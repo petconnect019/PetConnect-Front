@@ -9,7 +9,7 @@ const schema = yup.object().shape({
     .string()
     .email('Correo electrónico inválido')
     .required('Este campo es obligatorio')
-    .matches(/@dominio\.com$/, 'El correo debe ser del dominio @dominio.com'),
+    .matches(/@dominio\.com$/|/@gmail\.com$/, 'El correo debe ser del dominio @dominio.com'),
   password: yup
     .string()
     .min(6, 'La contraseña debe tener al menos 6 caracteres')
