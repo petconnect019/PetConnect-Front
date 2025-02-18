@@ -1,28 +1,18 @@
 import { useForm } from "react-hook-form";
 import { fetchLogin } from "../../Utils/FetchLogin/FetchLogin.jsx";
 import { useEffect, useState } from "react";
+import { GoogleOAuth } from "../../Components/GoogleAuthComponent/GoogleAuthComponent.jsx";
 
 export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const {token, setToken} = useState(null);
 
 
-  const onSubmit = data => {
-    
-    fetchLogin(data).then((res)=>{
+  const onSubmit = userData => {
+    fetchLogin(userData).then((res)=>{
         console.log(res);
 
-        
     })
   };
-
-  const handleGoogleLogin = ()=> {
-    window.location.href = 'http://localhost:5000/api/auth/google';
-    
-    
-  }
-
-
 
 
   return (
@@ -91,11 +81,7 @@ export const Login = () => {
             <span className="text-sm text-gray-600">O</span>
           </div>
 
-          <button onClick={handleGoogleLogin} type="button" className="w-full p-3 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none mb-4">
-            <span className="flex items-center justify-center space-x-2">
-              <span>Continuar con Google</span>
-            </span>
-          </button>
+          <GoogleOAuth/>
         </form>
       </div>
     </div>
