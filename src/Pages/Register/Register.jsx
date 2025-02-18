@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-
 
 // Esquema de validación con Yup
 const schema = yup.object().shape({
@@ -11,8 +10,8 @@ const schema = yup.object().shape({
     .string()
     .email('Correo electrónico inválido')
     .required('Este campo es obligatorio')
-    .matches(/@dominio\.com$/|/@gmail\.com$/, 'El correo debe ser del dominio @dominio.com'),
-    password: yup
+    .matches(/@dominio\.com$|@gmail\.com$/, 'El correo debe ser del dominio @dominio.com o @gmail.com'),
+  password: yup
     .string()
     .min(6, 'La contraseña debe tener al menos 6 caracteres')
     .matches(/[A-Z]/, 'La contraseña debe incluir al menos una letra mayúscula')
@@ -22,9 +21,7 @@ const schema = yup.object().shape({
 });
 
 export const Register = () => {
-
   const navigate = useNavigate();
-
 
   const {
     register,
@@ -34,6 +31,14 @@ export const Register = () => {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    // Verificamos si ya hay un token en el localStorage (indicando que el usuario ya está autenticado)
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      navigate('/welcome'); // Si está autenticado, redirigimos a la página de bienvenida
+    }
+  }, [navigate]);
+
   const onSubmit = async (data) => {
     try {
       const response = await fetch('http://localhost:5000/api/auth/register', {
@@ -42,12 +47,14 @@ export const Register = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
+        credentials: 'include',
       });
 
       const result = await response.json();
 
       if (response.ok) {
         alert('Registro exitoso');
+        navigate('/welcome');
       } else {
         alert(`Error: ${result.message || 'No se pudo registrar'}`);
       }
@@ -56,27 +63,40 @@ export const Register = () => {
     }
   };
 
-
   // Función para manejar el registro con Google
-  const handleGoogleSignUp = async () => {
+  const handleGoogleSignUp = () => {
+    let messageListener = null;
+
     try {
-      const response = await fetch('http://localhost:5000/api/auth/google', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const popup = window.open(
+        'http://localhost:5000/api/auth/google',
+        'Google Login',
+        'width=500,height=600,left=300,top=200'
+      );
 
-      const result = await response.json();
-
-      if (response.ok) {
-        alert('Registro con Google exitoso');
-        navigate('/welcome'); 
-      } else {
-        alert(`Error: ${result.message || 'No se pudo registrar con Google'}`);
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        throw new Error('Popup bloqueado');
       }
+
+      messageListener = async (event) => {
+        if (event.origin === 'http://localhost:5000' && event.data) {
+          window.removeEventListener('message', messageListener);
+
+          if (event.data.error) {
+            alert('Este correo no está registrado. Por favor, regístrate.');
+            navigate('/register');
+          } else if (event.data.token) {
+            localStorage.setItem('auth_token', event.data.token);
+            popup.close();
+            navigate('/welcome');
+          }
+        }
+      };
+
+      window.addEventListener('message', messageListener);
     } catch (error) {
-      alert('Error en la conexión con el servidor');
+      console.error('Error al abrir popup:', error);
+      window.location.href = 'http://localhost:5000/api/auth/google';
     }
   };
 
@@ -99,9 +119,7 @@ export const Register = () => {
             {...register('email')}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {errors.email && (
-            <span className="text-sm text-red-600">{errors.email.message}</span>
-          )}
+          {errors.email && <span className="text-sm text-red-600">{errors.email.message}</span>}
         </div>
 
         {/* Campo de contraseña */}
@@ -115,9 +133,7 @@ export const Register = () => {
             {...register('password')}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {errors.password && (
-            <span className="text-sm text-red-600">{errors.password.message}</span>
-          )}
+          {errors.password && <span className="text-sm text-red-600">{errors.password.message}</span>}
         </div>
 
         {/* Botón de registro */}
