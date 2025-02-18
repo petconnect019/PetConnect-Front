@@ -10,9 +10,12 @@ const schema = yup.object().shape({
     .email('Correo electrónico inválido')
     .required('Este campo es obligatorio')
     .matches(/@dominio\.com$/|/@gmail\.com$/, 'El correo debe ser del dominio @dominio.com'),
-  password: yup
+    password: yup
     .string()
     .min(6, 'La contraseña debe tener al menos 6 caracteres')
+    .matches(/[A-Z]/, 'La contraseña debe incluir al menos una letra mayúscula')
+    .matches(/[a-z]/, 'La contraseña debe incluir al menos una letra minúscula')
+    .matches(/[0-9]/, 'La contraseña debe incluir al menos un número')
     .required('Este campo es obligatorio'),
 });
 
@@ -25,9 +28,28 @@ export const Register = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    console.log('Datos del formulario:', data);
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('Registro exitoso');
+      } else {
+        alert(`Error: ${result.message || 'No se pudo registrar'}`);
+      }
+    } catch (error) {
+      alert('Error en la conexión con el servidor');
+    }
   };
+
 
   // Función para manejar el registro con Google
   const handleGoogleSignUp = () => {
