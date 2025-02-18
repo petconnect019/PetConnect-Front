@@ -10,11 +10,8 @@ export const Login = () => {
   const onSubmit = data => {
     
     fetchLogin(data).then((res)=>{
-        console.log("1");
-        if(res) {
-            console.log("resyes");
-            
-        }
+        console.log(res);
+
         
     })
   };
@@ -25,19 +22,7 @@ export const Login = () => {
     
   }
 
-//   useEffect(()=> {
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const token = urlParams.get('token');
-//     console.log(token);
-    
 
-//     if (token) {
-//       setToken(token);
-//       localStorage.setItem('accessToken', token);
-
-//     }
-
-//   }, [token])
 
 
   return (
