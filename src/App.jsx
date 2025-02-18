@@ -5,7 +5,8 @@ import { Introduction1 } from "./Pages/Introduccion1/introduction1";
 import { Introduction2 } from "./Pages/Introduccion2/introduction2";
 import { Welcome } from "./Pages/Welcome/welcome";
 import { Login } from "./Pages/Login/login";
-import { Register } from "./Pages/Register/register";
+import { Register } from "./Pages/Register/Register";
+
 
 const routes = createBrowserRouter([
   {
