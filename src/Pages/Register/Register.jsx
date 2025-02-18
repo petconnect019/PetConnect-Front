@@ -2,6 +2,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
+
 
 // Esquema de validación con Yup
 const schema = yup.object().shape({
@@ -20,6 +22,10 @@ const schema = yup.object().shape({
 });
 
 export const Register = () => {
+
+  const navigate = useNavigate();
+
+
   const {
     register,
     handleSubmit,
@@ -52,9 +58,26 @@ export const Register = () => {
 
 
   // Función para manejar el registro con Google
-  const handleGoogleSignUp = () => {
-    console.log('Registrarse con Google');
-    // Aquí iría la lógica para integrar Google OAuth
+  const handleGoogleSignUp = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/google', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('Registro con Google exitoso');
+        navigate('/welcome'); 
+      } else {
+        alert(`Error: ${result.message || 'No se pudo registrar con Google'}`);
+      }
+    } catch (error) {
+      alert('Error en la conexión con el servidor');
+    }
   };
 
   return (
