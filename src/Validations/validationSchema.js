@@ -5,7 +5,10 @@ export const registerSchema = yup.object().shape({
     .string()
     .email("Correo electrónico inválido")
     .required("Este campo es obligatorio")
-    .matches(/@dominio\.com$|@gmail\.com$/, "El correo debe ser @dominio.com o @gmail.com"),
+    .matches(
+      /@(gmail\.com|yahoo\.com|outlook\.com|hotmail\.com|aol\.com|icloud\.com|protonmail\.com|mail\.com|zoho\.com|yandex\.com|gmx\.com|live\.com|qq\.com|163\.com|126\.com|sina\.com|naver\.com|daum\.net|rediffmail\.com|rocketmail\.com|tutanota\.com|fastmail\.com|hushmail\.com|lycos\.com|mail\.ru|inbox\.com|earthlink\.net|att\.net|verizon\.net|comcast\.net|microsoft\.com|apple\.com|amazon\.com|facebook\.com|twitter\.com|linkedin\.com|ibm\.com|oracle\.com|intel\.com|hp\.com)$/,
+      "El correo debe ser de un dominio válido"
+    ),
   password: yup
     .string()
     .min(6, "Debe tener al menos 6 caracteres")
