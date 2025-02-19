@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { registerSchema } from '../../Validations/validationSchema';
 import { GoogleLogin } from '@react-oauth/google';
 import { FetchRegister } from '../../Utils/Fetch/FetchRegister/FetchRegister';
-
+import { GoogleAuthComponent } from '../../Components/GoogleAuthComponent/GoogleAuthComponent';
 
 
 export const Register = () => {
@@ -25,7 +25,7 @@ export const Register = () => {
   
     if (result.success) {
       toast.success(result.message || "Registro exitoso");
-      navigate("/introduction2");
+      navigate("/home");
     } else {
       toast.error(result.message || "Hubo un error en el registro");
     }
@@ -64,7 +64,7 @@ export const Register = () => {
           <div className="w-full border-t border-gray-300"></div>
         </div>
 
-        <GoogleLogin/>
+        <GoogleAuthComponent/>
         
       </form>
     </div>

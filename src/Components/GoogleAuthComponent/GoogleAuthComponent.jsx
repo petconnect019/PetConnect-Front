@@ -17,7 +17,7 @@ export const GoogleAuthComponent = () => {
     };
 
     if (redirect) {
-        return <Navigate to="/introduction2" />;
+        return <Navigate to="/home" />;
     }
 
     return (
