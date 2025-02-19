@@ -1,15 +1,27 @@
 import { useForm } from "react-hook-form";
-import { fetchLogin } from "../../Utils/FetchLogin/FetchLogin.jsx";
+import { fetchLogin } from "../../Utils/Fetch/FetchLogin/FetchLogin.jsx";
 import { GoogleAuthComponent } from "../../Components/GoogleAuthComponent/GoogleAuthComponent.jsx";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const navitage = useNavigate();
+  const [token, setTokenTrue] = useState(false);
+
+  useEffect(()=> {
+    if(token) {
+      navitage('/introduction2');
+    }
+
+  }, [token])
 
   //Funcion para iniciar por medio del formulario
   const onSubmit = userData => {
     fetchLogin(userData).then((res)=>{
-        console.log(res);
-
+        localStorage.setItem('userToken', res.accessToken);
+        setTokenTrue(true);
     })
   };
 
