@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { registerUser,signInWithGoogle } from '../../Services/authService';
 import { registerSchema } from '../../Validations/validationSchema';
+import { GoogleLogin } from '@react-oauth/google';
 
 
 export const Register = () => {
@@ -28,11 +29,6 @@ export const Register = () => {
       toast.error(result.message || "Hubo un error en el registro");
     }
   };
-  
-  const handleGoogleSignUp = () => {
-    signInWithGoogle(navigate, toast);
-  };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -67,12 +63,8 @@ export const Register = () => {
           <div className="w-full border-t border-gray-300"></div>
         </div>
 
-        <button type="button" onClick={handleGoogleSignUp}
-          className="w-full mt-4 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 flex items-center justify-center"
-        >
-          <img src="https://www.google.com/favicon.ico" alt="Google Logo" className="w-5 h-5 mr-2" />
-          Registrarse con Google
-        </button>
+        <GoogleLogin/>
+        
       </form>
     </div>
   );
