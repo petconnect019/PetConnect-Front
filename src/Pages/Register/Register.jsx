@@ -19,14 +19,13 @@ export const Register = () => {
 
   const onSubmit = async (data) => {
     const result = await registerUser(data);
-  
     console.log("Respuesta de registerUser:", result);
   
     if (result.success) {
-      toast.success(result.message); 
-      navigate("/introduction2"); 
+      toast.success(result.message || "Registro exitoso");
+      navigate("/introduction2");
     } else {
-      toast.error(result.message); 
+      toast.error(result.message || "Hubo un error en el registro");
     }
   };
   
