@@ -1,7 +1,7 @@
 // App.jsx
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+
 //pages:
 import { Introduction1 } from "./Pages/Introduccion1/introduction1";
 import { Introduction2 } from "./Pages/Introduccion2/introduction2";
