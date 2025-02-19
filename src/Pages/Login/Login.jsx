@@ -1,12 +1,11 @@
 import { useForm } from "react-hook-form";
 import { fetchLogin } from "../../Utils/FetchLogin/FetchLogin.jsx";
-import { useEffect, useState } from "react";
-import { GoogleOAuth } from "../../Components/GoogleAuthComponent/GoogleAuthComponent.jsx";
+import { GoogleAuthComponent } from "../../Components/GoogleAuthComponent/GoogleAuthComponent.jsx";
 
 export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-
+  //Funcion para iniciar por medio del formulario
   const onSubmit = userData => {
     fetchLogin(userData).then((res)=>{
         console.log(res);
@@ -81,7 +80,7 @@ export const Login = () => {
             <span className="text-sm text-gray-600">O</span>
           </div>
 
-          <GoogleOAuth/>
+          <GoogleAuthComponent/>
         </form>
       </div>
     </div>
