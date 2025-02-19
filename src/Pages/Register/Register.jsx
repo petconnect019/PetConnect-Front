@@ -4,9 +4,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { registerUser,signInWithGoogle } from '../../Services/authService';
 import { registerSchema } from '../../Validations/validationSchema';
 import { GoogleLogin } from '@react-oauth/google';
+import { FetchRegister } from '../../Utils/Fetch/FetchRegister/FetchRegister';
+
 
 
 export const Register = () => {
@@ -19,7 +20,7 @@ export const Register = () => {
   });
 
   const onSubmit = async (data) => {
-    const result = await registerUser(data);
+    const result = await FetchRegister(data);
     console.log("Respuesta de registerUser:", result);
   
     if (result.success) {
