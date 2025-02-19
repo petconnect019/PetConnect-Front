@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
 import { fetchLogin } from "../../Utils/FetchLogin/FetchLogin.jsx";
 import { GoogleAuthComponent } from "../../Components/GoogleAuthComponent/GoogleAuthComponent.jsx";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const navigate = useNavigate();
 
   //Funcion para iniciar por medio del formulario
   const onSubmit = userData => {
@@ -11,6 +13,42 @@ export const Login = () => {
         console.log(res);
 
     })
+  };
+
+  const handleGoogleSignUp = () => {
+    let messageListener = null;
+
+    try {
+      const popup = window.open(
+        'http://localhost:5000/api/auth/google',
+        'Google Login',
+        'width=500,height=600,left=300,top=200'
+      );
+
+      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        throw new Error('Popup bloqueado');
+      }
+
+      messageListener = async (event) => {
+        if (event.origin === 'http://localhost:5000' && event.data) {
+          window.removeEventListener('message', messageListener);
+
+          if (event.data.error) {
+            alert('Este correo no está registrado. Por favor, regístrate.');
+            navigate('/register');
+          } else if (event.data.token) {
+            localStorage.setItem('auth_token', event.data.token);
+            popup.close();
+            navigate('/welcome');
+          }
+        }
+      };
+
+      window.addEventListener('message', messageListener);
+    } catch (error) {
+      console.error('Error al abrir popup:', error);
+      window.location.href = 'http://localhost:5000/api/auth/google';
+    }
   };
 
 
@@ -80,7 +118,18 @@ export const Login = () => {
             <span className="text-sm text-gray-600">O</span>
           </div>
 
-          <GoogleAuthComponent/>
+          <button
+          type="button"
+          onClick={handleGoogleSignUp}
+          className="w-full mt-4 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 flex items-center justify-center"
+        >
+          <img
+            src="https://www.google.com/favicon.ico"
+            alt="Google Logo"
+            className="w-5 h-5 mr-2"
+          />
+          Registrarse con Google
+        </button>
         </form>
       </div>
     </div>
