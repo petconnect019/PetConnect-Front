@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
-import { fetchLogin } from "../../Utils/FetchLogin/FetchLogin.jsx";
+
 import { GoogleSignUp } from "../../Components/GoogleAuth/GoogleSignUp.jsx";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { fetchLogin } from "../../Utils/Fetch/FetchLogin/FetchLogin.jsx";
 
 export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
