@@ -3,8 +3,9 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { GoogleSignUp } from '../../Components/GoogleAuth/GoogleSignUp';
-import { fetchRegister } from '../../Utils/Fetch/FetchLogin/FetchRegister/FetchRegister';
+
 import { registerSchema } from '../../Validations/validationSchema';
+import { fetchRegister } from '../../Utils/Fetch/FetchRegister/FetchRegister';
 
 
 export const Register = () => {
