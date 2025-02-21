@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { fetchRegister } from '../../Utils/FetchRegister/FetchRegister';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
@@ -35,33 +36,20 @@ export const Register = () => {
     // Verificamos si ya hay un token en el localStorage (indicando que el usuario ya está autenticado)
     const token = localStorage.getItem('auth_token');
     if (token) {
-      navigate('/welcome'); // Si está autenticado, redirigimos a la página de bienvenida
+      navigate('/home');
     }
   }, [navigate]);
 
-  const onSubmit = async (data) => {
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-        credentials: 'include',
-      });
-
-      const result = await response.json();
-
+  // Función para manejar el envío del formulario
+  const onSubmit = (data) => {
+    fetchRegister(data).then((response) => {
       if (response.ok) {
-        alert('Registro exitoso');
-        navigate('/welcome');
+        navigate('/home');
       } else {
-        alert(`Error: ${result.message || 'No se pudo registrar'}`);
+        alert(`Error: ${response.message || 'No se pudo registrar'}`);
       }
-    } catch (error) {
-      alert('Error en la conexión con el servidor');
-    }
-  };
+    });
+  }
 
   // Función para manejar el registro con Google
   const handleGoogleSignUp = () => {

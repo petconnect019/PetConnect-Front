@@ -9,10 +9,14 @@ export const Login = () => {
 
   //Funcion para iniciar por medio del formulario
   const onSubmit = userData => {
-    fetchLogin(userData).then((res)=>{
-        console.log(res);
-
-    })
+    fetchLogin(userData).then((response) => {
+      if (response.ok) {
+        localStorage.setItem('userToken', response.token);
+        navigate('/welcome');
+      } else {
+        alert(`Error: ${response.message || 'No se pudo iniciar sesión'}`);
+      }
+    });
   };
 
   const handleGoogleSignUp = () => {

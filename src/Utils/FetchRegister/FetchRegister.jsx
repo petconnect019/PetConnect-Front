@@ -1,8 +1,6 @@
-export const fetchLogin = async (userData)=>{
-    console.log(userData);
-    
+export const fetchRegister = async (userData)=>{
     try {
-        const response = await fetch('http://localhost:5000/api/auth/login', {
+        const response = await fetch('http://localhost:5000/api/auth/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -14,12 +12,12 @@ export const fetchLogin = async (userData)=>{
         const result = await response.json();
   
         if (response.ok) {
-          return {ok: true, token: result.token};
-          
+          alert('Registro exitoso');
+          navigate('/welcome');
         } else {
-          return {ok: false, message: result.message};
+          alert(`Error: ${result.message || 'No se pudo registrar'}`);
         }
       } catch (error) {
-        return {ok: false, message: 'Error en la conexión con el servidor'};
+        alert('Error en la conexión con el servidor');
       }
 }
