@@ -1,9 +1,10 @@
 
 import { useForm } from 'react-hook-form';
-import { fetchRegister } from '../../Utils/Fetch/FetchLogin/FetchRegister/FetchRegister';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { GoogleSignUp } from '../../Components/GoogleAuth/GoogleSignUp';
+import { fetchRegister } from '../../Utils/Fetch/FetchLogin/FetchRegister/FetchRegister';
+
 
 // Esquema de validación con Yup
 const schema = yup.object().shape({

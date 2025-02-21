@@ -8,8 +8,8 @@ import { Login } from "./Pages/Login/Login";
 import { Register } from "./Pages/Register/Register";
 import { Welcome } from "./Pages/Welcome/Welcome";
 import { Home } from "./Pages/Home/Home";
-import { Welcome } from "./Pages/Welcome/Welcome";
-import { Home } from "./Pages/Home/Home";
+
+
 
 
 const routes = createBrowserRouter([
