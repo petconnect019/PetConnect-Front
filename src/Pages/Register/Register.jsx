@@ -4,6 +4,7 @@ import { fetchRegister } from '../../Utils/FetchRegister/FetchRegister';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { GoogleSignUp } from '../../Components/GoogleAuth/GoogleSignUp';
 
 // Esquema de validación con Yup
 const schema = yup.object().shape({
@@ -32,15 +33,15 @@ export const Register = () => {
     resolver: yupResolver(schema),
   });
 
+  // Verificar si el usuario ya está autenticado
   useEffect(() => {
-    // Verificamos si ya hay un token en el localStorage (indicando que el usuario ya está autenticado)
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('accessToken');
     if (token) {
       navigate('/home');
     }
   }, [navigate]);
 
-  // Función para manejar el envío del formulario
+  // Función que se ejecuta al enviar el formulario
   const onSubmit = (data) => {
     fetchRegister(data).then((response) => {
       if (response.ok) {
@@ -49,43 +50,6 @@ export const Register = () => {
         alert(`Error: ${response.message || 'No se pudo registrar'}`);
       }
     });
-  }
-
-  // Función para manejar el registro con Google
-  const handleGoogleSignUp = () => {
-    let messageListener = null;
-
-    try {
-      const popup = window.open(
-        'http://localhost:5000/api/auth/google',
-        'Google Login',
-        'width=500,height=600,left=300,top=200'
-      );
-
-      if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-        throw new Error('Popup bloqueado');
-      }
-
-      messageListener = async (event) => {
-        if (event.origin === 'http://localhost:5000' && event.data) {
-          window.removeEventListener('message', messageListener);
-
-          if (event.data.error) {
-            alert('Este correo no está registrado. Por favor, regístrate.');
-            navigate('/register');
-          } else if (event.data.token) {
-            localStorage.setItem('auth_token', event.data.token);
-            popup.close();
-            navigate('/welcome');
-          }
-        }
-      };
-
-      window.addEventListener('message', messageListener);
-    } catch (error) {
-      console.error('Error al abrir popup:', error);
-      window.location.href = 'http://localhost:5000/api/auth/google';
-    }
   };
 
   return (
@@ -96,7 +60,6 @@ export const Register = () => {
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Regístrate</h2>
 
-        {/* Campo de correo electrónico */}
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Correo electrónico:
@@ -110,7 +73,6 @@ export const Register = () => {
           {errors.email && <span className="text-sm text-red-600">{errors.email.message}</span>}
         </div>
 
-        {/* Campo de contraseña */}
         <div className="mb-6">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Contraseña:
@@ -124,7 +86,6 @@ export const Register = () => {
           {errors.password && <span className="text-sm text-red-600">{errors.password.message}</span>}
         </div>
 
-        {/* Botón de registro */}
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -132,26 +93,12 @@ export const Register = () => {
           Registrarse
         </button>
 
-        {/* Separador */}
         <div className="mt-6 flex items-center justify-center">
           <div className="w-full border-t border-gray-300"></div>
           <span className="px-2 text-gray-500">o</span>
           <div className="w-full border-t border-gray-300"></div>
         </div>
-
-        {/* Botón de registro con Google */}
-        <button
-          type="button"
-          onClick={handleGoogleSignUp}
-          className="w-full mt-4 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center"
-        >
-          <img
-            src="https://www.google.com/favicon.ico"
-            alt="Google Logo"
-            className="w-5 h-5 mr-2"
-          />
-          Registrarse con Google
-        </button>
+        <GoogleSignUp navigate={navigate} />
       </form>
     </div>
   );

@@ -15,7 +15,7 @@ export const Welcome = () => {
         const urlToken = params.get('token');
 
         // Usar el token de la URL o del localStorage
-        const token = urlToken || localStorage.getItem('auth_token');
+        const token = urlToken || localStorage.getItem('accessToken');
 
         if (!token) {
           navigate('/login');
@@ -24,7 +24,7 @@ export const Welcome = () => {
 
         // Si hay un token en la URL, guardarlo en localStorage
         if (urlToken) {
-          localStorage.setItem('auth_token', urlToken);
+          localStorage.setItem('accessToken', urlToken);
           // Limpiar la URL
           window.history.replaceState({}, document.title, '/welcome');
         }
@@ -46,7 +46,7 @@ export const Welcome = () => {
         }
       } catch (error) {
         console.error('Error de autenticación:', error);
-        localStorage.removeItem('auth_token');
+        localStorage.removeItem('accessToken');
         navigate('/login');
       } finally {
         setLoading(false);
@@ -62,7 +62,7 @@ export const Welcome = () => {
         method: 'POST',
         credentials: 'include',
       });
-      localStorage.removeItem('auth_token');
+      localStorage.removeItem('accessToken');
       navigate('/login');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
