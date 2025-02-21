@@ -1,6 +1,3 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-
 export const Welcome = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,27 +81,6 @@ export const Welcome = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
         <h1 className="text-2xl font-bold text-center mb-6">¡Bienvenido a PetConnect!</h1>
-        {userData && (
-          <div className="space-y-4">
-            <div className="text-center">
-              <p className="text-gray-600">Sesión iniciada como:</p>
-              <p className="font-semibold text-blue-600">{userData.email}</p>
-            </div>
-
-            <div className="border-t border-gray-200 pt-4">
-              <p className="text-sm text-gray-500">
-                Rol: <span className="font-medium">{userData.role}</span>
-              </p>
-            </div>
-
-            <button
-              onClick={handleLogout}
-              className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors"
-            >
-              Cerrar Sesión
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
