@@ -1,29 +1,34 @@
 import { useForm } from "react-hook-form";
-import { fetchLogin } from "../../Utils/Fetch/FetchLogin/FetchLogin.jsx";
-import { GoogleAuthComponent } from "../../Components/GoogleAuthComponent/GoogleAuthComponent.jsx";
-import { useEffect, useState } from "react";
+import { fetchLogin } from "../../Utils/FetchLogin/FetchLogin.jsx";
+import { GoogleSignUp } from "../../Components/GoogleAuth/GoogleSignUp.jsx";
 import { useNavigate } from "react-router-dom";
-
+import { useEffect } from "react";
 
 export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const navitage = useNavigate();
-  const [token, setTokenTrue] = useState(false);
-
-  useEffect(()=> {
-    if(token) {
-      navitage('/introduction2');
-    }
-
-  }, [token])
+  const navigate = useNavigate();
+  
+    // Verificar si el usuario ya está autenticado
+    useEffect(() => {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        navigate('/home');
+      }
+    }, [navigate]);
 
   //Funcion para iniciar por medio del formulario
   const onSubmit = userData => {
-    fetchLogin(userData).then((res)=>{
-        localStorage.setItem('userToken', res.accessToken);
-        setTokenTrue(true);
-    })
+    fetchLogin(userData).then((response) => {
+      if (response.ok) {
+        localStorage.setItem('accessToken', response.token);
+        navigate('/welcome');
+      } else {
+        alert(`Error: ${response.message || 'No se pudo iniciar sesión'}`);
+      }
+    });
   };
+
+
 
 
   return (
@@ -84,15 +89,19 @@ export const Login = () => {
             <a href="#" className="text-sm text-indigo-600 hover:underline">¿Has olvidado tu contraseña?</a>
           </div>
 
-          <button type="submit" className="w-full p-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4">
-            Iniciar sesión
-          </button>
-
-          <div className="text-center mb-4">
-            <span className="text-sm text-gray-600">O</span>
-          </div>
-
-          <GoogleAuthComponent/>
+          <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    Iniciar sesión
+                  </button>
+          
+                  <div className="mt-6 flex items-center justify-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                    <span className="px-2 text-gray-500">o</span>
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <GoogleSignUp navigate={navigate} />
         </form>
       </div>
     </div>

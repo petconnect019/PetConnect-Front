@@ -1,34 +1,55 @@
 
 import { useForm } from 'react-hook-form';
+import { fetchRegister } from '../../Utils/Fetch/FetchLogin/FetchRegister/FetchRegister';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { registerSchema } from '../../Validations/validationSchema';
-import { GoogleLogin } from '@react-oauth/google';
-import { FetchRegister } from '../../Utils/Fetch/FetchRegister/FetchRegister';
-import { GoogleAuthComponent } from '../../Components/GoogleAuthComponent/GoogleAuthComponent';
+import { GoogleSignUp } from '../../Components/GoogleAuth/GoogleSignUp';
 
+// Esquema de validación con Yup
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email('Correo electrónico inválido')
+    .required('Este campo es obligatorio')
+    .matches(/@dominio\.com$|@gmail\.com$/, 'El correo debe ser del dominio @dominio.com o @gmail.com'),
+  password: yup
+    .string()
+    .min(6, 'La contraseña debe tener al menos 6 caracteres')
+    .matches(/[A-Z]/, 'La contraseña debe incluir al menos una letra mayúscula')
+    .matches(/[a-z]/, 'La contraseña debe incluir al menos una letra minúscula')
+    .matches(/[0-9]/, 'La contraseña debe incluir al menos un número')
+    .required('Este campo es obligatorio'),
+});
 
 export const Register = () => {
   
   const navigate = useNavigate();
 
-
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(registerSchema),
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data) => {
-    const result = await FetchRegister(data);
-    console.log("Respuesta de registerUser:", result);
-  
-    if (result.success) {
-      toast.success(result.message || "Registro exitoso");
-      navigate("/home");
-    } else {
-      toast.error(result.message || "Hubo un error en el registro");
+  // Verificar si el usuario ya está autenticado
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      navigate('/home');
     }
+  }, [navigate]);
+
+  // Función que se ejecuta al enviar el formulario
+  const onSubmit = (data) => {
+    fetchRegister(data).then((response) => {
+      if (response.ok) {
+        navigate('/home');
+      } else {
+        alert(`Error: ${response.message || 'No se pudo registrar'}`);
+      }
+    });
   };
 
   return (
@@ -52,8 +73,9 @@ export const Register = () => {
           {errors.password && <span className="text-sm text-red-600">{errors.password.message}</span>}
         </div>
 
-        <button type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Registrarse
         </button>
@@ -63,10 +85,9 @@ export const Register = () => {
           <span className="px-2 text-gray-500">o</span>
           <div className="w-full border-t border-gray-300"></div>
         </div>
-
-        <GoogleAuthComponent/>
-        
+        <GoogleSignUp navigate={navigate} />
       </form>
     </div>
   );
 };
+

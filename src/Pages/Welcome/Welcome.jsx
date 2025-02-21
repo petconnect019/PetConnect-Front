@@ -1,4 +1,81 @@
 export const Welcome = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handleAuth = async () => {
+      try {
+        // Verificar si hay un token en la URL
+        const params = new URLSearchParams(location.search);
+        const urlToken = params.get('token');
+
+        // Usar el token de la URL o del localStorage
+        const token = urlToken || localStorage.getItem('accessToken');
+
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        // Si hay un token en la URL, guardarlo en localStorage
+        if (urlToken) {
+          localStorage.setItem('accessToken', urlToken);
+          // Limpiar la URL
+          window.history.replaceState({}, document.title, '/welcome');
+        }
+
+        // Validar el token
+        const response = await fetch('http://localhost:5000/api/auth/validate', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data.decoded);
+        } else {
+          throw new Error('Token inválido');
+        }
+      } catch (error) {
+        console.error('Error de autenticación:', error);
+        localStorage.removeItem('accessToken');
+        navigate('/login');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handleAuth();
+  }, [location, navigate]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('http://localhost:5000/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      localStorage.removeItem('accessToken');
+      navigate('/login');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          <p className="mt-4">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
