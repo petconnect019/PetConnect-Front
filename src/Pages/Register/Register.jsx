@@ -1,6 +1,6 @@
 
 import { useForm } from 'react-hook-form';
-import { fetchRegister } from '../../Utils/FetchRegister/FetchRegister';
+import { fetchRegister } from '../../Utils/Fetch/FetchLogin/FetchRegister/FetchRegister';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { GoogleSignUp } from '../../Components/GoogleAuth/GoogleSignUp';
