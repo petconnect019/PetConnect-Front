@@ -18,8 +18,8 @@ const { register, handleSubmit, formState: { errors } } = useForm({
 });
   // Verificar si el usuario ya está autenticado
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
       navigate('/home');
     }
   }, [navigate]);

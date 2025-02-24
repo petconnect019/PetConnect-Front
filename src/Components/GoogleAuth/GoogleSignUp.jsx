@@ -22,8 +22,8 @@ export const GoogleSignUp = ({ navigate }) => {
           if (event.data.error) {
             alert('Este correo no está registrado. Por favor, regístrate.');
             navigate('/register');
-          } else if (event.data.token) {
-            localStorage.setItem('accessToken', event.data.token);
+          } else if (event.data.accessToken) {
+            localStorage.setItem('accessToken', event.data.accessToken);
             popup.close();
             navigate('/home');
           }

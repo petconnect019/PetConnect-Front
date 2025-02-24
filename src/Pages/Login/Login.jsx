@@ -11,8 +11,8 @@ export const Login = () => {
   
     // Verificar si el usuario ya está autenticado
     useEffect(() => {
-      const token = localStorage.getItem('accessToken');
-      if (token) {
+      const accessToken = localStorage.getItem('accessToken');
+      if (accessToken) {
         navigate('/home');
       }
     }, [navigate]);
@@ -21,7 +21,7 @@ export const Login = () => {
   const onSubmit = userData => {
     fetchLogin(userData).then((response) => {
       if (response.ok) {
-        localStorage.setItem('accessToken', response.token);
+        localStorage.setItem('accessToken', response.accessToken);
         navigate('/welcome');
       } else {
         alert(`Error: ${response.message || 'No se pudo iniciar sesión'}`);
