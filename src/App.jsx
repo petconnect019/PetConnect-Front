@@ -2,12 +2,13 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 //pages:
-import { Introduction1 } from "./Pages/Introduccion1/introduction1";
+
 import { Introduction2 } from "./Pages/Introduccion2/introduction2";
 import { Login } from "./Pages/Login/Login";
 import { Register } from "./Pages/Register/Register";
 import { Welcome } from "./Pages/Welcome/Welcome";
 import { Home } from "./Pages/Home/Home";
+import { Introduction1 } from "./Pages/Introduccion1/Introduction1";
 
 
 
