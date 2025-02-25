@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 
 export const GoogleSignUp = ({ navigate, content }) => {
+  const { login } = useAuth();
+  const [token, setToken] = useState(null);
   const handleGoogleSignUp = () => {
     let messageListener = null;
 
@@ -16,7 +19,6 @@ export const GoogleSignUp = ({ navigate, content }) => {
       }
 
       messageListener = async (event) => {
-        console.log(event.data);
         
         if (event.origin === 'http://localhost:5000' && event.data) {
           window.removeEventListener('message', messageListener);
@@ -25,9 +27,8 @@ export const GoogleSignUp = ({ navigate, content }) => {
             alert('Este correo no está registrado. Por favor, regístrate.');
             navigate('/register');
           } else if (event.data.accessToken) {
-            localStorage.setItem('accessToken', event.data.accessToken);
+            setToken(event.data.accessToken);
             popup.close();
-            navigate('/home');
           }
         }
       };
@@ -38,6 +39,13 @@ export const GoogleSignUp = ({ navigate, content }) => {
       window.location.href = 'http://localhost:5000/api/auth/google';
     }
   };
+
+  useEffect(() => {
+    if (token) {
+      login(token);
+      navigate('/home');
+    }
+  }, [token, login, navigate]);
 
   return (
     <button
