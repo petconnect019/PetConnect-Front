@@ -9,26 +9,24 @@ export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
   const { isAuthenticated, login } = useAuth();
-  
-    // Verificar si el usuario ya está autenticado
-    useEffect(() => {
-      const accessToken = localStorage.getItem('accessToken');
-      if (accessToken) {
-        navigate('/home');
-      }
-    }, [navigate]);
 
-  //Funcion para iniciar por medio del formulario
-  const onSubmit = userData => {
-    fetchLogin(userData).then((response) => {
-      if (response.ok) {
-        localStorage.setItem('accessToken', response.accessToken);
-        login();
-        navigate('/welcome');
-      } else {
-        alert(`Error: ${response.message || 'No se pudo iniciar sesión'}`);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/home');
+    }
+  }, [isAuthenticated, navigate]);
+
+  const onSubmit = async (userData) => {
+    try {
+      const response = await fetchLogin(userData);
+      if (!response.ok) {
+        throw new Error(response.message || "Error al iniciar sesión");
       }
-    });
+      login(response.accessToken);
+      navigate('/home');
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -52,7 +50,7 @@ export const Login = () => {
                 required: "Este campo es obligatorio",
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Por favor, ingresa un correo electrónico válido"
+                  message: "Correo electrónico inválido"
                 }
               })}
             />
@@ -69,39 +67,31 @@ export const Login = () => {
                 required: "Este campo es obligatorio",
                 minLength: {
                   value: 8,
-                  message: "La contraseña debe tener al menos 8 caracteres"
+                  message: "Debe tener al menos 8 caracteres"
                 },
                 pattern: {
                   value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
-                  message: "La contraseña debe contener al menos una letra mayúscula, una letra minúscula y un número"
+                  message: "Debe contener mayúscula, minúscula y número"
                 }
               })}
             />
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
           </div>
 
-          <div className="flex items-center mb-4">
-            <input type="checkbox" id="remember" className="h-4 w-4 text-indigo-600" />
-            <label htmlFor="remember" className="ml-2 text-sm text-gray-600">Recuérdame</label>
-          </div>
-
-          <div className="text-center mb-4">
-            <a href="#" className="text-sm text-indigo-600 hover:underline">¿Has olvidado tu contraseña?</a>
-          </div>
-
           <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    Iniciar sesión
-                  </button>
-          
-                  <div className="mt-6 flex items-center justify-center">
-                    <div className="w-full border-t border-gray-300"></div>
-                    <span className="px-2 text-gray-500">o</span>
-                    <div className="w-full border-t border-gray-300"></div>
-                  </div>
-                  <GoogleSignUp navigate={navigate} content={"Inicia sesíon con Google"} />
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Iniciar sesión
+          </button>
+
+          <div className="mt-6 flex items-center justify-center">
+            <div className="w-full border-t border-gray-300"></div>
+            <span className="px-2 text-gray-500">o</span>
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+
+          <GoogleSignUp navigate={navigate} content={"Inicia sesión con Google"} />
         </form>
       </div>
     </div>
