@@ -22,6 +22,7 @@ import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
 import { Chat } from "../Pages/Chat/Chat";
 import { createBrowserRouter } from "react-router-dom";
+import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
 
 export const routes = createBrowserRouter([
   {
@@ -46,7 +47,10 @@ export const routes = createBrowserRouter([
   },
   {
     path: '/home',
-    element: <Home />,
+    element: 
+            <ProtectRoute>
+              <Home />
+            </ProtectRoute>,
   },
   {
     path: '/notification-request',

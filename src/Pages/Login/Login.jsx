@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-
+import { useAuth } from "../../Contexts/AuthContext/AuthContext.jsx";
 import { GoogleSignUp } from "../../Components/GoogleAuth/GoogleSignUp.jsx";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -8,6 +8,7 @@ import { fetchLogin } from "../../Utils/Fetch/FetchLogin/FetchLogin.jsx";
 export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
+  const { isAuthenticated, login } = useAuth();
   
     // Verificar si el usuario ya está autenticado
     useEffect(() => {
@@ -22,15 +23,13 @@ export const Login = () => {
     fetchLogin(userData).then((response) => {
       if (response.ok) {
         localStorage.setItem('accessToken', response.accessToken);
+        login();
         navigate('/welcome');
       } else {
         alert(`Error: ${response.message || 'No se pudo iniciar sesión'}`);
       }
     });
   };
-
-
-
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
@@ -102,7 +101,7 @@ export const Login = () => {
                     <span className="px-2 text-gray-500">o</span>
                     <div className="w-full border-t border-gray-300"></div>
                   </div>
-                  <GoogleSignUp navigate={navigate} />
+                  <GoogleSignUp navigate={navigate} content={"Inicia sesíon con Google"} />
         </form>
       </div>
     </div>
