@@ -28,7 +28,6 @@ export const GoogleSignUp = ({ navigate, content }) => {
             navigate('/register');
           } else if (event.data.accessToken) {
             setToken(event.data.accessToken);
-            popup.close();
           }
         }
       };

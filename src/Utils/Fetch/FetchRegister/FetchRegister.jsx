@@ -10,8 +10,6 @@ export const fetchRegister = async (userData) => {
     });
 
     const result = await response.json();
-    console.log(result);
-    
     if (response.ok) {
       return { ok: true, accessToken: result.accessToken };
     } else {

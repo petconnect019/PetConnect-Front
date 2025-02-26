@@ -1,4 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 export const StepUser = () => {
+    const navigate = useNavigate();
+
+    const handleContinue = () => {
+        navigate("/step-tag");
+    }
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
             <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
@@ -22,7 +30,7 @@ export const StepUser = () => {
                     <option value="mujer">Mujer</option>
                     <option value="otro">Otro</option>
                 </select>
-                <button className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Finalizar</button>
+                <button onClick={handleContinue} className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Finalizar</button>
             </div>
         </div>
     );
