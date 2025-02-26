@@ -5,7 +5,7 @@ export const Introduction2 = () => {
     const navigate = useNavigate();
     const handleContinue = () => {
         // Redirigir a la siguiente página
-        navigate('/welcome');
+        navigate('/notification-request');
     };
 
     return (
