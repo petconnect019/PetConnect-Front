@@ -1,6 +1,13 @@
 import Intro2 from '../../assets/Introduccion2.png';
+import { useNavigate } from 'react-router-dom';
 
 export const Introduction2 = () => {
+    const navigate = useNavigate();
+    const handleContinue = () => {
+        // Redirigir a la siguiente página
+        navigate('/welcome');
+    };
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-end bg-white p-2 relative overflow-hidden">
             {/* Contenedor de fondo con el clip-path */}
@@ -26,7 +33,7 @@ export const Introduction2 = () => {
                     </p>
 
                     {/* Botón centrado */}
-                    <button className="mt-4 w-full max-w-[20rem] py-3 bg-orange-400 text-white font-semibold rounded-full shadow-md">
+                    <button onClick={handleContinue} className="mt-4 w-full max-w-[20rem] py-3 bg-orange-400 text-white font-semibold rounded-full shadow-md">
                         Continuar
                     </button>
                 </div>

@@ -3,12 +3,12 @@ import Intro1 from '../../assets/Introduccion_1.png';
 
 
 export const Introduction1 = () => {
-
     const navigate = useNavigate();
 
     const handleContinue = () => {
-        navigate('/introduction2'); 
-    };
+        navigate('/introduction2');
+        
+    }
 
 
     return (
