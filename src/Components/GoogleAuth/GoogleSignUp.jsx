@@ -51,10 +51,17 @@ export const GoogleSignUp = ({ navigate, content }) => {
     <button
       type="button"
       onClick={handleGoogleSignUp}
-      className="w-full mt-4 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center"
+      className="w-full mt-4 flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 
+                py-2 px-4 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none 
+                focus:ring-2 focus:ring-gray-300 transition-all duration-300"
+      aria-label="Registrarse con Google"
     >
-      <img src="https://www.google.com/favicon.ico" alt="Google Logo" className="w-5 h-5 mr-2" />
-      {content}
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+        alt="Google Logo"
+        className="w-5 h-5"
+      />
+      <span className="font-medium"> {content} </span>
     </button>
   );
 };

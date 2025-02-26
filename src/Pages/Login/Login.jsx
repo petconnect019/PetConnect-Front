@@ -4,6 +4,7 @@ import { GoogleSignUp } from "../../Components/GoogleAuth/GoogleSignUp.jsx";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchLogin } from "../../Utils/Fetch/FetchLogin/FetchLogin.jsx";
+import { Link } from "react-router-dom";
 
 export const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -41,7 +42,9 @@ export const Login = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -50,15 +53,17 @@ export const Login = () => {
                 required: "Este campo es obligatorio",
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "Correo electrónico inválido"
-                }
+                  message: "Correo electrónico inválido",
+                },
               })}
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Contraseña</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Contraseña
+            </label>
             <input
               type="password"
               id="password"
@@ -67,12 +72,12 @@ export const Login = () => {
                 required: "Este campo es obligatorio",
                 minLength: {
                   value: 8,
-                  message: "Debe tener al menos 8 caracteres"
+                  message: "Debe tener al menos 8 caracteres",
                 },
                 pattern: {
                   value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
-                  message: "Debe contener mayúscula, minúscula y número"
-                }
+                  message: "Debe contener mayúscula, minúscula y número",
+                },
               })}
             />
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
@@ -80,7 +85,7 @@ export const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
           >
             Iniciar sesión
           </button>
@@ -92,6 +97,17 @@ export const Login = () => {
           </div>
 
           <GoogleSignUp navigate={navigate} content={"Inicia sesión con Google"} />
+
+          {/* Texto de registro */}
+          <p className="mt-4 text-center text-sm text-gray-600">
+            ¿Aún no tienes una cuenta?{" "}
+            <Link
+              to="/register"
+              className="text-blue-600 font-medium hover:underline"
+            >
+              Regístrate aquí
+            </Link>
+          </p>;
         </form>
       </div>
     </div>
