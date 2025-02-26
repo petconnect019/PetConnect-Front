@@ -10,7 +10,6 @@ export const SplashScreen = () => {
             <img src={Logo} alt="Logo" className='w-32 sm:w-24 mb-2' />
             <h1 className='text-2xl sm:text-xl font-bold text-center'>PetConnect</h1>
         </div>
-        {/* <div className='border-solid border-white border-[0.5rem] w-10 h-10 border-4  border-opacity-30 border-t-orange-500 rounded-full animate-spin mb-8'/> */}
         <Lottie animationData={DogLoader} className='w-50 h-50  mt-[2rem]' />
     </div>
   )
