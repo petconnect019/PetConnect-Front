@@ -6,7 +6,6 @@ import { Welcome } from "../Pages/Welcome/Welcome";
 import { Home } from "../Pages/Home/Home";
 import { NotificationRequest } from "../Pages/NotificationRequest/NotificationRequest";
 import { RecoverEmail } from "../Pages/RecoverEmail/RecoverEmail";
-import { RecoverCode } from "../Pages/RecoverCode/RecoverCode";
 import { ChangePassword } from "../Pages/ChangePassword/ChangePassword";
 import { StepPet } from "../Pages/StepPet/StepPet";
 import { StepUser } from "../Pages/StepUser/StepUser";
@@ -59,10 +58,6 @@ export const routes = createBrowserRouter([
   {
     path: '/recover-email',
     element: <RecoverEmail />,
-  },
-  {
-    path: '/recover-code',
-    element: <RecoverCode />,
   },
   {
     path: '/change-password',

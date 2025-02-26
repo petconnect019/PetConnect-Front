@@ -22,11 +22,11 @@ export const Register = () => {
   });
 
   // Verificar si el usuario ya está autenticado
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/home");
-    }
-  }, [isAuthenticated, navigate]);
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     navigate("/home");
+  //   }
+  // }, [isAuthenticated, navigate]);
 
   // Función que se ejecuta al enviar el formulario 
   const onSubmit = async (userData) => {
@@ -36,7 +36,7 @@ export const Register = () => {
         throw new Error(response.message || "Error al registrarse");
       }
       login(response.accessToken);
-      navigate("/home");
+      navigate("/step-pet");
     } catch (error) {
       alert(error.message);
     }
