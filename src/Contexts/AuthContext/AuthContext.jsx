@@ -3,20 +3,20 @@ import { createContext, useContext, useState, useEffect } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("accessToken"));
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!sessionStorage.getItem("accessToken"));
 
   useEffect(() => {
-    // Verificar token en localStorage al iniciar
-    setIsAuthenticated(!!localStorage.getItem("accessToken"));
+    // Verificar token en sessionStorage al iniciar
+    setIsAuthenticated(!!sessionStorage.getItem("accessToken"));
   }, []);
 
   const login = (token) => {
-    localStorage.setItem("accessToken", token);
+    sessionStorage.setItem("accessToken", token);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
+    sessionStorage.removeItem("accessToken");
     setIsAuthenticated(false);
   };
 
