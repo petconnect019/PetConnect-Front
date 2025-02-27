@@ -24,6 +24,7 @@ import { ResetPassword } from "../Pages/ResetPassword/ResetPassword";
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
 
+
 export const routes = createBrowserRouter([
   {
     path: '/',
