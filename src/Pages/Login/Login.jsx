@@ -81,6 +81,9 @@ export const Login = () => {
               })}
             />
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+            <Link to="/recover-email" className="text-blue-600 text-sm block mt-2 hover:underline">
+              ¿Has olvidado tu contraseña?
+            </Link>
           </div>
 
           <button
@@ -107,7 +110,7 @@ export const Login = () => {
             >
               Regístrate aquí
             </Link>
-          </p>;
+          </p>
         </form>
       </div>
     </div>

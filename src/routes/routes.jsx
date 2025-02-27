@@ -20,6 +20,7 @@ import { PublicPetProfile } from "../Pages/PublicPetProfile/PublicPetProfile";
 import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
 import { Chat } from "../Pages/Chat/Chat";
+import { ResetPassword } from "../Pages/ResetPassword/ResetPassword";
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
 
@@ -116,4 +117,8 @@ export const routes = createBrowserRouter([
     path: '/chat/:chat_id',
     element: <Chat />,
   },
+  {
+    path: '/reset-password',
+    element: <ResetPassword />,
+  }
 ]);

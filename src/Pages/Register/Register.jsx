@@ -21,13 +21,6 @@ export const Register = () => {
     resolver: yupResolver(registerSchema),
   });
 
-  // Verificar si el usuario ya está autenticado
-  // useEffect(() => {
-  //   if (isAuthenticated) {
-  //     navigate("/home");
-  //   }
-  // }, [isAuthenticated, navigate]);
-
   // Función que se ejecuta al enviar el formulario 
   const onSubmit = async (userData) => {
     try {
