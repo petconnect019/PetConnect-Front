@@ -1,4 +1,12 @@
+import { useAuth } from "../../Contexts/AuthContext/AuthContext";
+
 export const Home = () => {
+    const { logout } = useAuth();
+    const handleLogout = () => {
+      logout();
+    };
+
+
     return (
       <div className="min-h-screen flex flex-col bg-gray-100">
         {/* Header */}
@@ -36,6 +44,7 @@ export const Home = () => {
         <section className="flex justify-center space-x-4 p-6">
           <button className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition">Revisar Protección</button>
           <button className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition">Tienda</button>
+          <button onClick={handleLogout} className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition">LOG OUT</button>
         </section>
   
         {/* Footer Navigation */}

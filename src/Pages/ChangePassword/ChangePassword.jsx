@@ -1,7 +1,10 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useResetPassword } from "../../Contexts/ResetPasswordContext/ResetPasswordContext";
+import { FetchResetPassword } from "../../Utils/Fetch/FetchResetPassword/FetchResetPassword";
 
 export const ChangePassword = () => {
+  const { token } = useResetPassword();  
   const navigate = useNavigate();
   const {
     register,
@@ -11,8 +14,18 @@ export const ChangePassword = () => {
   
   const onSubmit = (data) => {
       if (validatePasswords(data.confirmPassword, data.newPassword)) {
-          alert("Contraseña actualizada");
-          navigate("/home");
+          const tokenEmail = {
+            resetToken: token,
+            newPassword: data.newPassword,
+          }
+          FetchResetPassword(tokenEmail).then((response)=> {
+            if (response.ok) {
+              alert("Contraseña actualizada correctamente");
+              navigate("/login");
+            } else {
+              alert("Error al actualizar la contraseña");
+            }
+          })
         }else {
             alert("Las contraseñas no coinciden");
         }
