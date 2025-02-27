@@ -1,10 +1,12 @@
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useResetPassword } from "../../Contexts/ResetPasswordContext/ResetPasswordContext";
 import { FetchResetPassword } from "../../Utils/Fetch/FetchResetPassword/FetchResetPassword";
+import { useEffect, useState } from "react";
 
 export const ChangePassword = () => {
   const { token } = useResetPassword();  
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const {
     register,
@@ -19,6 +21,7 @@ export const ChangePassword = () => {
             newPassword: data.newPassword,
           }
           FetchResetPassword(tokenEmail).then((response)=> {
+            setLoading(true);
             if (response.ok) {
               alert("Contraseña actualizada correctamente");
               navigate("/login");
@@ -35,6 +38,12 @@ export const ChangePassword = () => {
     const validatePasswords = (confirmPassword, newPassword) => {
       return confirmPassword === newPassword;
     };
+
+    useEffect(()=> {
+      if (loading) {
+        setLoading(false);
+      }
+    }, [loading])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
@@ -80,6 +89,7 @@ export const ChangePassword = () => {
             />
           </div>
           <button
+            disabled={loading}
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition-all"
           >
