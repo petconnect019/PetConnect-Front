@@ -8,17 +8,17 @@ import { SplashScreen } from './Pages/SplashScreen/SplashScreen';
 
 function App() {
 
-  const [loading,setLoading] = useState(true);
+  // const [loading,setLoading] = useState(true);
 
-  useEffect(() =>{
+  // useEffect(() =>{
 
-    const timer= setTimeout(() => setLoading(false),1000);
-    return () => clearTimeout(timer)
+  //   const timer= setTimeout(() => setLoading(false),1000);
+  //   return () => clearTimeout(timer)
 
-  },[])
+  // },[])
 
 
-  return loading? <SplashScreen /> : <RouterProvider router={routes} />;
+  return  <RouterProvider router={routes} />;
 }
 
 export default App;

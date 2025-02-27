@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import Position from '../../assets/posicionamiento-Step-user.png'
+import BackButton from '../../assets/back-button.png'
 
 export const StepUser = () => {
     const navigate = useNavigate();
@@ -8,8 +10,18 @@ export const StepUser = () => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-            <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6 ">
+            <div className="bg-white p-6 rounded-2xl  w-full max-w-md border-solid border-black border[0.2rem]">
+                <ul>
+                    <li>
+                        <img src={Position} alt="" />
+                    </li>
+                </ul>
+                <img src={} alt="" />
+                <p>2/3</p>
+
+            </div>
+            <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md border-solid border-black border[0.2rem]">
                 <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">¡Pasos finales!</h1>
                 <p className="text-center text-gray-600 mb-4">¡Ya casi llegamos! Completa tus datos personales para crear un perfil y comenzar tu viaje hacia una amistad peluda.</p>
                 <input 
