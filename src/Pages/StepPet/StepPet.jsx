@@ -68,7 +68,7 @@ export const StepPet = () => {
             </div>
 
             <div className="flex flex-col gap-2 mb-4">
-                <button onClick={handleConfirm} className="w-[25rem] bg-orange-400 text-white p-3 rounded-3xl">Confirmar</button>
+                <button onClick={handleConfirm} className="w-[25rem] bg-orange-400 text-white p-3 rounded-3xl">Continuar</button>
                 <button onClick={handleSkip} className="w-[25rem] bg-gray-200 text-gray-800 p-3 rounded-3xl">Saltar</button>
             </div>
         </div>
