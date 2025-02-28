@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
@@ -7,22 +6,21 @@ import { Link } from "react-router-dom";
 import { registerSchema } from "../../Validations/validationSchema";
 import { fetchRegister } from "../../Utils/Fetch/FetchRegister/FetchRegister";
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
+import { useHasPetsUser } from "../../Contexts/HasPetsUser/HasPetsUser";
 
 export const Register = () => {
   const navigate = useNavigate();
   const auth = useAuth();
-    // Verificamos si el contexto de autenticación está disponible antes de usarlo
-    if (!auth) {
-      return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
-    }
-  const { login, isAuthenticated } = auth;
+  const pets = useHasPetsUser();
 
-  //verificar si el usuario está autenticado
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/home");
-    }
-  }, [isAuthenticated, navigate]);
+  // Verificamos si el contexto de autenticación y el de mascotas está disponible antes de usarlo
+  if (!auth) {
+    return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+  }
+
+  const { login } = auth;
+  const { hasPets } = pets; 
+
 
   // Esquema de validación con Yup
   const {
@@ -41,7 +39,15 @@ export const Register = () => {
         throw new Error(response.message || "Error al registrarse");
       }
       login(response.accessToken);
-      navigate("/step-pet");
+      if (response.hasPets) {
+        hasPets(true);
+      }
+      if (response.isNewUser) {
+        navigate('/step-pet');
+        
+      } else {
+        navigate('/home');
+      }
     } catch (error) {
       alert(error.message);
     }

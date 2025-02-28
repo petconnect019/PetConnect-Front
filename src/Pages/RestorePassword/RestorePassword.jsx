@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useResetPassword } from "../../Contexts/ResetPasswordContext/ResetPasswordContext";
 import { FetchResetPassword } from "../../Utils/Fetch/FetchResetPassword/FetchResetPassword";
 
-export const ChangePassword = () => {
+export const RestorePassword = () => {
   const { token } = useResetPassword();  
   const navigate = useNavigate();
   const {

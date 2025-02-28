@@ -5,16 +5,19 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchLogin } from "../../Utils/Fetch/FetchLogin/FetchLogin.jsx";
 import { Link } from "react-router-dom";
+import { useHasPetsUser } from "../../Contexts/HasPetsUser/HasPetsUser.jsx";
 
 export const Login = () => {
   const auth = useAuth();
+  const pets = useHasPetsUser();
 
-  // Verificamos si el contexto de autenticación está disponible antes de usarlo
+  // Verificamos si el contexto de autenticación y el de mascotas está disponible antes de usarlo
   if (!auth) {
     return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
   }
 
   const { isAuthenticated, login } = auth;
+  const { hasPets } = pets; 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
@@ -33,7 +36,15 @@ export const Login = () => {
         throw new Error(response.message || "Error al iniciar sesión");
       }
       login(response.accessToken);
-      navigate('/home');
+      if (response.hasPets) {
+        hasPets(true);
+      }
+      if (response.isNewUser) {
+        navigate('/step-pet');
+        
+      } else {
+        navigate('/home');
+      }      
     } catch (error) {
       alert(error.message);
     }

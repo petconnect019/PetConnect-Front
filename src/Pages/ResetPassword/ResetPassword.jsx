@@ -14,7 +14,7 @@ export const ResetPassword = () => {
   // Extrae el valor del parámetro "token"
   const token = queryParams.get('token');
   setTokenValue(token);
-  navigate("/change-password");
+  navigate("/restore-password");
 
   return (
     <>

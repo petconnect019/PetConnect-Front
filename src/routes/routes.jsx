@@ -1,12 +1,17 @@
+import { createBrowserRouter } from "react-router-dom";
+import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
+
 import { Introduction1 } from "../Pages/Introduccion1/introduction1";
 import { Introduction2 } from "../Pages/Introduccion2/introduction2";
+import { Welcome } from "../Pages/Welcome/Welcome";
 import { Login } from "../Pages/Login/Login";
 import { Register } from "../Pages/Register/Register";
-import { Welcome } from "../Pages/Welcome/Welcome";
-import { Home } from "../Pages/Home/Home";
 import { NotificationRequest } from "../Pages/NotificationRequest/NotificationRequest";
 import { RecoverEmail } from "../Pages/RecoverEmail/RecoverEmail";
-import { ChangePassword } from "../Pages/ChangePassword/ChangePassword";
+import { RestorePassword } from "../Pages/RestorePassword/RestorePassword";
+import { ResetPassword } from "../Pages/ResetPassword/ResetPassword";
+
+import { Home } from "../Pages/Home/Home";
 import { StepPet } from "../Pages/StepPet/StepPet";
 import { StepUser } from "../Pages/StepUser/StepUser";
 import { StepTag } from "../Pages/StepTag/StepTag";
@@ -20,105 +25,89 @@ import { PublicPetProfile } from "../Pages/PublicPetProfile/PublicPetProfile";
 import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
 import { Chat } from "../Pages/Chat/Chat";
-import { ResetPassword } from "../Pages/ResetPassword/ResetPassword";
-import { createBrowserRouter } from "react-router-dom";
-import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
-
+import { Settings } from "../Pages/Settings/Settings";
+import { UserProfileConfig } from "../UserProfileConfig/UserProfileConfig";
+import { MyPets } from "../Pages/MyPets/MyPets";
 
 export const routes = createBrowserRouter([
-  {
-    path: '/',
-    element: <Introduction1 />,
-  },
-  {
-    path: '/introduction2',
-    element: <Introduction2 />,
-  },
-  {
-    path: '/welcome',
-    element: <Welcome />, 
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/register',
-    element: <Register />,
-  },
+  // Rutas públicas
+  { path: '/', element: <Introduction1 /> },
+  { path: '/introduction2', element: <Introduction2 /> },
+  { path: '/welcome', element: <Welcome /> },
+  { path: '/login', element: <Login /> },
+  { path: '/register', element: <Register /> },
+  { path: '/notification-request', element: <NotificationRequest /> },
+  { path: '/recover-email', element: <RecoverEmail /> },
+  { path: '/restore-password', element: <RestorePassword /> },
+  { path: '/reset-password', element: <ResetPassword /> },
+
+  // Rutas protegidas
   {
     path: '/home',
-    element: 
-            <ProtectRoute>
-              <Home />
-            </ProtectRoute>,
-  },
-  {
-    path: '/notification-request',
-    element: <NotificationRequest />,
-  },
-  {
-    path: '/recover-email',
-    element: <RecoverEmail />,
-  },
-  {
-    path: '/change-password',
-    element: <ChangePassword />,
+    element: <ProtectRoute><Home /></ProtectRoute>,
   },
   {
     path: '/step-pet',
-    element: <StepPet />,
+    element: <ProtectRoute><StepPet /></ProtectRoute>,
   },
   {
     path: '/step-user',
-    element: <StepUser />,
+    element: <ProtectRoute><StepUser /></ProtectRoute>,
   },
   {
     path: '/step-tag',
-    element: <StepTag />,
+    element: <ProtectRoute><StepTag /></ProtectRoute>,
   },
   {
     path: '/scanner',
-    element: <Scanner />,
+    element: <ProtectRoute><Scanner /></ProtectRoute>,
   },
   {
     path: '/notifications',
-    element: <Notifications />,
+    element: <ProtectRoute><Notifications /></ProtectRoute>,
   },
   {
     path: '/scan-records',
-    element: <ScanRecords />,
+    element: <ProtectRoute><ScanRecords /></ProtectRoute>,
   },
   {
     path: '/map-view',
-    element: <MapView />,
+    element: <ProtectRoute><MapView /></ProtectRoute>,
   },
   {
     path: '/pet-details/:pet_id',
-    element: <PetDetails />,
+    element: <ProtectRoute><PetDetails /></ProtectRoute>,
   },
   {
     path: '/pet-profile',
-    element: <PetProfile />,
+    element: <ProtectRoute><PetProfile /></ProtectRoute>,
+  },
+  {
+    path: '/my-pets',
+    element: <ProtectRoute><MyPets /></ProtectRoute>,
+  },
+  {
+    path: '/user-profile-config',
+    element: <ProtectRoute><UserProfileConfig /></ProtectRoute>,
   },
   {
     path: '/public-pet-profile',
-    element: <PublicPetProfile />,
+    element: <ProtectRoute><PublicPetProfile /></ProtectRoute>,
   },
   {
     path: '/ecommerce',
-    element: <Ecommerce />,
+    element: <ProtectRoute><Ecommerce /></ProtectRoute>,
   },
   {
     path: '/messages',
-    element: <Messages />,
+    element: <ProtectRoute><Messages /></ProtectRoute>,
   },
   {
     path: '/chat/:chat_id',
-    element: <Chat />,
+    element: <ProtectRoute><Chat /></ProtectRoute>,
   },
   {
-    path: '/reset-password',
-    element: <ResetPassword />,
-  }
+    path: '/settings',
+    element: <ProtectRoute><Settings /></ProtectRoute>,
+  },
 ]);

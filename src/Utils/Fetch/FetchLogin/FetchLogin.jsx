@@ -12,7 +12,12 @@ export const fetchLogin = async (userData) => {
     const result = await response.json();
 
     if (response.ok) {
-      return { ok: true, accessToken: result.accessToken };
+      return {
+        ok: true, accessToken: result.accessToken,
+        hasPets: result.hasPets,
+        isNewUser: !!result.isNewUser,
+
+       };
     } else {
       return { ok: false, message: result.message };
     }

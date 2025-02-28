@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
+import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
 
 export const GoogleSignUp = ({ navigate, content }) => {
   const auth = useAuth();
+  const Pets = useHasPetsUser();
 
   // Verificamos si el contexto de autenticación está disponible antes de desestructurar
   if (!auth) return <div className="text-center text-gray-600">Cargando autenticación...</div>;
 
   const { login } = auth;
+  const { hasPets } = Pets;
   const [token, setToken] = useState(null);
+  const [hasPetsResponse, setHasPetResponse] = useState(null);
+  const [isNewUser, setIsNewUser] = useState(null);
+
 
   const handleGoogleSignUp = () => {
     let messageListener = null;
@@ -33,6 +39,8 @@ export const GoogleSignUp = ({ navigate, content }) => {
             navigate('/register');
           } else if (event.data.accessToken) {
             setToken(event.data.accessToken);
+            setHasPetResponse(!!event.data.hasPets);
+            setIsNewUser(event.data.isNewUser);
           }
         }
       };
@@ -47,9 +55,17 @@ export const GoogleSignUp = ({ navigate, content }) => {
   useEffect(() => {
     if (token) {
       login(token);
-      navigate('/home');
+      if (hasPets) {
+        hasPets(true);
+      }
+      if (isNewUser) {
+        navigate('/step-pet');
+        
+      } else {
+        navigate('/home');
+      }
     }
-  }, [token, login, navigate]);
+  }, [token, login, hasPetsResponse, isNewUser, navigate]);
 
   return (
     <button
