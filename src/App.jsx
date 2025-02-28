@@ -8,11 +8,11 @@ import { SplashScreen } from './Pages/SplashScreen/SplashScreen';
 
 function App() {
 
-  const [loading,setLoading] = useState(true);
+   const [loading,setLoading] = useState(true);
 
-  useEffect(() =>{
+   useEffect(() =>{
 
-    const timer= setTimeout(() => setLoading(false),2000);
+    const timer= setTimeout(() => setLoading(false),1000);
     return () => clearTimeout(timer)
 
   },[])

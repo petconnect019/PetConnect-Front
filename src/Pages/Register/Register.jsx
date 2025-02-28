@@ -10,7 +10,19 @@ import { useAuth } from "../../Contexts/AuthContext/AuthContext";
 
 export const Register = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, login } = useAuth();
+  const auth = useAuth();
+    // Verificamos si el contexto de autenticación está disponible antes de usarlo
+    if (!auth) {
+      return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+    }
+  const { login, isAuthenticated } = auth;
+
+  //verificar si el usuario está autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   // Esquema de validación con Yup
   const {
@@ -21,13 +33,6 @@ export const Register = () => {
     resolver: yupResolver(registerSchema),
   });
 
-  // Verificar si el usuario ya está autenticado
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/home");
-    }
-  }, [isAuthenticated, navigate]);
-
   // Función que se ejecuta al enviar el formulario 
   const onSubmit = async (userData) => {
     try {
@@ -36,7 +41,7 @@ export const Register = () => {
         throw new Error(response.message || "Error al registrarse");
       }
       login(response.accessToken);
-      navigate("/home");
+      navigate("/step-pet");
     } catch (error) {
       alert(error.message);
     }

@@ -1,22 +1,38 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { FetchLogout } from "../../Utils/Fetch/FetchLogout/FetchLogout";
 
-const AuthContext = createContext();
+const AuthContext = createContext({ isAuthenticated: false, login: () => {} });
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("accessToken"));
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!sessionStorage.getItem("accessToken"));
+  const [fetchLogout, setFetchLogout] = useState(false);
 
   useEffect(() => {
-    // Verificar token en localStorage al iniciar
-    setIsAuthenticated(!!localStorage.getItem("accessToken"));
+    // Verificar token en sessionStorage al iniciar
+    setIsAuthenticated(!!sessionStorage.getItem("accessToken"));
   }, []);
 
+  useEffect(()=> {
+    // Realizar logout si se activa fetchLogout
+    if (fetchLogout) {
+      FetchLogout().then((response)=> {
+        if (!response.ok) {
+          console.log(response.message);
+          
+        }
+        setFetchLogout(false);
+      })
+    }
+  }, [fetchLogout])
+
   const login = (token) => {
-    localStorage.setItem("accessToken", token);
+    sessionStorage.setItem("accessToken", token);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
+    setFetchLogout(true);
+    sessionStorage.removeItem("accessToken");
     setIsAuthenticated(false);
   };
 
