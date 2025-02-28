@@ -23,11 +23,16 @@ import { Chat } from "../Pages/Chat/Chat";
 import { ResetPassword } from "../Pages/ResetPassword/ResetPassword";
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
+import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
 
 
 export const routes = createBrowserRouter([
   {
     path: '/',
+    element: <SplashScreen />,
+  },
+  {
+    path: '/introduction1',
     element: <Introduction1 />,
   },
   {

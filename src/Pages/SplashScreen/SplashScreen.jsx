@@ -1,9 +1,21 @@
-import React from 'react'
+import React, {  useEffect, useState } from 'react'
 import Logo from '../../assets/PetConnect Logo.png'
-
 import DogGift from '../../assets/DogSpinner.gif'
+import { useNavigate } from 'react-router-dom'
 
 export const SplashScreen = () => {
+  const navigate = useNavigate();
+  const [loading,setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+      navigate('/introduction1'); 
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [navigate]);
+
   return (
     <div className='fixed top-0 left-0 w-screen h-screen bg-orange-400 flex flex-col justify-center items-center text-white z-50'>
         <div className='flex flex-col items-center justify-center h-80'>
