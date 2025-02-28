@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { FetchLogout } from "../../Utils/Fetch/FetchLogout/FetchLogout";
 
-const AuthContext = createContext();
+const AuthContext = createContext({ isAuthenticated: false, login: () => {} });
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!sessionStorage.getItem("accessToken"));

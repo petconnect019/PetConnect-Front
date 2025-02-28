@@ -1,11 +1,16 @@
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
 
 export const Home = () => {
-    const { logout } = useAuth();
+    const auth = useAuth();
+
+    // Verificamos si el contexto de autenticación está disponible antes de desestructurar
+    if (!auth) return <div className="text-center text-gray-600">Cargando...</div>;
+
+    const { logout } = auth;
+
     const handleLogout = () => {
       logout();
     };
-
 
     return (
       <div className="min-h-screen flex flex-col bg-gray-100">
@@ -61,4 +66,4 @@ export const Home = () => {
         </footer>
       </div>
     );
-  };
+};
