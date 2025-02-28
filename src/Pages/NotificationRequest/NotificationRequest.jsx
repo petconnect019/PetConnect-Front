@@ -7,11 +7,11 @@ export const NotificationRequest = () => {
   const [permission, setPermission] = useState(Notification.permission);
 
   useEffect(() => {
-   
-    if (Notification.permission !== "default") {
+    if (permission !== "default") {
       navigate("/welcome");
     }
-  }, [navigate]); 
+  }, [permission, navigate]);
+
   const requestPermission = async () => {
     if (!("Notification" in window) || !("serviceWorker" in navigator)) {
       alert("Tu navegador no soporta notificaciones o Service Workers.");
@@ -20,11 +20,10 @@ export const NotificationRequest = () => {
 
     try {
       const result = await Notification.requestPermission();
-      setPermission(result);
+      setPermission(result); // Actualizar estado inmediatamente
 
       if (result === "granted") {
         const registration = await navigator.serviceWorker.ready;
-
         if (!registration) {
           console.error("No se encontró un Service Worker registrado.");
           return;
@@ -39,6 +38,7 @@ export const NotificationRequest = () => {
       console.error("Error al solicitar permisos de notificación:", error);
     }
   };
+
 
   return (
     <div className="flex flex-col items-center justify-center  min-h-screen bg-gray-100 p-6">
