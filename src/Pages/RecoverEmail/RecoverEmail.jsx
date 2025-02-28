@@ -43,17 +43,17 @@ export const RecoverEmail = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
+      <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md ">
           <nav className="flex justify-between items-center mb-[1rem]">
             <li onClick={handleBack} className="list-none"><img src={BackButton} alt="" /></li>
           </nav>
-         
-          <h2 className="text-2xl font-bold mb-2  text-center">¿Olvidaste tu contraseña? 🔑</h2>
-          <p className="text-gray-600 mt-3 text-sm">
-          Lo tenemos cubierto. Ingresa tu correo electrónico registrado para restablecer tu contraseña. Te enviaremos un link donde podrás seguir los pasos.
-
-
-          </p>
+          <div className="mb-4 p-7">
+            <h2 className="text-2xl font-bold mb-2  text-center">¿Olvidaste tu contraseña? 🔑</h2>
+              <p className="text-gray-600 mt-3 text-sm ">
+              Lo tenemos cubierto. Ingresa tu correo electrónico registrado para restablecer tu contraseña. Te enviaremos un link donde podrás seguir los pasos.
+            </p>
+          </div>
+          
           <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-4">
             <div className="flex items-center bg-gray-100 p-3 rounded-lg border border-gray-300">
               <span className="text-gray-600 mr-2"><img src={EmailImg} alt="emailIcon" /></span>
