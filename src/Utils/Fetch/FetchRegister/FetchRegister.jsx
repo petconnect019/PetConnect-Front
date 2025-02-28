@@ -10,8 +10,13 @@ export const fetchRegister = async (userData) => {
     });
 
     const result = await response.json();
-    if (response.ok) {
-      return { ok: true, accessToken: result.accessToken };
+    if (response.ok) {     
+      return {
+        ok: true, accessToken: result.accessToken,
+        hasPets: result.hasPets,
+        isNewUser: !!result.isNewUser,
+
+       };
     } else {
       return { ok: false, message: result.message };
     }

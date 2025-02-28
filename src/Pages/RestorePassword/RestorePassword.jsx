@@ -9,7 +9,7 @@ import Hide from '../../assets/NotShow.png'
 import { useState } from "react";
 import DefaultProfile from '../../assets/DefaultProfile.png';
 
-export const ChangePassword = () => {
+export const RestorePassword = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { FetchChangePassword } from "../../Utils/Fetch/FetchChangePassword/ChangePassword";
+import { FetchResetPassword } from "../../Utils/Fetch/FetchResetPassword/FetchResetPassword";
 import BackButton from '../../assets/BackButton.png'
 import { useState } from "react";
 import EmailImg from '../../assets/emailIcon.png'
@@ -15,7 +15,7 @@ export const RecoverEmail = () => {
     setLoading(true);
     setDisabled(true);
 
-    FetchChangePassword(data.email)
+    FetchResetPassword(data.email)
       .then((response) => {
         if (response.ok) {
           alert("Se ha enviado un correo con las instrucciones para restablecer tu contraseña");
