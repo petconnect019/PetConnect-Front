@@ -7,12 +7,11 @@ export const NotificationRequest = () => {
   const [permission, setPermission] = useState(Notification.permission);
 
   useEffect(() => {
-    // Verifica el permiso actual antes de redirigir
+   
     if (Notification.permission !== "default") {
       navigate("/welcome");
     }
-  }, [navigate]); // Solo dependemos de navigate para evitar redirecciones prematuras
-
+  }, [navigate]); 
   const requestPermission = async () => {
     if (!("Notification" in window) || !("serviceWorker" in navigator)) {
       alert("Tu navegador no soporta notificaciones o Service Workers.");
@@ -42,24 +41,26 @@ export const NotificationRequest = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-white p-4 relative overflow-hidden">
-      <img src={Notifications} alt="ImgNotifications" className="mt-8 w-64" />
+    <div className="flex flex-col items-center justify-center  min-h-screen bg-gray-100 p-6">
+      <div className="flex flex-col items-center justify-center bg-white p-6 rounded-2xl shadow-lg w-full max-w-md ">
+        <img src={Notifications} alt="ImgNotifications" className="mt-8 w-64" />
 
-      <div className="p-6 text-center w-full flex flex-col items-center">
-        <h2 className="text-xl font-bold">
-          ¡Activa las notificaciones para mensajería instantánea!
-        </h2>
-        <p className="text-gray-600">
-          Activa las notificaciones para recibir alertas sobre escaneos de etiquetas QR para mascotas, recordatorios de eventos y descuentos.
-        </p>
+        <div className="p-6 text-center w-full flex flex-col items-center">
+          <h2 className="text-xl font-bold">
+            ¡Activa las notificaciones para mensajería instantánea!
+          </h2>
+          <p className="text-gray-600">
+            Activa las notificaciones para recibir alertas sobre escaneos de etiquetas QR para mascotas, recordatorios de eventos y descuentos.
+          </p>
+        </div>
+
+        <button
+          onClick={requestPermission}
+          className="mt-4 w-full max-w-[20rem] py-3 bg-orange-400 text-white font-semibold rounded-full shadow-md"
+        >
+          {permission === "granted" ? "Notificaciones activadas" : "Activar Notificaciones"}
+        </button>
       </div>
-
-      <button
-        onClick={requestPermission}
-        className="mt-4 w-full max-w-[20rem] py-3 bg-orange-400 text-white font-semibold rounded-full shadow-md"
-      >
-        {permission === "granted" ? "Notificaciones activadas" : "Activar Notificaciones"}
-      </button>
     </div>
   );
 };
