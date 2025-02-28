@@ -10,7 +10,19 @@ import { useAuth } from "../../Contexts/AuthContext/AuthContext";
 
 export const Register = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, login } = useAuth();
+  const auth = useAuth();
+    // Verificamos si el contexto de autenticación está disponible antes de usarlo
+    if (!auth) {
+      return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+    }
+  const { login, isAuthenticated } = auth;
+
+  //verificar si el usuario está autenticado
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   // Esquema de validación con Yup
   const {
