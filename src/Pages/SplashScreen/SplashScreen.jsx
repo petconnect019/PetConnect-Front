@@ -1,7 +1,7 @@
 import React from 'react'
 import Logo from '../../assets/PetConnect Logo.png'
-import DogLoader from '../../assets/Perrito.json'
-import Lottie from "lottie-react";
+
+import DogGift from '../../assets/DogSpinner.gif'
 
 export const SplashScreen = () => {
   return (
@@ -10,7 +10,7 @@ export const SplashScreen = () => {
             <img src={Logo} alt="Logo" className='w-32 sm:w-24 mb-2' />
             <h1 className='text-2xl sm:text-xl font-bold text-center'>PetConnect</h1>
         </div>
-        <Lottie animationData={DogLoader} className='w-50 h-50  mt-[2rem]' />
+        <img src={DogGift} alt="Cargando..." className='w-20 h-20 mt-[2rem]' />
     </div>
   )
 }
