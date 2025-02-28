@@ -20,8 +20,8 @@ export const StepPet = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-white p-1">
-            <div className="bg-white p-4 rounded-2xl w-full max-w-md">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+            <div className="bg-white p-4 rounded-2xl w-full max-w-md h-auto">
                 <nav className="flex justify-between items-center mb-[1rem]">
                     <li className="list-none"><img src={ButtonBack} alt="" /></li>
                     <img src={Position} alt="" />
@@ -65,11 +65,12 @@ export const StepPet = () => {
                         </button>
                     </div>
                 </div>
-            </div>
+            
 
-            <div className="flex flex-col gap-2 mb-4">
-                <button onClick={handleConfirm} className="w-[25rem] bg-orange-400 text-white p-3 rounded-3xl">Continuar</button>
-                <button onClick={handleSkip} className="w-[25rem] bg-gray-200 text-gray-800 p-3 rounded-3xl">Saltar</button>
+                <div className="flex flex-col gap-2 mb-4">
+                    <button onClick={handleConfirm} className="w-[25rem] bg-orange-400 text-white p-3 rounded-3xl">Continuar</button>
+                    <button onClick={handleSkip} className="w-[25rem] bg-gray-200 text-gray-800 p-3 rounded-3xl">Saltar</button>
+                </div>
             </div>
         </div>
     );
