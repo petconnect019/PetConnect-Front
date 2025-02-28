@@ -28,20 +28,33 @@ import { Chat } from "../Pages/Chat/Chat";
 import { Settings } from "../Pages/Settings/Settings";
 import { UserProfileConfig } from "../UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";
+import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
 
 export const routes = createBrowserRouter([
-  // Rutas públicas
-  { path: '/', element: <Introduction1 /> },
-  { path: '/introduction2', element: <Introduction2 /> },
-  { path: '/welcome', element: <Welcome /> },
-  { path: '/login', element: <Login /> },
-  { path: '/register', element: <Register /> },
-  { path: '/notification-request', element: <NotificationRequest /> },
-  { path: '/recover-email', element: <RecoverEmail /> },
-  { path: '/restore-password', element: <RestorePassword /> },
-  { path: '/reset-password', element: <ResetPassword /> },
-
-  // Rutas protegidas
+  {
+    path: '/',
+    element: <SplashScreen />,
+  },
+  {
+    path: '/introduction1',
+    element: <Introduction1 />,
+  },
+  {
+    path: '/introduction2',
+    element: <Introduction2 />,
+  },
+  {
+    path: '/welcome',
+    element: <Welcome />, 
+  },
+  {
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+  },
   {
     path: '/home',
     element: <ProtectRoute><Home /></ProtectRoute>,
