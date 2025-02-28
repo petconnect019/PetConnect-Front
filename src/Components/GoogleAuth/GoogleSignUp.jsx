@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 
 export const GoogleSignUp = ({ navigate, content }) => {
-  const { login } = useAuth();
+  const auth = useAuth();
+
+  // Verificamos si el contexto de autenticación está disponible antes de desestructurar
+  if (!auth) return <div className="text-center text-gray-600">Cargando autenticación...</div>;
+
+  const { login } = auth;
   const [token, setToken] = useState(null);
+
   const handleGoogleSignUp = () => {
     let messageListener = null;
 
@@ -19,7 +25,6 @@ export const GoogleSignUp = ({ navigate, content }) => {
       }
 
       messageListener = async (event) => {
-        
         if (event.origin === 'http://localhost:5000' && event.data) {
           window.removeEventListener('message', messageListener);
 

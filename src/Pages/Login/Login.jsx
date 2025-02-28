@@ -7,13 +7,22 @@ import { fetchLogin } from "../../Utils/Fetch/FetchLogin/FetchLogin.jsx";
 import { Link } from "react-router-dom";
 
 export const Login = () => {
+  const auth = useAuth();
+
+  // Verificamos si el contexto de autenticación está disponible antes de usarlo
+  if (!auth) {
+    return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+  }
+
+  const { isAuthenticated, login } = auth;
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
-  const { isAuthenticated, login } = useAuth();
 
   useEffect(() => {
+    // Verificar si el usuario está autenticado y tiene mascotas
     if (isAuthenticated) {
-      navigate('/home');
+      const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
+      navigate(userData.hasPets ? '/home' : '/step-pet');
     }
   }, [isAuthenticated, navigate]);
 
