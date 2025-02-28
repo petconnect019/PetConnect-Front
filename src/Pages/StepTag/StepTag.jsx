@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+// import Position from "../../assets/Position.png"
 
 export const StepTag = () => {
     const navigate = useNavigate();
@@ -17,6 +18,11 @@ export const StepTag = () => {
     return(
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
             <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
+                <nav className="flex justify-between items-center mb-[1rem]">
+                                    <li className="list-none"><img src={BackButton} alt="" /></li>
+                                    <img src={Position} alt="" />
+                                    <p>2/3</p>
+                                </nav>
                 <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">Vincula la etiqueta QR de tu mascota</h1>
                 <p className="text-center text-gray-600 mb-4">Escanear la etiqueta de la mascota proporciona acceso a su perfil y a su información de contacto.<br/>Con una exploración, tu compañero regresará a casa.</p>
                 <div className="flex flex-col space-y-4">
