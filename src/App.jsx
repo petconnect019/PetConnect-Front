@@ -18,7 +18,7 @@ function App() {
   },[])
 
 
-  return loading? <SplashScreen /> : <RouterProvider router={routes} />;
+  return  loading? <SplashScreen /> : <RouterProvider router={routes} />;
 }
 
 export default App;
