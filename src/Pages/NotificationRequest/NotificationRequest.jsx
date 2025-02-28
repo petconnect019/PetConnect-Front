@@ -7,26 +7,38 @@ export const NotificationRequest = () => {
   const [permission, setPermission] = useState(Notification.permission);
 
   useEffect(() => {
-    // Verifica si el usuario ya vio esta pantalla en esta sesión
-    const hasSeenRequest = sessionStorage.getItem("hasSeenNotificationRequest");
-    if (hasSeenRequest) {
+    // Verifica el permiso actual antes de redirigir
+    if (Notification.permission !== "default") {
       navigate("/welcome");
     }
-  }, [navigate]);
+  }, [navigate]); // Solo dependemos de navigate para evitar redirecciones prematuras
 
   const requestPermission = async () => {
-    if (!("Notification" in window)) {
-      alert("Tu navegador no soporta notificaciones.");
+    if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+      alert("Tu navegador no soporta notificaciones o Service Workers.");
       return;
     }
 
-    const result = await Notification.requestPermission();
-    setPermission(result);
+    try {
+      const result = await Notification.requestPermission();
+      setPermission(result);
 
-    // Guarda en sessionStorage que ya se pidió permiso en esta sesión
-    sessionStorage.setItem("hasSeenNotificationRequest", "true");
+      if (result === "granted") {
+        const registration = await navigator.serviceWorker.ready;
 
-    navigate("/welcome");
+        if (!registration) {
+          console.error("No se encontró un Service Worker registrado.");
+          return;
+        }
+
+        registration.showNotification("¡Notificaciones activadas!", {
+          body: "Ahora recibirás alertas importantes en tu dispositivo.",
+          icon: "/icon-192x192.png",
+        });
+      }
+    } catch (error) {
+      console.error("Error al solicitar permisos de notificación:", error);
+    }
   };
 
   return (
