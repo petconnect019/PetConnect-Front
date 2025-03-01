@@ -1,4 +1,4 @@
-export const FetchRestorePassword = async (userEmail)=> {
+export const FetchRequestEmail = async (userEmail)=> {
     const response = await fetch('http://localhost:5000/api/auth/request-password-reset', {
         method: 'POST',
         headers: {

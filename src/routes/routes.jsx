@@ -31,6 +31,7 @@ import { MyPets } from "../Pages/MyPets/MyPets";
 import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
 
 export const routes = createBrowserRouter([
+  // 🔓 Rutas públicas (No requieren autenticación)
   {
     path: '/',
     element: <SplashScreen />,
@@ -55,6 +56,24 @@ export const routes = createBrowserRouter([
     path: '/register',
     element: <Register />,
   },
+  {
+    path: '/notification-request',
+    element: <NotificationRequest />,
+  },
+  {
+    path: '/recover-email',
+    element: <RecoverEmail />,
+  },
+  {
+    path: '/restore-password',
+    element: <RestorePassword />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPassword />,
+  },
+
+  // 🔒 Rutas protegidas (Requieren autenticación)
   {
     path: '/home',
     element: <ProtectRoute><Home /></ProtectRoute>,
