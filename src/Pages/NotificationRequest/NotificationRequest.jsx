@@ -7,7 +7,11 @@ export const NotificationRequest = () => {
   const [permission, setPermission] = useState(Notification.permission);
 
   useEffect(() => {
+    console.log("carga el componente");
+    
     if (permission !== "default") {
+      console.log("permiso ya solicitado");
+      
       navigate("/welcome");
     }
   }, [permission, navigate]);
