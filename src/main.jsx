@@ -1,5 +1,4 @@
 import { registerSW } from 'virtual:pwa-register'
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { AuthProvider } from './Contexts/AuthContext/AuthContext.jsx'
@@ -16,13 +15,11 @@ const updateSW = registerSW({
 });
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <AuthProvider>
-      <ResetPasswordProvider>
-        <HasPetsUserProvider>
-          <App />
-        </HasPetsUserProvider>
-      </ResetPasswordProvider>
-    </AuthProvider>
-  </StrictMode>
+  <AuthProvider>
+    <ResetPasswordProvider>
+      <HasPetsUserProvider>
+        <App />
+      </HasPetsUserProvider>
+    </ResetPasswordProvider>
+  </AuthProvider>
 );
