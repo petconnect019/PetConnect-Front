@@ -53,16 +53,17 @@ export const GoogleSignUp = ({ navigate, content }) => {
   };
 
   useEffect(() => {
+    console.log(hasPetsResponse, isNewUser);
     if (token) {
       login(token);
-      if (hasPets) {
-        hasPets(true);
-      }
-      if (isNewUser) {
-        navigate('/step-pet');
+      if (!isNewUser) {
+        navigate('/home');
         
       } else {
-        navigate('/home');
+        navigate('/step-pet');
+      }
+      if (hasPetsResponse) {
+        hasPets(true);
       }
     }
   }, [token, login, hasPetsResponse, isNewUser, navigate]);

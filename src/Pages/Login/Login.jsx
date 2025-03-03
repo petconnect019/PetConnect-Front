@@ -17,15 +17,22 @@ export const Login = () => {
   }
 
   const { isAuthenticated, login } = auth;
-  const { hasPets } = pets; 
+  const { changeHasPetsUser } = pets; 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
   useEffect(() => {
     // Verificar si el usuario está autenticado y tiene mascotas
     if (isAuthenticated) {
-      const userData = JSON.parse(sessionStorage.getItem('user') || '{}');
-      navigate(userData.hasPets ? '/home' : '/step-pet');
+      const userData = sessionStorage.getItem("accessToken");
+      const hasPets = sessionStorage.getItem("hasPets");
+      //si esta autenticado y tiene mascotas se redirige a la pagina home y se cambia el estado de hasPets a true
+      if (userData) {
+        navigate('/home');
+      }
+      if (hasPets) {
+        changeHasPetsUser();
+      }
     }
   }, [isAuthenticated, navigate]);
 

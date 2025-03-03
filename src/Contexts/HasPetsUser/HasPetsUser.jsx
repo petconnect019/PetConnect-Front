@@ -1,12 +1,20 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const HasPetsUserContext = createContext(false);
 
 export const HasPetsUserProvider = ({ children }) => {
     const [hasPetsUser, setHasPetsUser] = useState(false);
 
-    const changeHasPetsUser = (hasPetsUser) => {
-        setHasPetsUser(hasPetsUser);
+    useEffect(() => {
+        const hasPets = sessionStorage.getItem("hasPets");
+        if (hasPets) {
+            setHasPetsUser(true);
+        }
+    }, []);
+
+    const changeHasPetsUser = () => {
+        setHasPetsUser(true);
+        sessionStorage.setItem("hasPets", true);
     };
 
     return (
