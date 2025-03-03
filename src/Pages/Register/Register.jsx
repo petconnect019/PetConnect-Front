@@ -35,14 +35,15 @@ export const Register = () => {
   const onSubmit = async (userData) => {
     try {
       const response = await fetchRegister(userData);
+      console.log(response);
       if (!response.ok) {
         throw new Error(response.message || "Error al registrarse");
       }
       login(response.accessToken);
-      if (response.hasPets) {
+      if (!!response.hasPets) {
         hasPets(true);
       }
-      if (response.isNewUser) {
+      if (!!response.isNewUser) {
         navigate('/step-pet');
         
       } else {
