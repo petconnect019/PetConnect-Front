@@ -16,7 +16,7 @@ export const Login = () => {
     return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
   }
 
-  const { isAuthenticated, login } = auth;
+  const { isAuthenticated, login } = auth ?? {};
   const { changeHasPetsUser } = pets; 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ export const Login = () => {
       }
       login(response.accessToken);
       if (response.hasPets) {
-        hasPets(true);
+        changeHasPetsUser(true);
       }
       if (response.isNewUser) {
         navigate('/step-pet');

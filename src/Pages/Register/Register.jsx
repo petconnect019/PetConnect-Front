@@ -18,8 +18,8 @@ export const Register = () => {
     return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
   }
 
-  const { login } = auth;
-  const { hasPets } = pets; 
+  const { login } = auth ?? {};
+  const { changeHasPetsUser } = pets; 
 
 
   // Esquema de validación con Yup
@@ -35,15 +35,14 @@ export const Register = () => {
   const onSubmit = async (userData) => {
     try {
       const response = await fetchRegister(userData);
-      console.log(response);
       if (!response.ok) {
         throw new Error(response.message || "Error al registrarse");
       }
       login(response.accessToken);
-      if (!!response.hasPets) {
-        hasPets(true);
+      if (response.hasPets) {
+        changeHasPetsUser(true);
       }
-      if (!!response.isNewUser) {
+      if (response.isNewUser) {
         navigate('/step-pet');
         
       } else {

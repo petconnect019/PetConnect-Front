@@ -11,8 +11,8 @@ export const GoogleSignUp = ({ navigate, content }) => {
   // Verificamos si el contexto de autenticación está disponible antes de desestructurar
   if (!auth) return <div className="text-center text-gray-600">Cargando autenticación...</div>;
 
-  const { login } = auth;
-  const { hasPets } = Pets;
+  const { login } = auth ?? {};
+  const { changeHasPetsUser } = Pets;
   const [token, setToken] = useState(null);
   const [hasPetsResponse, setHasPetResponse] = useState(null);
   const [isNewUser, setIsNewUser] = useState(null);
@@ -55,7 +55,6 @@ export const GoogleSignUp = ({ navigate, content }) => {
   };
 
   useEffect(() => {
-    console.log(hasPetsResponse, isNewUser);
     if (token) {
       login(token);
       if (!isNewUser) {
@@ -65,7 +64,7 @@ export const GoogleSignUp = ({ navigate, content }) => {
         navigate('/step-pet');
       }
       if (hasPetsResponse) {
-        hasPets(true);
+        changeHasPetsUser(true);
       }
     }
   }, [token, login, hasPetsResponse, isNewUser, navigate]);

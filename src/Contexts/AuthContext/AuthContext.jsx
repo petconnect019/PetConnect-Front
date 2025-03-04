@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setFetchLogout(true);
     sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("hasPets");
     setIsAuthenticated(false);
   };
 

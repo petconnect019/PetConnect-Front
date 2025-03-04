@@ -6,11 +6,8 @@ export const NotificationRequest = () => {
   const navigate = useNavigate();
   const [permission, setPermission] = useState(Notification.permission);
 
-  useEffect(() => {
-    console.log("carga el componente");
-    
+  useEffect(() => {  
     if (permission !== "default") {
-      console.log("permiso ya solicitado");
       
       navigate("/welcome");
     }

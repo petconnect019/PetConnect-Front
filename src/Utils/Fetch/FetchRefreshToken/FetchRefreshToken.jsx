@@ -1,4 +1,4 @@
-export const RefreshToken = async ()=> {
+export const FetchRefreshToken = async ()=> {
     try {
         const response = await fetch('http://localhost:5000/api/auth/refresh', {
             method: 'POST',
