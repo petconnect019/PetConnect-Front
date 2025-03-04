@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ProfilePetSection } from "../ProfilePetSection/ProfilePetSection";
 
 export const PetsSection = ({ petList }) => {
     return (
@@ -10,7 +11,7 @@ export const PetsSection = ({ petList }) => {
             <div className="flex space-x-4">
                 {petList.length > 0 ? (
                     petList.map((pet, index) => (
-                        <img key={index} src={pet.imageUrl || "/default-pet.jpg"} alt={pet.name} className="w-14 h-14 rounded-full border-2 border-gray-300" />
+                        <ProfilePetSection key={index + pet} pet={pet}/>
                     ))
                 ) : (
                     <p className="text-gray-500">No tienes mascotas registradas.</p>
