@@ -1,11 +1,11 @@
-export const FetchMascotas  = async ()=> {
+export const FetchMascotas  = async (token)=> {
     try {
-        const response = await fetch('http://localhost:5000/api/pets', {
+        const response = await fetch('http://localhost:5000/api/pets/user/pets', {
             method: 'GET',
             credentials: 'include',
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                "Authorization": `Bearer ${token}`,
             }
         });
 
