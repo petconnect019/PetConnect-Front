@@ -4,22 +4,20 @@ const PetContext = createContext();
 
 export const PetProvider = ({ children }) => {
     const [petList, setPetList] = useState([]);
-    const [hasPetsUser, setHasPetsUser] = useState(false);
 
     const addPet = (newPet) => {
-        setPetList([...petList, newPet]);
+        setPetList((prevPets)=> [...prevPets, newPet]);
     };
 
     const removePet = (petId) => {
         setPetList(petList.filter((pet) => pet.id !== petId));
     };
-
-    const hasPets = () => {
-        setHasPetsUser(true);
+    const findPet = (petId) => {
+        return petList.find((pet) => pet.id === petId);
     }
 
     return (
-        <PetContext.Provider value={{ petList, addPet, removePet, hasPets }}>
+        <PetContext.Provider value={{ petList, addPet, removePet, findPet }}>
             {children}
         </PetContext.Provider>
     );
