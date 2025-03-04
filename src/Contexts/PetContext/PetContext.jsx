@@ -10,10 +10,10 @@ export const PetProvider = ({ children }) => {
     };
 
     const removePet = (petId) => {
-        setPetList(petList.filter((pet) => pet.id !== petId));
+        setPetList(petList.filter((pet) => pet._id !== petId));
     };
     const findPet = (petId) => {
-        return petList.find((pet) => pet.id === petId);
+        return petList.find((pet) => pet._id === petId);
     }
 
     return (

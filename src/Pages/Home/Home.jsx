@@ -46,7 +46,7 @@ export const Home = () => {
       </section>
 
       {/* Pets Section */}
-      <PetsSection petList={petList} />
+      <PetsSection petList={petList} navigate={navigate}/>
 
       {/* Buttons Section */}
       <section className="flex justify-center space-x-4 p-6">

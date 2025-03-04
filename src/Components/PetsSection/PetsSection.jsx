@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ProfilePetSection } from "../ProfilePetSection/ProfilePetSection";
 
-export const PetsSection = ({ petList }) => {
+export const PetsSection = ({ petList, navigate }) => {
     return (
         <section className="p-4">
             <div className="flex justify-between items-center mb-2">
@@ -11,7 +11,7 @@ export const PetsSection = ({ petList }) => {
             <div className="flex space-x-4">
                 {petList.length > 0 ? (
                     petList.map((pet, index) => (
-                        <ProfilePetSection key={index + pet} pet={pet}/>
+                        <ProfilePetSection key={index + pet} pet={pet} navigate={navigate}/>
                     ))
                 ) : (
                     <p className="text-gray-500">No tienes mascotas registradas.</p>
