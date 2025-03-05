@@ -11,12 +11,12 @@ export const PetsSection = ({ petList, navigate }) => {
             <div className="flex space-x-4">
                 {petList.length > 0 ? (
                     petList.map((pet, index) => (
-                        <ProfilePetSection key={index + pet} pet={pet} navigate={navigate}/>
+                        <ProfilePetSection key={index + pet._id} pet={pet} navigate={navigate}/>
                     ))
                 ) : (
                     <p className="text-gray-500">No tienes mascotas registradas.</p>
                 )}
-                <button className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 text-2xl font-bold">+</button>
+                <button onClick={()=> navigate('')} className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 text-2xl font-bold">+</button>
             </div>
         </section>
     );

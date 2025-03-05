@@ -6,9 +6,9 @@ import { usePet } from "../../Contexts/PetContext/PetContext";
 export const PetDetails = () => {
     const { pet_id } = useParams();
     const [pet, setPet] = useState({});
-    
-    const pets = usePet()?? [];
-    const { findPet } = pets;
+
+    const pets = usePet();
+    const { findPet } = pets?? {};
 
     //nos traemos la mascota de la lista de mascotas
     useEffect(()=> {
