@@ -50,7 +50,7 @@ export const Home = () => {
 
       {/* Buttons Section */}
       <section className="flex justify-center space-x-4 p-6">
-        <button className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition">
+        <button onClick={()=> navigate('/')} className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition">
           Revisar Protección
         </button>
         <button onClick={()=> navigate('/ecommerce')} className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition">
@@ -65,7 +65,7 @@ export const Home = () => {
       </section>
 
       {/* Footer Navigation */}
-      <FooterNav navigate={navigate} petList={petList} />
+      <FooterNav navigate={navigate} />
     </div>
   );
 };

@@ -29,6 +29,8 @@ import { Settings } from "../Pages/Settings/Settings";
 import { UserProfileConfig } from "../UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";
 import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
+import { NewPet1 } from "../Pages/NewPet/NewPet1";
+import { NewPet2 } from "../Pages/NewPet/NewPet2";
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -117,6 +119,14 @@ export const routes = createBrowserRouter([
   {
     path: '/my-pets',
     element: <ProtectRoute><MyPets /></ProtectRoute>,
+  },
+  {
+    path: '/new_pet_1',
+    element: <ProtectRoute><NewPet1 /></ProtectRoute>,
+  },
+  {
+    path: '/new_pet_2',
+    element: <ProtectRoute><NewPet2 /></ProtectRoute>,
   },
   {
     path: '/user-profile-config',

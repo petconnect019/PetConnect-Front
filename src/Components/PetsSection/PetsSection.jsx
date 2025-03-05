@@ -16,7 +16,7 @@ export const PetsSection = ({ petList, navigate }) => {
                 ) : (
                     <p className="text-gray-500">No tienes mascotas registradas.</p>
                 )}
-                <button onClick={()=> navigate('')} className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 text-2xl font-bold">+</button>
+                <button onClick={()=> navigate('/new_pet_1')} className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 text-2xl font-bold">+</button>
             </div>
         </section>
     );
