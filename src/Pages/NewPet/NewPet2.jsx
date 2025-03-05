@@ -1,9 +1,8 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 
-export const NewPet2 = () => {
+export const NewPet2 = ({name, type}) => {
   const { register, handleSubmit } = useForm();
-  const [isDog, setIsDog] = useState(true);
 
   const dogBreeds = [
     "Labrador",
@@ -16,6 +15,8 @@ export const NewPet2 = () => {
 
   const onSubmit = (data) => {
     console.log(data);
+    console.log(name, type);
+    
   };
 
   return (
@@ -27,7 +28,7 @@ export const NewPet2 = () => {
       <div className="flex justify-center mb-6">
         <img
           src="/profile-placeholder.png"
-          alt="Pet Profile"
+          alt={type}
           className="w-20 h-20 rounded-full object-cover"
         />
       </div>
@@ -60,7 +61,7 @@ export const NewPet2 = () => {
             {...register("breed")}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {(isDog ? dogBreeds : catBreeds).map((breed) => (
+            {(type == 'dog' ? dogBreeds : catBreeds).map((breed) => (
               <option key={breed} value={breed}>
                 {breed}
               </option>
