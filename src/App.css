@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+    /* --breakpoint-*: initial;
+    --breakpoint-sm: 480px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 976px; */
+    --color-brand: #EC9216;
+}
+
 .react-tel-input .form-control {
     height: 43px !important; 
     width: 100% !important;
