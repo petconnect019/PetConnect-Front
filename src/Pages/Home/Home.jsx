@@ -23,10 +23,6 @@ export const Home = () => {
 
   useFetchPets(hasPetsUser);
 
-  const handleEcommerce = () => {
-    navigate("/ecommerce");
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Header */}
@@ -40,7 +36,7 @@ export const Home = () => {
       <ProfileSection navigate={navigate} />
 
       {/* QR Section */}
-      <section onClick={handleEcommerce} className="bg-white p-6 mx-4 rounded-lg shadow-md text-center">
+      <section onClick={()=> navigate('/ecommerce')} className="bg-white p-6 mx-4 rounded-lg shadow-md text-center">
         <h2 className="text-lg font-semibold">
           ¿Aún no has adquirido nuestro QR?
         </h2>
@@ -50,14 +46,14 @@ export const Home = () => {
       </section>
 
       {/* Pets Section */}
-      <PetsSection petList={petList} />
+      <PetsSection petList={petList} navigate={navigate}/>
 
       {/* Buttons Section */}
       <section className="flex justify-center space-x-4 p-6">
-        <button className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition">
+        <button onClick={()=> navigate('/')} className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition">
           Revisar Protección
         </button>
-        <button onClick={handleEcommerce} className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition">
+        <button onClick={()=> navigate('/ecommerce')} className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600 transition">
           Tienda
         </button>
         <button
@@ -69,7 +65,7 @@ export const Home = () => {
       </section>
 
       {/* Footer Navigation */}
-      <FooterNav navigate={navigate} petList={petList} />
+      <FooterNav navigate={navigate} />
     </div>
   );
 };
