@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { GetPetAge } from "../../Utils/Helpers/GetPetAge/GetPetAge";
+import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
+import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 
 export const NewPet2 = ({ name, type }) => {
   const { register, handleSubmit } = useForm();
@@ -22,8 +24,16 @@ export const NewPet2 = ({ name, type }) => {
     formDataPet.append('name', name);
     formDataPet.append('species', type);
     formDataPet.append('breed', dataForm.breed);
-    formDataPet.append('age', GetPetAge(dataForm.birthdate));
-    formDataPet.append('photos', document.getElementById('profile-upload').files[0]);
+    formDataPet.append('age', dataForm.birthdate);
+    formDataPet.append('profile_picture', document.getElementById('profile-upload').files[0]);
+
+    let token = sessionStorage.getItem('acessToken');
+    if (isTokenExpired(token)) {
+      FetchRefreshToken(token);
+      token = sessionStorage.getItem('acessToken');
+    }
+    
+
   };
 
   return (
