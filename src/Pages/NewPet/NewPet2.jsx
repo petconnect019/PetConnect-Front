@@ -1,35 +1,49 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { GetPetAge } from "../../Utils/Helpers/GetPetAge/GetPetAge";
 
-export const NewPet2 = ({name, type}) => {
+export const NewPet2 = ({ name, type }) => {
   const { register, handleSubmit } = useForm();
+  const [profileImage, setProfileImage] = useState("/profile-placeholder.png");
 
-  const dogBreeds = [
-    "Labrador",
-    "Bulldog",
-    "Golden Retriever",
-    "Poodle",
-    "Husky",
-  ];
+  const dogBreeds = ["Labrador", "Bulldog", "Golden Retriever", "Poodle", "Husky"];
   const catBreeds = ["Persa", "Siames", "Maine Coon", "Bengala", "Sphynx"];
 
-  const onSubmit = (data) => {
-    console.log(data);
-    console.log(name, type);
-    
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+    }
+  };
+
+  const onSubmit = (dataForm) => {
+    const formDataPet = new FormData();
+    formDataPet.append('name', name);
+    formDataPet.append('species', type);
+    formDataPet.append('breed', dataForm.breed);
+    formDataPet.append('age', GetPetAge(dataForm.birthdate));
+    formDataPet.append('photos', document.getElementById('profile-upload').files[0]);
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-2xl relative">
-      <button className="absolute top-4 left-4 text-gray-600 hover:text-gray-800">
-        ←
-      </button>
+      <button className="absolute top-4 left-4 text-gray-600 hover:text-gray-800">←</button>
 
       <div className="flex justify-center mb-6">
-        <img
-          src="/profile-placeholder.png"
-          alt={type}
-          className="w-20 h-20 rounded-full object-cover"
+        <label htmlFor="profile-upload" className="cursor-pointer">
+          <img
+            src={profileImage}
+            alt={type}
+            className="w-20 h-20 rounded-full object-cover border"
+          />
+        </label>
+        <input
+          id="profile-upload"
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageChange}
         />
       </div>
 
@@ -61,7 +75,7 @@ export const NewPet2 = ({name, type}) => {
             {...register("breed")}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {(type == 'dog' ? dogBreeds : catBreeds).map((breed) => (
+            {(type === "dog" ? dogBreeds : catBreeds).map((breed) => (
               <option key={breed} value={breed}>
                 {breed}
               </option>

@@ -1,7 +1,6 @@
 import { NewPet2 } from "./NewPet2";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Position from '../../assets/posicionamiento-Step.png';
 import { useForm } from "react-hook-form";
 import ButtonBack from '../../assets/BackButton.png';
 import ImgFrontal from '../../assets/ImgStepPet.png';
