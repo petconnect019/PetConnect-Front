@@ -25,7 +25,7 @@ export const useFetchPets = (hasPetsUser) => {
             try {
                 const data = await FetchMascotas(token);
                 data.pets.forEach(pet => {
-                    if (!findPet(pet.id)) {
+                    if (!findPet(pet._id)) {
                         addPet(pet);
                     }
                 });
