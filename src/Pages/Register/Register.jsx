@@ -54,71 +54,63 @@ export const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-md bg-white p-8 rounded-lg shadow-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Regístrate</h2>
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Correo electrónico:
-          </label>
-          <input
-            type="email"
-            id="email"
-            {...register("email")}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:outline-none focus:ring-2"
-          />
-          {errors.email && (
-            <span className="text-sm text-red-600">{errors.email.message}</span>
-          )}
+    <div className="min-h-screen flex flex-col justify-center px-6 bg-white">
+      {/* <button
+      className="mb-6" onClick={() => navigate(-1)}>
+      </button> // Boton para ir atras falta configurar */}
+
+      <h2 className="text-3xl font-bold">Únete a PetConnect <span className="inline-block">🐾</span></h2>
+      <p className="text-gray-500">Un mundo de posibilidades peludas te esperan.</p>
+      
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+        <div>
+          <label className="block font-medium">Email</label>
+          <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-100">
+            <input
+              type="email"
+              {...register("email")}
+              className="ml-2 flex-1 bg-transparent outline-none"
+              placeholder="Email"
+            />
+          </div>
+          {errors.email && <span className="text-sm text-red-600">{errors.email.message}</span>}
         </div>
-        <div className="mb-6">
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Contraseña:
-          </label>
-          <input
-            type="password"
-            id="password"
-            {...register("password")}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:outline-none focus:ring-2"
-          />
-          {errors.password && (
-            <span className="text-sm text-red-600">
-              {errors.password.message}
-            </span>
-          )}
+
+        <div>
+          <label className="block font-medium">Contraseña</label>
+          <div className="flex items-center border rounded-lg px-3 py-2 bg-gray-100">
+            <input
+              type="password"
+              {...register("password")}
+              className="ml-2 flex-1 bg-transparent outline-none"
+              placeholder="Contraseña"
+            />
+          </div>
+          {errors.password && <span className="text-sm text-red-600">{errors.password.message}</span>}
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-        >
-          Regístrate
-        </button>
-        <div className="mt-6 flex items-center justify-center">
-          <div className="w-full border-t border-gray-300"></div>
-          <span className="px-2 text-gray-500">o</span>
-          <div className="w-full border-t border-gray-300"></div>
+
+        <div className="flex items-center space-x-2">
+          <input type="checkbox" className="w-5 h-5 text-orange-500 border-2 rounded-md focus:ring-orange-500" />
+          <span className="text-sm">
+            Aceptar Términos <span className="text-brand">& Condiciones de PetConnect.</span>
+          </span>
         </div>
-        <GoogleSignUp navigate={navigate} content={"Regístrate con Google"} />
-        {/* Texto de redirección a Iniciar Sesión */}
-        <p className="mt-4 text-center text-sm text-gray-600">
-          ¿Ya tienes una cuenta?{" "}
-          <Link
-            to="/login"
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Inicia sesión aquí
-          </Link>
+
+        <p className="text-center text-sm">
+          ¿Ya tienes una cuenta? <Link to="/login" className="text-brand font-medium">Iniciar Sesión</Link>
         </p>
-        ;
+
+        <div className="relative flex items-center my-4">
+          <div className="flex-grow border-t border-gray-300"></div>
+          <span className="px-2 text-gray-500">o</span>
+          <div className="flex-grow border-t border-gray-300"></div>
+        </div>
+        
+        <GoogleSignUp navigate={navigate} content={"Continuar con Google"} className="border rounded-lg py-2 flex justify-center items-center shadow-md" />
+        
+        <button type="submit" className="w-full bg-brand text-white py-3 rounded-full text-lg font-medium shadow-md hover:bg-orange-600 transition">
+          Crear Cuenta
+        </button>
       </form>
     </div>
   );

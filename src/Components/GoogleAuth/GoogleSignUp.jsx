@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
+import logo from '../../assets/logoGoogleLight.png';
+
 
 export const GoogleSignUp = ({ navigate, content }) => {
   const auth = useAuth();
@@ -71,17 +73,15 @@ export const GoogleSignUp = ({ navigate, content }) => {
     <button
       type="button"
       onClick={handleGoogleSignUp}
-      className="w-full mt-4 flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 
-                py-2 px-4 rounded-md shadow-sm hover:bg-gray-100 focus:outline-none 
-                focus:ring-2 focus:ring-gray-300 transition-all duration-300"
+      className="flex items-center space-x-7 w-full max-w-xs bg-white text-black border-solid border-2 border-gray-100 px-5 py-2.5 rounded-full mt-8 text-lg font-medium"
       aria-label="Registrarse con Google"
     >
       <img
-        src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+        src={logo}
         alt="Google Logo"
-        className="w-5 h-5"
+        className="w-6" 
       />
-      <span className="font-medium"> {content} </span>
+      <span> {content} </span>
     </button>
   );
 };
