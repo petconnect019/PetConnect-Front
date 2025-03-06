@@ -48,26 +48,26 @@ export const StepPet = () => {
                             className="flex flex-col items-center p-2 h-[6.5rem] rounded-lg " 
                             onClick={() => setSelectedPet("dog")}
                         >
-                            <img className={`w-23 h-[5rem]  border-gray rounded-[0.4rem] transition-all ${
+                            <img className={` p-5 w-25 h-[6rem]  border-gray rounded-[0.4rem] transition-all ${
                                 selectedPet === "dog" ? "border-3 rounded-[0.5rem] border-orange-400" : "border border-gray-300"
                             }`} src={DogButton} alt="DogButton" />
-                            <p className="relative bottom-10 text-center mt-1 font-semibold">Perro</p>
+                            <p className="bottom-7 relative  text-center mt-1 ">Perro</p>
                         </button>
 
                         <button 
                             className="flex flex-col items-center p-2 h-[6.5rem] rounded-lg "
                             onClick={() => setSelectedPet("cat")}
                         >
-                            <img className={`w-23 h-[5rem]  border-gray rounded-[0.4rem] transition-all ${
+                            <img className={`p-5 w-25 h-[6rem]  border-gray rounded-[0.4rem] transition-all ${
                                 selectedPet === "cat" ? "border-3 rounded-[0.5rem] border-orange-400" : "border border-gray-300"
                             }`}  src={CatButton} alt="CatButton" />
-                            <p className=" relative bottom-10 text-center mt-1 font-semibold">Gato</p>
+                            <p className=" relative bottom-7  text-center mt-1 ">Gato</p>
                         </button>
                     </div>
                 </div>
             
 
-                <div className="flex flex-col gap-2 mb-4">
+                <div className="flex flex-col gap-2 mt-6">
                     <button onClick={handleConfirm} className="w-[25rem] bg-orange-400 text-white p-3 rounded-3xl">Continuar</button>
                     <button onClick={handleSkip} className="w-[25rem] bg-gray-200 text-gray-800 p-3 rounded-3xl">Saltar</button>
                 </div>
