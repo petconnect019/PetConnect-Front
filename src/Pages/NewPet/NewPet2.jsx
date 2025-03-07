@@ -4,11 +4,13 @@ import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpire
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { FetchAddPet } from "../../Utils/Fetch/FetchAddPet/FetchAddPet";
 import { convertDateFormat } from "../../Utils/Helpers/ConvertDateFormat/ConvertDateFormat";
+import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 
-export const NewPet2 = ({ name, type }) => {
+export const NewPet2 = ({ name, type , navigate}) => {
   const { register, handleSubmit } = useForm();
   const [profileImage, setProfileImage] = useState("/profile-placeholder.png");
   const [filePfp, setFilePfp] = useState(null);
+  const {changeIsFetched} = useIsFetchedPets();
 
   const dogBreeds = ["Labrador", "Bulldog", "Golden Retriever", "Poodle", "Husky"];
   const catBreeds = ["Persa", "Siames", "Maine Coon", "Bengala", "Sphynx"];
@@ -50,6 +52,9 @@ export const NewPet2 = ({ name, type }) => {
       console.log(error);
       
     }
+
+    changeIsFetched(false);
+    navigate('/home');
   };
 
   return (

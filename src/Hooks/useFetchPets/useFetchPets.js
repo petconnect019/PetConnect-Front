@@ -3,12 +3,13 @@ import { FetchPets } from "../../Utils/Fetch/FetchGetPet/FetchGetPets";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { usePet } from "../../Contexts/PetContext/PetContext";
+import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 
 export const useFetchPets = (hasPetsUser) => {
     const { addPet, findPet } = usePet();
-
+    const { isFetchedPets, changeIsFetched } = useIsFetchedPets();
     useEffect(() => {
-        if (!hasPetsUser) return;
+        if (!hasPetsUser || isFetchedPets) return;
 
         const fetchData = async () => {
             let token = sessionStorage.getItem('accessToken');
@@ -29,6 +30,8 @@ export const useFetchPets = (hasPetsUser) => {
                         addPet(pet);
                     }
                 });
+                changeIsFetched(true);
+
             } catch (error) {
                 console.error(error);
             }
