@@ -11,7 +11,7 @@ export const SplashScreen = () => {
     const timer = setTimeout(() => {
       setLoading(false);
       navigate('/introduction1'); 
-    }, 2000);
+    }, 800);
     
     return () => clearTimeout(timer);
   }, [navigate]);
