@@ -5,6 +5,7 @@ import { AuthProvider } from './Contexts/AuthContext/AuthContext.jsx'
 import { ResetPasswordProvider } from './Contexts/ResetPasswordContext/ResetPasswordContext.jsx'
 import { HasPetsUserProvider } from './Contexts/HasPetsUser/HasPetsUser.jsx'
 import { PetProvider } from './Contexts/PetContext/PetContext.jsx'
+import { FetchedPetsProvider } from './Contexts/IsFetchedPets/IsFetchedPets.jsx'
 
 const updateSW = registerSW({
   onNeedRefresh: function() {
@@ -20,7 +21,9 @@ createRoot(document.getElementById('root')).render(
     <ResetPasswordProvider>
       <HasPetsUserProvider>
         <PetProvider>
-          <App />
+          <FetchedPetsProvider>
+            <App />
+          </FetchedPetsProvider>
         </PetProvider>
       </HasPetsUserProvider>
     </ResetPasswordProvider>

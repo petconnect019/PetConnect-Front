@@ -6,8 +6,10 @@ import ImgFrontal from '../../assets/ImgStepPet.png';
 import DogButton from '../../assets/DogButton.png';
 import CatButton from '../../assets/CatButton.png';
 import Paper from '../../assets/Paper.png';
+import { useNavigate } from "react-router-dom";
 
 export const NewPet1 = () => {
+    const navigate = useNavigate();
     const [renderPet2, setRenderPet2] = useState(false);
     const [data, setData] = useState({ name: '', type: '' });
     const { register, handleSubmit } = useForm();
@@ -82,6 +84,6 @@ export const NewPet1 = () => {
             </div>
         </div>
     ) : (
-        <NewPet2 name={data.name} type={data.type} />
+        <NewPet2 name={data.name} type={data.type} navigate={navigate} setRenderPet2={setRenderPet2} />
     );
 };

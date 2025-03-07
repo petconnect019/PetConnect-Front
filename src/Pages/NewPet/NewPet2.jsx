@@ -1,14 +1,18 @@
+import defaultCatPfp from '../../assets/CatProfilePfp.png'
+import defaultDogPfp from '../../assets/DogProfilePfp.png'
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { FetchAddPet } from "../../Utils/Fetch/FetchAddPet/FetchAddPet";
 import { convertDateFormat } from "../../Utils/Helpers/ConvertDateFormat/ConvertDateFormat";
+import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 
-export const NewPet2 = ({ name, type }) => {
+export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
   const { register, handleSubmit } = useForm();
-  const [profileImage, setProfileImage] = useState("/profile-placeholder.png");
+  const [profileImage, setProfileImage] = useState(type == 'dog'? defaultDogPfp : defaultCatPfp);
   const [filePfp, setFilePfp] = useState(null);
+  const {changeIsFetched} = useIsFetchedPets();
 
   const dogBreeds = ["Labrador", "Bulldog", "Golden Retriever", "Poodle", "Husky"];
   const catBreeds = ["Persa", "Siames", "Maine Coon", "Bengala", "Sphynx"];
@@ -50,11 +54,14 @@ export const NewPet2 = ({ name, type }) => {
       console.log(error);
       
     }
+
+    changeIsFetched(false);
+    navigate('/home');
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white shadow-lg rounded-2xl relative">
-      <button className="absolute top-4 left-4 text-gray-600 hover:text-gray-800">←</button>
+      <button onClick={()=>setRenderPet2(false)} className="absolute top-4 left-4 text-gray-600 hover:text-gray-800">←</button>
 
       <div className="flex justify-center mb-6">
         <label htmlFor="profile-upload" className="cursor-pointer">
