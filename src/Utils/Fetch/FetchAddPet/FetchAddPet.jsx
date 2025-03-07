@@ -9,6 +9,7 @@ export const FetchAddPet = async (formDataPet, token)=> {
             body: formDataPet
         });
         const result = await response.json();
+        
 
         if (!response.ok) {
             return {
