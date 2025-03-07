@@ -84,6 +84,6 @@ export const NewPet1 = () => {
             </div>
         </div>
     ) : (
-        <NewPet2 name={data.name} type={data.type} navigate={navigate} />
+        <NewPet2 name={data.name} type={data.type} navigate={navigate} setRenderPet2={setRenderPet2} />
     );
 };
