@@ -8,6 +8,7 @@ import { convertDateFormat } from "../../Utils/Helpers/ConvertDateFormat/Convert
 export const NewPet2 = ({ name, type }) => {
   const { register, handleSubmit } = useForm();
   const [profileImage, setProfileImage] = useState("/profile-placeholder.png");
+  const [filePfp, setFilePfp] = useState(null);
 
   const dogBreeds = ["Labrador", "Bulldog", "Golden Retriever", "Poodle", "Husky"];
   const catBreeds = ["Persa", "Siames", "Maine Coon", "Bengala", "Sphynx"];
@@ -17,6 +18,7 @@ export const NewPet2 = ({ name, type }) => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+      setFilePfp(file);
     }
   };
 
@@ -28,7 +30,7 @@ export const NewPet2 = ({ name, type }) => {
     formDataPet.append('birthDate', convertDateFormat(dataForm.birthDate));
     formDataPet.append('color', dataForm.color);
     formDataPet.append('gender', dataForm.gender);
-    formDataPet.append('profile_picture', document.getElementById('profile-upload').files[0]);
+    formDataPet.append('photo', filePfp);
     
     let token = sessionStorage.getItem('accessToken');
     if (isTokenExpired(token)) {
