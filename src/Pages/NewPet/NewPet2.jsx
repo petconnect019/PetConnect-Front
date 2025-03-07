@@ -1,6 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { GetPetAge } from "../../Utils/Helpers/GetPetAge/GetPetAge";
+import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
+import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
+import { FetchAddPet } from "../../Utils/Fetch/FetchAddPet/FetchAddPet";
+import { convertDateFormat } from "../../Utils/Helpers/ConvertDateFormat/ConvertDateFormat";
 
 export const NewPet2 = ({ name, type }) => {
   const { register, handleSubmit } = useForm();
@@ -17,13 +20,34 @@ export const NewPet2 = ({ name, type }) => {
     }
   };
 
-  const onSubmit = (dataForm) => {
+  const onSubmitForm = async (dataForm) => { 
     const formDataPet = new FormData();
     formDataPet.append('name', name);
     formDataPet.append('species', type);
     formDataPet.append('breed', dataForm.breed);
-    formDataPet.append('age', GetPetAge(dataForm.birthdate));
-    formDataPet.append('photos', document.getElementById('profile-upload').files[0]);
+    formDataPet.append('birthDate', convertDateFormat(dataForm.birthDate));
+    formDataPet.append('color', dataForm.color);
+    formDataPet.append('gender', dataForm.gender);
+    formDataPet.append('profile_picture', document.getElementById('profile-upload').files[0]);
+    
+    let token = sessionStorage.getItem('accessToken');
+    if (isTokenExpired(token)) {
+      try {
+        await FetchRefreshToken();
+        token = sessionStorage.getItem('accessToken');
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    try {
+      await FetchAddPet(formDataPet, token);
+
+    } catch (error) {
+      console.log(error);
+      
+    }
   };
 
   return (
@@ -47,7 +71,7 @@ export const NewPet2 = ({ name, type }) => {
         />
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
         <div
           className="relative cursor-pointer p-3 border rounded-lg flex justify-between items-center hover:bg-gray-100"
           onClick={() => console.log("Añadir Código QR")}
@@ -64,7 +88,7 @@ export const NewPet2 = ({ name, type }) => {
           <span className="absolute left-3 top-10 text-gray-500">📅</span>
           <input
             type="date"
-            {...register("birthdate")}
+            {...register("birthDate")}
             className="w-full pl-10 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -89,8 +113,8 @@ export const NewPet2 = ({ name, type }) => {
             {...register("gender")}
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="male">Macho</option>
-            <option value="female">Hembra</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
           </select>
         </div>
 

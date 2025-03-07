@@ -1,4 +1,4 @@
-export const FetchGetMascotaId = async (id)=> {
+export const FetchPetById = async (id)=> {
     try {
         const response = await fetch(`http://localhost:5000/api/pets/${id}`, {
             method: 'GET',
@@ -17,7 +17,7 @@ export const FetchGetMascotaId = async (id)=> {
         return data;
 
     } catch (error) {
-        console.error('Error en FetchGetMascotaId:', error);
+        console.error('Error en FetchPetById:', error);
         throw error;
     }
 }

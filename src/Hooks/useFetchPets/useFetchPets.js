@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { FetchMascotas } from "../../Utils/Fetch/FetchGetMascotas/FetchGetMascotas";
+import { FetchPets } from "../../Utils/Fetch/FetchGetPet/FetchGetPets";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { usePet } from "../../Contexts/PetContext/PetContext";
@@ -23,7 +23,7 @@ export const useFetchPets = (hasPetsUser) => {
             }
 
             try {
-                const data = await FetchMascotas(token);
+                const data = await FetchPets(token);
                 data.pets.forEach(pet => {
                     if (!findPet(pet._id)) {
                         addPet(pet);
