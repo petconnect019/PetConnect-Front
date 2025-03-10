@@ -17,7 +17,6 @@ import { StepUser } from "../Pages/StepUser/StepUser";
 import { StepTag } from "../Pages/StepTag/StepTag";
 import { Scanner } from "../Pages/Scanner/Scanner";
 import { Notifications } from "../Pages/Notifications/Notifications";
-import { ScanRecords } from "../Pages/ScanRecords/ScanRecords";
 import { MapView } from "../Pages/MapView/MapView";
 import { PetDetails } from "../Pages/PetDetails/PetDetails";
 import { PetProfile } from "../Pages/PetProfile/PetProfile";
@@ -30,6 +29,7 @@ import { UserProfileConfig } from "../UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";
 import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
 import { NewPet1 } from "../Pages/NewPet/NewPet1";
+import { CheckProtection } from "../Pages/CheckProtection/CheckProtection";
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -100,10 +100,6 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><Notifications /></ProtectRoute>,
   },
   {
-    path: '/scan-records',
-    element: <ProtectRoute><ScanRecords /></ProtectRoute>,
-  },
-  {
     path: '/map-view',
     element: <ProtectRoute><MapView /></ProtectRoute>,
   },
@@ -134,6 +130,10 @@ export const routes = createBrowserRouter([
   {
     path: '/ecommerce',
     element: <ProtectRoute><Ecommerce /></ProtectRoute>,
+  },
+  {
+    path: '/check-protection',
+    element: <ProtectRoute><CheckProtection /></ProtectRoute>,
   },
   {
     path: '/messages',
