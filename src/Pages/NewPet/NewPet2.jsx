@@ -13,13 +13,16 @@ import { ModalResponse } from '../../Components/ModalBasic/ModalResponse';
 import { InputField } from '../../Components/InputField/InputField';
 import Paper from '../../assets/Paper.png'
 import Calendar from '../../assets/Calendar.png'
+import { CalendarInput } from '../../Components/Calendar/CalendarInput';
+import QRIcon from '../../assets/QRIcon.png'
 
 export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit,setValue } = useForm();
   const [profileImage, setProfileImage] = useState(type == 'dog'? defaultDogPfp : defaultCatPfp);
   const [filePfp, setFilePfp] = useState(null);
   const {changeIsFetched} = useIsFetchedPets();
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState("");
 
 
   const dogBreeds = [
@@ -64,6 +67,8 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
     formDataPet.append('color', dataForm.color);
     formDataPet.append('gender', dataForm.gender);
     formDataPet.append('photo', filePfp);
+
+    console.log("Datos enviados:", Object.fromEntries(formDataPet));
     
     let token = sessionStorage.getItem('accessToken');
     if (isTokenExpired(token)) {
@@ -73,23 +78,32 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
         
       } catch (error) {
         console.log(error);
+        return;
       }
     }
 
     try {
-      await FetchAddPet(formDataPet, token);
-      if (!FetchAddPet.ok) {
-        setModalOpen(true);
-        
+        const response = await FetchAddPet(formDataPet, token);
+      console.log("Respuesta completa del backend:", response);
+      if (response.ok) {
+          setModalOpen(true);
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error al registrar mascota:", error);
       
     }
 
     changeIsFetched(false);
     
   };
+
+ 
+
+  const handleDateChange = (formattedDate) => {
+    
+    setSelectedDate(formattedDate); // Guarda la fecha en el estado
+    setValue("birthDate", formattedDate); // Actualiza el valor en react-hook-form
+    };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6 text-[1.4rem]">
@@ -115,26 +129,22 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
       <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
         <label className='font-semibold'>Seguridad de la mascota</label>
         <div
-          className="relative cursor-pointer p-3 border rounded-lg flex justify-between items-center text-[1.2rem] hover:bg-gray-100"
+          className="relative cursor-pointer p-3 bg-gray-100 rounded-lg flex justify-between items-center text-[1.2rem] hover:bg-gray-100"
           onClick={() => console.log("Añadir Código QR")}
         > 
         
           <span className="flex items-center">
-            <span className="text-gray-500 mr-2">🔒</span>
+            <span className="text-gray-500 mr-2"><img className='w-5 h-5' src={QRIcon} alt="QRIcon" /></span>
             Codigo QR
           </span>
           <span className="text-orange-500 hover:underline">+add</span>
         </div>
 
         <div className="relative">
-          <label className="block mb-1 font-semibold">Fecha de nacimiento</label>
-          <span className="absolute left-3 top-14 text-gray-500"><img className='h-5 w-5' src={Calendar} alt="IconCalendar" /></span>
-          <input
-            type="date"
-            {...register("birthDate")}
-            className="w-full pl-10 p-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+            <label className="block mb-1 font-semibold">Fecha de nacimiento</label>
+            <CalendarInput onDateSelect={handleDateChange} />
+            <input type="hidden" {...register("birthDate")} value={selectedDate} />
+          </div>
 
         <div>
           <label className="block mb-1 font-semibold">Raza</label>
@@ -156,9 +166,9 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
             {...register("gender")}
             className="w-full p-3  text-[1.2rem]  bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
           >
-            <option className='text-[1.2rem]' value="Default">Escoga el genero de tu mascota</option>
-            <option value="Macho">Macho</option>
-            <option value="Hembra">Hembra</option>
+            <option key="default" value="Default">Escoge el género de tu mascota</option>
+            <option key="macho" value="Macho">Macho</option>
+            <option key="hembra" value="Hembra">Hembra</option>
           </select>
         </div>
 
