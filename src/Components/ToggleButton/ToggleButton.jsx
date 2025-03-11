@@ -1,12 +1,17 @@
 import './ToggleButton.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export const ToggleButton = ({ textLeft, textRight }) => {
+export const ToggleButton = ({ textLeft, textRight, setProtectionRender }) => {
     const [isChecked, setIsChecked] = useState(false);
 
     const handleToggle = () => {
         setIsChecked(!isChecked);
     };
+
+    useEffect(()=> {
+        isChecked ? setProtectionRender('scan') : setProtectionRender('tag');
+
+    }, [isChecked])
 
     return (
         <div className="toggle-container" onClick={handleToggle}>
