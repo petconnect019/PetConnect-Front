@@ -15,6 +15,7 @@ import Paper from '../../assets/Paper.png'
 import Calendar from '../../assets/Calendar.png'
 import { CalendarInput } from '../../Components/Calendar/CalendarInput';
 import QRIcon from '../../assets/QRIcon.png'
+import EditImg from '../../assets/EditImage.png'
 
 export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
   const { register, handleSubmit,setValue } = useForm();
@@ -35,7 +36,7 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
     "Yorkshire Terrier", "Shiba Inu", "West Highland White Terrier", "Cane Corso", "Scottish Terrier",
     "Airedale Terrier", "Basset Hound", "Bull Terrier", "Galgo", "Pointer",
     "Weimaraner", "Pomerania", "Pastor Belga", "Fox Terrier", "Cavapoo",
-    "American Staffordshire Terrier", "Cavalier King Charles Spaniel", "Whippet", "Vizsla", "Terranova"
+    "American Staffordshire Terrier", "Cavalier King Charles Spaniel", "Whippet", "Vizsla", "Terranova","Criollo"
   ];
   
   const catBreeds = [
@@ -45,7 +46,7 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
     "Abisinio", "Somalí", "Himalayo", "Ocicat", "Balinés",
     "Burmés", "Oriental de Pelo Corto", "Chartreux", "Selkirk Rex", "Savannah",
     "Exótico de Pelo Corto", "Turco Van", "Munchkin", "Burmilla", "Tonkinés",
-    "Singapura", "Chausie", "Serengeti", "Cymric", "Javanés"
+    "Singapura", "Chausie", "Serengeti", "Cymric", "Javanés","Criollo"
   ];
   
 
@@ -84,7 +85,6 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
 
     try {
         const response = await FetchAddPet(formDataPet, token);
-      console.log("Respuesta completa del backend:", response);
       if (response.ok) {
           setModalOpen(true);
       }
@@ -101,8 +101,8 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
 
   const handleDateChange = (formattedDate) => {
     
-    setSelectedDate(formattedDate); // Guarda la fecha en el estado
-    setValue("birthDate", formattedDate); // Actualiza el valor en react-hook-form
+    setSelectedDate(formattedDate); 
+    setValue("birthDate", formattedDate);
     };
 
   return (
@@ -110,12 +110,13 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
       <div className='bg-white p-8 rounded-2xl w-screen max-w-sm '>
         <NavButton onClick={()=>setRenderPet2(false)} />
           <div className="flex justify-center mb-6">
-            <label htmlFor="profile-upload" className="cursor-pointer">
+            <label htmlFor="profile-upload" className="relative cursor-pointer">
               <img
                 src={profileImage}
                 alt={type}
-                className="w-32 h-30 rounded-full object-cover border"
+                className="w-32 h-30 rounded-full object-cover "
               />
+              <span className='absolute bottom-1 right-0 '><img className=' rounded-[0.5rem] w-6 h-6' src={EditImg} alt="EditImgIcon" /></span>
             </label>
             <input
               id="profile-upload"
@@ -164,31 +165,13 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
           <label className="block mb-1 font-semibold">Género</label>
           <select
             {...register("gender")}
-            className="w-full p-3  text-[1.2rem]  bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
+            className="w-full p-3    bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
           >
-            <option key="default" value="Default">Escoge el género de tu mascota</option>
+            <option key="default" value="Default">Escoge el género</option>
             <option key="macho" value="Macho">Macho</option>
             <option key="hembra" value="Hembra">Hembra</option>
           </select>
         </div>
-
-        {/* <div>
-          <label className="block mb-1">Color</label>
-          <input
-            type="text"
-            placeholder="Color"
-            {...register("color")}
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-           label="Nombre"
-                                          icon={Paper}
-                                          register={register}
-                                          name="name"
-                                          placeholder="Nombre"
-                                          validation={{ required: "El nombre es obligatorio" }}
-
-        </div> */}
         <InputField 
           label="Color"
           icon={Paper}

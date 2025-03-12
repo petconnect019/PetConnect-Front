@@ -14,7 +14,7 @@ export const ModalResponse = ({ path, setModalOpen,  textResponse, navigate }) =
         <button
           onClick={() => {
             setModalOpen(false);
-            setTimeout(() => navigate(path), 300);
+            navigate(path);
           }}
           className="mt-4 w-full bg-orange-400 text-white py-2 px-6 rounded-lg hover:bg-orange-600 transition-all"
         >

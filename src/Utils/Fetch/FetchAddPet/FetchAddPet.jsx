@@ -17,7 +17,6 @@ export const FetchAddPet = async (formDataPet, token)=> {
                 message: result.message
             }
         }
-        console.log(result);
         return result;
         
 
