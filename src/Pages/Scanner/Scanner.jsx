@@ -1,16 +1,74 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Camera, XCircle, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import jsQR from 'jsqr';
+import { GetQrId } from '../../Utils/Helpers/GetQrId/GetQrId';
+import { FetchLinkPetQr } from '../../Utils/Fetch/FetchLinkPetQr/FetchLinkPet';
+//importing screens
+import { WelcomeScreen } from '../../Components/ScannerScreens/WelcomeScreen';
+import { PermisionsDeniedScreens } from '../../Components/ScannerScreens/PermisionsDeniedScreen';
+import { ScanningScreen } from '../../Components/ScannerScreens/ScanningScreen';
+import { SuccessScreen } from '../../Components/ScannerScreens/SuccessScreen';
+import { useFetchLinkPet } from '../../Hooks/useFetchLinkPet/useFetchLinkPet';
 
 export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanning, setScanning] = useState(false);
   const [scannedResult, setScannedResult] = useState(null);
+  const [scanning, setScanning] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
 
+  const [renderCheckVideoFrame, setRenderCheckVideoFrame] = useState(false);
+  const {pet_id} = useParams();
+
+  // Process QR code function defined early with useCallback
+  const processQRCode = useCallback((canvas, ctx) => {
+    return new Promise((resolve, reject) => {
+      try {
+        //obtenemos los datos de la imagen de canvas
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        //intentamos detectar un codigo qr
+        const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
+
+        //si hay un codigo qr, devolverl el contenido
+        if (qrCode) {
+          resolve(qrCode.data);
+        } else {
+          resolve(null);
+        }
+        
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }, []);
+
+  // Stop scanning defined early with useCallback
+  const stopScanning = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setScanning(false);
+    setRenderCheckVideoFrame(false);
+  }, []);
+
   // Request camera permission and set up video stream
-  const startScanning = async () => {
+  const startScanning = useCallback(async () => {
+    // Ensure previous stream is fully stopped
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    
+    // Reset video element
+    if (videoRef.current && videoRef.current.srcObject) {
+      videoRef.current.srcObject = null;
+    }
+    
+    setScanning(true);
+    
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: 'environment' } 
@@ -19,57 +77,41 @@ export const Scanner = () => {
       streamRef.current = stream;
       
       if (videoRef.current) {
+        
         videoRef.current.srcObject = stream;
-        setHasPermission(true);
-        setScanning(true);
-        
-        // Clear any previous results when starting a new scan
-        setScannedResult(null);
-        
-        // Start looking for QR codes
-        checkVideoFrame();
+        videoRef.current.onloadedmetadata = () => {
+          console.log("Video metadata loaded, attempting to play");
+          videoRef.current.play()
+            .then(() => {
+              console.log("Video playback started successfully");
+              setHasPermission(true);
+              setScanning(true);
+              
+              // Clear any previous results when starting a new scan
+              setScannedResult(null);
+              
+              // Start looking for QR codes
+              setRenderCheckVideoFrame(true);
+            })
+            .catch(error => {
+              console.error("Error playing video:", error);
+              setHasPermission(false);
+            });
+        };
       }
     } catch (error) {
       console.error("Error accessing camera:", error);
       setHasPermission(false);
     }
-  };
-
-  // Stop scanning and release camera
-  const stopScanning = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    
-    setScanning(false);
-  };
-
-  // Cleanup on component unmount
-  useEffect(() => {
-    return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-    };
   }, []);
 
-  // Simple mock QR code processing function
-  // In a real implementation, you would use a library like jsQR
-  const processQRCode = (canvas, ctx) => {
-    // Mock detection - in a real app, process the image data and detect QR codes
-    // For demo purposes, we'll simulate finding a QR code after 3 seconds
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("https://example.com/product/12345");
-      }, 3000);
-    });
-  };
-
-  // Check video frames for QR codes
-  const checkVideoFrame = async () => {
-    if (!scanning || !videoRef.current || !canvasRef.current) return;
-
+  // Check video frames for QR codes - defined with useCallback before any useEffect that references it
+  const checkVideoFrame = useCallback(async () => {
+    if (!scanning || !videoRef.current || !canvasRef.current) {
+      console.log("Skipping frame check - conditions not met", { scanning });
+      return;
+    }
+    
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -98,96 +140,132 @@ export const Scanner = () => {
       }
     }
     
-    // If still scanning, continue checking frames
+    // If still scanning, continue checking frames with a delay
     if (scanning) {
-      requestAnimationFrame(checkVideoFrame);
+      setTimeout(() => {
+        requestAnimationFrame(checkVideoFrame);
+      }, 500);
+    } else {
+      console.log("Scanning stopped, not scheduling next frame");
     }
-  };
+  }, [scanning, processQRCode, stopScanning]);
+
+  // For the Scan Again button
+  const handleScanAgain = useCallback(() => {
+    console.log("Scan again requested");
+    setScannedResult(null);
+    stopScanning();
+    console.log("Scanning stopped, scheduling restart");
+    setTimeout(() => {
+      console.log("Starting scan again");
+      startScanning();
+    }, 800);
+  }, [stopScanning, startScanning]);
+
+  // useEffect to check video frames when renderCheckVideoFrame state changes
+  useEffect(() => {
+    if (renderCheckVideoFrame && scanning) {
+      console.log("Starting to check video frames");
+      checkVideoFrame();
+    }
+  }, [renderCheckVideoFrame, scanning, checkVideoFrame]);
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  //access to the scanned result
+  useEffect(()=> {
+    if (scannedResult) {
+      const objectQr ={
+        qrId: GetQrId(scannedResult),
+        petId: pet_id
+      }
+      useFetchLinkPet(objectQr);
+      
+    }
+  }, [scannedResult, setScannedResult])
+  
 
   return (
-    <div className="flex flex-col items-center w-full max-w-md mx-auto">
-      <div className="relative w-full aspect-square bg-gray-100 rounded-lg overflow-hidden mb-4">
+    <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 relative">
+      {/* Header */}
+      <div className="w-full mb-6 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 p-4">
+          <span className="text-[#EC9126]">Tag</span> Scanner
+        </h2>
+      </div>
+      
+      {/* Scanner Container with responsive aspect ratio */}
+      <div className="relative w-full bg-white rounded-2xl overflow-hidden shadow-xl mb-6" style={{aspectRatio: "1/1", maxHeight: "80vh"}}>
+        {/* Always render the video element, but hide it when not scanning */}
+        <video
+          ref={videoRef}
+          className={`absolute inset-0 w-full h-full object-cover ${scanning ? 'block' : 'hidden'}`}
+          autoPlay
+          playsInline
+          muted
+        />
+        
+        {/* Welcome Screen */}
         {!scanning && !scannedResult && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-            <Camera className="w-16 h-16 text-gray-400 mb-4" />
-            <p className="text-lg font-medium text-gray-800 mb-2">QR Code Scanner</p>
-            <p className="text-sm text-gray-500 mb-6">Position the QR code within the camera view</p>
-            <button
-              onClick={startScanning}
-              className="px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Start Scanner
-            </button>
-          </div>
+          <WelcomeScreen startScanning={startScanning}/>
         )}
         
+        {/* Permission Denied Screen */}
         {hasPermission === false && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-red-50">
-            <XCircle className="w-12 h-12 text-red-500 mb-4" />
-            <p className="text-lg font-medium text-red-800 mb-2">Camera Access Denied</p>
-            <p className="text-sm text-red-600 mb-6">Permission to use camera is required for scanning QR codes</p>
-            <button
-              onClick={startScanning}
-              className="px-6 py-2 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              Try Again
-            </button>
-          </div>
+          <PermisionsDeniedScreens startScanning={startScanning} />
         )}
         
+        {/* Scanning Screen */}
         {scanning && (
-          <>
-            <video
-              ref={videoRef}
-              className="absolute inset-0 w-full h-full object-cover"
-              autoPlay
-              playsInline
-              muted
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-2/3 h-2/3 border-2 border-white border-opacity-70 rounded-lg"></div>
-            </div>
-            <button
-              onClick={stopScanning}
-              className="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-white text-gray-800 font-medium rounded-md shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            >
-              Cancel
-            </button>
-          </>
+          <ScanningScreen stopScanning={stopScanning}/>
         )}
         
+        {/* Success Screen */}
         {scannedResult && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-green-50">
-            <CheckCircle2 className="w-12 h-12 text-green-500 mb-4" />
-            <p className="text-lg font-medium text-green-800 mb-2">QR Code Detected!</p>
-            <p className="text-sm text-green-700 mb-2 font-mono overflow-hidden text-ellipsis max-w-full">
-              {scannedResult}
-            </p>
-            <div className="flex space-x-3 mt-6">
-              <button
-                onClick={() => {
-                  // Handle the scanned result, e.g., navigate to the URL
-                  alert(`Processing QR code: ${scannedResult}`);
-                }}
-                className="px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-              >
-                Use Result
-              </button>
-              <button
-                onClick={() => {
-                  setScannedResult(null);
-                  startScanning();
-                }}
-                className="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
-              >
-                Scan Again
-              </button>
-            </div>
-          </div>
+          <SuccessScreen scannedResult={scannedResult} handleScanAgain={handleScanAgain} />
         )}
         
         <canvas ref={canvasRef} className="hidden" />
       </div>
+      
+      {/* Instructions or tip */}
+      {!scanning && !scannedResult && (
+        <div className="text-center text-sm text-gray-500 max-w-xs">
+          <p>Asegúrate de que el código QR esté bien iluminado y encuadrado para mejores resultados.</p>
+        </div>
+      )}
     </div>
   );
 };
+
+// Add custom animation
+const styles = document.createElement('style');
+styles.innerHTML = `
+  @keyframes scanline {
+    0% {
+      transform: translateY(0%);
+    }
+    50% {
+      transform: translateY(1000%);
+    }
+    100% {
+      transform: translateY(0%);
+    }
+  }
+  
+  .animate-scanline {
+    animation: scanline 2s ease-in-out infinite;
+  }
+  
+  .animate-bounce-slow {
+    animation: bounce 2s infinite;
+  }
+`;
+document.head.appendChild(styles);
