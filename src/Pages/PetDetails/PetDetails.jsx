@@ -44,7 +44,7 @@ export const PetDetails = () => {
                     <h1 className="text-center text-2xl font-bold text-gray-800">Revisar Protección</h1>
                     
                     <div className="flex justify-evenly">
-                        <img onClick={()=> navigate('/scanner')} className="w-10 h-10" src={enableQR} alt="Activar QR" />
+                        <img onClick={()=> navigate(`/scanner/${pet_id}`)} className="w-10 h-10" src={enableQR} alt="Activar QR" />
                         <img className="w-20" src={pet?.profile_picture} alt="pfp" />
                         <img className="w-10 h-10" src={enableLost} alt="Pet is Lost" />
                     </div>

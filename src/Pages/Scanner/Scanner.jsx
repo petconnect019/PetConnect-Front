@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import jsQR from 'jsqr';
-import { XCircle, CheckCircle2, Scan, ArrowLeft } from 'lucide-react';
-import scanQrIcon from '../../assets/scanQR.png'
+import { GetQrId } from '../../Utils/Helpers/GetQrId/GetQrId';
+import { FetchLinkPetQr } from '../../Utils/Fetch/FetchLinkPetQr/FetchLinkPet';
+//importing screens
+import { WelcomeScreen } from '../../Components/ScannerScreens/WelcomeScreen';
+import { PermisionsDeniedScreens } from '../../Components/ScannerScreens/PermisionsDeniedScreen';
+import { ScanningScreen } from '../../Components/ScannerScreens/ScanningScreen';
+import { SuccessScreen } from '../../Components/ScannerScreens/SuccessScreen';
+import { useFetchLinkPet } from '../../Hooks/useFetchLinkPet/useFetchLinkPet';
 
 export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -12,6 +19,7 @@ export const Scanner = () => {
   const streamRef = useRef(null);
 
   const [renderCheckVideoFrame, setRenderCheckVideoFrame] = useState(false);
+  const {pet_id} = useParams();
 
   // Process QR code function defined early with useCallback
   const processQRCode = useCallback((canvas, ctx) => {
@@ -123,7 +131,6 @@ export const Scanner = () => {
         
         if (result) {
           // QR code found
-          console.log("QR code found:", result);
           setScannedResult(result);
           stopScanning();
           return;
@@ -172,6 +179,19 @@ export const Scanner = () => {
     };
   }, []);
 
+  //access to the scanned result
+  useEffect(()=> {
+    if (scannedResult) {
+      const objectQr ={
+        qrId: GetQrId(scannedResult),
+        petId: pet_id
+      }
+      useFetchLinkPet(objectQr);
+      
+    }
+  }, [scannedResult, setScannedResult])
+  
+
   return (
     <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 relative">
       {/* Header */}
@@ -194,108 +214,22 @@ export const Scanner = () => {
         
         {/* Welcome Screen */}
         {!scanning && !scannedResult && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-white to-orange-50">
-            <img className='w-40 m-5' src={scanQrIcon} alt="Escanea" />
-            <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">Escáner de Código QR</h3>
-            <p className="text-gray-600 mb-8 max-w-xs">Coloca el código QR dentro del visor de la cámara para escanear automáticamente</p>
-            <button
-              onClick={startScanning}
-              className="px-8 py-3 bg-[#EC9126] text-white font-semibold rounded-full hover:bg-[#d98421] focus:outline-none focus:ring-2 focus:ring-[#EC9126] focus:ring-offset-2 transform transition-transform hover:scale-101 shadow-lg flex items-center"
-            >
-              <Scan className="w-5 h-5 mr-2" />
-              Iniciar Escáner
-            </button>
-          </div>
+          <WelcomeScreen startScanning={startScanning}/>
         )}
         
         {/* Permission Denied Screen */}
         {hasPermission === false && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-red-50">
-            <div className="w-24 h-24 rounded-full bg-red-100 flex items-center justify-center mb-6">
-              <XCircle className="w-12 h-12 text-red-500" />
-            </div>
-            <h3 className="text-xl font-bold text-red-800 mb-2">Acceso a la cámara denegado</h3>
-            <p className="text-red-600 mb-8 max-w-xs">Se requiere permiso para usar la cámara para escanear códigos QR</p>
-            <button
-              onClick={startScanning}
-              className="px-6 py-3 bg-red-600 text-white font-semibold rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-lg"
-            >
-              Intentar de nuevo
-            </button>
-          </div>
+          <PermisionsDeniedScreens startScanning={startScanning} />
         )}
         
-        {/* Scanning UI */}
+        {/* Scanning Screen */}
         {scanning && (
-          <div className="absolute inset-0">
-            {/* Scan frame with corners */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-4/5 h-2/3 max-w-xs">
-                {/* Scanner overlay */}
-                <div className="absolute inset-0 border-2 border-[#EC9126] rounded-lg z-10">
-                  {/* Top-left corner */}
-                  <div className="absolute -top-1 -left-1 w-6 h-6 border-t-4 border-l-4 border-[#EC9126] rounded-tl-lg" />
-                  {/* Top-right corner */}
-                  <div className="absolute -top-1 -right-1 w-6 h-6 border-t-4 border-r-4 border-[#EC9126] rounded-tr-lg" />
-                  {/* Bottom-left corner */}
-                  <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-4 border-l-4 border-[#EC9126] rounded-bl-lg" />
-                  {/* Bottom-right corner */}
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-4 border-r-4 border-[#EC9126] rounded-br-lg" />
-                </div>
-                
-                {/* Scan animation */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-[#EC9126] opacity-70 z-20 animate-scanline"></div>
-              </div>
-
-              {/* Cancel button */}
-              <button
-                onClick={stopScanning}
-                className="absolute bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-white text-gray-800 font-semibold rounded-full shadow-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 flex items-center space-x-2"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span>Cancelar</span>
-              </button>
-            </div>
-            
-            {/* Scanning status */}
-            <div className="absolute top-6 left-0 right-0 flex justify-center">
-              <div className="px-4 py-2 bg-black bg-opacity-70 rounded-full flex items-center">
-                <div className="w-3 h-3 bg-[#EC9126] rounded-full animate-pulse mr-2"></div>
-                <span className="text-white text-sm">Escaneando...</span>
-              </div>
-            </div>
-          </div>
+          <ScanningScreen stopScanning={stopScanning}/>
         )}
         
         {/* Success Screen */}
         {scannedResult && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-green-50 to-white">
-            <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mb-6 animate-bounce-slow">
-              <CheckCircle2 className="w-12 h-12 text-green-500" />
-            </div>
-            <h3 className="text-xl font-bold text-green-800 mb-2">¡Código QR Detectado!</h3>
-            <div className="bg-white rounded-xl p-4 shadow-md w-full max-w-xs mb-6 border border-green-200">
-              <p className="text-gray-500 text-xs mb-1">Resultado:</p>
-              <p className="text-sm font-mono overflow-hidden text-ellipsis break-all bg-gray-50 p-2 rounded">{scannedResult}</p>
-            </div>
-            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full max-w-xs">
-              <button
-                onClick={() => {
-                  // Handle the scanned result, e.g., navigate to the URL
-                  alert(`Procesando código QR: ${scannedResult}`);
-                }}
-                className="px-4 py-3 bg-[#EC9126] text-white font-semibold rounded-full hover:bg-[#d98421] focus:outline-none focus:ring-2 focus:ring-[#EC9126] focus:ring-offset-2 shadow-lg sm:flex-1"
-              >
-                Usar Resultado
-              </button>
-              <button
-                onClick={handleScanAgain}
-                className="px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-full hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 shadow sm:flex-1"
-              >
-                Escanear Nuevo
-              </button>
-            </div>
-          </div>
+          <SuccessScreen scannedResult={scannedResult} handleScanAgain={handleScanAgain} />
         )}
         
         <canvas ref={canvasRef} className="hidden" />

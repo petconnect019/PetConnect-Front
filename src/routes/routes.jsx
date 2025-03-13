@@ -92,7 +92,7 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><StepTag /></ProtectRoute>,
   },
   {
-    path: '/scanner',
+    path: '/scanner/:pet_id',
     element: <ProtectRoute><Scanner /></ProtectRoute>,
   },
   {
