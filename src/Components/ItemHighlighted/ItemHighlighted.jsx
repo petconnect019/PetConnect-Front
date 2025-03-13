@@ -10,7 +10,7 @@ export const ItemHighlighted = ({pet, active})=> {
             }`}
         >
             <div className="w-10 h-10 rounded-full border-2 border-gray-300">
-                <img key={pet._id} src={pet.profile_picture || (pet.species == 'gato'? catDefault: dogDefault)} alt={pet.name} className="rounded-full w-full h-auto" />
+                <img key={pet._id} src={pet.profile_picture || (pet.species == 'cat'? catDefault: dogDefault)} alt={pet.name} className="rounded-full w-full h-auto" />
                 <p className="text-center">{pet.name}</p>
             </div>
         </button>
