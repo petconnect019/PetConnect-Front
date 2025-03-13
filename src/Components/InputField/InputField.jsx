@@ -16,7 +16,7 @@ export const InputField = ({ label, icon, register, name, placeholder, validatio
           {...register(name, validation)}
           type="text"
           placeholder={placeholder}
-          className="bg-gray-100 rounded-md p-2 pl-10 w-full h-14"
+          className="bg-gray-100 rounded-md p-2 pl-10 w-full h-14 focus:outline-none focus:ring-2 focus:ring-brand"
         />
       </div>
     </div>
