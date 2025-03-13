@@ -1,7 +1,8 @@
-import { FetchScans } from "../../Utils/Fetch/FetchScans/FetchScans";
+import { FetchLinkPetQr } from "../../Utils/Fetch/FetchLinkPetQr/FetchLinkPet";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
+import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 
-export const useFetchScans = (pet_id) => {
+export const useFetchLinkPet = (objectQrPet) => {
     const fetchData = async () => {
         let token = sessionStorage.getItem('accessToken');
         if (isTokenExpired(token)) {
@@ -15,7 +16,7 @@ export const useFetchScans = (pet_id) => {
         }
 
         try {
-            const data = await FetchScans(pet_id);
+            const data = await FetchLinkPetQr(objectQrPet, token);
             console.log(data);
             
             // data.pets.forEach(pet => {

@@ -32,7 +32,7 @@ export const CheckProtection = () => {
   //se hace el fetch con los datos de la mascota seleccionada
   useEffect(()=> {
     if (protectionRender && selectedPet) {
-        console.log("se hace el fetch con los datos: " + selectedPet.name + !!sessionStorage.getItem('accessToken'));
+        console.log("se hace el fetch con los datos: " + protectionRender + selectedPet.name + !!sessionStorage.getItem('accessToken'));
         useFetchScans(selectedPet._id);
     }
 
