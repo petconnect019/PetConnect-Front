@@ -183,13 +183,10 @@ export const Scanner = () => {
   //access to the scanned result
   useEffect(()=> {
     if (scannedResult) {
-      console.log(scannedResult);
-      
-      const objectQr ={
+        const objectQr ={
         qrId: GetQrId(scannedResult),
         petId: pet_id
       }
-
       //Usamos el hook personalizado para hacer la peticion
       useFetchLinkPet(objectQr).then((result)=> {
         if (!result.hasPet) {
