@@ -189,17 +189,16 @@ export const Scanner = () => {
       }
       //Usamos el hook personalizado para hacer la peticion
       useFetchLinkPet(objectQr).then((result)=> {
-        if (!result.hasPet) {
-          console.log('primera vez');
-        } else  {
-          console.log('ya linkeado');
-          
+        if (result.success) {
+          if (!result.hasPet) {
+            console.log('primera vez');
+          } else  {
+            console.log('ya linkeado'); 
+          }
+        } else {
+          console.log(result.message); 
         }
-        
       })
-      
-      
-      
     }
   }, [scannedResult, setScannedResult])
   

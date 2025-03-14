@@ -20,12 +20,25 @@ export const useFetchLinkPet = (objectQrPet) => {
             if (result.ok) {
                 if (result.data.qr.pet) {
                     //devolvemos el qr con la mascota linkeada
-                    return {hasPet: true, pet: result.data.qr.pet};
+                    return {
+                        success: true,
+                        data: result.data,
+                        hasPet: true, 
+                        pet: result.data.qr.pet
+                    };
                 } else {
                     //devolvemos el qr sin mascota linkeada
-                    return {hasPet: false, pet: null};
+                    return {
+                        success: true,
+                        data: result.data,
+                        hasPet: false, 
+                        pet: null,
+                    };
                 }
-            } else return false;
+            } else return {
+                success: false,
+                message: result.message
+            };
             
         } catch (error) {
             console.error(error);
