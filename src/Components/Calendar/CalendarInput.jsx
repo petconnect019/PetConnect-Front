@@ -77,7 +77,7 @@ export const CalendarInput = ({ onDateSelect }) => {
     <div className="relative" ref={calendarRef}>
       {/* Input para seleccionar la fecha */}
       <div 
-        className="flex items-center bg-gray-100 rounded p-2 cursor-pointer" 
+        className="flex items-center bg-gray-100 rounded-lg p-2 cursor-pointer" 
         onClick={() => setShowCalendar(!showCalendar)}
       >
         <img src={CalendarIcon} alt="Calendar" className="w-6 h-6 ml-2" />
@@ -104,13 +104,13 @@ export const CalendarInput = ({ onDateSelect }) => {
             </p>
             <div className="flex">
               <span 
-                className="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 hover:bg-gray-200 cursor-pointer text-2xl"
+                className="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 hover:bg-gray-200 cursor-pointer text-2xl"
                 onClick={() => changeMonth('prev')}
               >
                 &#8249;
               </span>
               <span 
-                className="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 hover:bg-gray-200 cursor-pointer text-2xl ml-2"
+                className="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 hover:bg-gray-200 cursor-pointer text-2xl ml-2"
                 onClick={() => changeMonth('next')}
               >
                 &#8250;

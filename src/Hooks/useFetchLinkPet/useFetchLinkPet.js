@@ -16,14 +16,7 @@ export const useFetchLinkPet = (objectQrPet) => {
         }
 
         try {
-            const data = await FetchLinkPetQr(objectQrPet, token);
-            console.log(data);
-            
-            // data.pets.forEach(pet => {
-            //     if (!findPet(pet._id)) {
-            //         addPet(pet);
-            //     }
-            // });
+            await FetchLinkPetQr(objectQrPet, token);
 
         } catch (error) {
             console.error(error);

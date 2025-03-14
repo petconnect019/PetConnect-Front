@@ -14,6 +14,7 @@ export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scannedResult, setScannedResult] = useState(null);
   const [scanning, setScanning] = useState(false);
+  const [petLinked, setPetLinked] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -159,7 +160,7 @@ export const Scanner = () => {
     setTimeout(() => {
       console.log("Starting scan again");
       startScanning();
-    }, 800);
+    }, 100);
   }, [stopScanning, startScanning]);
 
   // useEffect to check video frames when renderCheckVideoFrame state changes
@@ -186,8 +187,9 @@ export const Scanner = () => {
         qrId: GetQrId(scannedResult),
         petId: pet_id
       }
-      useFetchLinkPet(objectQr);
-      
+      const qrLinked = useFetchLinkPet(objectQr);
+      if (qrLinked.ok)
+        setPetLinked(true);
     }
   }, [scannedResult, setScannedResult])
   
@@ -228,7 +230,7 @@ export const Scanner = () => {
         )}
         
         {/* Success Screen */}
-        {scannedResult && (
+        {petLinked && (
           <SuccessScreen scannedResult={scannedResult} handleScanAgain={handleScanAgain} />
         )}
         
