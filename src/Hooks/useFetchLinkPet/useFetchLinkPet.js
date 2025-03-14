@@ -16,19 +16,22 @@ export const useFetchLinkPet = (objectQrPet) => {
         }
 
         try {
-            const data = await FetchLinkPetQr(objectQrPet, token);
-            console.log(data);
+            const result = await FetchLinkPetQr(objectQrPet, token);
+            if (result.ok) {
+                if (result.qr.pet) {
+                    //devolvemos el qr con la mascota linkeada
+                    return {hasPet: true, pet: result.qr.pet};
+                } else {
+                    //devolvemos el qr sin mascota linkeada
+                    return {haspet: false, pet: null};
+                }
+            } else return false;
             
-            // data.pets.forEach(pet => {
-            //     if (!findPet(pet._id)) {
-            //         addPet(pet);
-            //     }
-            // });
 
         } catch (error) {
             console.error(error);
         }
     };
 
-    fetchData();
+    return fetchData();
 };
