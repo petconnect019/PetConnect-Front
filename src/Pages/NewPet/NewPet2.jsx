@@ -66,10 +66,12 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
       setFilePfp(file);
+      event.target.value = "";
     }
   };
 
-  const onSubmitForm = async (dataForm) => { 
+  const onSubmitForm = async (dataForm) => {
+  
     const formDataPet = new FormData();
     formDataPet.append('name', name);
     formDataPet.append('species', type);
@@ -95,10 +97,6 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
 
     try {
         const response = await FetchAddPet(formDataPet, token);
-
-         // Convertir la respuesta a JSON
-
-    
 
       if (response.ok) {
         console.log("📩 Respuesta del backend:", response);
