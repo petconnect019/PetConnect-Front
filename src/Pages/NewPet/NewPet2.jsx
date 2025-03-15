@@ -158,7 +158,7 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
 
         <div className="relative">
             <label className="block mb-1 font-semibold">Fecha de nacimiento</label>
-            <span><img className=' absolute top-13 left-2 z-10 w-5 h-5' src={CalendarImg} alt="CalendarIcon" /></span>
+            <span className={`absolute top-13 left-3  z-4 ${modalOpen ? 'hidden' : ''}`}><img className='  w-5 h-5' src={CalendarImg} alt="CalendarIcon" /></span>
             <Calendar
               value={selectedDate}
               onChange={handleDateChange}
