@@ -5,7 +5,6 @@ import Position from '../../assets/posicionamiento-Step-user.png';
 import DefaultProfile from '../../assets/DefaultProfile.png';
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { NavButton } from "../../Components/NavButton/NavButton";
 import Paper from '../../assets/Paper.png';
 import { InputField } from "../../Components/InputField/InputField";
 import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary";
@@ -14,6 +13,7 @@ import { FetchUpdatePhotoU } from "../../Utils/Fetch/FetchUpdatePhotoU/FetchUpda
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { FetchUpdateUser } from "../../Utils/Fetch/FetchUpdateUser/FetchUpdateUser";
+import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep";
 
 
 
@@ -87,7 +87,7 @@ export const StepUser = () => {
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">
             <div className="bg-white p-6 rounded-2xl  max-w-sm ">
-                <NavButton  onClick={handleBack} img={Position} text={'2/3'} />
+                <NavButtonStep  onClick={handleBack} img={Position} text={'2/3'} />
                 <div className="mb-4 p-2">
                         <h2 className="text-2xl font-bold mb-2 ">¡Pasos finales!</h2>
                         <p className=" text-gray-600 mb-4">¡Ya casi llegamos! Completa tus datos personales para crear un perfil y comenzar tu viaje hacia una amistad peluda.</p>
