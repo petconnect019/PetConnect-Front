@@ -7,24 +7,21 @@ import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefr
 import { FetchAddPet } from "../../Utils/Fetch/FetchAddPet/FetchAddPet";
 import { convertDateFormat } from "../../Utils/Helpers/ConvertDateFormat/ConvertDateFormat";
 import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
-import { useHasPetsUser } from "../../Contexts/HasPetsUser/HasPetsUser";
 import { NavButton } from "../../Components/NavButton/NavButton";
-import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary";
 import { ModalResponse } from "../../Components/ModalBasic/ModalResponse";
 import { InputField } from "../../Components/InputField/InputField";
 import Paper from "../../assets/Paper.png";
-import Calendar from "../../assets/Calendar.png";
-import { CalendarInput } from "../../Components/Calendar/CalendarInput";
+import CalendarImg from "../../assets/Calendar.png";
 import QRIcon from "../../assets/QRIcon.png";
 import EditImg from "../../assets/EditImage.png";
+import { Calendar } from 'primereact/calendar';
+
 
 export const NewPet2 = ({ name, type, navigate, setRenderPet2 }) => {
-  const { register, handleSubmit, setValue } = useForm();
-  const [profileImage, setProfileImage] = useState(
-    type == "dog" ? defaultDogPfp : defaultCatPfp
-  );
+  const { register, handleSubmit,setValue } = useForm();
+  const [profileImage, setProfileImage] = useState(type == 'dog'? defaultDogPfp : defaultCatPfp);
   const [filePfp, setFilePfp] = useState(null);
-  const { changeIsFetched } = useIsFetchedPets();
+  const {changeIsFetched} = useIsFetchedPets();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
 
@@ -68,6 +65,7 @@ export const NewPet2 = ({ name, type, navigate, setRenderPet2 }) => {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
       setFilePfp(file);
+      event.target.value = "";
     }
   };
 
@@ -76,7 +74,7 @@ export const NewPet2 = ({ name, type, navigate, setRenderPet2 }) => {
     formDataPet.append("name", name);
     formDataPet.append("species", type);
     formDataPet.append("breed", dataForm.breed);
-    formDataPet.append("birthDate", convertDateFormat(dataForm.birthDate));
+    formDataPet.append('birthDate', dataForm.birthDate);
     formDataPet.append("color", dataForm.color);
     formDataPet.append("gender", dataForm.gender);
     formDataPet.append("photo", filePfp);
@@ -104,9 +102,10 @@ export const NewPet2 = ({ name, type, navigate, setRenderPet2 }) => {
     changeIsFetched(false);
   };
 
-  const handleDateChange = (formattedDate) => {
-    setSelectedDate(formattedDate);
-    setValue("birthDate", formattedDate);
+  const handleDateChange = (e) => {
+    const selected = e.value || null;  
+    setSelectedDate(selected); 
+    setValue("birthDate", selected ? convertDateFormat(selected) : ""); 
   };
 
   return (
@@ -153,16 +152,18 @@ export const NewPet2 = ({ name, type, navigate, setRenderPet2 }) => {
           </div>
 
           <div className="relative">
-            <label className="block mb-1 font-semibold">
-              Fecha de nacimiento
-            </label>
-            <CalendarInput onDateSelect={handleDateChange} />
-            <input
-              type="hidden"
-              {...register("birthDate")}
+            <label className="block mb-1 font-semibold">Fecha de nacimiento</label>
+            <span className={`absolute top-13 left-3  z-4 ${modalOpen ? 'hidden' : ''}`}><img className='  w-5 h-5' src={CalendarImg} alt="CalendarIcon" /></span>
+            <Calendar
               value={selectedDate}
+              onChange={handleDateChange}
+              dateFormat="dd/mm/yy"
+              placeholder='Seleccione la fecha'
+              className="w-full bg-gray-100 "
             />
+            <input  type="hidden" {...register("birthDate")} value={selectedDate || ""} />
           </div>
+
 
           <div>
             <label className="block mb-1 font-semibold">Raza</label>
