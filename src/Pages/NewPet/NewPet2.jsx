@@ -8,14 +8,13 @@ import { FetchAddPet } from "../../Utils/Fetch/FetchAddPet/FetchAddPet";
 import { convertDateFormat } from "../../Utils/Helpers/ConvertDateFormat/ConvertDateFormat";
 import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 import { NavButton } from '../../Components/NavButton/NavButton';
-import { ButtonPrimary } from '../../Components/Buttons/ButtonPrimary';
 import { ModalResponse } from '../../Components/ModalBasic/ModalResponse';
 import { InputField } from '../../Components/InputField/InputField';
 import Paper from '../../assets/Paper.png'
-import Calendar from '../../assets/Calendar.png'
-import { CalendarInput } from '../../Components/Calendar/CalendarInput';
+import { Calendar } from 'primereact/calendar';
 import QRIcon from '../../assets/QRIcon.png'
 import EditImg from '../../assets/EditImage.png'
+import CalendarImg from '../../assets/Calendar.png'
 
 export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
   const { register, handleSubmit,setValue } = useForm();
@@ -48,6 +47,17 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
     "Exótico de Pelo Corto", "Turco Van", "Munchkin", "Burmilla", "Tonkinés",
     "Singapura", "Chausie", "Serengeti", "Cymric", "Javanés","Criollo"
   ];
+
+  const spanishLocale = {
+    firstDayOfWeek: 1,
+    dayNames: ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"],
+    dayNamesShort: ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"],
+    dayNamesMin: ["D", "L", "M", "X", "J", "V", "S"],
+    monthNames: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+    monthNamesShort: ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
+    today: "Hoy",
+    clear: "Limpiar"
+  };
   
 
   const handleImageChange = (event) => {
@@ -64,7 +74,7 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
     formDataPet.append('name', name);
     formDataPet.append('species', type);
     formDataPet.append('breed', dataForm.breed);
-    formDataPet.append('birthDate', convertDateFormat(dataForm.birthDate));
+    formDataPet.append('birthDate', dataForm.birthDate);
     formDataPet.append('color', dataForm.color);
     formDataPet.append('gender', dataForm.gender);
     formDataPet.append('photo', filePfp);
@@ -85,7 +95,13 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
 
     try {
         const response = await FetchAddPet(formDataPet, token);
+
+         // Convertir la respuesta a JSON
+
+    
+
       if (response.ok) {
+        console.log("📩 Respuesta del backend:", response);
           setModalOpen(true);
       }
     } catch (error) {
@@ -99,11 +115,12 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
 
  
 
-  const handleDateChange = (formattedDate) => {
-    
-    setSelectedDate(formattedDate); 
-    setValue("birthDate", formattedDate);
-    };
+  const handleDateChange = (e) => {
+    const selected = e.value || null;  
+    setSelectedDate(selected); 
+    setValue("birthDate", selected ? convertDateFormat(selected) : ""); 
+};
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6 text-[1.4rem]">
@@ -143,8 +160,15 @@ export const NewPet2 = ({ name, type , navigate, setRenderPet2}) => {
 
         <div className="relative">
             <label className="block mb-1 font-semibold">Fecha de nacimiento</label>
-            <CalendarInput onDateSelect={handleDateChange} />
-            <input type="hidden" {...register("birthDate")} value={selectedDate} />
+            <span><img className=' absolute top-13 left-2 z-10 w-5 h-5' src={CalendarImg} alt="CalendarIcon" /></span>
+            <Calendar
+              value={selectedDate}
+              onChange={handleDateChange}
+              dateFormat="yy/mm/dd"
+              placeholder='Seleccione la fecha'
+              className="w-full bg-gray-100 "
+            />
+            <input  type="hidden" {...register("birthDate")} value={selectedDate || ""} />
           </div>
 
         <div>

@@ -7,6 +7,9 @@ import { HasPetsUserProvider } from './Contexts/HasPetsUser/HasPetsUser.jsx'
 import { PetProvider } from './Contexts/PetContext/PetContext.jsx'
 import { FetchedPetsProvider } from './Contexts/IsFetchedPets/IsFetchedPets.jsx'
 
+import { PrimeReactProvider } from 'primereact/api';
+        
+
 const updateSW = registerSW({
   onNeedRefresh: function() {
     if (confirm('Hay una nueva versión disponible. ¿Deseas actualizar?')) {
@@ -22,7 +25,9 @@ createRoot(document.getElementById('root')).render(
       <HasPetsUserProvider>
         <PetProvider>
           <FetchedPetsProvider>
-            <App />
+            <PrimeReactProvider>
+              <App />
+            </PrimeReactProvider>
           </FetchedPetsProvider>
         </PetProvider>
       </HasPetsUserProvider>
