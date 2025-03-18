@@ -26,7 +26,7 @@ export const StepUser = () => {
 
 
     const handleBack = () => {
-        navigate('/step-pet')
+        navigate('/register')
     }
 
     const handleImageChange = (event) => {
@@ -44,7 +44,7 @@ export const StepUser = () => {
           formDataUser.append('name', dataForm.name);
           formDataUser.append('phone', phone);
           formDataUser.append('gender', dataForm.gender);
-          formDataUser.append('profile_picture', filePfp);
+        
       
           console.log("Datos enviados:", Object.fromEntries(formDataUser));
           
@@ -60,29 +60,36 @@ export const StepUser = () => {
             }
         }
 
-      
-          try {
-              const response = await FetchUpdatePhotoU(formDataUser, token); 
-
-              if(response.ok){
-                try {
-                    const response = await FetchUpdateUser(formDataUser, token); 
-                    if(response.ok){
-                        console.log("Registro exitoso del Usuario" , response);
-                        
-                    }
-                  
-                } catch (error) {
-                  console.error("Error al registrar Usuario:", error);
-                  
-                }
+        try {
+          const responseUser = await FetchUpdateUser(formDataUser, token); 
+  
+          if (responseUser.ok) {
+              console.log("Registro exitoso del Usuario:", responseUser);
+  
+              if (filePfp) {
+                  const formDataPhoto = new FormData();
+                  formDataPhoto.append("profile_picture", filePfp);
+  
+                  try {
+                      const responsePhoto = await FetchUpdatePhotoU(formDataPhoto, token);
+                      if (responsePhoto.ok) {
+                          console.log("Foto de perfil actualizada:", responsePhoto);
+                      } else {
+                          console.error("No se pudo actualizar la foto.");
+                      }
+                  } catch (error) {
+                      console.error("Error al subir la foto:", error);
+                  }
               }
-            
-          } catch (error) {
-            console.error("Error al Registrar la Foto del Usuario:", error);
-            
+  
+              navigate("/step-pet");
+          } else {
+              console.error("Error al registrar usuario.");
           }
-    };
+      } catch (error) {
+          console.error("Error al registrar Usuario:", error);
+      }
+  };
 
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">

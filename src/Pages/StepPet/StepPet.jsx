@@ -19,7 +19,7 @@ export const StepPet = () => {
     const [selectedPet, setSelectedPet] = useState(null);
 
    const handleBack = () =>{
-    navigate('/login')
+    navigate('/step-user')
    }
 
 
