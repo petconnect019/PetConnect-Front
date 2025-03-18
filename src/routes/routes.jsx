@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
 
-import { Introduction1 } from "../Pages/Introduccion1/introduction1";
-import { Introduction2 } from "../Pages/Introduccion2/introduction2";
+import { Introduction1 } from "../Pages/Introduccion1/Introduction1";
+import { Introduction2 } from "../Pages/Introduccion2/Introduction2";
 import { Welcome } from "../Pages/Welcome/Welcome";
 import { Login } from "../Pages/Login/Login";
 import { Register } from "../Pages/Register/Register";
@@ -30,6 +30,7 @@ import { MyPets } from "../Pages/MyPets/MyPets";
 import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
 import { NewPet1 } from "../Pages/NewPet/NewPet1";
 import { CheckProtection } from "../Pages/CheckProtection/CheckProtection";
+
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Position from '../../assets/posicionamiento-Step-user.png';
 import ImgFrontal from '../../assets/ImgStepPet.png';
 import Paper from '../../assets/Paper.png';
@@ -17,9 +17,6 @@ export const StepPet = () => {
     const navigate = useNavigate();
      const { register, handleSubmit } = useForm();
     const [selectedPet, setSelectedPet] = useState(null);
-
-    const {pet_id} = useParams();
-    
 
    const handleBack = () =>{
     navigate('/login')
@@ -57,8 +54,7 @@ export const StepPet = () => {
          const response = await FetchAddPet(formDataPet, token);
          if (response.ok) {
            console.log(response);
-           const responseData = await response.json(); 
-           const pet_id = responseData.id;
+           const pet_id = response.pet?.id;
            navigate(`/step-tag/${pet_id}`);
          }
        } catch (error) {
