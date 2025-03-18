@@ -5,11 +5,10 @@ export const FetchAddPet = async (formDataPet, token)=> {
             headers: {
                 Authorization : `Bearer ${token}`
             },
-            credentials: 'include',
             body: formDataPet
         });
         const result = await response.json();
-        
+        console.log("Respuesta del servidor:", result);
 
         if (!response.ok) {
             return {

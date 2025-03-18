@@ -16,7 +16,7 @@ export const NewPet1 = () => {
     const [renderPet2, setRenderPet2] = useState(false);
     const [data, setData] = useState({ name: '', type: '' });
     const { register, handleSubmit } = useForm();
-    const [selectedPet, setSelectedPet] = useState(null);
+    
 
     const handleRender = (formData) => {
         if (!selectedPet) return; 

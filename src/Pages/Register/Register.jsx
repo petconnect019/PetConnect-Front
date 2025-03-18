@@ -43,7 +43,7 @@ export const Register = () => {
         changeHasPetsUser(true);
       }
       if (response.isNewUser) {
-        navigate('/step-pet');
+        navigate('/step-user');
         
       } else {
         navigate('/home');

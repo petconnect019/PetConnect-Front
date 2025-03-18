@@ -1,18 +1,20 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import Position from "../../assets/posicionamiento-Step-Qr.png"
-import BackButton from "../../assets/BackButton.png"
 import ImgQR from "../../assets/QR.png"
 import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep"
 
+
+
 export const StepTag = () => {
     const navigate = useNavigate();
+    const {pet_id} = useParams();
 
     const handleBack = () => {
         navigate('/step-user');
     }
 
     const handleActivateTag = () =>{
-        navigate('/scanner');
+        navigate(`/scanner/${pet_id}`);
     }
     const handleNoTag = () => {
         navigate('/ecommerce');
