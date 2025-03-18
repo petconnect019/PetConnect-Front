@@ -33,7 +33,6 @@ export const FetchLinkPetQr = async (objectQrPet, token) => {
         return { ok: true, data: result };
 
     } catch (error) {
-        console.error("Error en FetchLinkPetQr:", error);
-        return { ok: false, message: "Error en la conexión con el servidor" };
+        return { ok: false, message: `Error de conexión: ${error.message || "Error desconocido"}` };
     }
 };

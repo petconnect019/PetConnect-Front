@@ -140,7 +140,7 @@ export const NewPet2 = ({ name, type, navigate, setRenderPet2 }) => {
           <label className="font-semibold">Seguridad de la mascota</label>
           <div
             className="relative cursor-pointer p-3 bg-gray-100 rounded-lg flex justify-between items-center text-[1.2rem] hover:bg-gray-100"
-            onClick={() => console.log("Añadir Código QR")}
+            onClick={() => navigate('/check_protection')}
           >
             <span className="flex items-center text-gray-500">
               <span className="text-gray-500 mr-2">
