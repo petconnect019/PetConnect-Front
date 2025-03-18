@@ -147,7 +147,7 @@ export const StepUser = () => {
                             <option value="otro">Otro</option>
                         </select>
                     </div>
-                    <ButtonPrimary path='/step-pet' text='Continuar' />
+                    <ButtonPrimary  text='Continuar' />
                 </form>
             </div>
         </div>
