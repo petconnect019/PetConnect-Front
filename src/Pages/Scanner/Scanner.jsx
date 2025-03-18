@@ -8,7 +8,6 @@ import { PermisionsDeniedScreens } from '../../Components/ScannerScreens/Permisi
 import { ScanningScreen } from '../../Components/ScannerScreens/ScanningScreen';
 import { SuccessScreen } from '../../Components/ScannerScreens/SuccessScreen';
 import { useFetchLinkPet } from '../../Hooks/useFetchLinkPet/useFetchLinkPet';
-import { LogIn } from 'lucide-react';
 
 export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);

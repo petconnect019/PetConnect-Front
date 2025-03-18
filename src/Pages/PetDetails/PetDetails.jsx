@@ -3,8 +3,6 @@ import { useParams } from "react-router-dom"
 import { useEffect } from "react";
 import { usePet } from "../../Contexts/PetContext/PetContext";
 import { GridItem } from "../../Components/GridItem/GridItem";
-import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
-import { useFetchPets } from "../../Hooks/useFetchPets/useFetchPets";
 import enableLost from '../../assets/enableLost.png'
 import enableQR from '../../assets/enableQR.png'
 import { useNavigate } from "react-router-dom";
@@ -12,21 +10,15 @@ import { useNavigate } from "react-router-dom";
 export const PetDetails = () => {
     const { pet_id } = useParams();
     const [pet, setPet] = useState({});
-    const isFetched = useIsFetchedPets();
 
     const pets = usePet();
     const navigate = useNavigate();
-    const { isFetchedPets } = isFetched ?? {};
     const { findPet } = pets?? {};
 
     //nos traemos la mascota de la lista de mascotas
     useEffect(()=> {
         setPet(findPet(pet_id));
     }, [pet_id, findPet])
-
-    
-  //revisamos si las mascotas ya estan traidas o no
-  isFetchedPets ? useFetchPets(false) : useFetchPets(true);
 
   const petDetails = [
     { title: 'Género', subtitle: pet?.gender },
