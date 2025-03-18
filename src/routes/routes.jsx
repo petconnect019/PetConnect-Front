@@ -28,7 +28,7 @@ import { Settings } from "../Pages/Settings/Settings";
 import { UserProfileConfig } from "../UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";
 import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
-import { NewPet1 } from "../Pages/NewPet/NewPet1";
+import { NewPet1 } from "../Pages/NewPet1/NewPet1";
 import { CheckProtection } from "../Pages/CheckProtection/CheckProtection";
 
 export const routes = createBrowserRouter([
@@ -108,7 +108,7 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><PetDetails /></ProtectRoute>,
   },
   {
-    path: '/pet-profile',
+    path: '/pet-profile/:pet_id',
     element: <ProtectRoute><PetProfile /></ProtectRoute>,
   },
   {
