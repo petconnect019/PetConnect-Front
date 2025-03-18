@@ -6,26 +6,12 @@ import ImgQR from "../../assets/QR.png"
 export const StepTag = () => {
     const navigate = useNavigate();
 
-    const handleBack = () => {
-        navigate('/step-user');
-    }
-
-    const handleActivateTag = () =>{
-        navigate('/scanner');
-    }
-    const handleNoTag = () => {
-        navigate('/ecommerce');
-    }
-    const handleActiveLater = () => {
-        navigate('/home');
-    }
-
 
     return(
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
             <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
                 <nav className="flex justify-between items-center mb-[1rem]">
-                                    <li onClick={handleBack} className="list-none"><img src={BackButton} alt="" /></li>
+                                    <li onClick={(()=>navigate('/step-user'))} className="list-none"><img src={BackButton} alt="" /></li>
                                     <img src={Position} alt="" />
                                     <p>3/3</p>
                                 </nav>
@@ -36,9 +22,9 @@ export const StepTag = () => {
                 </div>
                 
                 <div className="flex flex-col space-y-4">
-                    <button onClick={handleActivateTag} className="w-full bg-orange-400 text-white p-3 rounded-lg hover:bg-blue-600 transition">Activar Etiqueta QR</button>
-                    <button onClick={handleNoTag} className="w-full bg-gray-100 text-orange-400 p-3 rounded-lg hover:bg-gray-400 transition">No cuento con una etiqueta QR</button>
-                    <button onClick={handleActiveLater} className="w-full  text-orange-400 p-3 rounded-lg hover:bg-gray-400 transition">Activar después</button>
+                    <button onClick={(()=>navigate('/scanner'))} className="w-full bg-orange-400 text-white p-3 rounded-lg hover:bg-blue-600 transition">Activar Etiqueta QR</button>
+                    <button onClick={(()=>navigate('/ecommerce'))} className="w-full bg-gray-100 text-orange-400 p-3 rounded-lg hover:bg-gray-400 transition">No cuento con una etiqueta QR</button>
+                    <button onClick={(()=>navigate('/home'))} className="w-full  text-orange-400 p-3 rounded-lg hover:bg-gray-400 transition">Activar después</button>
                 </div>
             </div>
         </div>

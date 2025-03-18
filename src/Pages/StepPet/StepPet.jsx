@@ -68,7 +68,7 @@ export const StepPet = () => {
                                     
                                 </div>
                             </div>
-                            <ButtonPrimary path='/step-user' text='Continuar' />
+                            <ButtonPrimary path={`/step/`} text='Continuar' />
                         </form>
                     </div>
                 </div>

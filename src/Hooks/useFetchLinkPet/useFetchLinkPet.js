@@ -1,48 +1,62 @@
+import { useState } from 'react';
 import { FetchLinkPetQr } from "../../Utils/Fetch/FetchLinkPetQr/FetchLinkPet";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 
-export const useFetchLinkPet = (objectQrPet) => {
-    const fetchData = async () => {
-        let token = sessionStorage.getItem('accessToken');
-        if (isTokenExpired(token)) {
-            try {
-                await FetchRefreshToken();
-                token = sessionStorage.getItem('accessToken');
-            } catch (error) {
-                console.error("Error al refrescar el token:", error);
-                return;
-            }
-        }
+export const useFetchLinkPet = (qrId, petId) => {
+  const [linkState, setLinkState] = useState({
+    isLoading: false,
+    error: null,
+    data: null,
+    hasPet: false,
+    pet: null
+  });
 
+  const linkPet = async () => {
+    if (!qrId || !petId) return;
+    
+    setLinkState(prev => ({ ...prev, isLoading: true, error: null }));
+    
+    try {
+      let token = sessionStorage.getItem('accessToken');
+      
+      if (isTokenExpired(token)) {
         try {
-            const result = await FetchLinkPetQr(objectQrPet, token);
-            if (result.ok) {
-                if (result.data.qr.pet) {
-                    //devolvemos el qr con la mascota linkeada
-                    return {
-                        success: true,
-                        data: result.data,
-                        hasPet: true, 
-                        pet: result.data.qr.pet
-                    };
-                } else {
-                    //devolvemos el qr sin mascota linkeada
-                    return {
-                        success: true,
-                        data: result.data,
-                        hasPet: false, 
-                        pet: null,
-                    };
-                }
-            } else return {
-                success: false,
-                message: result.message
-            };
-            
-        } catch (error) {
-            console.error(error);
+          await FetchRefreshToken();
+          token = sessionStorage.getItem('accessToken');
+        } catch (refreshError) {
+          throw new Error("Error al refrescar el token: " + refreshError.message);
         }
-    };
-    return fetchData();
+      }
+
+      const objectQrPet = { qrId, petId };
+      const result = await FetchLinkPetQr(objectQrPet, token);
+      
+      if (!result.ok) {
+        throw new Error(result.message || "Error en la respuesta del servidor");
+      }
+      
+      setLinkState({
+        isLoading: false,
+        error: null,
+        data: result.data,
+        hasPet: (result.data.qr.pet?'linked':'first'),
+        pet: result.data.qr.pet || null,
+      });
+      
+      return result.data;
+    } catch (error) {
+      setLinkState(prev => ({ 
+        ...prev, 
+        isLoading: false, 
+        error: error.message || "Error desconocido" 
+      }));
+      return null;
+    }
+  };
+
+  return {
+    ...linkState,
+    linkPet
+  };
 };
