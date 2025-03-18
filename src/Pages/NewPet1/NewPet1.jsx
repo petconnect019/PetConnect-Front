@@ -11,30 +11,32 @@ import { useFetchAddPet } from "../../Hooks/useFetchAddPet/useFetchAddPet";
 
 export const NewPet1 = () => {
     const navigate = useNavigate();
-    const [petData, setPetData] = useState({ name: null, type: null });
+    const [petData, setPetData] = useState({ name: null, species: null });
     const { register, handleSubmit } = useForm();
     const [selectedPet, setSelectedPet] = useState(null);
-    const {addPet, pet, isSuccess, isLoading, error} = useFetchAddPet();
+    const {fetchNewPet, pet, isSuccess, isLoading, error} = useFetchAddPet();
 
     const onSubmit = (formData) => {
         if (!selectedPet) return; 
-        setPetData({ name: formData.name, type: selectedPet });
+        setPetData({ name: formData.name, species: selectedPet });
     };
 
     useEffect(()=> {
-        if (petData.name && petData.type) {
+        if (petData.name && petData.species) {
             console.log(petData);
             //hacemos el fetch de la creacion de la mascota, se añade al contexto local de mascotas con la respuesta del backend y despues de eso lo redireccionamos a /pet-profile/:pet_id
-            addPet(petData);
+            fetchNewPet(petData);
         }
     }, [petData])
 
     useEffect(()=> {
-        console.log(
-            `pet: ${pet}\n
-            loading: ${isLoading}\n
-            error: ${error}`
-        );
+        if (pet) {
+            console.log(
+                `pet: ${pet}\n
+                loading: ${isLoading}\n
+                error: ${error}`
+            );
+        }
         
 
     }, [pet, isLoading, error])

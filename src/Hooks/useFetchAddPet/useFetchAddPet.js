@@ -2,19 +2,20 @@ import { useState } from 'react';
 import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { FetchAddPet } from '../../Utils/Fetch/FetchAddPet/FetchAddPet';
-import { useIsFetchedPets } from '../../Contexts/IsFetchedPets/IsFetchedPets';
+import { usePet } from '../../Contexts/PetContext/PetContext';
 
 export const useFetchAddPet = () => {
-  const [addPetState, setAddPetState] = useState({
+  const [fetchNewPetState, setAddPetState] = useState({
     isLoading: false,
     error: null,
     isSuccess: false,
     pet: null
   });
 
-  const { changeIsFetched } = useIsFetchedPets();
+  const pet = usePet(); 
+  const {addPet} = pet ?? {};
 
-  const addPet = async (petData) => {
+  const fetchNewPet = async (petData) => {
     setAddPetState((prev)=> ({...prev, isLoading: true}));
 
     try {
@@ -35,12 +36,11 @@ export const useFetchAddPet = () => {
 
       // Submit the pet data
       const response = await FetchAddPet(petData, token);
-      
-      if (response.ok) {
-        console.log(response);
 
-        changeIsFetched(false); // Trigger refetch of pets list
-        setAddPetState((prev)=>({...prev, isSuccess: true, isLoading: false, pet: response}))
+      if (response.ok) {
+        //actualizamos el estado y añadimos localmente la mascota creada
+        setAddPetState((prev)=>({...prev, isSuccess: true, isLoading: false, pet: response.pet}));
+        addPet(response.pet);
         return { success: true };
       } else {
         setAddPetState((prev)=> ({...prev, error: response.message || "An unexpected error occurred", isLoading: false }))
@@ -55,7 +55,7 @@ export const useFetchAddPet = () => {
   };
 
   return {
-    ...addPetState,
-    addPet
+    ...fetchNewPetState,
+    fetchNewPet
   };
 };
