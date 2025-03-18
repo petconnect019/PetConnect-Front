@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import Position from "../../assets/posicionamiento-Step-Qr.png"
 import BackButton from "../../assets/BackButton.png"
 import ImgQR from "../../assets/QR.png"
+import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep"
 
 export const StepTag = () => {
     const navigate = useNavigate();
@@ -10,11 +11,7 @@ export const StepTag = () => {
     return(
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
             <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
-                <nav className="flex justify-between items-center mb-[1rem]">
-                                    <li onClick={(()=>navigate('/step-user'))} className="list-none"><img src={BackButton} alt="" /></li>
-                                    <img src={Position} alt="" />
-                                    <p>3/3</p>
-                                </nav>
+                <NavButtonStep  onClick={handleBack} img={Position} text={'3/3'} />
                 <div className="mb-4 p-2 flex flex-col items-center">
                 <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">Vincula la etiqueta QR de tu mascota</h2>
                     <img src={ImgQR} alt="" />

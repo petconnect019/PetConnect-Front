@@ -1,17 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Position from '../../assets/posicionamiento-Step.png';
-import ButtonBack from '../../assets/BackButton.png';
 import ImgFrontal from '../../assets/ImgStepPet.png';
 import DogButton from '../../assets/DogButton.png';
 import CatButton from '../../assets/CatButton.png';
 import Paper from '../../assets/Paper.png';
 import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary";
-import { ButtonSecondary } from "../../Components/Buttons/ButtonSecondary";
 import { InputField } from "../../Components/InputField/InputField";
 import { useForm } from "react-hook-form";
-import { NavButton } from "../../Components/NavButton/NavButton";
-
+import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep";
+NavButtonStep
 
 
 export const StepPet = () => {
@@ -26,7 +24,7 @@ export const StepPet = () => {
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">
                     <div className="bg-white p-6 rounded-2xl  max-w-sm ">
-                        <NavButton  onClick={handleBack} img={Position} text={'1/3'} />
+                        <NavButtonStep  onClick={handleBack} img={Position} text={'1/3'} />
                         <h2 className="text-2xl font-bold mb-2 text-center">Nombra tu mascota 🐾</h2>
                         <img className="mx-auto w-auto h-60" src={ImgFrontal} alt="Pet step" />
         
