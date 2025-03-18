@@ -31,7 +31,7 @@ export const NewPet1 = () => {
 
     useEffect(() => {
         if (pet) {
-            navigate(`/pet-profile/${pet.id}`);
+            navigate(`/pet-profile/${pet._id}`);
         }
     }, [pet, navigate]);
 
@@ -63,7 +63,7 @@ export const NewPet1 = () => {
                     </div>
                     {error && (
                         <div className="mt-2 flex items-center text-red-500 text-sm">
-                            <MdErrorOutline className="mr-1" /> {error.message || "Error al crear la mascota"}
+                            <MdErrorOutline className="mr-1" /> {error || "Error al crear la mascota"}
                         </div>
                     )}
                 </form>
