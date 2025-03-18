@@ -88,7 +88,7 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><StepUser /></ProtectRoute>,
   },
   {
-    path: '/step-tag',
+    path: '/step-tag/:pet_id',
     element: <ProtectRoute><StepTag /></ProtectRoute>,
   },
   {

@@ -1,26 +1,26 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import jsQR from 'jsqr';
-import { GetQrId } from '../../Utils/Helpers/GetQrId/GetQrId';
-import { FetchLinkPetQr } from '../../Utils/Fetch/FetchLinkPetQr/FetchLinkPet';
+import { getQrId } from '../../Utils/Helpers/GetQrId/getQrId';
 //importing screens
 import { WelcomeScreen } from '../../Components/ScannerScreens/WelcomeScreen';
 import { PermisionsDeniedScreens } from '../../Components/ScannerScreens/PermisionsDeniedScreen';
 import { ScanningScreen } from '../../Components/ScannerScreens/ScanningScreen';
 import { SuccessScreen } from '../../Components/ScannerScreens/SuccessScreen';
 import { useFetchLinkPet } from '../../Hooks/useFetchLinkPet/useFetchLinkPet';
+import { LogIn } from 'lucide-react';
 
 export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scannedResult, setScannedResult] = useState(null);
   const [scanning, setScanning] = useState(false);
-  const [petLinked, setPetLinked] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
 
   const [renderCheckVideoFrame, setRenderCheckVideoFrame] = useState(false);
   const {pet_id} = useParams();
+  const {linkPet, data, pet, hasPet, isLoading, error} = useFetchLinkPet(scannedResult ? getQrId(scannedResult) : null, pet_id);
 
   // Process QR code function defined early with useCallback
   const processQRCode = useCallback((canvas, ctx) => {
@@ -183,28 +183,15 @@ export const Scanner = () => {
   //access to the scanned result
   useEffect(()=> {
     if (scannedResult) {
-      console.log(scannedResult);
-      
-      const objectQr ={
-        qrId: GetQrId(scannedResult),
-        petId: pet_id
-      }
-
-      //Usamos el hook personalizado para hacer la peticion
-      useFetchLinkPet(objectQr).then((result)=> {
-        if (!result.hasPet) {
-          console.log('primera vez');
-        } else  {
-          console.log('ya linkeado');
-          
-        }
-        
-      })
-      
-      
-      
+      linkPet();
     }
-  }, [scannedResult, setScannedResult])
+    
+  }, [scannedResult])
+
+  useEffect(()=> {
+    console.log(hasPet);
+    
+  }, [hasPet])
   
 
   return (
@@ -228,7 +215,7 @@ export const Scanner = () => {
         />
         
         {/* Welcome Screen */}
-        {!scanning && !scannedResult && (
+        {!scanning && !data && (
           <WelcomeScreen startScanning={startScanning}/>
         )}
         
@@ -242,9 +229,14 @@ export const Scanner = () => {
           <ScanningScreen stopScanning={stopScanning}/>
         )}
         
-        {/* Success Screen */}
-        {petLinked && (
-          <SuccessScreen scannedResult={scannedResult} handleScanAgain={handleScanAgain} />
+        {/* Successfully pet created screen */}
+        {hasPet === 'first' && (
+          <SuccessScreen handleScanAgain={handleScanAgain} />
+        )}
+
+        {/* Pet already linked Screen */}
+        {hasPet === 'linked' && (
+          <SuccessScreen handleScanAgain={handleScanAgain} />
         )}
         
         <canvas ref={canvasRef} className="hidden" />
