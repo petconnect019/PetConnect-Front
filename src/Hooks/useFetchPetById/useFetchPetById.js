@@ -7,7 +7,7 @@ export const useFetchPetById = () => {
     isLoading: false,
     error: null,
     isSuccess: false,
-    pet: null,
+    petResult: null,
   });
 
   const pets = usePet();
@@ -25,7 +25,7 @@ export const useFetchPetById = () => {
           ...prev,
           isSuccess: true,
           isLoading: false,
-          pet: petData.pet,
+          petResult: petData.pet,
         }));
         //add the pet locally
         addPet(petData.pet);
