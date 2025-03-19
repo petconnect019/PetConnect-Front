@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Position from '../../assets/posicionamiento-Step-user.png';
 import ImgFrontal from '../../assets/ImgStepPet.png';
@@ -8,60 +8,38 @@ import { InputField } from "../../Components/InputField/InputField";
 import { useForm } from "react-hook-form";
 import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep";
 import { PetTypeSelector } from "../../Components/PetSelector/PetTypeSelector";
-import { FetchAddPet } from "../../Utils/Fetch/FetchAddPet/FetchAddPet";
-import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { ButtonSecondary } from "../../Components/Buttons/ButtonSecondary";
-import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
+import  {useFetchAddPet}  from "../../Hooks/useFetchAddPet/useFetchAddPet";
+
+
 
 export const StepPet = () => {
     const navigate = useNavigate();
-     const { register, handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm();
     const [selectedPet, setSelectedPet] = useState(null);
+    const [petData, setPetData] = useState({ name: null, species: null });
+    const { fetchNewPet, pet, isLoading, error } = useFetchAddPet();
 
    const handleBack = () =>{
     navigate('/step-user')
    }
 
+   const onSubmit = (formData) => {
+        if (!selectedPet) return;
+        setPetData({ name: formData.name, species: selectedPet });
+    };
 
-   const onSubmitForm = async (dataForm) => {
-       const formDataPet = new FormData();
-       formDataPet.append("name", dataForm.name);
-       formDataPet.append("species", selectedPet);
-    
-       console.log("Datos que se envían al backend:", Object.fromEntries(formDataPet));
-
-       let token = sessionStorage.getItem("accessToken");
-
-
-       if (!token) {
-        console.error("❌ No hay token disponible. No se puede hacer la petición.");
-        return;
+    useEffect(() => {
+        if (petData.name && petData.species) {
+            fetchNewPet(petData);
         }
+    }, [petData]);
 
-        console.log("✅ Token antes de enviar petición:", token);
-
-       if (isTokenExpired(token)) {
-         try {
-           await FetchRefreshToken();
-           token = sessionStorage.getItem("accessToken");
-         } catch (error) {
-           console.log(error);
-           return;
-         }
-       }
-   
-       try {
-         const response = await FetchAddPet(formDataPet, token);
-         if (response.ok) {
-           console.log(response);
-           const pet_id = response.pet?.id;
-           navigate(`/step-tag/${pet_id}`);
-         }
-       } catch (error) {
-         console.error("Error al registrar mascota:", error);
-       }
-     };
-   
+    useEffect(() => {
+        if (pet) {
+            navigate(`/step-tag/${pet._id}`);
+        }
+    }, [pet, navigate]);   
 
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">
@@ -70,7 +48,7 @@ export const StepPet = () => {
                         <h2 className="text-2xl font-bold mb-2 text-center">Nombra tu mascota 🐾</h2>
                         <img className="mx-auto w-auto h-60" src={ImgFrontal} alt="Pet step" />
         
-                        <form onSubmit={handleSubmit(onSubmitForm)} >
+                        <form onSubmit={handleSubmit(onSubmit)} >
                             <div className="flex flex-col gap-2">
         
                                     <InputField
