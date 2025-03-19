@@ -10,7 +10,7 @@ export const FetchAddPet = async (petData, token)=> {
             body: JSON.stringify(petData)
         });
         const result = await response.json();
-        
+        console.log("Respuesta del servidor:", result);
 
         if (!response.ok) {
             return {

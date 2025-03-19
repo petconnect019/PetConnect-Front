@@ -1,11 +1,19 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import Position from "../../assets/posicionamiento-Step-Qr.png"
-import BackButton from "../../assets/BackButton.png"
 import ImgQR from "../../assets/QR.png"
 import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep"
 
+
+
 export const StepTag = () => {
     const navigate = useNavigate();
+    const {pet_id} = useParams();
+
+    const handleBack = () => {
+        navigate('/step-user');
+    }
+
+   
 
 
     return(
@@ -19,7 +27,7 @@ export const StepTag = () => {
                 </div>
                 
                 <div className="flex flex-col space-y-4">
-                    <button onClick={(()=>navigate('/scanner'))} className="w-full bg-orange-400 text-white p-3 rounded-lg hover:bg-blue-600 transition">Activar Etiqueta QR</button>
+                    <button onClick={(()=>navigate(`/scanner/${pet_id}`))} className="w-full bg-orange-400 text-white p-3 rounded-lg hover:bg-blue-600 transition">Activar Etiqueta QR</button>
                     <button onClick={(()=>navigate('/ecommerce'))} className="w-full bg-gray-100 text-orange-400 p-3 rounded-lg hover:bg-gray-400 transition">No cuento con una etiqueta QR</button>
                     <button onClick={(()=>navigate('/home'))} className="w-full  text-orange-400 p-3 rounded-lg hover:bg-gray-400 transition">Activar después</button>
                 </div>
