@@ -1,0 +1,33 @@
+ export const dogBreeds = [
+    "Criollo",
+    "Labrador Retriever",
+    "Bulldog",
+    "Golden Retriever",
+    "Poodle",
+    "Husky",
+    "Beagle",
+    "Dachshund",
+    "Boxer",
+    "Chihuahua",
+    "Doberman",
+    "Rottweiler",
+    "Shih Tzu",
+    "Schnauzer",
+    "Pastor Alemán",
+    "Maltés",
+    "Cocker Spaniel",
+    "Pitbull Terrier",
+    "Yorkshire Terrier",
+    "Pug",
+    "Otro",
+  ];
+
+export const catBreeds = [
+    "Criollo",
+    "Persa",
+    "Siamés",
+    "Maine Coon",
+    "Bengala",
+    "Angora",
+    "Otro",
+  ];

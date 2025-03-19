@@ -6,7 +6,9 @@ export const PetProvider = ({ children }) => {
     const [petList, setPetList] = useState([]);
 
     const addPet = (newPet) => {
-        setPetList((prevPets)=> [...prevPets, newPet]);
+        if (!findPet(newPet._id)) {
+            setPetList((prevPets)=> [...prevPets, newPet]);
+        }
     };
 
     const removePet = (petId) => {
