@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { NavButton } from "../../Components/NavButton/NavButton";
 import { ItemHighlighted } from "../../Components/ItemHighlighted/ItemHighlighted";
 import SortIcon from "../../assets/sort.png";
-import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 import { usePet } from "../../Contexts/PetContext/PetContext";
 import { useFetchPets } from "../../Hooks/useFetchPets/useFetchPets";
 import { useFetchScans } from "../../Hooks/useFetchScans/useFetchScans";
@@ -12,17 +11,12 @@ import { useFetchScans } from "../../Hooks/useFetchScans/useFetchScans";
 export const CheckProtection = () => {
   const pets = usePet();
   const navigate = useNavigate();
-  const isFetched = useIsFetchedPets();
 
   const { petList } = pets ?? {};
-  const { isFetchedPets } = isFetched ?? {};
 
   //estados del componente
   const [protectionRender, setProtectionRender] = useState("tag");
   const [selectedPet, setSelectedPet] = useState(petList?.[0] || null);
-
-  //revisamos si las mascotas ya estan traidas o no
-  isFetchedPets ? useFetchPets(false) : useFetchPets(true);
   
   //manejo del boton back
   const handleNavButton = () => {

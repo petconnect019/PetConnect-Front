@@ -1,12 +1,13 @@
-export const FetchAddPet = async (formDataPet, token)=> {
+export const FetchAddPet = async (petData, token)=> {
     try {
         let response = await fetch('http://localhost:5000/api/pets', {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 Authorization : `Bearer ${token}`
             },
             credentials: 'include',
-            body: formDataPet
+            body: JSON.stringify(petData)
         });
         const result = await response.json();
         
