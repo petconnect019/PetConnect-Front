@@ -1,14 +1,17 @@
+import { AiFillHome, AiFillMessage, AiFillSetting } from "react-icons/ai"
+
+
 export const FooterNav = ({ navigate }) => {
     return (
-        <footer className="fixed bottom-0 w-full bg-white p-4 flex justify-around shadow-md border-t">
-            <button className="text-blue-500 flex flex-col items-center">
-                🏠<span className="text-xs">Home</span>
+        <footer className="bg-white flex justify-around fixed bottom-0 w-full mt-4 mb-10">
+            <button>
+                <AiFillHome className="text-2xl text-brand" />
             </button>
-            <button onClick={() => navigate("/messages")} className="text-gray-500 flex flex-col items-center hover:text-blue-500">
-                💬<span className="text-xs">Mensajes</span>
+            <button onClick={() => navigate("/messages")}>
+                <AiFillMessage className="text-2xl text." />
             </button>
-            <button onClick={() => navigate("/settings")} className="text-gray-500 flex flex-col items-center hover:text-blue-500">
-                ⚙️<span className="text-xs">Configuración</span>
+            <button onClick={() => navigate("/settings")}>
+                <AiFillSetting className="text-2xl" />
             </button>
         </footer>
     );
