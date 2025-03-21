@@ -1,8 +1,11 @@
 import addTag from '../../assets/addTag.png'
+import { useNavigate } from 'react-router-dom';
 
-export const AddTagContainer = () => {
+export const AddTagContainer = ({petId}) => {
+const navigate = useNavigate();
+
     return (
-      <div className="flex items-center justify-center bg-[#F8FAFC] border-none rounded-lg shadow-lg">
+      <div onClick={()=>navigate(`/scanner/${petId}`)} className="flex items-center justify-center bg-[#F8FAFC] border-none rounded-lg shadow-lg">
         <div className="flex items-center justify-center w-full h-full">
           <img 
             src={addTag} 

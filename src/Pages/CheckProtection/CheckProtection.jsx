@@ -94,17 +94,17 @@ export const CheckProtection = () => {
 
             {qrsResult?.[0].petId._id===selectedPet?._id?
             addTagContainer.map((element, index) => {
-              let count = qrsResult?.length; // Count the number of QR elements
+              let count = qrsResult?.length; 
 
               return index < count ? (
                 <ImageTagContainer key={`image-${index}`} />
               ) : (
-                <AddTagContainer key={`add-${index}`} />
+                <AddTagContainer key={`add-${index} `} petId={selectedPet?._id} />
               );
             })
             :
             addTagContainer.map((el, index)=> (
-              <AddTagContainer key={`image-${index}`} />
+              <AddTagContainer key={`image-${index}`}  petId={selectedPet?._id} />
             ))
           }
           </div>
