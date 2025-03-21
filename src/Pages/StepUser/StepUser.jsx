@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import Position from '../../assets/posicionamiento-Step-user.png';
+import Position from '../../assets/posicionamiento-Step.png';
 import DefaultProfile from '../../assets/DefaultProfile.png';
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,7 +26,7 @@ export const StepUser = () => {
 
 
     const handleBack = () => {
-        navigate('/step-pet')
+        navigate('/register')
     }
 
     const handleImageChange = (event) => {
@@ -44,7 +44,7 @@ export const StepUser = () => {
           formDataUser.append('name', dataForm.name);
           formDataUser.append('phone', phone);
           formDataUser.append('gender', dataForm.gender);
-          formDataUser.append('profile_picture', filePfp);
+        
       
           console.log("Datos enviados:", Object.fromEntries(formDataUser));
           
@@ -60,37 +60,43 @@ export const StepUser = () => {
             }
         }
 
-      
-          try {
-              const response = await FetchUpdatePhotoU(formDataUser, token); 
-
-              if(response.ok){
-                try {
-                    const response = await FetchUpdateUser(formDataUser, token); 
-                    if(response.ok){
-                        console.log("Registro exitoso del Usuario" , response);
-                        
-                    }
-                  
-                } catch (error) {
-                  console.error("Error al registrar Usuario:", error);
-                  
-                }
+        try {
+          const responseUser = await FetchUpdateUser(formDataUser, token); 
+  
+          if (responseUser.ok) {
+              console.log("Registro exitoso del Usuario:", responseUser);
+  
+              if (filePfp) {
+                  const formDataPhoto = new FormData();
+                  formDataPhoto.append("profile_picture", filePfp);
+  
+                  try {
+                      const responsePhoto = await FetchUpdatePhotoU(formDataPhoto, token);
+                      if (responsePhoto.ok) {
+                          console.log("Foto de perfil actualizada:", responsePhoto);
+                      } else {
+                          console.error("No se pudo actualizar la foto.");
+                      }
+                  } catch (error) {
+                      console.error("Error al subir la foto:", error);
+                  }
               }
-            
-          } catch (error) {
-            console.error("Error al Registrar la Foto del Usuario:", error);
-            
+  
+              navigate("/step-pet");
+          } else {
+              console.error("Error al registrar usuario.");
           }
-    };
+      } catch (error) {
+          console.error("Error al registrar Usuario:", error);
+      }
+  };
 
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">
             <div className="bg-white p-6 rounded-2xl  max-w-sm ">
-                <NavButtonStep  onClick={handleBack} img={Position} text={'2/3'} />
-                <div className="mb-4 p-2">
-                        <h2 className="text-2xl font-bold mb-2 ">¡Pasos finales!</h2>
-                        <p className=" text-gray-600 mb-4">¡Ya casi llegamos! Completa tus datos personales para crear un perfil y comenzar tu viaje hacia una amistad peluda.</p>
+                <NavButtonStep  onClick={handleBack} img={Position} text={'1/3'} />
+                <div className="mb-4 p-2 text-center">
+                        <h2 className="text-2xl font-bold mb-2 ">¡Creando tu Perfil!</h2>
                     </div>
 
                 <div className="flex justify-center mb-6">
@@ -141,7 +147,7 @@ export const StepUser = () => {
                             <option value="otro">Otro</option>
                         </select>
                     </div>
-                    <ButtonPrimary path='/step-tag' text='Continuar' />
+                    <ButtonPrimary  text='Continuar' />
                 </form>
             </div>
         </div>

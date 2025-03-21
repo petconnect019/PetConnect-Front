@@ -1,34 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Position from '../../assets/posicionamiento-Step.png';
+import Position from '../../assets/posicionamiento-Step-user.png';
 import ImgFrontal from '../../assets/ImgStepPet.png';
-import DogButton from '../../assets/DogButton.png';
-import CatButton from '../../assets/CatButton.png';
 import Paper from '../../assets/Paper.png';
 import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary";
 import { InputField } from "../../Components/InputField/InputField";
 import { useForm } from "react-hook-form";
 import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep";
-NavButtonStep
+import { PetTypeSelector } from "../../Components/PetSelector/PetTypeSelector";
+import { ButtonSecondary } from "../../Components/Buttons/ButtonSecondary";
+import  {useFetchAddPet}  from "../../Hooks/useFetchAddPet/useFetchAddPet";
+
 
 
 export const StepPet = () => {
     const navigate = useNavigate();
-     const { register, handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm();
     const [selectedPet, setSelectedPet] = useState(null);
+    const [petData, setPetData] = useState({ name: null, species: null });
+    const { fetchNewPet, pet, isLoading, error } = useFetchAddPet();
 
    const handleBack = () =>{
-    navigate('/login')
+    navigate('/step-user')
    }
+
+   const onSubmit = (formData) => {
+        if (!selectedPet) return;
+        setPetData({ name: formData.name, species: selectedPet });
+    };
+
+    useEffect(() => {
+        if (petData.name && petData.species) {
+            fetchNewPet(petData);
+        }
+    }, [petData]);
+
+    useEffect(() => {
+        if (pet) {
+            navigate(`/step-tag/${pet._id}`);
+        }
+    }, [pet, navigate]);   
 
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">
                     <div className="bg-white p-6 rounded-2xl  max-w-sm ">
-                        <NavButtonStep  onClick={handleBack} img={Position} text={'1/3'} />
+                        <NavButtonStep  onClick={handleBack} img={Position} text={'2/3'} />
                         <h2 className="text-2xl font-bold mb-2 text-center">Nombra tu mascota 🐾</h2>
                         <img className="mx-auto w-auto h-60" src={ImgFrontal} alt="Pet step" />
         
-                        <form onSubmit={handleSubmit} >
+                        <form onSubmit={handleSubmit(onSubmit)} >
                             <div className="flex flex-col gap-2">
         
                                     <InputField
@@ -40,33 +60,10 @@ export const StepPet = () => {
                                         validation={{ required: "El nombre es obligatorio" }}
                                         />
         
-                                <label className="text-[1.4rem] mb-8">¿Cuál es tu tipo de Mascota?</label>
-                                <div className="flex justify-around gap-2">
-                                    <button
-                                        type="button"
-                                        className={`flex flex-col items-center p-2 h-[10rem] w-[10rem] rounded-lg border ${
-                                            selectedPet === "dog" ? "border-orange-400" : "border-gray-300"
-                                        }`}
-                                        onClick={() => setSelectedPet("dog")}
-                                    >
-                                        <img className="w-27 h-[7rem]" src={DogButton} alt="Dog" />
-                                        <p className="text-center mt-1 font-semibold text-[1.4rem]">Perro</p>
-                                    </button>
-        
-                                    <button
-                                        type="button"
-                                        className={`flex flex-col items-center p-2 h-[10rem] w-[10rem] rounded-lg border ${
-                                            selectedPet === "cat" ? "border-orange-400" : "border-gray-300"
-                                        }`}
-                                        onClick={() => setSelectedPet("cat")}
-                                    >
-                                        <img className="w-27 h-[7rem]" src={CatButton} alt="Cat" />
-                                        <p className="text-center mt-1 font-semibold text-[1.4rem]">Gato</p>
-                                    </button>
-                                    
-                                </div>
+                                    <PetTypeSelector selectedPet={selectedPet} setSelectedPet={setSelectedPet} />           
                             </div>
-                            <ButtonPrimary path={`/step/`} text='Continuar' />
+                            <ButtonPrimary  text='Continuar' />
+                            <ButtonSecondary path='/home' text='Saltar' />
                         </form>
                     </div>
                 </div>
