@@ -42,7 +42,7 @@ export const Login = () => {
       if (!response.ok) {
         throw new Error(response.message || "Error al iniciar sesión");
       }
-      login(response.accessToken);
+      login(response.accessToken, response.user);
       if (response.hasPets) {
         changeHasPetsUser(true);
       }

@@ -49,6 +49,11 @@ export const CheckProtection = () => {
     { id: 5 },
     { id: 6 },
   ];
+
+  const count = qrsResult?.length || 0;
+  const hasQrs = count > 0;
+  const isSelectedPet = qrsResult?.[0]?.petId?._id === selectedPet?._id;
+
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg">
       <div className="flex items-center justify-between mb-4">
@@ -92,20 +97,18 @@ export const CheckProtection = () => {
         <div className="w-full max-w-lg mx-auto p-4">
           <div className="grid grid-cols-2 grid-rows-6 gap-10">
 
-            {qrsResult?.[0].petId._id===selectedPet?._id?
-            addTagContainer.map((element, index) => {
-              let count = qrsResult?.length; 
-
-              return index < count ? (
-                <ImageTagContainer key={`image-${index}`} />
-              ) : (
-                <AddTagContainer key={`add-${index} `} petId={selectedPet?._id} />
-              );
-            })
-            :
-            addTagContainer.map((el, index)=> (
-              <AddTagContainer key={`image-${index}`}  petId={selectedPet?._id} />
-            ))
+            {
+              addTagContainer.map((element, index) => {
+                if (hasQrs && isSelectedPet) {
+                  return index < count ? (
+                    <ImageTagContainer key={`image-${index}`} />
+                  ) : (
+                    <AddTagContainer key={`add-${index}`} petId={selectedPet?._id} />
+                  );
+                }
+              
+                return <AddTagContainer key={`add-${index}`} petId={selectedPet?._id} />;
+              })
           }
           </div>
         </div>

@@ -44,7 +44,9 @@ export const GoogleSignUp = ({ navigate, content }) => {
         }
         
         if (event.data.accessToken) {
-          login(event.data.accessToken);
+          console.log(event.data);
+          
+          login(event.data.accessToken, event.data.user);
           
           const hasPets = Boolean(event.data.hasPets);
           if (hasPets) {

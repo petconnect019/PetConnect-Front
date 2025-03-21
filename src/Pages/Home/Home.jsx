@@ -20,7 +20,6 @@ export const Home = () => {
   if (!auth)
     return <div className="text-center text-gray-600">Cargando...</div>;
 
-  const { logout } = auth ?? {};
   const { hasPetsUser } = petsValidation;
   const { petList } = petsUser;
 
