@@ -40,11 +40,6 @@ export const CheckProtection = () => {
     }
   }, [petList]);
 
-  useEffect(()=> {
-    console.log(qrsResult?.length, error);
-    
-  }, [qrsResult, error])
-
   //arreglo para medir la cantidad de imagenes de añadir tag renderizar
   const addTagContainer = [
     { id: 1 },
@@ -96,9 +91,10 @@ export const CheckProtection = () => {
       {protectionRender === "tag" && (
         <div className="w-full max-w-lg mx-auto p-4">
           <div className="grid grid-cols-2 grid-rows-6 gap-10">
-            {qrsResult?.length>0 ?
+
+            {qrsResult?.[0].petId._id===selectedPet?._id?
             addTagContainer.map((element, index) => {
-              let count = qrsResult.length; // Count the number of QR elements
+              let count = qrsResult?.length; // Count the number of QR elements
 
               return index < count ? (
                 <ImageTagContainer key={`image-${index}`} />
