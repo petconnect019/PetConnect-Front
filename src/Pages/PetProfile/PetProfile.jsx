@@ -135,6 +135,10 @@ export const PetProfile = () => {
     }
   };
 
+  const handlePublicProfile = () =>{
+    navigate(`/public-pet-profile/${pet_id}`)
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100  text-[1.4rem]">
       <div className="bg-white p-6 rounded-2xl w-screen  ">
@@ -157,7 +161,7 @@ export const PetProfile = () => {
             <p className="text-[0.7rem] text-gray-800 justify-center p-2 text-star">
               Verifica que el perfil público de tu mascota esté actualizado para facilitar una reunión rápida y sin contratiempos
             </p>
-            <button className="w-full max-w-xs h-[2rem] bg-brand text-white  rounded-full  text-lg shadow-md">
+            <button onClick={handlePublicProfile} className="w-full max-w-xs h-[2rem] bg-brand text-white  rounded-full  text-lg shadow-md">
               <p className="text-[0.8rem]">Ver perfil público</p>
             </button>
           </div>
