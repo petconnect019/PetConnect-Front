@@ -7,7 +7,9 @@ import { WelcomeScreen } from '../../Components/ScannerScreens/WelcomeScreen';
 import { PermisionsDeniedScreens } from '../../Components/ScannerScreens/PermisionsDeniedScreen';
 import { ScanningScreen } from '../../Components/ScannerScreens/ScanningScreen';
 import { SuccessScreen } from '../../Components/ScannerScreens/SuccessScreen';
+import { LinkedPetScreen } from '../../Components/ScannerScreens/LinkedPetScreen';
 import { useFetchLinkPet } from '../../Hooks/useFetchLinkPet/useFetchLinkPet';
+import { ErrorLinkScreen } from '../../Components/ScannerScreens/ErrorLinkScreen';
 
 export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -214,7 +216,7 @@ export const Scanner = () => {
         />
         
         {/* Welcome Screen */}
-        {!scanning && !data && (
+        {!scanning && !scannedResult && !data && !hasPet && (
           <WelcomeScreen startScanning={startScanning}/>
         )}
         
@@ -229,13 +231,18 @@ export const Scanner = () => {
         )}
         
         {/* Successfully pet created screen */}
-        {hasPet === 'first' && (
+        {hasPet === 'first' && !scanning &&  (
           <SuccessScreen handleScanAgain={handleScanAgain} />
         )}
 
         {/* Pet already linked Screen */}
-        {hasPet === 'linked' && (
-          <SuccessScreen handleScanAgain={handleScanAgain} />
+        {hasPet === 'linked' && !scanning && (
+          <LinkedPetScreen handleScanAgain={handleScanAgain} petId={pet?._id} />
+        )}
+
+        {/* Error scanning qr*/}
+        {error && !scanning && (
+          <ErrorLinkScreen error={error} handleScanAgain={handleScanAgain} />
         )}
         
         <canvas ref={canvasRef} className="hidden" />

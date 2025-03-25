@@ -125,7 +125,7 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><UserProfileConfig /></ProtectRoute>,
   },
   {
-    path: '/public-pet-profile',
+    path: '/public-pet-profile/:pet_id',
     element: <ProtectRoute><PublicPetProfile /></ProtectRoute>,
   },
   {
