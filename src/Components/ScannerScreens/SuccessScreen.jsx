@@ -1,8 +1,8 @@
 import { PartyPopper } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export const SuccessScreen = ({pet_id, handleScanAgain }) => {
-const navigate = useNavigate();
+export const SuccessScreen = ({ handleScanAgain }) => {
+  const navigate = useNavigate();
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-green-50 to-white">
@@ -19,19 +19,16 @@ const navigate = useNavigate();
       </div>
       <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full max-w-xs">
         <button
-          onClick={() => {
-            // Navigate to pet profile
-            navigate(`/pet-profile/${pet_id}`);            
-          }}
-          className="px-4 py-3 bg-[#EC9126] text-white font-semibold rounded-full hover:bg-[#d98421] focus:outline-none focus:ring-2 focus:ring-[#EC9126] focus:ring-offset-2 shadow-lg sm:flex-1"
-        >
-          Ver Mascota
-        </button>
-        <button
           onClick={handleScanAgain}
           className="px-4 py-3 bg-gray-200 text-gray-800 font-semibold rounded-full hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 shadow sm:flex-1"
         >
           Vincular Otra
+        </button>
+        <button
+          onClick={() => navigate(-1)}
+          className="px-4 py-3 bg-red-400 text-white font-semibold rounded-full hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-redbg-red-400 focus:ring-offset-2 shadow sm:flex-1"
+        >
+          Volver
         </button>
       </div>
     </div>
