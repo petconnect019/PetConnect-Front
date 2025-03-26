@@ -14,12 +14,19 @@ export const PetProvider = ({ children }) => {
     const removePet = (petId) => {
         setPetList(petList.filter((pet) => pet._id !== petId));
     };
+    const updatePet = (updatedPet) => {
+        setPetList((prevPets) =>
+            prevPets.map((pet) =>
+                pet._id === updatedPet._id ? { ...pet, ...updatedPet } : pet
+            )
+        );
+    };
     const findPet = (petId) => {
         return petList.find((pet) => pet._id === petId);
     }
 
     return (
-        <PetContext.Provider value={{ petList, addPet, removePet, findPet }}>
+        <PetContext.Provider value={{ petList, addPet, removePet, findPet, updatePet }}>
             {children}
         </PetContext.Provider>
     );
