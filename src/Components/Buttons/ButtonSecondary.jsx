@@ -5,7 +5,7 @@ export const ButtonSecondary = ({path, text}) => {
   return (
     <button
       onClick={() => navigate(path)} 
-      className="w-full max-w-xs bg-white text-brand text-lg py-3 rounded-full mt-8 font-medium inset-shadow-sm">
+      className="w-full max-w-md bg-white text-brand text-lg py-3 rounded-full mt-8 font-medium inset-shadow-sm">
         {text}
     </button>
   )
