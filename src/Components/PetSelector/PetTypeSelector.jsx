@@ -4,7 +4,7 @@ import CatButton from '../../assets/CatButton.png';
 export const PetTypeSelector = ({ selectedPet, setSelectedPet }) => {
     return (
         <div className="flex flex-col">
-            <label className="text-[1.4rem] mb-4">¿Cuál es tu tipo de Mascota?</label>
+            <label className="text-[1.2rem] mb-4">¿Cuál es tu tipo de Mascota?</label>
             <div className="flex justify-around gap-2">
                 <button
                     type="button"
