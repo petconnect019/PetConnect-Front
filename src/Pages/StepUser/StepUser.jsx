@@ -142,9 +142,9 @@ export const StepUser = () => {
                         <label>Género</label>
                         <select {...register("gender")} className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand">
                             <option value="">Selecciona tu género</option>
-                            <option value="hombre">Hombre</option>
-                            <option value="mujer">Mujer</option>
-                            <option value="otro">Otro</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
                         </select>
                     </div>
                     <ButtonPrimary  text='Continuar' />

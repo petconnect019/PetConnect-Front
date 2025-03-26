@@ -11,7 +11,7 @@ export const InputField = ({
   return (
     <div className="flex flex-col gap-2">
       {label && (
-        <label htmlFor={name} className="font-semibold">
+        <label htmlFor={name} className="font-semibold text-[1.2rem]">
           {label}
         </label>
       )}
