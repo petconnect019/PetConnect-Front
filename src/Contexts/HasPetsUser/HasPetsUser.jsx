@@ -12,9 +12,9 @@ export const HasPetsUserProvider = ({ children }) => {
         }
     }, []);
 
-    const changeHasPetsUser = () => {
-        setHasPetsUser(true);
-        sessionStorage.setItem("hasPets", true);
+    const changeHasPetsUser = (bool) => {
+        setHasPetsUser(bool);
+        sessionStorage.setItem("hasPets", bool);
     };
 
     return (
