@@ -76,7 +76,7 @@ export const GoogleSignUp = ({ navigate, content }) => {
     <button
       type="button"
       onClick={handleGoogleSignUp}
-      className="flex items-center justify-between w-full max-w-xs bg-white text-black border-solid border-2 border-gray-100 px-5 py-2.5 rounded-full mt-8 text-lg font-medium"
+      className="block mx-auto flex items-center justify-between w-full max-w-md bg-white text-black border-solid border-2 border-gray-100 px-5 py-2.5 rounded-full mt-8 text-lg font-medium"
       aria-label="Registrarse con Google"
     >
       <img
