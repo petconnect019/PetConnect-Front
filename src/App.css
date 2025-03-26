@@ -2,7 +2,7 @@
 
 @theme {
      --breakpoint-*: initial;
-    --breakpoint-xs: 375px
+    --breakpoint-xs: 375px;
     --breakpoint-sm: 576px;
     --breakpoint-md: 768px;
     --breakpoint-lg: 992px;

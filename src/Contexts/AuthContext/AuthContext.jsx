@@ -25,8 +25,9 @@ export const AuthProvider = ({ children }) => {
     }
   }, [fetchLogout])
 
-  const login = (token) => {
+  const login = (token, userData) => {
     sessionStorage.setItem("accessToken", token);
+    sessionStorage.setItem("userData", JSON.stringify(userData));
     setIsAuthenticated(true);
   };
 
