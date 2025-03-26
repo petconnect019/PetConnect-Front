@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { fetchLogin } from "../../Utils/Fetch/FetchLogin/FetchLogin.jsx";
 import { Link } from "react-router-dom";
 import { useHasPetsUser } from "../../Contexts/HasPetsUser/HasPetsUser.jsx";
+import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary.jsx";
+
 
 export const Login = () => {
   const auth = useAuth();
@@ -42,7 +44,7 @@ export const Login = () => {
       if (!response.ok) {
         throw new Error(response.message || "Error al iniciar sesión");
       }
-      login(response.accessToken);
+      login(response.accessToken, response.user);
       if (response.hasPets) {
         changeHasPetsUser(true);
       }
@@ -58,24 +60,24 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
+    <div className="bg-white flex items-center justify-center min-h-screen sm:p-4 md:bg-gray-100">
+      <div className="bg-white w-screen p-6 rounded-4xl md:shadow-lg max-w-md">
+        <h1 className="text-3xl font-bold text-gray-900 mt-15 mb-4">
           Bienvenido de nuevo!👋
         </h1>
-        <p className="text-center text-gray-600 mb-6">
+        <p className="text-gray-500 mb-6">
           Continuemos el viaje con tus amigos peludos.
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block font-semibold text-gray-700">
               Email
             </label>
             <input
               type="email"
               id="email"
-              className="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="bg-gray-100 mt-1 p-3 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               {...register("email", {
                 required: "Este campo es obligatorio",
                 pattern: {
@@ -88,13 +90,13 @@ export const Login = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="block font-semibold text-gray-700">
               Contraseña
             </label>
             <input
               type="password"
               id="password"
-              className="mt-1 p-3 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="bg-gray-100 mt-1 p-3 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               {...register("password", {
                 required: "Este campo es obligatorio",
                 minLength: {
@@ -108,17 +110,25 @@ export const Login = () => {
               })}
             />
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
-            <Link to="/recover-email" className="text-blue-600 text-sm block mt-2 hover:underline">
+
+            <div className="flex items-center space-x-2 my-10">
+            <input type="checkbox" className="w-5.5 h-5.5 appearance-none border-2 border-brand rounded-md checked:bg-brand focus:ring-2 focus:ring-brand mr-3" />
+            <span className="flex">
+              Recuerdame 
+            <Link to="/recover-email" className="text-brand block hover:underline ml-5">
               ¿Has olvidado tu contraseña?
             </Link>
+            </span>
+            </div>
           </div>
 
-          <button
+
+          {/* <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-          >
+            >
             Iniciar sesión
-          </button>
+            </button> */}
 
           <div className="mt-6 flex items-center justify-center">
             <div className="w-full border-t border-gray-300"></div>
@@ -126,14 +136,18 @@ export const Login = () => {
             <div className="w-full border-t border-gray-300"></div>
           </div>
 
-          <GoogleSignUp navigate={navigate} content={"Inicia sesión con Google"} />
+          <div className="space-y-20">
+            <GoogleSignUp navigate={navigate} content={"Inicia sesión con Google"} />
+
+            <ButtonPrimary text={'Iniciar Sesión'}/>
+          </div>
 
           {/* Texto de registro */}
-          <p className="mt-4 text-center text-sm text-gray-600">
+          <p className="mt-10 text-center text-sm text-gray-600">
             ¿Aún no tienes una cuenta?{" "}
             <Link
               to="/register"
-              className="text-blue-600 font-medium hover:underline"
+              className="text-brand font-medium hover:underline"
             >
               Regístrate aquí
             </Link>
