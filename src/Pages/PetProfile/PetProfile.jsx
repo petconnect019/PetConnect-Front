@@ -171,7 +171,7 @@ export const PetProfile = () => {
 
         <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
           <label className="font-semibold text-[1.2rem]">Seguridad de la mascota</label>
-          <div className="relative cursor-pointer p-3 bg-gray-100 rounded-lg flex justify-between items-center text-[1.2rem] hover:bg-gray-100" onClick={() => navigate("/check_protection")}>
+          <div className="relative cursor-pointer p-3 bg-gray-100 rounded-lg flex justify-between items-center text-[1.2rem] hover:bg-gray-100" onClick={() => navigate("/check-protection")}>
             <span className="flex items-center text-gray-500">
               <img className="w-5 h-5" src={QRIcon} alt="QRIcon" /> Codigo QR
             </span>
