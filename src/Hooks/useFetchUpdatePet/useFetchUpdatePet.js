@@ -4,14 +4,19 @@ import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefr
 import { usePet } from "../../Contexts/PetContext/PetContext";
 import { FetchUpdatePet } from "../../Utils/Fetch/FetchUpdatePet/FetchUpdatePet";
 import { FetchUpdatePhotoPet } from "../../Utils/FetchUpdatePhotoPet/FetchUpdatePhotoPet";
+import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 
 
 export const useFetchUpdatePet = () => {
+  const fetched = useIsFetchedPets();
+  const {changeIsFetched} = fetched ?? {};
+
   const [fetchUpdatePetState, setUpdatePetState] = useState({
     isLoading: false,
     error: null,
     isSuccess: false,
-    pet: null,
+    petFetched: null,
+    petPicture: null
   });
 
   const { updatePet } = usePet() || {}; 
@@ -45,6 +50,12 @@ export const useFetchUpdatePet = () => {
         if (!responsePhotoPet.ok) {
           throw new Error(responsePhotoPet.message || "Error al actualizar la foto de la mascota");
         }
+        // actualizamos el estado de la foto de la mascota
+        setUpdatePetState((prev)=> ({
+          ...prev,
+          petPicture: responsePhotoPet.profile_picture
+        }))
+        
       }
 
        // Actualizar el estado global
@@ -52,9 +63,10 @@ export const useFetchUpdatePet = () => {
         ...prev,
         isSuccess: true,
         isLoading: false,
-        pet: updatedPet,
+        petFetched: updatedPet,
       }));
-      updatePet?.(updatedPet);
+
+      changeIsFetched(false);
 
       return { success: true };
       
