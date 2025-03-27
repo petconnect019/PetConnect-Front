@@ -10,6 +10,10 @@ import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary.jsx";
 
 
 export const Login = () => {
+  const navigate = useNavigate();
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  
+  //instancias de contextos
   const auth = useAuth();
   const pets = useHasPetsUser();
 
@@ -18,25 +22,31 @@ export const Login = () => {
     return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
   }
 
+  // desestrucuring de los contextos
   const { isAuthenticated, login } = auth ?? {};
-  const { changeHasPetsUser } = pets; 
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const navigate = useNavigate();
+  const { changeHasPetsUser } = pets ?? {}; 
 
   useEffect(() => {
-    // Verificar si el usuario está autenticado y tiene mascotas
+    // Verificar si el usuario está autenticado
     if (isAuthenticated) {
       const userData = sessionStorage.getItem("accessToken");
       const hasPets = sessionStorage.getItem("hasPets");
-      //si esta autenticado y tiene mascotas se redirige a la pagina home y se cambia el estado de hasPets a true
+      const user = JSON.parse(sessionStorage.getItem("userData"));
+      
       if (userData) {
-        navigate('/home');
+        // Check if it's a new user before redirecting
+        if (user && user.isNewUser) {
+          navigate('/step-pet');
+        } else {
+          navigate('/home');
+        }
       }
+      
       if (hasPets) {
         changeHasPetsUser();
       }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, changeHasPetsUser]);
 
   const onSubmit = async (userData) => {
     try {

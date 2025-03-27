@@ -51,6 +51,7 @@ export const GoogleSignUp = ({ navigate, content }) => {
           const hasPets = Boolean(event.data.hasPets);
           if (hasPets) {
             changeHasPetsUser(true);
+            
           }
           
           navigate(event.data.isNewUser ? '/step-pet' : '/home');
