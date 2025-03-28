@@ -6,11 +6,14 @@ import { usePet } from "../../Contexts/PetContext/PetContext";
 import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 
 export const useFetchPets = (hasPetsUser) => {
-    const { addPet, findPet } = usePet();
+    const { addPet, findPet, updatePet } = usePet();
     const { isFetchedPets, changeIsFetched } = useIsFetchedPets();
     useEffect(() => {
+        console.log(isFetchedPets);
+        
         if (!hasPetsUser || isFetchedPets) return;
-
+        console.log("entra");
+        
         const fetchData = async () => {
             let token = sessionStorage.getItem('accessToken');
             if (isTokenExpired(token)) {
@@ -28,6 +31,8 @@ export const useFetchPets = (hasPetsUser) => {
                 data.pets.forEach(pet => {
                     if (!findPet(pet._id)) {
                         addPet(pet);
+                    } else {
+                        updatePet(pet)
                     }
                 });
                 changeIsFetched(true);

@@ -5,33 +5,21 @@ const AuthContext = createContext({ isAuthenticated: false, login: () => {} });
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!sessionStorage.getItem("accessToken"));
-  const [fetchLogout, setFetchLogout] = useState(false);
 
   useEffect(() => {
     // Verificar token en sessionStorage al iniciar
     setIsAuthenticated(!!sessionStorage.getItem("accessToken"));
   }, []);
 
-  useEffect(()=> {
-    // Realizar logout si se activa fetchLogout
-    if (fetchLogout) {
-      FetchLogout().then((response)=> {
-        if (!response.ok) {
-          console.log(response.message);
-          
-        }
-        setFetchLogout(false);
-      })
-    }
-  }, [fetchLogout])
 
-  const login = (token) => {
+  const login = (token, userData) => {
     sessionStorage.setItem("accessToken", token);
+    userData && sessionStorage.setItem("userData", JSON.stringify(userData));
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    setFetchLogout(true);
+    FetchLogout();
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("hasPets");
     setIsAuthenticated(false);

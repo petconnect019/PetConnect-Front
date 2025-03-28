@@ -3,7 +3,7 @@ import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
 import logo from '../../assets/logoGoogleLight.png';
 
-export const GoogleSignUp = ({ navigate, content }) => {
+export const GoogleSignUp = ({ navigate, content, setUser, setAccesToken, setHasPetsState, setIsnewUserState, setErrorState}) => {
   const auth = useAuth();
   const pets = useHasPetsUser();
 
@@ -38,20 +38,15 @@ export const GoogleSignUp = ({ navigate, content }) => {
         window.removeEventListener('message', messageListener);
         
         if (event.data.error) {
-          alert('Este correo no está registrado. Por favor, regístrate.');
-          navigate('/register');
+          setErrorState('Este correo no está registrado. Por favor, regístrate.');
           return;
         }
         
         if (event.data.accessToken) {
-          login(event.data.accessToken);
-          
-          const hasPets = Boolean(event.data.hasPets);
-          if (hasPets) {
-            changeHasPetsUser(true);
-          }
-          
-          navigate(event.data.isNewUser ? '/step-pet' : '/home');
+          setUser && setUser(event.data.user);
+          setAccesToken && setAccesToken(event.data.accessToken);
+          setHasPetsState && setHasPetsState(!!event.data.hasPets);
+          setIsnewUserState && setIsnewUserState(!!event.data.isNewUser);
         }
       };
       
@@ -74,7 +69,7 @@ export const GoogleSignUp = ({ navigate, content }) => {
     <button
       type="button"
       onClick={handleGoogleSignUp}
-      className="flex items-center justify-between w-full max-w-xs bg-white text-black border-solid border-2 border-gray-100 px-5 py-2.5 rounded-full mt-8 text-lg font-medium"
+      className="block mx-auto flex items-center justify-between w-full max-w-md bg-white text-black border-solid border-2 border-gray-100 px-5 py-2.5 rounded-full mt-8 text-lg font-medium"
       aria-label="Registrarse con Google"
     >
       <img

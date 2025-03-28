@@ -27,6 +27,7 @@ export const StepUser = () => {
     const [city,setCity] = useState([])
     const [department , setDepartment] = useState("")
 
+
     const handleDepartamentoChange = (event) => {
         const deptoSelection = event.target.value;
         setDepartment(deptoSelection);
@@ -38,6 +39,7 @@ export const StepUser = () => {
     const handleBack = () => {
         navigate('/register')
     }
+
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -68,6 +70,7 @@ export const StepUser = () => {
       
           console.log("Datos enviados:", Object.fromEntries(formDataUser));
           
+
           let token = sessionStorage.getItem('accessToken');
 
         if (!token || isTokenExpired(token)) {
@@ -84,7 +87,7 @@ export const StepUser = () => {
           const responseUser = await FetchUpdateUser(formDataUser, token); 
   
           if (responseUser.ok) {
-              console.log("Registro exitoso del Usuario:", responseUser);
+              sessionStorage.setItem("userData", JSON.stringify(responseUser.user))
   
               if (filePfp) {
                   const formDataPhoto = new FormData();
@@ -114,7 +117,7 @@ export const StepUser = () => {
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">
             <div className="bg-white p-6 rounded-2xl  max-w-sm ">
-                <NavButtonStep  onClick={handleBack} img={Position} text={'1/3'} />
+                <NavButtonStep  onClick={()=>navigate(-1)} img={Position} text={'1/3'} />
                 <div className="mb-4 p-2 text-center">
                         <h2 className="text-2xl font-bold mb-2 ">¡Creando tu Perfil!</h2>
                     </div>
@@ -160,11 +163,12 @@ export const StepUser = () => {
                         />
 
                         <label>Género</label>
+
                             <select {...register("gender")} className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand">
                                 <option value="">Selecciona tu género</option>
-                                <option value="hombre">Hombre</option>
-                                <option value="mujer">Mujer</option>
-                                <option value="otro">Otro</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="Otro">Otro</option>
                             </select>
                         <label >Pais</label>
                             <select  {...register("country")} className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand">
@@ -201,6 +205,7 @@ export const StepUser = () => {
                         <label >Direccion</label>
                             <input {...register("address")}
                                 className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand" />
+
                     </div>
                     <ButtonPrimary  text='Continuar' />
                 </form>

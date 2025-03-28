@@ -6,6 +6,7 @@ import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary";
 import { InputField } from "../../Components/InputField/InputField";
 import { PetTypeSelector } from "../../Components/PetSelector/PetTypeSelector";
 import { useFetchAddPet } from "../../Hooks/useFetchAddPet/useFetchAddPet";
+import { useHasPetsUser } from "../../Contexts/HasPetsUser/HasPetsUser";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdErrorOutline } from "react-icons/md";
 import ImgFrontal from '../../assets/ImgStepPet.png';
@@ -16,6 +17,8 @@ export const NewPet1 = () => {
     const [petData, setPetData] = useState({ name: null, species: null });
     const { register, handleSubmit } = useForm();
     const [selectedPet, setSelectedPet] = useState(null);
+    const hasPets = useHasPetsUser();
+    const {changeHasPetsUser} = hasPets
     const { fetchNewPet, pet, isLoading, error } = useFetchAddPet();
 
     const onSubmit = (formData) => {
@@ -31,13 +34,14 @@ export const NewPet1 = () => {
 
     useEffect(() => {
         if (pet) {
+            changeHasPetsUser(true);
             navigate(`/pet-profile/${pet._id}`);
         }
     }, [pet, navigate]);
 
     return (
-        <div className="flex flex-col items-center justify-center bg-gray-100 p-6">
-            <div className="bg-white p-6 rounded-2xl w-screen max-w-sm">
+        <div className="flex flex-col items-center justify-center bg-gray-100 ">
+            <div className="bg-white p-6 rounded-2xl w-screen ">
                 <NavButton onClick={() => navigate('/Home')} />
                 <h2 className="text-2xl font-bold mb-2 text-center">Nombra tu mascota 🐾</h2>
                 <img className="mx-auto w-auto h-60" src={ImgFrontal} alt="Pet step" />
@@ -54,7 +58,7 @@ export const NewPet1 = () => {
                         />
                         <PetTypeSelector selectedPet={selectedPet} setSelectedPet={setSelectedPet} />
                     </div>
-                    <div className="mt-4 flex justify-center">
+                    <div className="mt-4 flex justify-center mt-15 lg:mt-0">
                         {isLoading ? (
                             <AiOutlineLoading3Quarters className="animate-spin text-2xl text-blue-500" />
                         ) : (

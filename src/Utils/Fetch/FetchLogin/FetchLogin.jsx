@@ -13,16 +13,17 @@ export const fetchLogin = async (userData) => {
 
     if (response.ok) {
       return {
-        ok: true, accessToken: result.accessToken,
+        ok: true,
+        user: result.user,
+        accessToken: result.accessToken,
         hasPets: result.hasPets,
         isNewUser: !!result.isNewUser,
 
        };
     } else {
-      return { ok: false, message: result.message };
+      return { ok: false, message: result.message ||"Error desconocido", user: null };
     }
   } catch (error) {
-    console.log(error);
-    return { ok: false, message: "Error en la conexión con el servidor" };
+    return { ok: false, message: "Error en la conexión con el servidor", user: null };
   }
 };
