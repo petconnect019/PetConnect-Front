@@ -5,7 +5,7 @@ import { usePet } from '../../Contexts/PetContext/PetContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import { GridItem } from '../../Components/GridItem/GridItem';
 import { ArrowLeft, Share2 } from 'lucide-react';
-import { FaPaw } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 import defaultCat from '../../assets/CatProfilePfp.png'
 import defaultDog from '../../assets/DogProfilePfp.png'
 import defaultOwner from '../../assets/DefaultProfile.png'
@@ -136,7 +136,7 @@ export const PublicPetProfile = () => {
       ) : 
       (
         <div className="flex justify-center items-center h-screen">
-          <FaPaw className="animate-pulse text-[#EC9126] text-4xl" />
+          <ImSpinner2 className="animate-pulse text-[#EC9126] text-4xl" />
         </div>
       )
     }

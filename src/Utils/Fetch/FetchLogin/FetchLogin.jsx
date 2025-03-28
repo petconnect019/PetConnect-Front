@@ -21,10 +21,9 @@ export const fetchLogin = async (userData) => {
 
        };
     } else {
-      return { ok: false, message: result.message, user: null };
+      return { ok: false, message: result.message ||"Error desconocido", user: null };
     }
   } catch (error) {
-    console.log(error);
     return { ok: false, message: "Error en la conexión con el servidor", user: null };
   }
 };
