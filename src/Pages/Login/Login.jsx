@@ -10,7 +10,10 @@ import { useFetchLogin } from "../../Hooks/useFetchLogin/useFetchLogin.js";
 import { ImSpinner2 } from "react-icons/im";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { InputField } from "../../Components/InputField/InputField.jsx";
+import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
+import emailIcon from '../../assets/emailIcon.png'
+import passwordIcon from '../../assets/Lock.png'
 export const Login = () => {
   const navigate = useNavigate();
   const {
@@ -94,7 +97,7 @@ export const Login = () => {
 
   return (
     <>
-      {/* Spinner Overlay - shown during loading */}
+      {/* Loading Spinner */}
       {isLoading && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-gray-1 backdrop-blur-sm"
@@ -110,28 +113,27 @@ export const Login = () => {
 
       <div
         className={`
-      flex items-center justify-center 
-      min-h-screen 
-      px-4 py-6 
-      bg-gray-100 
-      ${isLoading ? "blur-sm pointer-events-none" : ""}
-    `}
+          flex items-center justify-center 
+          min-h-screen 
+          px-4 py-6 
+          bg-gray-100 
+          ${isLoading ? "blur-sm pointer-events-none" : ""}
+        `}
       >
         <div
           className="
-        w-full 
-        max-w-md 
-        bg-white 
-        rounded-2xl 
-        shadow-xl 
-        overflow-hidden 
-        transition-all 
-        duration-300 
-        ease-in-out
-        hover:shadow-2xl
-      "
+            w-full 
+            max-w-md 
+            bg-white 
+            rounded-2xl 
+            shadow-xl 
+            overflow-hidden 
+            transition-all 
+            duration-300 
+            ease-in-out
+            hover:shadow-2xl
+          "
         >
-          {/* Toastify Container with improved positioning */}
           <ToastContainer
             position="top-right"
             autoClose={5000}
@@ -148,24 +150,10 @@ export const Login = () => {
 
           <div className="p-6 sm:p-8">
             <header className="mb-6 text-center">
-              <h1
-                className="
-              text-3xl 
-              font-extrabold 
-              text-gray-900 
-              mb-2 
-              tracking-tight
-            "
-              >
+              <h1 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
                 Bienvenido de nuevo! 👋
               </h1>
-              <p
-                className="
-              text-gray-600 
-              text-sm 
-              font-medium
-            "
-              >
+              <p className="text-gray-600 text-sm font-medium">
                 Continuemos el viaje con tus amigos peludos.
               </p>
             </header>
@@ -177,55 +165,25 @@ export const Login = () => {
             >
               {/* Email Input */}
               <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="
-                block 
-                font-semibold 
-                text-gray-700 
-                mb-2
-              "
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  disabled={isLoading}
-                  autoComplete="email"
-                  aria-invalid={errors.email ? "true" : "false"}
-                  className={`
-                w-full 
-                p-3 
-                bg-gray-100 
-                rounded-lg 
-                border 
-                border-transparent
-                focus:outline-none 
-                focus:ring-2 
-                focus:ring-indigo-500 
-                focus:border-transparent
-                transition 
-                duration-300
-                ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
-              `}
-                  {...register("email", {
+                <InputField
+                  name="email"
+                  label="Email"
+                  icon={emailIcon}
+                  register={register}
+                  placeholder="Correo electrónico"
+                  validation={{
                     required: "Este campo es obligatorio",
                     pattern: {
                       value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                       message: "Correo electrónico inválido",
                     },
-                  })}
+                  }}
+                  disabled={isLoading}
                 />
                 {errors.email && (
                   <p
                     role="alert"
-                    className="
-                  text-red-500 
-                  text-xs 
-                  mt-1 
-                  animate-fade-in-down
-                "
+                    className="text-red-500 text-xs mt-1 animate-fade-in-down"
                   >
                     {errors.email.message}
                   </p>
@@ -234,39 +192,14 @@ export const Login = () => {
 
               {/* Password Input */}
               <div className="mb-4">
-                <label
-                  htmlFor="password"
-                  className="
-                block 
-                font-semibold 
-                text-gray-700 
-                mb-2
-              "
-                >
-                  Contraseña
-                </label>
-                <input
+                <PasswordField
+                  name="password"
+                  label="Contraseña"
+                  icon={passwordIcon}
+                  register={register}
                   type="password"
-                  id="password"
-                  disabled={isLoading}
-                  autoComplete="current-password"
-                  aria-invalid={errors.password ? "true" : "false"}
-                  className={`
-                w-full 
-                p-3 
-                bg-gray-100 
-                rounded-lg 
-                border 
-                border-transparent
-                focus:outline-none 
-                focus:ring-2 
-                focus:ring-indigo-500 
-                focus:border-transparent
-                transition 
-                duration-300
-                ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
-              `}
-                  {...register("password", {
+                  placeholder="Contraseña"
+                  validation={{
                     required: "Este campo es obligatorio",
                     minLength: {
                       value: 8,
@@ -276,46 +209,33 @@ export const Login = () => {
                       value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
                       message: "Debe contener mayúscula, minúscula y número",
                     },
-                  })}
+                  }}
+                  disabled={isLoading}
                 />
                 {errors.password && (
                   <p
                     role="alert"
-                    className="
-                  text-red-500 
-                  text-xs 
-                  mt-1 
-                  animate-fade-in-down
-                "
+                    className="text-red-500 text-xs mt-1 animate-fade-in-down"
                   >
                     {errors.password.message}
                   </p>
                 )}
 
                 {/* Remember me and Forgot Password */}
-                <div
-                  className="
-                flex 
-                flex-col 
-                sm:flex-row 
-                justify-between 
-                items-center 
-                my-6
-              "
-                >
+                <div className="flex flex-col sm:flex-row justify-between items-center my-6">
                   <div className="flex items-center mb-2 sm:mb-0">
                     <input
                       type="checkbox"
                       id="remember-me"
                       disabled={isLoading}
                       className="
-                    mr-2 
-                    w-4 
-                    h-4 
-                    text-brand 
-                    rounded 
-                    focus:ring-brand
-                  "
+                        mr-2 
+                        w-4 
+                        h-4 
+                        text-brand 
+                        rounded 
+                        focus:ring-brand
+                      "
                     />
                     <label
                       htmlFor="remember-me"
@@ -327,27 +247,23 @@ export const Login = () => {
                   <Link
                     to="/recover-email"
                     className="
-                  text-sm 
-                  text-brand 
-                  hover:underline 
-                  transition 
-                  duration-300
-                "
+                      text-sm 
+                      text-brand 
+                      hover:underline 
+                      transition 
+                      duration-300
+                    "
                   >
                     ¿Has olvidado tu contraseña?
                   </Link>
                 </div>
               </div>
 
+              {/* Rest of the component remains the same */}
+              {/* Divider, Google Sign Up, Login Button, Registration Link */}
+
               {/* Divider */}
-              <div
-                className="
-              flex 
-              items-center 
-              justify-center 
-              my-6
-            "
-              >
+              <div className="flex items-center justify-center my-6">
                 <div className="flex-grow border-t border-gray-300"></div>
                 <span className="px-4 text-gray-500 text-sm">o</span>
                 <div className="flex-grow border-t border-gray-300"></div>
@@ -375,24 +291,17 @@ export const Login = () => {
               </div>
 
               {/* Registration Link */}
-              <p
-                className="
-              mt-6 
-              text-center 
-              text-sm 
-              text-gray-600
-            "
-              >
+              <p className="mt-6 text-center text-sm text-gray-600">
                 ¿Aún no tienes una cuenta?{" "}
                 <Link
                   to="/register"
                   className="
-                text-brand 
-                font-semibold 
-                hover:underline 
-                transition 
-                duration-300
-              "
+                    text-brand 
+                    font-semibold 
+                    hover:underline 
+                    transition 
+                    duration-300
+                  "
                 >
                   Regístrate aquí
                 </Link>
