@@ -8,7 +8,7 @@ import enableQR from "../../assets/enableQR.png";
 import { useNavigate } from "react-router-dom";
 import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 import { useFetchPetById } from "../../Hooks/useFetchPetById/useFetchPetById";
-import { FaPaw } from "react-icons/fa";
+import { ImSpinner2 } from "react-icons/im";
 import defaultDog from "../../assets/DogProfilePfp.png";
 import defaultCat from "../../assets/CatProfilePfp.png";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
@@ -176,7 +176,7 @@ export const PetDetails = () => {
         </section>
       ) : (
         <div className="flex justify-center items-center h-screen">
-          <FaPaw className="animate-pulse text-[#EC9126] text-4xl" />
+          <ImSpinner2 className="animate-pulse text-[#EC9126] text-4xl" />
         </div>
       )}
     </>

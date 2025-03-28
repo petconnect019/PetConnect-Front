@@ -27,7 +27,7 @@ import Paper from "../../assets/Paper.png";
 import CalendarImg from "../../assets/Calendar.png";
 import QRIcon from "../../assets/QRIcon.png";
 import EditImg from "../../assets/EditImage.png";
-import { FaSpinner } from "react-icons/fa";
+import { ImSpinner2 } from "react-icons/im";
 
 export const PetProfile = () => {
   const { pet_id } = useParams();
@@ -169,7 +169,7 @@ export const PetProfile = () => {
         {isLoading && (
           <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/30 backdrop-blur-sm">
             <div className="flex flex-col items-center">
-              <FaSpinner
+              <ImSpinner2
                 className="text-orange-500 animate-spin"
                 size={50}
               />

@@ -24,11 +24,6 @@ export const StepUser = () => {
     const [filePfp, setFilePfp] = useState(null);
     const [phone, setPhone] = useState(""); 
 
-
-    const handleBack = () => {
-        navigate('/register')
-    }
-
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -44,10 +39,7 @@ export const StepUser = () => {
           formDataUser.append('name', dataForm.name);
           formDataUser.append('phone', phone);
           formDataUser.append('gender', dataForm.gender);
-        
-      
-          console.log("Datos enviados:", Object.fromEntries(formDataUser));
-          
+
           let token = sessionStorage.getItem('accessToken');
 
         if (!token || isTokenExpired(token)) {
@@ -64,7 +56,7 @@ export const StepUser = () => {
           const responseUser = await FetchUpdateUser(formDataUser, token); 
   
           if (responseUser.ok) {
-              console.log("Registro exitoso del Usuario:", responseUser);
+              sessionStorage.setItem("userData", JSON.stringify(responseUser.user))
   
               if (filePfp) {
                   const formDataPhoto = new FormData();
@@ -94,7 +86,7 @@ export const StepUser = () => {
     return (
         <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">
             <div className="bg-white p-6 rounded-2xl  max-w-sm ">
-                <NavButtonStep  onClick={handleBack} img={Position} text={'1/3'} />
+                <NavButtonStep  onClick={()=>navigate(-1)} img={Position} text={'1/3'} />
                 <div className="mb-4 p-2 text-center">
                         <h2 className="text-2xl font-bold mb-2 ">¡Creando tu Perfil!</h2>
                     </div>

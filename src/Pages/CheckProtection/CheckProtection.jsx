@@ -50,6 +50,12 @@ export const CheckProtection = () => {
     { id: 6 },
   ];
 
+  useEffect(()=> {
+    if (qrsResult) {
+      console.log(qrsResult)
+    }
+  }, [qrsResult])
+
   const count = qrsResult?.length || 0;
   const hasQrs = count > 0;
   const isSelectedPet = qrsResult?.[0]?.petId?._id === selectedPet?._id;

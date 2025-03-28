@@ -3,7 +3,7 @@ import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
 import logo from '../../assets/logoGoogleLight.png';
 
-export const GoogleSignUp = ({ navigate, content }) => {
+export const GoogleSignUp = ({ navigate, content, setUser, setAccesToken, setHasPetsState, setIsnewUserState, setErrorState}) => {
   const auth = useAuth();
   const pets = useHasPetsUser();
 
@@ -38,22 +38,15 @@ export const GoogleSignUp = ({ navigate, content }) => {
         window.removeEventListener('message', messageListener);
         
         if (event.data.error) {
-          alert('Este correo no está registrado. Por favor, regístrate.');
-          navigate('/register');
+          setErrorState('Este correo no está registrado. Por favor, regístrate.');
           return;
         }
         
         if (event.data.accessToken) {
-          console.log(event.data);
-          
-          login(event.data.accessToken, event.data.user);
-          
-          const hasPets = Boolean(event.data.hasPets);
-          if (hasPets) {
-            changeHasPetsUser(true);
-          }
-          
-          navigate(event.data.isNewUser ? '/step-pet' : '/home');
+          setUser && setUser(event.data.user);
+          setAccesToken && setAccesToken(event.data.accessToken);
+          setHasPetsState && setHasPetsState(!!event.data.hasPets);
+          setIsnewUserState && setIsnewUserState(!!event.data.isNewUser);
         }
       };
       
