@@ -14,7 +14,8 @@ import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpire
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { FetchUpdateUser } from "../../Utils/Fetch/FetchUpdateUser/FetchUpdateUser";
 import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep";
-
+import {City as ciudadesPorDepartamento} from '../../Utils/Data-Schema/City'
+import {Department as departamentos} from '../../Utils/Data-Schema/Department'
 
 
 export const StepUser = () => {
@@ -23,7 +24,16 @@ export const StepUser = () => {
     const [profileImage, setProfileImage] = useState(DefaultProfile);
     const [filePfp, setFilePfp] = useState(null);
     const [phone, setPhone] = useState(""); 
+    const [city,setCity] = useState([])
+    const [department , setDepartment] = useState("")
 
+    const handleDepartamentoChange = (event) => {
+        const deptoSelection = event.target.value;
+        setDepartment(deptoSelection);
+        // Correctly access cities for the selected department
+        setCity(ciudadesPorDepartamento[deptoSelection] || []);
+    };
+    
 
     const handleBack = () => {
         navigate('/register')
@@ -40,10 +50,20 @@ export const StepUser = () => {
 
 
       const onSubmitForm = async (dataForm) => { 
+
+        if (!dataForm.city) {
+            alert("Por favor, seleccione una ciudad");
+            return;
+        }
+
           const formDataUser = new FormData();
           formDataUser.append('name', dataForm.name);
           formDataUser.append('phone', phone);
           formDataUser.append('gender', dataForm.gender);
+          formDataUser.append('country', dataForm.country);
+          formDataUser.append('state', department);
+          formDataUser.append('city', dataForm.city);
+          formDataUser.append('address',dataForm.address)
         
       
           console.log("Datos enviados:", Object.fromEntries(formDataUser));
@@ -140,12 +160,47 @@ export const StepUser = () => {
                         />
 
                         <label>Género</label>
-                        <select {...register("gender")} className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand">
-                            <option value="">Selecciona tu género</option>
-                            <option value="hombre">Hombre</option>
-                            <option value="mujer">Mujer</option>
-                            <option value="otro">Otro</option>
-                        </select>
+                            <select {...register("gender")} className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand">
+                                <option value="">Selecciona tu género</option>
+                                <option value="hombre">Hombre</option>
+                                <option value="mujer">Mujer</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        <label >Pais</label>
+                            <select  {...register("country")} className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand">
+                                <option value="">Seleccione tu pais</option>
+                                <option value="Colombia">Colombia</option>
+                            </select>
+                        <label >Departamento</label>
+                            <select 
+                                {...register("state")}
+                                className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
+                                value={department}
+                                onChange={handleDepartamentoChange}>
+                                <option value="">Seleccione un departamento</option>
+                                {departamentos.map((depto) => (
+                                    <option key={depto} value={depto}>
+                                        {depto}
+                                    </option>
+                                ))}
+                            </select>
+
+                        <label >Ciudad</label>
+                            <select 
+                                {...register("city")}
+                                className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand" 
+                                disabled={!city.length}
+                            >
+                                <option value="">Seleccione una ciudad</option>
+                                {city.map((ciudad) => (
+                                    <option key={ciudad} value={ciudad}>
+                                        {ciudad}
+                                    </option>
+                                ))}
+                            </select>
+                        <label >Direccion</label>
+                            <input {...register("address")}
+                                className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand" />
                     </div>
                     <ButtonPrimary  text='Continuar' />
                 </form>
