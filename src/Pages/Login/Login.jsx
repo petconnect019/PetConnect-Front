@@ -12,8 +12,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { InputField } from "../../Components/InputField/InputField.jsx";
 import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
-import emailIcon from '../../assets/emailIcon.png'
-import passwordIcon from '../../assets/Lock.png'
+import emailIcon from '../../assets/images/emailIcon.png'
+import passwordIcon from '../../assets/images/Lock.png'
 export const Login = () => {
   const navigate = useNavigate();
   const {

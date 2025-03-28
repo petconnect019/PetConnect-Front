@@ -1,4 +1,4 @@
-import scanQrIcon from '../../assets/scanQR.png'
+import scanQrIcon from '../../assets/images/scanQR.png'
 import { Scan } from 'lucide-react';
 
 export const WelcomeScreen = ({startScanning}) => {

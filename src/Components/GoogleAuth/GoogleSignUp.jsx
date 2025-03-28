@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
-import logo from '../../assets/logoGoogleLight.png';
+import logo from '../../assets/images/logoGoogleLight.png';
 
 export const GoogleSignUp = ({ navigate, content, setUser, setAccesToken, setHasPetsState, setIsnewUserState, setErrorState}) => {
   const auth = useAuth();

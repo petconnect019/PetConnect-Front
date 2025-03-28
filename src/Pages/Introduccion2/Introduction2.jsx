@@ -1,4 +1,4 @@
-import Intro2 from '../../assets/Introduccion2.png';
+import Intro2 from '../../assets/images/Introduccion2.png';
 import { useNavigate } from 'react-router-dom';
 
 export const Introduction2 = () => {

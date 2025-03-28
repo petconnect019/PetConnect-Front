@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Urbanist';
+  src: url('./assets/fonts/Urbanist.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Aplicar la fuente a toda la app */
+body {
+  font-family: 'Urbanist', sans-serif;
+}
+
 @theme {
      --breakpoint-*: initial;
     --breakpoint-xs: 375px;

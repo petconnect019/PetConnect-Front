@@ -5,7 +5,7 @@ import { ToggleButton } from "../../Components/ToggleButton/ToggleButton";
 import { useNavigate } from "react-router-dom";
 import { NavButton } from "../../Components/NavButton/NavButton";
 import { ItemHighlighted } from "../../Components/ItemHighlighted/ItemHighlighted";
-import SortIcon from "../../assets/sort.png";
+import SortIcon from "../../assets/images/sort.png";
 import { usePet } from "../../Contexts/PetContext/PetContext";
 import { useFetchPets } from "../../Hooks/useFetchPets/useFetchPets";
 import { useFetchScans } from "../../Hooks/useFetchScans/useFetchScans";

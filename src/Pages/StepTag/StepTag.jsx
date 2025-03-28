@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom"
-import Position from "../../assets/posicionamiento-Step-Qr.png"
-import ImgQR from "../../assets/QR.png"
+import Position from "../../assets/images/posicionamiento-Step-Qr.png"
+import ImgQR from "../../assets/images/QR.png"
 import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep"
 
 

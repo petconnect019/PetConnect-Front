@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import Intro1 from '../../assets/Introduccion_1.png';
+import Intro1 from '../../assets/images/Introduccion_1.png';
 
 
 export const Introduction1 = () => {

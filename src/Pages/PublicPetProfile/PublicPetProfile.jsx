@@ -6,9 +6,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { GridItem } from '../../Components/GridItem/GridItem';
 import { ArrowLeft, Share2 } from 'lucide-react';
 import { ImSpinner2 } from 'react-icons/im';
-import defaultCat from '../../assets/CatProfilePfp.png'
-import defaultDog from '../../assets/DogProfilePfp.png'
-import defaultOwner from '../../assets/DefaultProfile.png'
+import defaultCat from '../../assets/images/CatProfilePfp.png'
+import defaultDog from '../../assets/images/DogProfilePfp.png'
+import defaultOwner from '../../assets/images/DefaultProfile.png'
 
 export const PublicPetProfile = () => {
   const { pet_id } = useParams();
