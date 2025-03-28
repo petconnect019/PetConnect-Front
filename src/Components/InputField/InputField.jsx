@@ -1,4 +1,3 @@
-import React from "react";
 
 export const InputField = ({
   label,
@@ -7,11 +6,16 @@ export const InputField = ({
   name,
   placeholder,
   validation,
+  type = "text",
+  disabled = false,
 }) => {
   return (
     <div className="flex flex-col gap-2">
       {label && (
-        <label htmlFor={name} className="font-semibold text-[1.2rem]">
+        <label 
+          htmlFor={name} 
+          className="font-semibold text-gray-700 text-md"
+        >
           {label}
         </label>
       )}
@@ -24,9 +28,21 @@ export const InputField = ({
         <input
           {...register(name, validation)}
           id={name}
-          type="text"
+          type={type}
           placeholder={placeholder}
-          className="bg-gray-100 rounded-md p-2 pl-10 w-full h-14 focus:outline-none focus:ring-2 focus:ring-brand"
+          disabled={disabled}
+          className={`
+            bg-gray-100 
+            rounded-2xl
+            p-3 
+            pl-10 
+            w-full 
+            h-14 
+            focus:outline-none 
+            focus:ring-2 
+            focus:ring-brand
+            ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+          `}
         />
       </div>
     </div>

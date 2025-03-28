@@ -9,9 +9,13 @@ import { useEffect, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../../Validations/validationSchema";
 import { ImSpinner2 } from "react-icons/im";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useFetchRegister } from "../../Hooks/useFetchRegister/useFetchRegister"; // Assuming this is the new custom hook
+import { InputField } from "../../Components/InputField/InputField.jsx";
+import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
+import emailIcon from '../../assets/emailIcon.png'
+import passwordIcon from '../../assets/Lock.png'
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -19,30 +23,30 @@ export const Register = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(registerSchema),
   });
-  
+
   // instancias de contextos
   const auth = useAuth();
   const pets = useHasPetsUser();
 
   // Verificamos si el contexto de autenticación está disponible antes de usarlo
   if (!auth) {
-    return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Cargando...
+      </div>
+    );
   }
 
   // Destructuring contexts and hooks
   const { login } = auth;
   const { changeHasPetsUser } = pets;
-  const {
-    handleRegister,
-    accessTokenResult,
-    error, 
-    isSuccess, 
-    isLoading
-  } = useFetchRegister();
+  const { handleRegister, accessTokenResult, error, isSuccess, isLoading } =
+    useFetchRegister();
 
   // Local states
   const [accessToken, setAccessToken] = useState(null);
@@ -50,17 +54,22 @@ export const Register = () => {
 
   // Form submission
   const onSubmit = async (formData) => {
-    handleRegister(formData);
+    // Crear un nuevo objeto sin el campo confirmPassword
+    const { confirmPassword, ...registerData } = formData;
+    
+    // Verificar que las contraseñas coincidan antes de registrar
+    if (formData.password === formData.confirmPassword) {
+      handleRegister(registerData);
+    }
   };
 
   // Efecto para actualizar estados cuando el customHook cambie
   useEffect(() => {
-    if (isSuccess) {      
+    if (isSuccess) {
       setAccessToken(accessTokenResult);
     }
     if (error) {
       setErrorState(error);
-
     }
   }, [isSuccess, error]);
 
@@ -69,7 +78,7 @@ export const Register = () => {
     if (accessToken) {
       login(accessToken, null);
       changeHasPetsUser(false);
-      navigate('/step-user');
+      navigate("/step-user");
     }
   }, [accessToken]);
 
@@ -84,14 +93,42 @@ export const Register = () => {
     <>
       {/* Loading Spinner */}
       {isLoading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-1 backdrop-blur-xs">
-          <ImSpinner2 className="w-16 h-16 text-gray-500" />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-gray-1 backdrop-blur-sm"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <ImSpinner2
+            className="w-16 h-16 text-gray-500 animate-spin"
+            aria-label="Cargando..."
+          />
         </div>
       )}
 
-      <div className={`bg-white flex items-center justify-center min-h-screen sm:p-4 md:bg-gray-100 ${isLoading ? 'blur-sm' : ''}`}>
-        <div className="bg-white w-screen p-6 rounded-4xl md:shadow-lg max-w-md">
-          {/* Toastify Container */}
+      <div
+        className={`
+      flex items-center justify-center 
+      min-h-screen 
+      px-4 py-6 
+      bg-gray-100 
+      ${isLoading ? "blur-sm pointer-events-none" : ""}
+    `}
+      >
+        <div
+          className="
+        w-full 
+        max-w-md 
+        bg-white 
+        rounded-2xl 
+        shadow-xl 
+        overflow-hidden 
+        transition-all 
+        duration-300 
+        ease-in-out
+        hover:shadow-2xl
+      "
+        >
+          {/* Toastify Container with improved positioning */}
           <ToastContainer
             position="top-right"
             autoClose={5000}
@@ -103,109 +140,249 @@ export const Register = () => {
             draggable
             pauseOnHover
             theme="light"
+            className="z-50"
           />
 
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Únete a PetConnect <span className="inline-block">🐾</span>
-          </h2>
-          <p className="text-gray-500 mb-8">Un mundo de posibilidades peludas te esperan.</p>
-          
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Email Input */}
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-md font-semibold text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                disabled={isLoading}
-                className={`bg-gray-50 mt-1 p-3 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 
-                  ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                {...register("email", {
-                  required: "Este campo es obligatorio",
-                  pattern: {
-                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                    message: "Correo electrónico inválido",
-                  },
-                })}
-              />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
-            </div>
+          <div className="p-6 sm:p-8">
+            <header className="mb-6 text-center">
+              <h2
+                className="
+              text-3xl 
+              font-extrabold 
+              text-gray-900 
+              mb-2 
+              tracking-tight
+            "
+              >
+                Únete a PetConnect <span className="inline-block">🐾</span>
+              </h2>
+              <p
+                className="
+              text-gray-600 
+              text-sm 
+              font-medium
+            "
+              >
+                Un mundo de posibilidades peludas te esperan.
+              </p>
+            </header>
 
-            {/* Password Input */}
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-md font-semibold text-gray-700 mb-2">
-                Contraseña
-              </label>
-              <input
-                type="password"
-                id="password"
-                disabled={isLoading}
-                className={`bg-gray-50 mt-1 p-3 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 
-                  ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                {...register("password", {
-                  required: "Este campo es obligatorio",
-                  minLength: {
-                    value: 8,
-                    message: "Debe tener al menos 8 caracteres",
-                  },
-                  pattern: {
-                    value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
-                    message: "Debe contener mayúscula, minúscula y número",
-                  },
-                })}
-              />
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
-            </div>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              noValidate
+              aria-label="Formulario de registro"
+            >
+              {/* Email Input */}
+              <div className="mb-4">
+                <InputField
+                  name="email"
+                  label="Email"
+                  icon={emailIcon}
+                  register={register}
+                  placeholder="Correo electrónico"
+                  validation={{
+                    required: "Este campo es obligatorio",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Correo electrónico inválido",
+                    },
+                  }}
+                  disabled={isLoading}
+                />
+                {errors.email && (
+                  <p
+                    role="alert"
+                    className="
+                  text-red-500 
+                  text-xs 
+                  mt-1 
+                  animate-fade-in-down
+                "
+                  >
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
 
-            {/* Terms and Conditions Checkbox */}
-            <div className="flex items-center space-x-2 my-10">
-              <input 
-                type="checkbox" 
-                disabled={isLoading}
-                className="w-5.5 h-5.5 appearance-none border-2 border-brand rounded-md checked:bg-brand focus:ring-2 focus:ring-brand mr-3" 
-                {...register("terms", {
-                  required: "Debes aceptar los términos y condiciones"
-                })}
-              />
-              <span className="text-md">
-                Aceptar Términos <span className="text-brand">& Condiciones de PetConnect.</span>
-              </span>
-            </div>
-            {errors.terms && <p className="text-red-500 text-xs mt-1">{errors.terms.message}</p>}
+              {/* Password Input */}
+              <div className="mb-4">
+                <PasswordField
+                  name="password"
+                  label="Contraseña"
+                  icon={passwordIcon}
+                  register={register}
+                  type="password"
+                  placeholder="Contraseña"
+                  validation={{
+                    required: "Este campo es obligatorio",
+                    minLength: {
+                      value: 8,
+                      message: "Debe tener al menos 8 caracteres",
+                    },
+                    pattern: {
+                      value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
+                      message: "Debe contener mayúscula, minúscula y número",
+                    },
+                  }}
+                  disabled={isLoading}
+                />
+                {errors.password && (
+                  <p
+                    role="alert"
+                    className="
+                  text-red-500 
+                  text-xs 
+                  mt-1 
+                  animate-fade-in-down
+                "
+                  >
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
 
-            {/* Login Link */}
-            <p className="text-center mb-10">
-              ¿Ya tienes una cuenta? <Link to="/login" className="text-brand font-medium">Iniciar Sesión</Link>
-            </p>
+              {/* Confirm Password Input */}
+              <div className="mb-4">
+                <PasswordField
+                  name="confirmPassword"
+                  label="Confirmar Contraseña"
+                  icon={passwordIcon}
+                  register={register}
+                  type="password"
+                  placeholder="Confirmar Contraseña"
+                  validation={{
+                    required: "Este campo es obligatorio",
+                    validate: (val) => {
+                      if (watch("password") !== val) {
+                        return "Las contraseñas no coinciden";
+                      }
+                    }
+                  }}
+                  disabled={isLoading}
+                />
+                {errors.confirmPassword && (
+                  <p
+                    role="alert"
+                    className="
+                  text-red-500 
+                  text-xs 
+                  mt-1 
+                  animate-fade-in-down
+                "
+                  >
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
 
-            {/* Divider */}
-            <div className="relative flex items-center my-4">
-              <div className="flex-grow border-t border-gray-300"></div>
-              <span className="px-2 text-gray-500">o</span>
-              <div className="flex-grow border-t border-gray-300"></div>
-            </div>
+              {/* Terms and Conditions Checkbox */}
+              <div className="mb-4 mt-5">
+                <div className="flex items-start space-x-2">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    disabled={isLoading}
+                    className="
+                  w-4 
+                  h-4 
+                  text-brand 
+                  rounded 
+                  focus:ring-brand
+                "
+                    {...register("terms", {
+                      required: "Debes aceptar los términos y condiciones",
+                    })}
+                  />
+                  <label
+                    htmlFor="terms"
+                    className="
+                  text-sm 
+                  text-gray-600
+                  leading-tight
+                "
+                  >
+                    Aceptar Términos{" "}
+                    <span className="text-brand">
+                      & Condiciones de PetConnect.
+                    </span>
+                  </label>
+                </div>
+                {errors.terms && (
+                  <p
+                    role="alert"
+                    className="
+                  text-red-500 
+                  text-xs 
+                  mt-1 
+                  animate-fade-in-down
+                "
+                  >
+                    {errors.terms.message}
+                  </p>
+                )}
+              </div>
 
-            {/* Google Sign Up and Register Button */}
-            <div className="space-y-25">
-              <GoogleSignUp
-                navigate={navigate}
-                content={"Regístrate con Google"}
-                setUser={false}
-                setAccesToken={setAccessToken}
-                setHasPetsState={false}
-                setErrorState={setErrorState}
-                setIsnewUserState={false}
-                disabled={isLoading}
-              />
+              {/* Login Link */}
+              <p
+                className="
+              text-center 
+              text-sm 
+              text-gray-600 
+              mt-6
+              mb-6
+            "
+              >
+                ¿Ya tienes una cuenta?{" "}
+                <Link
+                  to="/login"
+                  className="
+                text-brand 
+                font-semibold 
+                hover:underline 
+                transition 
+                duration-300
+              "
+                >
+                  Iniciar Sesión
+                </Link>
+              </p>
 
-              <ButtonPrimary 
-                text={'Registrarse'} 
-                disabled={isLoading}
-              />
-            </div>
-          </form>
+              {/* Divider */}
+              <div
+                className="
+              flex 
+              items-center 
+              justify-center 
+              my-6
+            "
+              >
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="px-4 text-gray-500 text-sm">o</span>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
+
+              {/* Google Sign Up and Register Button */}
+              <div className="space-y-4">
+                <GoogleSignUp
+                  navigate={navigate}
+                  content={"Regístrate con Google"}
+                  setUser={false}
+                  setAccesToken={setAccessToken}
+                  setHasPetsState={false}
+                  setErrorState={setErrorState}
+                  setIsnewUserState={false}
+                  disabled={isLoading}
+                  className="w-full"
+                />
+
+                <ButtonPrimary
+                  text={"Registrarse"}
+                  disabled={isLoading}
+                  className="w-full"
+                />
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </>
