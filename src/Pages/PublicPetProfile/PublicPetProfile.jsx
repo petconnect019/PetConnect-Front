@@ -59,25 +59,25 @@ export const PublicPetProfile = () => {
     { title: 'Edad', subtitle: petData?.age || "No especificada" },
     { title: 'Raza', subtitle: petData?.breed },
     { title: 'Color', subtitle: petData?.color },
-    { title: 'Tipo', subtitle: petData?.species },
+    { title: 'Tipo', subtitle: petData?.species == "dog"? 'Perro' : 'Gato' },
     { title: 'Género', subtitle: petData?.gender }
   ];
   console.log(petData);
   
 
   return (
-    <div>
+    <div className='flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4'>
       {petData ? (
-          <div className="bg-white min-h-screen">
+          <div className="bg-white min-h-screen rounded-3xl">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center justify-between p-4">
             <button 
               onClick={handleGoBack} 
               className="text-[#EC9126] hover:bg-orange-100 p-2 rounded-full"
             >
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-xl font-semibold text-gray-800">Detalles de la mascota</h1>
+            <h1 className="text-2xl font-semibold text-gray-800">Detalles de la mascota</h1>
             <button 
               onClick={handleShare}
               className="text-[#EC9126] hover:bg-orange-100 p-2 rounded-full"
