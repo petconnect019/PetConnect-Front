@@ -3,7 +3,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Position from '../../assets/posicionamiento-Step.png';
 import DefaultProfile from '../../assets/DefaultProfile.png';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Paper from '../../assets/Paper.png';
 import { InputField } from "../../Components/InputField/InputField";
@@ -16,6 +16,8 @@ import { FetchUpdateUser } from "../../Utils/Fetch/FetchUpdateUser/FetchUpdateUs
 import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep";
 import {City as ciudadesPorDepartamento} from '../../Utils/Data-Schema/City'
 import {Department as departamentos} from '../../Utils/Data-Schema/Department'
+import { useFetchUpdateUser } from "../../Hooks/useFetchUpdateUser/useFetchUpdateUser";
+import { useIsFetchedUsers } from "../../Contexts/isFetchedUsers/isFetchedUsers";
 
 
 export const StepUser = () => {
@@ -26,6 +28,16 @@ export const StepUser = () => {
     const [phone, setPhone] = useState(""); 
     const [city,setCity] = useState([])
     const [department , setDepartment] = useState("")
+    
+    const {fetchUpdateUser, isLoading, error, userFetched} = useFetchUpdateUser();
+    const fetchedUser = useIsFetchedUsers();
+    const {isFetchedUsers ,changeIsFetched} = fetchedUser ?? {};
+
+    useEffect(() => {
+        if(!isFetchedUsers){
+            
+        }
+    })
 
 
     const handleDepartamentoChange = (event) => {
@@ -35,10 +47,6 @@ export const StepUser = () => {
         setCity(ciudadesPorDepartamento[deptoSelection] || []);
     };
     
-
-    const handleBack = () => {
-        navigate('/register')
-    }
 
 
     const handleImageChange = (event) => {
