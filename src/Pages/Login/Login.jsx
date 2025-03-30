@@ -36,7 +36,7 @@ export const Login = () => {
   }
 
   // desestrucuring de los contextos y hooks
-  const { isAuthenticated, login } = auth ?? {};
+  const { login } = auth ?? {};
   const { changeHasPetsUser } = pets ?? {};
   const {
     handleLogin,
@@ -272,7 +272,6 @@ export const Login = () => {
               {/* Google Sign Up and Login Button */}
               <div className="space-y-4">
                 <GoogleSignUp
-                  navigate={navigate}
                   content={"Inicia sesión con Google"}
                   setUser={setUser}
                   setAccesToken={setAccessToken}

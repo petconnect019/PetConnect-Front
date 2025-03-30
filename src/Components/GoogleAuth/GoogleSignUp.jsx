@@ -3,7 +3,7 @@ import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
 import logo from '../../assets/images/logoGoogleLight.png';
 
-export const GoogleSignUp = ({ navigate, content, setUser, setAccesToken, setHasPetsState, setIsnewUserState, setErrorState}) => {
+export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState, setIsnewUserState, setErrorState}) => {
   const auth = useAuth();
   const pets = useHasPetsUser();
 
@@ -63,7 +63,7 @@ export const GoogleSignUp = ({ navigate, content, setUser, setAccesToken, setHas
       console.error('Error al abrir popup:', error);
       window.location.href = popupUrl;
     }
-  }, [login, changeHasPetsUser, navigate]);
+  }, [login, changeHasPetsUser]);
 
   return (
     <button

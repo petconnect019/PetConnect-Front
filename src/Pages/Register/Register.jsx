@@ -364,7 +364,6 @@ export const Register = () => {
               {/* Google Sign Up and Register Button */}
               <div className="space-y-4">
                 <GoogleSignUp
-                  navigate={navigate}
                   content={"Regístrate con Google"}
                   setUser={false}
                   setAccesToken={setAccessToken}
