@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import BackButton from '../../assets/BackButton.png'
+import BackButton from '../../assets/images/BackButton.png'
 import { FetchRequestEmail } from "../../Utils/Fetch/FetchRequestEmail/FetchRequestEmail";
 import { useState } from "react";
-import EmailImg from '../../assets/emailIcon.png'
+import EmailImg from '../../assets/images/emailIcon.png'
 
 export const RecoverEmail = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();

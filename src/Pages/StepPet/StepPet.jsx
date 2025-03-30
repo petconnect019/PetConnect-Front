@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Position from '../../assets/posicionamiento-Step-user.png';
-import ImgFrontal from '../../assets/ImgStepPet.png';
-import Paper from '../../assets/Paper.png';
+import Position from '../../assets/images/posicionamiento-Step-user.png';
+import ImgFrontal from '../../assets/images/ImgStepPet.png';
+import Paper from '../../assets/images/Paper.png';
 import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary";
 import { InputField } from "../../Components/InputField/InputField";
 import { useForm } from "react-hook-form";

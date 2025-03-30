@@ -1,4 +1,4 @@
-import addTag from '../../assets/addTag.png'
+import addTag from '../../assets/images/addTag.png'
 import { useNavigate } from 'react-router-dom';
 
 export const AddTagContainer = ({petId}) => {

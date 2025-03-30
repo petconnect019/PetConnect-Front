@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import tag from '../../assets/tag.png';
+import tag from '../../assets/images/tag.png';
 import { MoreVertical, AlertTriangle } from 'lucide-react';
 
 export const ImageTagContainer = () => {

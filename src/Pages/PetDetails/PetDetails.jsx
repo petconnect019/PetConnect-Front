@@ -3,17 +3,17 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { usePet } from "../../Contexts/PetContext/PetContext";
 import { GridItem } from "../../Components/GridItem/GridItem";
-import enableLost from "../../assets/enableLost.png";
-import enableQR from "../../assets/enableQR.png";
+import enableLost from "../../assets/images/enableLost.png";
+import enableQR from "../../assets/images/enableQR.png";
 import { useNavigate } from "react-router-dom";
 import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
 import { useFetchPetById } from "../../Hooks/useFetchPetById/useFetchPetById";
 import { ImSpinner2 } from "react-icons/im";
-import defaultDog from "../../assets/DogProfilePfp.png";
-import defaultCat from "../../assets/CatProfilePfp.png";
+import defaultDog from "../../assets/images/DogProfilePfp.png";
+import defaultCat from "../../assets/images/CatProfilePfp.png";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
-import petPhoto from '../../assets/petPhoto.png'
-import addPetPhoto from '../../assets/addPetPhoto.png'
+import petPhoto from '../../assets/images/petPhoto.png'
+import addPetPhoto from '../../assets/images/addPetPhoto.png'
 import { FooterNav } from "../../Components/FooterNav/FooterNav";
 
 

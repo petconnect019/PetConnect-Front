@@ -5,10 +5,10 @@ import Position from '../../assets/posicionamiento-Step.png';
 import DefaultProfile from '../../assets/DefaultProfile.png';
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Paper from '../../assets/Paper.png';
+import Paper from '../../assets/images/Paper.png';
 import { InputField } from "../../Components/InputField/InputField";
 import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary";
-import EditImg from '../../assets/EditImg3.png'
+import EditImg from '../../assets/images/EditImg3.png'
 import { FetchUpdatePhotoU } from "../../Utils/Fetch/FetchUpdatePhotoU/FetchUpdatePhotoU";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";

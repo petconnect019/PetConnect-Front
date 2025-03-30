@@ -188,11 +188,6 @@ export const Scanner = () => {
     }
     
   }, [scannedResult])
-
-  useEffect(()=> {
-    console.log(hasPet);
-    
-  }, [hasPet])
   
 
   return (

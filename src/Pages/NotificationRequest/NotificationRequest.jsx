@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Notifications from "../../assets/NotificacionesRequest.png";
+import Notifications from "../../assets/images/NotificacionesRequest.png";
 
 export const NotificationRequest = () => {
   const navigate = useNavigate();

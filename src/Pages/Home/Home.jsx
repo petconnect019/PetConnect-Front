@@ -7,9 +7,9 @@ import { useFetchPets } from "../../Hooks/useFetchPets/useFetchPets";
 import { ProfileSection } from "../../Components/ProfileSection/ProfileSection";
 import { PetsSection } from "../../Components/PetsSection/PetsSection";
 import { FooterNav } from "../../Components/FooterNav/FooterNav";
-import petImage from '../../assets/petImage.png'
-import iconoHomeUno from '../../assets/iconoHomeUno.png'
-import iconoHomeDos from '../../assets/iconoHomeDos.png'
+import petImage from '../../assets/images/petImage.png'
+import iconoHomeUno from '../../assets/images/iconoHomeUno.png'
+import iconoHomeDos from '../../assets/images/iconoHomeDos.png'
 
 export const Home = () => {
   const auth = useAuth();

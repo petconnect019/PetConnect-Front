@@ -12,8 +12,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { InputField } from "../../Components/InputField/InputField.jsx";
 import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
-import emailIcon from '../../assets/emailIcon.png'
-import passwordIcon from '../../assets/Lock.png'
+import emailIcon from '../../assets/images/emailIcon.png'
+import passwordIcon from '../../assets/images/Lock.png'
 export const Login = () => {
   const navigate = useNavigate();
   const {
@@ -36,7 +36,7 @@ export const Login = () => {
   }
 
   // desestrucuring de los contextos y hooks
-  const { isAuthenticated, login } = auth ?? {};
+  const { login } = auth ?? {};
   const { changeHasPetsUser } = pets ?? {};
   const {
     handleLogin,
@@ -272,7 +272,6 @@ export const Login = () => {
               {/* Google Sign Up and Login Button */}
               <div className="space-y-4">
                 <GoogleSignUp
-                  navigate={navigate}
                   content={"Inicia sesión con Google"}
                   setUser={setUser}
                   setAccesToken={setAccessToken}

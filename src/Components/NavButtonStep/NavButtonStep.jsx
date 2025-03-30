@@ -1,5 +1,5 @@
 import React from 'react'
-import ButtonBack from '../../assets/BackButton.png'
+import ButtonBack from '../../assets/images/BackButton.png'
 
 export const NavButtonStep = ({onClick,text,img}) => {
   return (

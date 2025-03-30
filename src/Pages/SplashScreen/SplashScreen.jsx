@@ -1,6 +1,6 @@
 import React, {  useEffect, useState } from 'react'
-import Logo from '../../assets/PetConnect Logo.png'
-import DogGift from '../../assets/DogSpinner.gif'
+import Logo from '../../assets/images/PetConnect Logo.png'
+import DogGift from '../../assets/images/DogSpinner.gif'
 import { useNavigate } from 'react-router-dom'
 
 export const SplashScreen = () => {

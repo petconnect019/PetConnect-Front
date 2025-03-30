@@ -1,5 +1,5 @@
-import catDefault from "../../assets/CatProfilePfp.png";
-import dogDefault from "../../assets/DogProfilePfp.png";
+import catDefault from "../../assets/images/CatProfilePfp.png";
+import dogDefault from "../../assets/images/DogProfilePfp.png";
 
 export const ProfilePetSection = ({pet, navigate})=> {
     

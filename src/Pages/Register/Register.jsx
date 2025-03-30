@@ -14,8 +14,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { useFetchRegister } from "../../Hooks/useFetchRegister/useFetchRegister"; // Assuming this is the new custom hook
 import { InputField } from "../../Components/InputField/InputField.jsx";
 import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
-import emailIcon from '../../assets/emailIcon.png'
-import passwordIcon from '../../assets/Lock.png'
+import emailIcon from '../../assets/images/emailIcon.png'
+import passwordIcon from '../../assets/images/Lock.png'
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -276,7 +276,7 @@ export const Register = () => {
               </div>
 
               {/* Terms and Conditions Checkbox */}
-              <div className="mb-4 mt-5">
+              <div className="mb-4 mt-5 ml-2">
                 <div className="flex items-start space-x-2">
                   <input
                     type="checkbox"
@@ -296,7 +296,7 @@ export const Register = () => {
                   <label
                     htmlFor="terms"
                     className="
-                  text-sm 
+                  text-xs 
                   text-gray-600
                   leading-tight
                 "
@@ -364,7 +364,6 @@ export const Register = () => {
               {/* Google Sign Up and Register Button */}
               <div className="space-y-4">
                 <GoogleSignUp
-                  navigate={navigate}
                   content={"Regístrate con Google"}
                   setUser={false}
                   setAccesToken={setAccessToken}

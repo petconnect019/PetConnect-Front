@@ -2,12 +2,12 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useResetPassword } from "../../Contexts/ResetPasswordContext/ResetPasswordContext";
 import { FetchResetPassword } from "../../Utils/Fetch/FetchResetPassword/FetchResetPassword";
-import BackButton from '../../assets/BackButton.png'
-import Lock from '../../assets/Lock.png'
-import Show from '../../assets/Show.png'
-import Hide from '../../assets/NotShow.png'
+import BackButton from '../../assets/images/BackButton.png'
+import Lock from '../../assets/images/Lock.png'
+import Show from '../../assets/images/Show.png'
+import Hide from '../../assets/images/NotShow.png'
 import { useState } from "react";
-import DefaultProfile from '../../assets/DefaultProfile.png';
+import DefaultProfile from '../../assets/images/DefaultProfile.png';
 
 export const RestorePassword = () => {
 
