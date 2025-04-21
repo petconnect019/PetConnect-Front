@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+//Corrección de rutas de imagenes
 import Position from '../../assets/images/posicionamiento-Step.png';
 import DefaultProfile from '../../assets/images/DefaultProfile.png';
 import { useEffect, useState } from "react";
