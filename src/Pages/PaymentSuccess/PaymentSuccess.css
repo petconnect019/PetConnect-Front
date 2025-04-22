@@ -1,0 +1,101 @@
+.payment-success {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.payment-success h1 {
+    color: #28a745;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.order-details {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.order-details h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.qr-codes {
+    margin-top: 2rem;
+}
+
+.qr-codes h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.qr-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.qr-item {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.qr-item h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.qr-item img {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+}
+
+.actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.actions button {
+    padding: 0.75rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.actions button:hover {
+    background-color: #0056b3;
+}
+
+.error-container {
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-container h2 {
+    color: #dc3545;
+}
+
+.error-container button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.error-container button:hover {
+    background-color: #0056b3;
+} 
