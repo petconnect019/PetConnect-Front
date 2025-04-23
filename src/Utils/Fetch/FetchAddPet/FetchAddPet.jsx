@@ -1,6 +1,6 @@
 export const FetchAddPet = async (petData, token)=> {
     try {
-        let response = await fetch('http://localhost:5000/api/pets', {
+        let response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
