@@ -10,7 +10,7 @@ export const FetchUpdatePet = async (petData, token) => {
       formData.append("_id", petData._id);
       
   
-      let response = await fetch(`http://localhost:5000/api/pets/${petData._id}`, {
+      let response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${petData._id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`

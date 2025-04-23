@@ -1,6 +1,6 @@
 export const FetchQrsUser = async (token)=> {
     try {
-        const response = await fetch(`http://localhost:5000/api/qr/user`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/qr/user`, {
             method: 'GET',
             credentials: 'include',
             
