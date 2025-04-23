@@ -12,7 +12,7 @@ export const FetchUpdatePhotoPet = async (petData,file,token) => {
     }
 
 
-    let response = await fetch(`http://localhost:5000/api/pets/${petData._id}/profile-picture`,{
+    let response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${petData._id}/profile-picture`,{
         method: 'PUT',
         headers:{
             Authorization: `Bearer ${token}`

@@ -1,6 +1,6 @@
 export const FetchRefreshToken = async ()=> {
     try {
-        const response = await fetch('http://localhost:5000/api/auth/refresh', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/refresh`, {
             method: 'POST',
             credentials: 'include',
             headers: {

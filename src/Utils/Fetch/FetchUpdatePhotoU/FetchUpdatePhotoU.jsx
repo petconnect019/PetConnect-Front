@@ -1,6 +1,6 @@
 export const FetchUpdatePhotoU = async (formDataUser, token) => {
     try {
-        let response = await fetch('http://localhost:5000/api/users/profile/picture', {
+        let response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile/picture`, {
             method: 'PUT',
             headers: {
                 Authorization: `Bearer ${token}`
