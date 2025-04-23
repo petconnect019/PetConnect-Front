@@ -30,7 +30,9 @@ import { MyPets } from "../Pages/MyPets/MyPets";
 import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
 import { NewPet1 } from "../Pages/NewPet1/NewPet1";
 import { CheckProtection } from "../Pages/CheckProtection/CheckProtection";
-
+import {Payment} from '../Pages/Payment/Payment'
+import { PaymentSuccess } from "../Pages/PaymentSuccess/PaymentSuccess";
+import { PaymentShop } from "../Pages/Ecommerce/PaymentShop";
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -147,5 +149,17 @@ export const routes = createBrowserRouter([
   {
     path: '/settings',
     element: <ProtectRoute><Settings /></ProtectRoute>,
+  },
+  {
+    path: "/payment",
+    element: <ProtectRoute><Payment /></ProtectRoute>
+  },
+  {
+      path: "/payment/success",
+      element: <ProtectRoute><PaymentSuccess /></ProtectRoute>
+  },
+  {
+    path: "/payment/shop",
+    element: <ProtectRoute><PaymentShop /></ProtectRoute>
   },
 ]);

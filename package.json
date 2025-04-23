@@ -12,6 +12,7 @@
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
     "@react-oauth/google": "^0.12.1",
+    "epayco-sdk-node": "^1.4.2",
     "js-tokens": "^9.0.1",
     "jsqr": "^1.4.0",
     "jwt-decode": "^4.0.0",
