@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import Position from '../../assets/posicionamiento-Step.png';
-import DefaultProfile from '../../assets/DefaultProfile.png';
+import Position from '../../assets/images/posicionamiento-Step.png';
+import DefaultProfile from '../../assets/images/DefaultProfile.png';
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Paper from '../../assets/images/Paper.png';

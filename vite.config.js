@@ -13,6 +13,14 @@ export default defineConfig({
       host: 'localhost',
       port: 5175, // Asegura que HMR use el mismo puerto
     },
+    allowedHosts: ['5ff3-179-1-217-69.ngrok-free.app'],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      }
+    },
   },
   plugins: [
     react(),
