@@ -56,6 +56,11 @@ export const useFetchUpdatePet = () => {
           petPicture: responsePhotoPet.profile_picture
         }))
         
+        // Actualizamos el contexto global con la nueva foto
+        updatedPet = {
+          ...updatedPet,
+          profile_picture: responsePhotoPet.profile_picture
+        };
       }
 
        // Actualizar el estado global
@@ -66,6 +71,8 @@ export const useFetchUpdatePet = () => {
         petFetched: updatedPet,
       }));
 
+      // Actualizar el contexto global de mascotas
+      updatePet(updatedPet);
       changeIsFetched(false);
 
       return { success: true };

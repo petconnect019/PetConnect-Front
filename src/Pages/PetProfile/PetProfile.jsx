@@ -94,15 +94,15 @@ export const PetProfile = () => {
 
   useEffect(() => {
     const subscription = watch((values) => {
-      setIsModified(
+      const hasFormChanges = 
         values.birthDate !== pet?.birthDate ||
-          values.breed !== pet?.breed ||
-          values.gender !== pet?.gender ||
-          values.color !== pet?.color ||
-          filePfp !== null ||
-          values.name !== pet?.name ||
-          selectedPet !== pet?.species
-      );
+        values.breed !== pet?.breed ||
+        values.gender !== pet?.gender ||
+        values.color !== pet?.color ||
+        values.name !== pet?.name ||
+        selectedPet !== pet?.species;
+
+      setIsModified(hasFormChanges || filePfp !== null);
     });
     return () => subscription.unsubscribe();
   }, [watch, pet, filePfp, selectedPet]);
@@ -150,6 +150,7 @@ export const PetProfile = () => {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
       setFilePfp(file);
+      setIsModified(true);
       event.target.value = "";
     }
   };

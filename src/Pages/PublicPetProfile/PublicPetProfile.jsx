@@ -19,22 +19,35 @@ export const PublicPetProfile = () => {
   const {findPet} = petUser?? {};
   const { isFetchedPets } = fetchedPets ?? {};
   const [petData, setPetData] = useState(null);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    // Obtener datos del usuario del sessionStorage
+    const storedUserData = sessionStorage.getItem("userData");
+    if (storedUserData) {
+      try {
+        const parsedData = JSON.parse(storedUserData);
+        setUserData(parsedData);
+      } catch (error) {
+        console.error("Error al parsear datos del usuario:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!isFetchedPets) {
       trigguerGetId();
     }
   }, []);
-  
+
   useEffect(() => {
     if (petResult) {
       setPetData(petResult);
-    }else {
-      setPetData(findPet(pet_id))
-      
+    } else {
+      setPetData(findPet(pet_id));
     }
   }, [petResult, isFetchedPets]);
-  
+
   const trigguerGetId = () => {
     getPetById(pet_id);
   };
@@ -44,7 +57,6 @@ export const PublicPetProfile = () => {
   };
 
   const handleShare = () => {
-    // implementacion de copiado del perfil
     navigator.clipboard.writeText(window.location.href)
       .then(() => {
         alert('Link copiado al portapapeles');
@@ -56,14 +68,12 @@ export const PublicPetProfile = () => {
 
   const petDetails = [
     { title: 'Género', subtitle: petData?.gender },
-    { title: 'Edad', subtitle: petData?.age || "No especificada" },
+    { title: 'Edad', subtitle: petData?.calculatedAge || "No especificada" },
     { title: 'Raza', subtitle: petData?.breed },
     { title: 'Color', subtitle: petData?.color },
     { title: 'Tipo', subtitle: petData?.species == "dog"? 'Perro' : 'Gato' },
     { title: 'Género', subtitle: petData?.gender }
   ];
-  console.log(petData);
-  
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4'>
@@ -90,7 +100,7 @@ export const PublicPetProfile = () => {
           <div className="mt-2 mb-6 flex justify-center">
             <div className="aspect-square w-64 overflow-hidden rounded-xl">
               <img 
-                src={petData.photos[0] || (petData.species=='dog'?defaultDog:defaultCat)} 
+                src={petData.profile_picture || (petData.species=='dog'?defaultDog:defaultCat)} 
                 alt={petData.name} 
                 className="w-64 h-64 object-cover"
               />
@@ -101,8 +111,9 @@ export const PublicPetProfile = () => {
           <div className="p-6">
             <h1 className="text-2xl font-bold mb-4">{petData.name}</h1>
             <div className="flex items-center gap-2 mb-6">
-                {/* <MapPin className="text-blue-500" size={24} /> */}
-                <span className="text-gray-700 text-lg">Ciudad, País</span>
+                <span className="text-gray-700 text-lg">
+                  {userData?.city || 'Ciudad no especificada'}, {userData?.country || 'País no especificado'}
+                </span>
             </div>
             <div className="grid grid-cols-3 gap-4">
             {petDetails.map((detail, index) => (
@@ -114,13 +125,13 @@ export const PublicPetProfile = () => {
           {/* Owner Profile Banner */}
           <div className="mx-4 bg-[#FFF5EA] rounded-lg p-4 flex items-center space-x-4">
             <img 
-              src={petData.owner.profilePicture || defaultOwner} 
-              alt={petData.owner.name}
+              src={petData.owner?.profilePicture || defaultOwner} 
+              alt={petData.owner?.name}
               className="w-12 h-12 rounded-full object-cover"
             />
             <div>
-              <p className="font-semibold text-gray-800">{petData.owner.name}</p>
-              <p className="text-sm text-gray-600">{petData.owner.location}</p>
+              <p className="font-semibold text-gray-800">{petData.owner?.name}</p>
+              <p className="text-sm text-gray-600">{petData.owner?.location}</p>
             </div>
           </div>
     
@@ -133,13 +144,11 @@ export const PublicPetProfile = () => {
             </button>
           </div>
         </div>
-      ) : 
-      (
+      ) : (
         <div className="flex justify-center items-center h-screen">
-          <ImSpinner2 className="animate-pulse text-[#EC9126] text-4xl" />
+          <ImSpinner2 className="animate-spin text-[#EC9126] text-4xl" />
         </div>
-      )
-    }
+      )}
     </div>
-    );
+  );
 };
