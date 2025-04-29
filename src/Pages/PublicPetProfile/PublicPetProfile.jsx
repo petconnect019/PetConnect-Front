@@ -72,7 +72,7 @@ export const PublicPetProfile = () => {
     { title: 'Raza', subtitle: petData?.breed },
     { title: 'Color', subtitle: petData?.color },
     { title: 'Tipo', subtitle: petData?.species == "dog"? 'Perro' : 'Gato' },
-    { title: 'Estado', subtitle: petData?.status }
+    ...(petData?.status === 'Perdido' ? [{ title: 'Estado', subtitle: petData?.status, className: 'text-red-500 font-semibold' }] : [])
   ];
 
   return (
