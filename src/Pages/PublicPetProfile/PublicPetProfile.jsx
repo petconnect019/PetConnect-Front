@@ -72,11 +72,11 @@ export const PublicPetProfile = () => {
     { title: 'Raza', subtitle: petData?.breed },
     { title: 'Color', subtitle: petData?.color },
     { title: 'Tipo', subtitle: petData?.species == "dog"? 'Perro' : 'Gato' },
-    { title: 'Género', subtitle: petData?.gender }
+    { title: 'Estado', subtitle: petData?.status }
   ];
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4'>
+    <div className='flex flex-col items-center  sm:py-12'>
       {petData ? (
           <div className="bg-white min-h-screen rounded-3xl">
           {/* Header */}
@@ -125,7 +125,7 @@ export const PublicPetProfile = () => {
           {/* Owner Profile Banner */}
           <div className="mx-4 bg-[#FFF5EA] rounded-lg p-4 flex items-center space-x-4">
             <img 
-              src={petData.owner?.profilePicture || defaultOwner} 
+              src={petData.owner?.profile_picture || defaultOwner} 
               alt={petData.owner?.name}
               className="w-12 h-12 rounded-full object-cover"
             />
