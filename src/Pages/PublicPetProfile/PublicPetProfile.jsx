@@ -79,36 +79,36 @@ export const PublicPetProfile = () => {
   ];
 
   return (
-    <div className='flex flex-col items-center  sm:py-12'>
+    <div className='grid grid-cols-1 gap-4 py-6 md:py-12 max-w-7xl mx-auto px-4 md:px-6 lg:px-8'>
       {petData ? (
           <div className="bg-white min-h-screen rounded-3xl">
           {/* Header */}
-          <div className="flex items-center justify-between p-4">
+          <div className="grid grid-cols-[auto_1fr_auto] items-center p-4 md:p-6">
             <button 
               onClick={handleGoBack} 
-              className="text-[#EC9126] hover:bg-orange-100 p-2 rounded-full"
+              className="hover:bg-orange-100 p-2 rounded-full"
             >
               <ArrowLeft size={24} />
             </button>
-            <h1 className="text-2xl font-semibold text-gray-800">Detalles de la mascota</h1>
+            <h1 className="text-lg md:text-2xl font-semibold text-gray-800 text-center">Detalles de la mascota</h1>
             <button 
               onClick={handleShare}
-              className="text-[#EC9126] hover:bg-orange-100 p-2 rounded-full"
+              className="hover:bg-orange-100 p-2 rounded-full"
             >
               <Share2 size={24} />
             </button>
           </div>
     
           {/* Pet Photo Carousel */}
-          <div className="mt-2 mb-6 flex justify-center relative">
-            <div className="aspect-square w-64 overflow-hidden rounded-xl">
+          <div className="grid place-items-center mt-2 mb-6 relative">
+            <div className="aspect-square w-64 sm:w-80 md:w-[28rem] overflow-hidden rounded-xl">
               <img 
                 src={petData.profile_picture || (petData.species=='dog'?defaultDog:defaultCat)} 
                 alt={petData.name} 
-                className="w-64 h-64 object-cover"
+                className="w-full h-full object-cover"
               />
               {petData?.status === 'Perdido' && (
-                <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full animate-pulse">
+                <div className="absolute top-2 right-2 bg-red-500 text-white px-2 md:px-3 py-1 rounded-full animate-pulse text-xs md:text-base">
                   {petData.status}
                 </div>
               )}
@@ -116,44 +116,44 @@ export const PublicPetProfile = () => {
           </div>
     
           {/* Pet details */}
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">{petData.name}</h1>
-            <div className="flex items-center gap-2 mb-6">
-                <span className="text-gray-700 text-lg">
-                  {userData?.city || 'Ciudad no especificada'}, {userData?.country || 'País no especificado'}
-                </span>
+          <div className="grid gap-4 p-4 md:p-6">
+            <div className="grid gap-2">
+              <h1 className="text-lg md:text-2xl font-bold">{petData.name}</h1>
+              <span className="text-sm md:text-lg text-gray-700">
+                {userData?.city || 'Ciudad no especificada'}, {userData?.country || 'País no especificado'}
+              </span>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-            {petDetails.map((detail, index) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+              {petDetails.map((detail, index) => (
                 <GridItem key={index} title={detail.title} subtitle={detail.subtitle} />
-            ))}
+              ))}
             </div>
           </div>
     
           {/* Owner Profile Banner */}
-          <div className="mx-4 bg-[#FFF5EA] rounded-lg p-4 flex items-center space-x-4">
+          <div className="grid grid-cols-[auto_1fr] gap-4 mx-4 md:mx-6 bg-[#FFF5EA] rounded-lg p-4">
             <img 
               src={petData.owner?.profile_picture || defaultOwner} 
               alt={petData.owner?.name}
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full object-cover"
             />
-            <div>
-              <p className="font-semibold text-gray-800">{petData.owner?.name}</p>
-              <p className="text-sm text-gray-600">{`${petData.owner?.city} , ${petData.owner?.state}`}</p>
+            <div className="grid gap-1">
+              <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-800">{petData.owner?.name}</p>
+              <p className="text-sm sm:text-base text-gray-600">{`${petData.owner?.city} , ${petData.owner?.state}`}</p>
             </div>
           </div>
     
           {/* Contact Owner Button */}
-          <div className="mx-4 mt-6">
+          <div className="mx-4 md:mx-6 mt-6 mb-6">
             <button 
-              className="w-full bg-[#EC9126] text-white py-3 rounded-lg hover:bg-orange-600 transition-colors font-semibold"
+              className="w-full bg-[#EC9126] text-white py-2 md:py-3 rounded-lg hover:bg-orange-600 transition-colors font-semibold text-sm md:text-base"
             >
               Contactar Propietario
             </button>
           </div>
         </div>
       ) : (
-        <div className="flex justify-center items-center h-screen">
+        <div className="grid place-items-center h-screen">
           <ImSpinner2 className="animate-spin text-[#EC9126] text-4xl" />
         </div>
       )}

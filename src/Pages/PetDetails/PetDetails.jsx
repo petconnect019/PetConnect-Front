@@ -79,17 +79,17 @@ export const PetDetails = () => {
       {pet ? (
         <section className="flex flex-col items-center  sm:py-12">
           <div className="w-full max-w-md sm:max-w-xl md:max-w-2xl bg-white p-4 sm:p-6">
-            <div className="flex justify-center items-center  mt-4 w-screen">
-                <div className="absolute left-0 ">
-                  <NavButton onClick={handleBackButton}/>
-                </div>
-                <h1 className="text-center pr-10 text-xl sm:text-2xl font-bold text-gray-800">
-                  Detalles de la Mascota
-                </h1>
-                <div className="absolute right-5">
-                  <img className="w-6 h-6" src={SharedImg} alt="SharedImg" />
-                </div>
+            <div className="relative flex items-center justify-center mt-4 w-full">
+              <div className="absolute left-0">
+                <NavButton onClick={handleBackButton}/>
               </div>
+              <h1 className="text-center text-xl sm:text-2xl font-bold text-gray-800">
+                Detalles de la Mascota
+              </h1>
+              <div className="absolute right-0">
+                <img className="w-6 h-6" src={SharedImg} alt="SharedImg" />
+              </div>
+            </div>
 
             <div className="mt-4">
             <div className="sm:m-10 flex justify-center items-center p-3 gap-6 sm:gap-12">
@@ -129,13 +129,12 @@ export const PetDetails = () => {
                   {userData?.city || 'Ciudad no especificada'}, {userData?.country || 'País no especificado'}
                 </span>
               </div>
-              <div className="grid grid-rows-2 grid-cols-3 gap-3 sm:gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
                 {petDetails.map((detail, index) => (
-                  <GridItem
-                    key={index}
-                    title={detail.title}
-                    subtitle={detail.subtitle}
-                  />
+                  <div key={index} className="bg-gray-50 p-3 sm:p-4 rounded-lg shadow-sm">
+                    <p className="text-xs sm:text-sm text-gray-500">{detail.title}</p>
+                    <p className="text-sm sm:text-base font-medium text-gray-800">{detail.subtitle || 'No especificado'}</p>
+                  </div>
                 ))}
               </div>
               <div className="flex justify-center my-4 sm:m-5">
