@@ -45,7 +45,7 @@ export const Register = () => {
   // Destructuring contexts and hooks
   const { login } = auth;
   const { changeHasPetsUser } = pets;
-  const { handleRegister, accessTokenResult, error, isSuccess, isLoading } =
+  const { handleRegister, accessTokenResult, userResult, error, isSuccess, isLoading } =
     useFetchRegister();
 
   // Local states
@@ -75,12 +75,12 @@ export const Register = () => {
 
   // Efectos para las acciones de los estados
   useEffect(() => {
-    if (accessToken) {
-      login(accessToken, null);
+    if (accessToken && userResult) {
+      login(accessToken, userResult);
       changeHasPetsUser(false);
       navigate("/step-user");
     }
-  }, [accessToken]);
+  }, [accessToken, userResult]);
 
   // Manejo de error
   useEffect(() => {
@@ -107,25 +107,13 @@ export const Register = () => {
 
       <div
         className={`
-      flex items-center justify-center 
-      min-h-screen 
-      px-4 py-6 
-      bg-gray-100 
+      flex items-center justify-center h-auto
       ${isLoading ? "blur-sm pointer-events-none" : ""}
     `}
       >
         <div
           className="
-        w-full 
-        max-w-md 
-        bg-white 
-        rounded-2xl 
-        shadow-xl 
-        overflow-hidden 
-        transition-all 
-        duration-300 
-        ease-in-out
-        hover:shadow-2xl
+        flex flex-col pt-2 w-screen items-center
       "
         >
           {/* Toastify Container with improved positioning */}
@@ -143,7 +131,7 @@ export const Register = () => {
             className="z-50"
           />
 
-          <div className="p-6 sm:p-8">
+          <div className="p-2 sm:p-4 mt-8 ">
             <header className="mb-6 text-center">
               <h2
                 className="
@@ -171,9 +159,10 @@ export const Register = () => {
               onSubmit={handleSubmit(onSubmit)}
               noValidate
               aria-label="Formulario de registro"
+              className=" w-[20rem]"
             >
               {/* Email Input */}
-              <div className="mb-4">
+              <div className="mb-4 ">
                 <InputField
                   name="email"
                   label="Email"

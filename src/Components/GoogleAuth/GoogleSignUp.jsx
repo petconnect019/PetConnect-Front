@@ -15,9 +15,10 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
   const { login } = auth;
   const { changeHasPetsUser } = pets;
 
+
   // Use useCallback to avoid recreating this function on every render
   const handleGoogleSignUp = useCallback(() => {
-    const popupUrl = `${import.meta.env.VITE_API_URL}/api/auth/google`;
+    const popupUrl = 'https://petconnect-backend-production.up.railway.app/api/auth/google';
     const popupName = 'Google Login';
     const popupFeatures = 'width=500,height=600,left=300,top=200';
     
@@ -31,7 +32,7 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
       }
       
       const messageListener = async (event) => {
-        if (event.origin !== import.meta.env.VITE_API_URL || !event.data) {
+        if (event.origin !== 'https://petconnect-backend-production.up.railway.app' || !event.data) {
           return;
         }
         

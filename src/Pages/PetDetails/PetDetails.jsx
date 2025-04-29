@@ -15,19 +15,38 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import petPhoto from '../../assets/images/petPhoto.png'
 import addPetPhoto from '../../assets/images/addPetPhoto.png'
 import { FooterNav } from "../../Components/FooterNav/FooterNav";
-
-
+import { NavButton } from "../../Components/NavButton/NavButton";
+import SharedImg from '../../assets/images/shared.png'
+import LocationImg from '../../assets/images/Location.png'
 
 export const PetDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { pet_id } = useParams();
   const [pet, setPet] = useState({});
+  const [userData, setUserData] = useState(null);
   const fetchedPets = useIsFetchedPets();
   const { isFetchedPets } = fetchedPets ?? {};
   const pets = usePet();
   const navigate = useNavigate();
   const { findPet } = pets ?? {};
   const { getPetById, petResult } = useFetchPetById();
+
+  const handleBackButton = () => {
+    navigate('/home');
+  }
+
+  useEffect(() => {
+    // Obtener datos del usuario del sessionStorage
+    const storedUserData = sessionStorage.getItem("userData");
+    if (storedUserData) {
+      try {
+        const parsedData = JSON.parse(storedUserData);
+        setUserData(parsedData);
+      } catch (error) {
+        console.error("Error al parsear datos del usuario:", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!isFetchedPets) {
@@ -58,13 +77,22 @@ export const PetDetails = () => {
   return (
     <>
       {pet ? (
-        <section className="flex flex-col items-center min-h-screen px-4 py-8 sm:py-12">
-          <div className="w-full max-w-md sm:max-w-xl md:max-w-2xl bg-white p-4 sm:p-6 rounded-xl shadow-lg">
-            <h1 className="mt-4 sm:mt-5 text-center text-xl sm:text-2xl font-bold text-gray-800">
-              Detalles de la Mascota
-            </h1>
+        <section className="flex flex-col items-center  sm:py-12">
+          <div className="w-full max-w-md sm:max-w-xl md:max-w-2xl bg-white p-4 sm:p-6">
+            <div className="flex justify-center items-center  mt-4 w-screen">
+                <div className="absolute left-0 ">
+                  <NavButton onClick={handleBackButton}/>
+                </div>
+                <h1 className="text-center pr-10 text-xl sm:text-2xl font-bold text-gray-800">
+                  Detalles de la Mascota
+                </h1>
+                <div className="absolute right-5">
+                  <img className="w-6 h-6" src={SharedImg} alt="SharedImg" />
+                </div>
+              </div>
 
-            <div className="my-6 sm:m-10 flex justify-between sm:justify-evenly items-center">
+            <div className="mt-4">
+            <div className="sm:m-10 flex justify-center items-center p-3 gap-6 sm:gap-12">
               <div
                 onClick={() => navigate(`/scanner/${pet_id}`)}
                 className="flex flex-col items-center cursor-pointer"
@@ -90,14 +118,18 @@ export const PetDetails = () => {
                 <p className="text-xs text-center mt-1">Reportar como Perdida</p>
               </div>
             </div>
+            
 
             {/* Pet details */}
             <div className="p-4 sm:p-6">
               <h1 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{pet.name}</h1>
               <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                <span className="text-gray-700 text-base sm:text-lg">Ciudad, País</span>
+                <img className="w-5 h-5" src={LocationImg} alt="Location" />
+                <span className="text-gray-700 text-base sm:text-lg">
+                  {userData?.city || 'Ciudad no especificada'}, {userData?.country || 'País no especificado'}
+                </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="grid grid-rows-2 grid-cols-3 gap-3 sm:gap-6">
                 {petDetails.map((detail, index) => (
                   <GridItem
                     key={index}
@@ -114,6 +146,7 @@ export const PetDetails = () => {
                   Editar Perfil
                 </button>
               </div>
+            </div>
             </div>
 
             {/* Galería de Imagenes de la Mascota */}
@@ -139,6 +172,7 @@ export const PetDetails = () => {
               </div>
             </div>
           </div>
+
 
           {/* Modal */}
           {isModalOpen && (

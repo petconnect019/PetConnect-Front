@@ -4,25 +4,45 @@ import { FetchLogout } from "../../Utils/Fetch/FetchLogout/FetchLogout";
 const AuthContext = createContext({ isAuthenticated: false, login: () => {} });
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => !!sessionStorage.getItem("accessToken"));
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const token = sessionStorage.getItem("accessToken");
+    const userData = sessionStorage.getItem("userData");
+    return !!(token && userData);
+  });
 
   useEffect(() => {
-    // Verificar token en sessionStorage al iniciar
-    setIsAuthenticated(!!sessionStorage.getItem("accessToken"));
+    // Verificar token y datos de usuario en sessionStorage al iniciar
+    const token = sessionStorage.getItem("accessToken");
+    const userData = sessionStorage.getItem("userData");
+    setIsAuthenticated(!!(token && userData));
   }, []);
 
-
   const login = (token, userData) => {
-    sessionStorage.setItem("accessToken", token);
-    userData && sessionStorage.setItem("userData", JSON.stringify(userData));
-    setIsAuthenticated(true);
+    if (!token || !userData) {
+      console.error("Token o datos de usuario no proporcionados");
+      return;
+    }
+    
+    try {
+      sessionStorage.setItem("accessToken", token);
+      sessionStorage.setItem("userData", JSON.stringify(userData));
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error("Error al guardar datos de autenticación:", error);
+      setIsAuthenticated(false);
+    }
   };
 
   const logout = () => {
-    FetchLogout();
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("hasPets");
-    setIsAuthenticated(false);
+    try {
+      FetchLogout();
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("userData");
+      sessionStorage.removeItem("hasPets");
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
   };
 
   return (

@@ -6,7 +6,7 @@ import React from 'react';
 export const ModalResponse = ({ path, setModalOpen,  textResponse, navigate,imgProfile }) => {
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-md">
+    <div className="fixed inset-0 flex items-center w-screen justify-center bg-black/30 backdrop-blur-md">
       <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md text-center">
         <img src={imgProfile} alt="Éxito" className="mx-auto object-cover mb-4 w-28 h-28 rounded-full" />
         <h2 className="text-2xl font-bold text-gray-800">¡Ya estás listo!</h2>

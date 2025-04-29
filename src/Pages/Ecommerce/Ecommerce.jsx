@@ -14,19 +14,19 @@ export const Ecommerce = () => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center  ">
-            <div className="bg-white ">
+        <div className="flex items-center justify-center h-auto">
+            <div className="flex flex-col p-4 w-screen  items-center h-screen">
              
-                <div className="bg-white  shadow-md p-7 h-screen w-full mx-auto md:p-10 lg:p-12  ">
+                <div className="bg-white w-full mx-auto md:p-10 lg:p-12 ">
                     <NavButton onClick={onClick} />
-                    <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+                    <h1 className="text-3xl font-bold text-center text-gray-800 ">
                         Etiqueta de codigo QR para tu que tu mascota tenga una mayor proteccion
                     </h1>
                     
-                    <div className="flex justify-center my-8">
-                        <img src={ImageQR} alt="QR PetConnect" className="w-85" />
+                    <div className="flex justify-center">
+                        <img src={ImageQR} alt="QR PetConnect" className="w-55" />
                     </div>
-                    <div className='flex flex-col items-center'>
+                    <div className='flex flex-col items-center p-2'>
                         <ButtonPrimary path="/payment/shop" text="Comprar" />
                         <button className='flex justify-center w-full max-w-md bg-orange-50 text-brand text-lg py-3 rounded-full mt-8 font-medium items-center gap-2'>
                             <img className='w-6' src={CrownImg} alt="Crown" />

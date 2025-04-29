@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import jsQR from 'jsqr';
-import { getQrId } from '../../Utils/Helpers/GetQrId/getQrId';
+import { getQrId } from '../../Utils/Helpers/GetQrId/GetQrId';
 //importing screens
 import { WelcomeScreen } from '../../Components/ScannerScreens/WelcomeScreen';
 import { PermisionsDeniedScreens } from '../../Components/ScannerScreens/PermisionsDeniedScreen';
