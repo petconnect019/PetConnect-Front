@@ -165,30 +165,26 @@ export const PetProfile = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center  ">
-      <div className="bg-white shadow-xl p-6   max-w-md space-y-6 border">
-        <div className="flex items-center  mb-6 text-center  w-screen p-1 ">
+    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-gray-50">
+      <div className="bg-white w-full max-w-md md:max-w-2xl lg:max-w-4xl space-y-3 xs:space-y-4 sm:space-y-6 md:space-y-8">
+        <div className="flex items-center mb-3 xs:mb-4 sm:mb-6 md:mb-8 text-center w-full p-1">
           <NavButton onClick={() => navigate(-1)} />
-          <h2 className="text-2xl pr-10 sm:text-2xl font-bold text-gray-800 flex-grow text-center">
+          <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 flex-grow text-center">
             Perfil de tu mascota
           </h2>
         </div>
 
-        
-        <div className="flex justify-between items-cente p-4  md:flex-row md:space-y-0 md:space-x-6">
-          <div className="relative w-25 h-25  flex justify-center items-center">
-            <label htmlFor="profile-upload" className="cursor-pointer flex justify-center items-center ">
+        <div className="flex flex-row justify-between items-center p-2 xs:p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 2xl:p-12 space-x-4 xs:space-x-6 sm:space-x-8 md:space-x-10 lg:space-x-12 xl:space-x-14 2xl:space-x-16">
+          <div className="relative w-16 h-16 xs:w-20 xs:h-20 sm:w-25 sm:h-25 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 2xl:w-56 2xl:h-56 3xl:w-64 3xl:h-64 4xl:w-56 4xl:h-56 flex justify-center items-center">
+            <label htmlFor="profile-upload" className="cursor-pointer flex justify-center items-center">
               <img
-                src={
-                  profileImage ||
-                  (pet?.species === "dog" ? defaultDogPfp : defaultCatPfp)
-                }
+                src={profileImage || (pet?.species === "dog" ? defaultDogPfp : defaultCatPfp)}
                 alt={pet?.species}
-                className="w-25 h-25 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
+                className="w-16 h-16 xs:w-20 xs:h-20 sm:w-25 sm:h-25 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 2xl:w-56 2xl:h-56 3xl:w-64 3xl:h-64 4xl:w-56 4xl:h-56 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
               />
-              <span className="absolute bottom-18 right-0 rounded-full p-1.5">
+              <span className="absolute bottom-12 xs:bottom-14 sm:bottom-18 md:bottom-24 lg:bottom-30 xl:bottom-36 2xl:bottom-42 3xl:bottom-48 4xl:bottom-42 right-0 rounded-md p-1 xs:p-1.5 md:p-2 lg:p-2.5 xl:p-3 2xl:p-3.5">
                 <img
-                  className="w-5 h-5 rounded-sm"
+                  className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 2xl:w-9 2xl:h-9 3xl:w-10 3xl:h-10 4xl:w-9 4xl:h-9 rounded-lg"
                   src={EditImg}
                   alt="EditImgIcon"
                 />
@@ -203,27 +199,27 @@ export const PetProfile = () => {
             />
           </div>
 
-          <div className="flex-1 w-full text-center md:text-left space-y-3 ">
-            <p className="text-xs text-justify text-gray-600 px-2 mb-6">
+          <div className="flex-1 w-full text-left space-y-2 xs:space-y-3 md:space-y-4 lg:space-y-5 xl:space-y-6 2xl:space-y-7">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-2xl text-justify text-gray-600 mb-3 xs:mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12 2xl:mb-14">
               Verifica que el perfil público de tu mascota esté actualizado para
               facilitar una reunión rápida y sin contratiempos
             </p>
             <button
               onClick={handlePublicProfile}
-              className="w-full max-w-xs h-7 bg-orange-400 text-white rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors"
+              className="w-full max-w-xs h-6 xs:h-7 md:h-9 lg:h-10 xl:h-12 2xl:h-14 3xl:h-16 4xl:h-12 bg-orange-400 text-white rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors"
             >
-              <p className="text-sm">Ver perfil público</p>
+              <p className="text-xs xs:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl 4xl:text-xl">Ver perfil público</p>
             </button>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 my-4 -mx-6 w-screen" />
+        <div className="border-t border-gray-200 my-3 xs:my-4 sm:my-6 md:my-8 w-full" />
 
         {isLoading && (
           <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/30 backdrop-blur-sm">
             <div className="flex flex-col items-center">
-              <ImSpinner2 className="text-orange-500 animate-spin" size={50} />
-              <p className="mt-4 text-orange-600 font-semibold text-lg">
+              <ImSpinner2 className="text-orange-500 animate-spin w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-20 lg:h-20" />
+              <p className="mt-3 xs:mt-4 sm:mt-6 text-orange-600 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl">
                 Cargando...
               </p>
             </div>
@@ -231,24 +227,24 @@ export const PetProfile = () => {
         )}
 
         {error && (
-          <div className="p-4 bg-red-500 text-white rounded-lg mb-4 shadow-md">
-            <p>{error}</p>
+          <div className="p-2 xs:p-3 sm:p-4 md:p-6 bg-red-500 text-white rounded-lg mb-3 xs:mb-4 sm:mb-6">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl">{error}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4 p-4">
-          <label className="font-semibold text-lg text-gray-700">
+        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-2 xs:space-y-3 sm:space-y-4 md:space-y-6 p-2 xs:p-3 sm:p-4 md:p-6">
+          <label className="font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700">
             Seguridad de la mascota
           </label>
           <div
-            className="mt-3 relative cursor-pointer p-3 bg-gray-50 rounded-lg flex justify-between items-center hover:bg-gray-100 transition-colors"
+            className="mt-2 xs:mt-3 sm:mt-4 relative cursor-pointer p-2 xs:p-3 sm:p-4 bg-gray-50 rounded-lg flex justify-between items-center hover:bg-gray-100 transition-colors"
             onClick={() => navigate("/check-protection")}
           >
-            <span className="flex items-center text-gray-600">
-              <img className="w-5 h-5 mr-2" src={QRIcon} alt="QRIcon" />
+            <span className="flex items-center text-gray-600 text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl">
+              <img className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 mr-2" src={QRIcon} alt="QRIcon" />
               Codigo QR
             </span>
-            <span className="text-orange-500 hover:underline">+add</span>
+            <span className="text-orange-500 hover:underline text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl">+add</span>
           </div>
 
           <InputField
@@ -261,15 +257,11 @@ export const PetProfile = () => {
           />
 
           <div className="relative">
-            <label className="block mb-2 font-semibold text-lg text-gray-700">
+            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700">
               Fecha de nacimiento
             </label>
-            <span
-              className={`absolute top-12 left-3 z-10 ${
-                modalOpen ? "hidden" : ""
-              }`}
-            >
-              <img className="w-5 h-5" src={CalendarImg} alt="CalendarIcon" />
+            <span className={`absolute top-8 xs:top-10 sm:top-12 md:top-14 lg:top-16 left-3 z-10 ${modalOpen ? "hidden" : ""}`}>
+              <img className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" src={CalendarImg} alt="CalendarIcon" />
             </span>
             <Calendar
               value={selectedDate}
@@ -289,12 +281,12 @@ export const PetProfile = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-semibold text-lg text-gray-700">
+            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700">
               Raza
             </label>
             <select
               {...register("breed")}
-              className="w-full p-3 bg-gray-50 rounded-lg text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              className="w-full p-2 xs:p-3 sm:p-4 bg-gray-50 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
             >
               <option value="No especificada">No especificada</option>
               {(pet?.species === "dog" ? dogBreeds : catBreeds).map((breed) => (
@@ -306,12 +298,12 @@ export const PetProfile = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-semibold text-lg text-gray-700">
+            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700">
               Género
             </label>
             <select
               {...register("gender")}
-              className="w-full p-3 bg-gray-50 rounded-lg text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              className="w-full p-2 xs:p-3 sm:p-4 bg-gray-50 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
             >
               <option value="No especificado">No especificado</option>
               <option value="Macho">Macho</option>
@@ -337,7 +329,7 @@ export const PetProfile = () => {
           <button
             type="submit"
             disabled={!isModified}
-            className="w-full bg-orange-500 mt-3 text-white py-3 rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="w-full bg-orange-500 mt-2 xs:mt-3 sm:mt-4 text-white py-2 xs:py-3 sm:py-4 rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl"
           >
             Guardar cambios
           </button>
