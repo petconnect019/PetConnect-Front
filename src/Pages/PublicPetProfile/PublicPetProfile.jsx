@@ -35,18 +35,22 @@ export const PublicPetProfile = () => {
   }, []);
 
   useEffect(() => {
-    if (!isFetchedPets) {
-      trigguerGetId();
-    }
-  }, []);
+    // Siempre intentar cargar los datos del pet
+    trigguerGetId();
+  }, [pet_id]);
 
   useEffect(() => {
     if (petResult) {
       setPetData(petResult);
     } else {
-      setPetData(findPet(pet_id));
+      const foundPet = findPet(pet_id);
+      if (foundPet) {
+        setPetData(foundPet);
+      } else {
+        trigguerGetId();
+      }
     }
-  }, [petResult, isFetchedPets]);
+  }, [petResult, isFetchedPets, pet_id, findPet]);
 
   const trigguerGetId = () => {
     getPetById(pet_id);
@@ -135,7 +139,7 @@ export const PublicPetProfile = () => {
             />
             <div>
               <p className="font-semibold text-gray-800">{petData.owner?.name}</p>
-              <p className="text-sm text-gray-600">{petData.owner?.location}</p>
+              <p className="text-sm text-gray-600">{`${petData.owner?.city} , ${petData.owner?.state}`}</p>
             </div>
           </div>
     
