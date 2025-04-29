@@ -77,6 +77,7 @@ body {
     .p-calendar .p-inputtext {
         height: 3rem !important;
         font-size: 1rem !important;
+        padding-left: 41px;
     }
 }
 
@@ -84,6 +85,7 @@ body {
     .p-calendar .p-inputtext {
         height: 3.5rem !important;
         font-size: 1.125rem !important;
+        padding-left: 48px;
     }
 }
 
@@ -91,6 +93,7 @@ body {
     .p-calendar .p-inputtext {
         height: 4rem !important;
         font-size: 1.25rem !important;
+        padding-left: 56px;
     }
 }
 
@@ -98,6 +101,7 @@ body {
     .p-calendar .p-inputtext {
         height: 4.5rem !important;
         font-size: 1.375rem !important;
+        padding-left: 68px;
     }
 }
 
@@ -105,6 +109,7 @@ body {
     .p-calendar .p-inputtext {
         height: 5rem !important;
         font-size: 1.5rem !important;
+        padding-left: 76px;
     }
 }
 
@@ -112,6 +117,7 @@ body {
     .p-calendar .p-inputtext {
         height: 5.5rem !important;
         font-size: 1.625rem !important;
+        padding-left: 85px;
     }
 }
 
@@ -119,6 +125,7 @@ body {
     .p-calendar .p-inputtext {
         height: 6rem !important;
         font-size: 1.75rem !important;
+        padding-left: 88px;
     }
 }
 
@@ -126,6 +133,7 @@ body {
     .p-calendar .p-inputtext {
         height: 6.5rem !important;
         font-size: 1.875rem !important;
+        padding-left: 84px;
     }
 }
 

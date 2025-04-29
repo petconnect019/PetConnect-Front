@@ -167,9 +167,9 @@ export const PetProfile = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full min-h-screen bg-gray-50">
       <div className="bg-white w-full max-w-md md:max-w-2xl lg:max-w-4xl space-y-3 xs:space-y-4 sm:space-y-6 md:space-y-8">
-        <div className="flex items-center mb-3 xs:mb-4 sm:mb-6 md:mb-8 text-center w-full p-1">
+        <div className="flex items-center mt-2 mb-3 xs:mb-4 sm:mb-6 md:mb-8 text-center w-full p-1">
           <NavButton onClick={() => navigate(-1)} />
-          <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl 3xl:text-6xl 4xl:text-5xl font-bold text-gray-800 flex-grow text-center">
+          <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl 4xl:text-5xl font-bold text-gray-800 flex-grow text-center">
             Perfil de tu mascota
           </h2>
         </div>
@@ -180,11 +180,11 @@ export const PetProfile = () => {
               <img
                 src={profileImage || (pet?.species === "dog" ? defaultDogPfp : defaultCatPfp)}
                 alt={pet?.species}
-                className="w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 2xl:w-56 2xl:h-56 3xl:w-64 3xl:h-64 4xl:w-72 4xl:h-72 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
+                className="w-18 h-18 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 2xl:w-56 2xl:h-56 3xl:w-64 3xl:h-64 4xl:w-72 4xl:h-72 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
               />
               <span className="absolute bottom-12 xs:bottom-14 sm:bottom-18 md:bottom-24 lg:bottom-30 xl:bottom-36 2xl:bottom-42 3xl:bottom-48 4xl:bottom-42 right-0 rounded-md p-1 xs:p-1.5 md:p-2 lg:p-2.5 xl:p-3 2xl:p-3.5">
                 <img
-                  className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 2xl:w-9 2xl:h-9 3xl:w-10 3xl:h-10 4xl:w-11 4xl:h-11 rounded-lg"
+                  className="w-4 h-4 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 2xl:w-9 2xl:h-9 3xl:w-10 3xl:h-10 4xl:w-11 4xl:h-11 rounded-lg"
                   src={EditImg}
                   alt="EditImgIcon"
                 />
@@ -260,7 +260,7 @@ export const PetProfile = () => {
             <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
               Fecha de nacimiento
             </label>
-            <span className={`absolute top-10 xs:top-11.5 sm:top-14 md:top-13 lg:top-15 xl:top-18 2xl:top-20 3xl:top-22 4xl:top-20 left-3 z-10 ${modalOpen ? "hidden" : ""}`}>
+            <span className={`absolute top-10 xs:top-11.5 sm:top-14 xs:left-4.5 md:top-13 md:left-6 lg:top-15 lg:left-8 xl:top-16 xl:left-9 2xl:top-18 2xl:left-10 3xl:top-20 4xl:top-20 4xl:left-10 left-3.5 z-10 ${modalOpen ? "hidden" : ""}`}>
               <img className="w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10" src={CalendarImg} alt="CalendarIcon" />
             </span>
             <Calendar
