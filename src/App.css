@@ -49,9 +49,10 @@ body {
 /* Fondo del input */
 .p-calendar .p-inputtext {
     background-color: #f3f4f6 !important; 
-    border: 1px solid #d1d5db !important; 
+    border: 1px solid #ffffff !important; 
     color: #374151 !important; 
     padding-left: 40px;
+    border-radius: 15px;
   }
   
   /* Estilo cuando el input está enfocado */

@@ -68,12 +68,12 @@ export const PetProfile = () => {
     if (foundPet) {
       setPet(foundPet);
       setProfileImage(
-        foundPet.profile_picture || foundPet.species == "dog"
-          ? defaultDogPfp
-          : defaultCatPfp
+        foundPet.profile_picture || 
+        (foundPet.species === "dog" ? defaultDogPfp : defaultCatPfp)
       );
       setSelectedPet(foundPet.species);
       setValue("birthDate", foundPet.birthDate || "");
+      setSelectedDate(foundPet.birthDate ? new Date(foundPet.birthDate) : "");
       setValue(
         "name",
         foundPet.name == "No especificado" ? "No especificada" : foundPet.name
@@ -129,7 +129,9 @@ export const PetProfile = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      setProfileImage(petPicture);
+      if (petPicture) {
+        setProfileImage(petPicture);
+      }
       setModalOpen(true);
     }
   }, [isSuccess]);
@@ -162,27 +164,28 @@ export const PetProfile = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-      <div className="bg-white shadow-xl p-6 rounded-3xl w-full max-w-md space-y-6">
-        <div className="flex items-center justify-start mb-6 gap-2">
+    <div className="flex flex-col items-center justify-center  ">
+      <div className="bg-white shadow-xl p-6   max-w-md space-y-6 border">
+        <div className="flex items-center  mb-6 text-center  w-screen p-1 ">
           <NavButton onClick={() => navigate(-1)} />
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex-grow text-center">
-            Nombra tu mascota 🐾
+          <h2 className="text-2xl pr-10 sm:text-2xl font-bold text-gray-800 flex-grow text-center">
+            Perfil de tu mascota
           </h2>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-          <div className="relative w-32 h-32">
-            <label htmlFor="profile-upload" className="cursor-pointer">
+        
+        <div className="flex justify-between items-cente p-4  md:flex-row md:space-y-0 md:space-x-6">
+          <div className="relative w-25 h-25  flex justify-center items-center">
+            <label htmlFor="profile-upload" className="cursor-pointer flex justify-center items-center ">
               <img
                 src={
                   profileImage ||
                   (pet?.species === "dog" ? defaultDogPfp : defaultCatPfp)
                 }
                 alt={pet?.species}
-                className="w-32 h-32 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
+                className="w-25 h-25 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
               />
-              <span className="absolute bottom-0 right-0 rounded-full p-1.5">
+              <span className="absolute bottom-18 right-0 rounded-full p-1.5">
                 <img
                   className="w-5 h-5 rounded-sm"
                   src={EditImg}
@@ -199,21 +202,21 @@ export const PetProfile = () => {
             />
           </div>
 
-          <div className="flex-1 w-full text-center md:text-left space-y-3">
-            <p className="text-sm text-gray-600 px-2">
+          <div className="flex-1 w-full text-center md:text-left space-y-3 ">
+            <p className="text-xs text-justify text-gray-600 px-2 mb-6">
               Verifica que el perfil público de tu mascota esté actualizado para
               facilitar una reunión rápida y sin contratiempos
             </p>
             <button
               onClick={handlePublicProfile}
-              className="w-full max-w-xs h-10 bg-orange-500 text-white rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors"
+              className="w-full max-w-xs h-7 bg-orange-400 text-white rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors"
             >
               <p className="text-sm">Ver perfil público</p>
             </button>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 my-4" />
+        <div className="border-t border-gray-200 my-4 -mx-6 w-screen" />
 
         {isLoading && (
           <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/30 backdrop-blur-sm">
@@ -232,7 +235,7 @@ export const PetProfile = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4 p-4">
           <label className="font-semibold text-lg text-gray-700">
             Seguridad de la mascota
           </label>
@@ -272,7 +275,7 @@ export const PetProfile = () => {
               onChange={handleDateChange}
               dateFormat="dd/mm/yy"
               placeholder="Seleccione la fecha"
-              className="w-full bg-gray-50 rounded-lg"
+              className="w-full bg-gray-50 rounded-10"
               pt={{
                 panel: { style: { width: "2rem" } },
               }}
@@ -327,20 +330,21 @@ export const PetProfile = () => {
           <PetTypeSelector
             selectedPet={selectedPet}
             setSelectedPet={setSelectedPet}
+            textLabel="Tipo de mascota"
           />
 
           <button
             type="submit"
             disabled={!isModified}
-            className="w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="w-full bg-orange-500 mt-3 text-white py-3 rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
-            Confirmar
+            Guardar cambios
           </button>
         </form>
 
         {modalOpen && (
           <ModalResponse
-            imgProfile={profileImage}
+            imgProfile={profileImage || (selectedPet === "dog" ? defaultDogPfp : defaultCatPfp)}
             setModalOpen={setModalOpen}
             navigate={navigate}
             path="/home"

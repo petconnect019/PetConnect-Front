@@ -113,25 +113,13 @@ export const Login = () => {
 
       <div
         className={`
-          flex items-center justify-center 
-          min-h-screen 
-          px-4 py-6 
-          bg-gray-100 
+          flex items-center justify-center h-auto
           ${isLoading ? "blur-sm pointer-events-none" : ""}
         `}
       >
         <div
           className="
-            w-full 
-            max-w-md 
-            bg-white 
-            rounded-2xl 
-            shadow-xl 
-            overflow-hidden 
-            transition-all 
-            duration-300 
-            ease-in-out
-            hover:shadow-2xl
+           flex flex-col p-4 w-screen rounded-xl max-w-md md:shadow-lg items-center bg-white 
           "
         >
           <ToastContainer
@@ -148,7 +136,7 @@ export const Login = () => {
             className="z-50"
           />
 
-          <div className="p-6 sm:p-8">
+          <div className="p-2 sm:p-8 mt-14">
             <header className="mb-6 text-center">
               <h1 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
                 Bienvenido de nuevo! 👋
@@ -162,6 +150,7 @@ export const Login = () => {
               onSubmit={handleSubmit(onSubmit)}
               noValidate
               aria-label="Formulario de inicio de sesión"
+              className=" w-[20rem]"
             >
               {/* Email Input */}
               <div className="mb-4">
@@ -222,40 +211,27 @@ export const Login = () => {
                 )}
 
                 {/* Remember me and Forgot Password */}
-                <div className="flex flex-col sm:flex-row justify-between items-center my-6">
-                  <div className="flex items-center mb-2 sm:mb-0">
-                    <input
-                      type="checkbox"
-                      id="remember-me"
-                      disabled={isLoading}
-                      className="
-                        mr-2 
-                        w-4 
-                        h-4 
-                        text-brand 
-                        rounded 
-                        focus:ring-brand
-                      "
-                    />
-                    <label
-                      htmlFor="remember-me"
-                      className="text-sm text-gray-600"
+                <div className="flex flex-row justify-between items-center my-6">
+                    <div className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id="remember-me"
+                            disabled={isLoading}
+                            className="mr-2 w-4 h-4 text-brand rounded focus:ring-brand"
+                        />
+                        <label
+                            htmlFor="remember-me"
+                            className="text-sm text-gray-600"
+                        >
+                            Recuérdame
+                        </label>
+                    </div>
+                    <Link
+                        to="/recover-email"
+                        className="text-sm text-brand hover:underline transition duration-300"
                     >
-                      Recuérdame
-                    </label>
-                  </div>
-                  <Link
-                    to="/recover-email"
-                    className="
-                      text-sm 
-                      text-brand 
-                      hover:underline 
-                      transition 
-                      duration-300
-                    "
-                  >
-                    ¿Has olvidado tu contraseña?
-                  </Link>
+                        ¿Has olvidado tu contraseña?
+                    </Link>
                 </div>
               </div>
 
@@ -290,7 +266,7 @@ export const Login = () => {
               </div>
 
               {/* Registration Link */}
-              <p className="mt-6 text-center text-sm text-gray-600">
+              <p className="mt-6 text-center text-sm text-gray-600 mt-6">
                 ¿Aún no tienes una cuenta?{" "}
                 <Link
                   to="/register"

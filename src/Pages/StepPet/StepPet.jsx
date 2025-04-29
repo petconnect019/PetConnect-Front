@@ -42,8 +42,8 @@ export const StepPet = () => {
     }, [pet, navigate]);   
 
     return (
-        <div className="flex flex-col items-center justify-center bg-gray-100 p-6 min-h-screen">
-                    <div className="bg-white p-6 rounded-2xl  max-w-sm ">
+        <div className="flex flex-col items-center justify-center">
+                    <div className="p-6 w-screen">
                         <NavButtonStep  onClick={handleBack} img={Position} text={'2/3'} />
                         <h2 className="text-2xl font-bold mb-2 text-center">Nombra tu mascota 🐾</h2>
                         <img className="mx-auto w-auto h-60" src={ImgFrontal} alt="Pet step" />
@@ -60,9 +60,9 @@ export const StepPet = () => {
                                         validation={{ required: "El nombre es obligatorio" }}
                                         />
         
-                                    <PetTypeSelector selectedPet={selectedPet} setSelectedPet={setSelectedPet} />           
+                                    <PetTypeSelector textLabel="¿Cuál es tu tipo de Mascota?" selectedPet={selectedPet} setSelectedPet={setSelectedPet} />           
                             </div>
-                            <ButtonPrimary  text='Continuar' />
+                            <ButtonPrimary  text='Confirmar' />
                             <ButtonSecondary path='/home' text='Saltar' />
                         </form>
                     </div>

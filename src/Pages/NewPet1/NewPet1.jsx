@@ -21,6 +21,10 @@ export const NewPet1 = () => {
   const { changeHasPetsUser } = hasPets;
   const { fetchNewPet, pet, isLoading, error } = useFetchAddPet();
 
+  const handleBackButton = () => {
+    navigate('/home');
+  }
+
   const onSubmit = (formData) => {
     if (!selectedPet) return;
     setPetData({ name: formData.name, species: selectedPet });
@@ -40,15 +44,16 @@ export const NewPet1 = () => {
   }, [pet, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
+    <div className="flex items-center justify-center h-auto">
+      <div className="w-full h-screen">
         <div className="p-6 sm:p-8">
-          <div className="flex items-center justify-start mb-6 gap-2">
-            <NavButton onClick={() => navigate(-1)} />
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 flex-grow text-center">
-              Nombra tu mascota 🐾
-            </h2>
+          <div className="relative right-6">
+            <NavButton onClick={handleBackButton} />
+            
           </div>
+            <h2 className="text-2xl sm:text-2xl font-bold text-gray-800 flex-grow text-center">
+                Nombra a tu mascota 🐾
+            </h2>
 
           <div className="text-center mb-6">
             <img
@@ -70,6 +75,7 @@ export const NewPet1 = () => {
                 className="w-full"
               />
               <PetTypeSelector
+                textLabel="¿Cuál es tu tipo de Mascota?"
                 selectedPet={selectedPet}
                 setSelectedPet={setSelectedPet}
               />
@@ -81,7 +87,7 @@ export const NewPet1 = () => {
                   <AiOutlineLoading3Quarters className="animate-spin text-2xl text-blue-500" />
                 </div>
               ) : (
-                <ButtonPrimary text="Continuar" />
+                <ButtonPrimary text="Siguiente" />
               )}
             </div>
 

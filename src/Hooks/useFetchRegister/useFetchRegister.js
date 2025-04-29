@@ -7,6 +7,7 @@ export const useFetchRegister = () => {
     error: null,
     isSuccess: false,
     accessTokenResult: null,
+    userResult: null,
   });
 
   const handleRegister = async (userData) => {
@@ -20,12 +21,12 @@ export const useFetchRegister = () => {
       const response = await fetchRegister(userData);
 
       if (response.ok) {
-
         setRegisterState({
           isLoading: false,
           isSuccess: true,
           error: null,
           accessTokenResult: response.accessToken,
+          userResult: response.user,
         });
         
         return { 

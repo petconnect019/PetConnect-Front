@@ -1,4 +1,4 @@
-import Intro2 from '../../assets/images/Introduccion2.png';
+import Intro2 from '../../assets/images/Introduction-2.png';
 import { useNavigate } from 'react-router-dom';
 
 export const Introduction2 = () => {
@@ -9,13 +9,12 @@ export const Introduction2 = () => {
     };
 
     return (
-        <div  className="flex flex-col items-center justify-center  bg-gray-100 ">
-
-            <div className="min-h-screen relative items-center justify-end bg-white p-2 relative overflow-hidden ">
+        <div>
+            <div className="h-screen p-2 relative overflow-hidden ">
             
                 <div 
-                    className="absolute inset-0 bg-orange-400 flex justify-center items-end h-[95vh] sm:h-[35vh] md:h-[98vh] lg:h-[95vh] "
-                    style={{ clipPath: 'ellipse(100% 550px at center top)' }}
+                    className="absolute inset-0 bg-orange-400 flex justify-center items-end h-[95vh] xs:h-[95vh] sm:h-[35vh] md:h-[30vh] lg:h-[88vh] rounded-b-[5rem] "
+                    style={{ clipPath: 'ellipse(100% 460px at center top)' }}
                 >
                 
                     <img 
@@ -26,7 +25,7 @@ export const Introduction2 = () => {
                 </div>
 
                 {/* Contenedor blanco con ajustes */}
-                <div className="absolute top-150 lg:top-90 md:top-80 md:w-screen sm:buttom-40 relative w-full lg:w-screen  bg-white  flex flex-col items-center z-20  overflow-hidden   ">
+                <div className="absolute top-125 xs:top-115 lg:top-90 md:top-80 md:w-screen sm:buttom-40 relative w-full lg:w-screen  bg-white  flex flex-col items-center z-20  overflow-hidden   ">
                     {/* Contenedor con borde negro */}
                     <div className="p-6 text-center w-full  flex flex-col items-center mb-10 ">
                         <h2 className="text-xl font-bold">Gestiona la información sobre tu mascota</h2>

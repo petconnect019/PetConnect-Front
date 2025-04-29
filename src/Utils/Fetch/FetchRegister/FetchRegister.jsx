@@ -12,11 +12,12 @@ export const fetchRegister = async (userData) => {
     const result = await response.json();
     if (response.ok) {     
       return {
-        ok: true, accessToken: result.accessToken,
+        ok: true, 
+        accessToken: result.accessToken,
+        user: result.user,
         hasPets: result.hasPets,
         isNewUser: !!result.isNewUser,
-
-       };
+      };
     } else {
       return { ok: false, message: result.message };
     }
