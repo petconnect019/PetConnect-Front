@@ -71,8 +71,7 @@ export const PublicPetProfile = () => {
     { title: 'Edad', subtitle: petData?.calculatedAge || "No especificada" },
     { title: 'Raza', subtitle: petData?.breed },
     { title: 'Color', subtitle: petData?.color },
-    { title: 'Tipo', subtitle: petData?.species == "dog"? 'Perro' : 'Gato' },
-    ...(petData?.status === 'Perdido' ? [{ title: 'Estado', subtitle: petData?.status, className: 'text-red-500 font-semibold' }] : [])
+    { title: 'Tipo', subtitle: petData?.species == "dog"? 'Perro' : 'Gato' }
   ];
 
   return (
@@ -97,13 +96,18 @@ export const PublicPetProfile = () => {
           </div>
     
           {/* Pet Photo Carousel */}
-          <div className="mt-2 mb-6 flex justify-center">
+          <div className="mt-2 mb-6 flex justify-center relative">
             <div className="aspect-square w-64 overflow-hidden rounded-xl">
               <img 
                 src={petData.profile_picture || (petData.species=='dog'?defaultDog:defaultCat)} 
                 alt={petData.name} 
                 className="w-64 h-64 object-cover"
               />
+              {petData?.status === 'Perdido' && (
+                <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full animate-pulse">
+                  {petData.status}
+                </div>
+              )}
             </div>
           </div>
     
