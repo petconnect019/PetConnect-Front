@@ -145,10 +145,10 @@ export const Login = () => {
               </div>
              
               <header className="mb-4 sm:mb-6 text-center">
-                <h1 className="text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 tracking-tight">
+                <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-4xl 3xl:text-4xl 4xl:text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">
                   Bienvenido de nuevo! 👋
                 </h1>
-                <p className="text-sm xs:text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 font-medium">
+                <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl text-gray-600 font-medium">
                   Continuemos el viaje con tus amigos peludos.
                 </p>
               </header>
@@ -228,14 +228,14 @@ export const Login = () => {
                           />
                           <label
                               htmlFor="remember-me"
-                              className="text-sm text-gray-600"
+                              className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-lg text-gray-600"
                           >
                               Recuérdame
                           </label>
                       </div>
                       <Link
                           to="/recover-email"
-                          className="text-xs xs:text-xs sm:text-sm md:text-base text-brand hover:underline transition duration-300"
+                          className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-lg text-brand hover:underline transition duration-300"
                       >
                           ¿Has olvidado tu contraseña?
                       </Link>
@@ -245,7 +245,7 @@ export const Login = () => {
                 {/* Divider */}
                 <div className="flex items-center justify-center my-4 sm:my-6">
                   <div className="flex-grow border-t border-gray-300"></div>
-                  <span className="px-4 text-gray-500 text-xs xs:text-xs sm:text-sm md:text-base">o</span>
+                  <span className="px-4 text-gray-500 text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-lg">o</span>
                   <div className="flex-grow border-t border-gray-300"></div>
                 </div>
 
@@ -270,7 +270,7 @@ export const Login = () => {
                 </div>
 
                 {/* Registration Link */}
-                <p className="mt-4 sm:mt-6 text-center text-xs xs:text-xs sm:text-sm md:text-base text-gray-600">
+                <p className="mt-4 sm:mt-6 text-center text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-lg text-gray-600">
                   ¿Aún no tienes una cuenta?{" "}
                   <Link
                     to="/register"
