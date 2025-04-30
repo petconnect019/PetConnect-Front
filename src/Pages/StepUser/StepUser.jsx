@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import Position from '../../assets/images/posicionamiento-Step.png';
 import DefaultProfile from '../../assets/images/DefaultProfile.png';
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -80,11 +79,11 @@ export const StepUser = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="p-6 w-screen">
-                <NavButtonStep onClick={()=>navigate('/register')} img={Position} text={'1/3'} />
+        <div className="flex flex-col items-center justify-center ">
+            <div className="w-screen p-2 3xl:p-4 4xl:p-6">
+                <NavButtonStep onClick={()=>navigate('/register')} text={'1/3'} />
                 <div className="mb-4 p-2 text-center">
-                    <h2 className="text-2xl font-bold mb-2">¡Creando tu Perfil!</h2>
+                    <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl 3xl:text-7xl 4xl:text-8xl font-bold mb-2">¡Creando tu Perfil!</h2>
                 </div>
 
                 <div className="flex justify-center mb-6">
@@ -92,10 +91,10 @@ export const StepUser = () => {
                         <img
                             src={profileImage}
                             alt='userImgDefault'
-                            className="w-32 h-30 rounded-full object-cover"
+                            className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 xl:w-40 xl:h-40 2xl:w-44 2xl:h-44 3xl:w-48 3xl:h-48 4xl:w-52 4xl:h-52 rounded-full object-cover"
                         />
                         <span className='absolute bottom-1 right-0'>
-                            <img className='rounded-[0.5rem] w-6 h-6' src={EditImg} alt="EditImgIcon" />
+                            <img className='rounded-[0.5rem] w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10 3xl:w-11 3xl:h-11 4xl:w-12 4xl:h-12' src={EditImg} alt="EditImgIcon" />
                         </span>
                     </label>
                     <input
@@ -107,9 +106,9 @@ export const StepUser = () => {
                     />
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmitForm)}>
-                    <div className="flex flex-col gap-2 mt-4">
-                        <label className="font-semibold">Nombre Completo</label>
+                <form onSubmit={handleSubmit(onSubmitForm)} className="w-full">
+                    <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6 2xl:gap-7 3xl:gap-8 4xl:gap-9 mt-4">
+                        <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">Nombre Completo</label>
                         <InputField
                             icon={Paper}
                             register={register}
@@ -118,66 +117,66 @@ export const StepUser = () => {
                             validation={{ required: "El nombre es obligatorio" }}
                         />
 
-                        <label>Número de Teléfono</label>
+                        <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">Número de Teléfono</label>
                         <PhoneInput
                             country={"co"} 
                             value={phone}
                             onChange={setPhone}
                             onlyCountries={["co"]}
-                            inputClass="w-full !w-[100%] p-3 border-none rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-brand"
-                            containerClass="h-[2.7rem] w-full mb-3 bg-gray-100"
+                            inputClass="w-full !w-[100%] p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 border-none rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22"
+                            containerClass="w-full mb-3 bg-gray-100 h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22"
                         />
 
-                        <label>Género</label>
-                        <select {...register("gender")} className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand">
-                            <option value="">Selecciona tu género</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                            <option value="Otro">Otro</option>
+                        <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">Género</label>
+                        <select {...register("gender")} className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-7 4xl:p-6 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22">
+                            <option value="" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-2xl 4xl:text-3xl">Selecciona tu género</option>
+                            <option value="Masculino" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-2xl 4xl:text-3xl">Masculino</option>
+                            <option value="Femenino" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-2xl 4xl:text-3xl">Femenino</option>
+                            <option value="Otro" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-2xl 4xl:text-3xl">Otro</option>
                         </select>
 
-                        <label>País</label>
-                        <select {...register("country")} className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand">
-                            <option value="">Seleccione su país</option>
-                            <option value="Colombia">Colombia</option>
+                        <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">País</label>
+                        <select {...register("country")} className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-7 4xl:p-6 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22">
+                            <option value="" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">Seleccione su país</option>
+                            <option value="Colombia" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">Colombia</option>
                         </select>
 
-                        <label>Departamento</label>
+                        <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">Departamento</label>
                         <select 
                             {...register("state")}
-                            className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
+                            className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-7 4xl:p-6 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22"
                             value={department}
                             onChange={handleDepartamentoChange}
                         >
-                            <option value="">Seleccione un departamento</option>
+                            <option value="" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">Seleccione un departamento</option>
                             {departamentos.map((depto) => (
-                                <option key={depto} value={depto}>
+                                <option key={depto} value={depto} className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">
                                     {depto}
                                 </option>
                             ))}
                         </select>
 
-                        <label>Ciudad</label>
+                        <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">Ciudad</label>
                         <select 
                             {...register("city")}
-                            className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand" 
+                            className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-7 4xl:p-6 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22" 
                             disabled={!city.length}
                         >
-                            <option value="">Seleccione una ciudad</option>
+                            <option value="" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">Seleccione una ciudad</option>
                             {city.map((ciudad) => (
-                                <option key={ciudad} value={ciudad}>
+                                <option key={ciudad} value={ciudad} className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">
                                     {ciudad}
                                 </option>
                             ))}
                         </select>
 
-                        <label>Dirección</label>
+                        <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">Dirección</label>
                         <input 
                             {...register("address")}
-                            className="w-full p-3 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand" 
+                            className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 mb-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22" 
                         />
                     </div>
-                    <ButtonPrimary text='Continuar' disabled={isLoading} />
+                    <ButtonPrimary text='Continuar' disabled={isLoading} className="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-10 xl:mt-12 2xl:mt-14 3xl:mt-16 4xl:mt-18" />
                 </form>
             </div>
         </div>
