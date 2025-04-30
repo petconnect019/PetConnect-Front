@@ -64,8 +64,8 @@ export const Welcome = () => {
             alt="Logo" 
             className="w-32 xs:w-36 sm:w-40 md:w-44 lg:w-48 xl:w-52 2xl:w-56 3xl:w-60 4xl:w-64 my-4 xs:my-6 sm:my-8 md:my-10" 
           />
-          <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">Bienvenido</h1>
-          <h2 className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-500 mb-6 xs:mb-8 sm:mb-10">
+          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl 3xl:text-5xl 4xl:text-5xl font-bold text-gray-900 mb-2">Bienvenido</h1>
+          <h2 className="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-2xl 2xl:text-2xl 3xl:text-2xl 4xl:text-2xl text-gray-500 mb-6 xs:mb-8 sm:mb-10">
             Ingresa a tu cuenta para continuar
           </h2>
           <div className="w-screen max-w-[300px] xs:max-w-[350px] sm:max-w-[400px] md:max-w-[450px] lg:max-w-[500px] xl:max-w-[550px] 2xl:max-w-[600px] 3xl:max-w-[650px] 4xl:max-w-[700px]">
@@ -85,7 +85,7 @@ export const Welcome = () => {
               <ButtonSecondary path="/login" text="Iniciar Sesión" />
             </div>
           </div>
-          <p className="text-xs xs:text-sm sm:text-base text-gray-400 absolute bottom-4 xs:bottom-6">
+          <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl text-gray-400 absolute bottom-4 xs:bottom-6">
             Políticas de Privacidad • Términos de Servicio
           </p>
         </div>

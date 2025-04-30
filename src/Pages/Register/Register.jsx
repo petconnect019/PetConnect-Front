@@ -139,7 +139,7 @@ export const Register = () => {
             <header className="mb-4 sm:mb-6 text-center">
               <h2
                 className="
-              text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl
+              text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-4xl 3xl:text-4xl 4xl:text-4xl
               font-extrabold 
               text-gray-900 
               mb-2 
@@ -150,7 +150,7 @@ export const Register = () => {
               </h2>
               <p
                 className="
-              text-sm xs:text-sm sm:text-base md:text-lg lg:text-xl
+              text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl
               text-gray-600 
               font-medium
             "
@@ -288,7 +288,7 @@ export const Register = () => {
                   <label
                     htmlFor="terms"
                     className="
-                  text-xs xs:text-xs sm:text-sm md:text-base
+                  text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-lg
                   text-gray-600
                   leading-tight
                 "
@@ -318,7 +318,7 @@ export const Register = () => {
               <p
                 className="
               text-center 
-              text-xs xs:text-xs sm:text-sm md:text-base
+              text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-lg
               text-gray-600 
               mt-6
               mb-6
@@ -349,7 +349,7 @@ export const Register = () => {
             "
               >
                 <div className="flex-grow border-t border-gray-300"></div>
-                <span className="px-4 text-gray-500 text-xs xs:text-xs sm:text-sm md:text-base">o</span>
+                <span className="px-4 text-gray-500 text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-lg">o</span>
                 <div className="flex-grow border-t border-gray-300"></div>
               </div>
 
