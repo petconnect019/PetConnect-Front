@@ -10,6 +10,7 @@ import { SuccessScreen } from '../../Components/ScannerScreens/SuccessScreen';
 import { LinkedPetScreen } from '../../Components/ScannerScreens/LinkedPetScreen';
 import { useFetchLinkPet } from '../../Hooks/useFetchLinkPet/useFetchLinkPet';
 import { ErrorLinkScreen } from '../../Components/ScannerScreens/ErrorLinkScreen';
+import { NavButton } from '../../Components/NavButton/NavButton';
 
 export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -194,6 +195,7 @@ export const Scanner = () => {
     <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 relative">
       {/* Header */}
       <div className="w-full mb-6 text-center">
+        <NavButton onClick={() => navigate(-1)} />
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 p-4">
           <span className="text-[#EC9126]">Escaner</span> medalla QR
         </h2>
