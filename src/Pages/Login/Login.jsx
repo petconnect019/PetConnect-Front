@@ -14,6 +14,8 @@ import { InputField } from "../../Components/InputField/InputField.jsx";
 import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
 import emailIcon from '../../assets/images/emailIcon.png'
 import passwordIcon from '../../assets/images/Lock.png'
+import { NavButton } from "../../Components/NavButton/NavButton.jsx";
+
 export const Login = () => {
   const navigate = useNavigate();
   const {
@@ -111,177 +113,180 @@ export const Login = () => {
         </div>
       )}
 
-      <div
-        className={`
-          flex items-center justify-center h-auto
-          ${isLoading ? "blur-sm pointer-events-none" : ""}
-        `}
-      >
+      <div className="w-screen h-screen  bg-gray-50">
         <div
-          className="
-           flex flex-col p-4 w-screen rounded-xl max-w-md md:shadow-lg items-center bg-white 
-          "
+          className={`
+            flex items-center justify-center h-auto
+            ${isLoading ? "blur-sm pointer-events-none" : ""}
+          `}
         >
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-            className="z-50"
-          />
+          <div
+            className="
+              flex flex-col p-4 w-full  
+            "
+          >
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+              className="z-50"
+            />
 
-          <div className="p-2 sm:p-8 mt-14">
-            <header className="mb-6 text-center">
-              <h1 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
-                Bienvenido de nuevo! 👋
-              </h1>
-              <p className="text-gray-600 text-sm font-medium">
-                Continuemos el viaje con tus amigos peludos.
-              </p>
-            </header>
-
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              noValidate
-              aria-label="Formulario de inicio de sesión"
-              className=" w-[20rem]"
-            >
-              {/* Email Input */}
-              <div className="mb-4">
-                <InputField
-                  name="email"
-                  label="Email"
-                  icon={emailIcon}
-                  register={register}
-                  placeholder="Correo electrónico"
-                  validation={{
-                    required: "Este campo es obligatorio",
-                    pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                      message: "Correo electrónico inválido",
-                    },
-                  }}
-                  disabled={isLoading}
-                />
-                {errors.email && (
-                  <p
-                    role="alert"
-                    className="text-red-500 text-xs mt-1 animate-fade-in-down"
-                  >
-                    {errors.email.message}
-                  </p>
-                )}
+            <div className=" sm:p-4 md:p-6 lg:p-8 ">
+              <div className="mb-6">
+                <NavButton onClick={() => navigate(-1)} />
               </div>
+             
+              <header className="mb-4 sm:mb-6 text-center">
+                <h1 className="text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 tracking-tight">
+                  Bienvenido de nuevo! 👋
+                </h1>
+                <p className="text-sm xs:text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 font-medium">
+                  Continuemos el viaje con tus amigos peludos.
+                </p>
+              </header>
 
-              {/* Password Input */}
-              <div className="mb-4">
-                <PasswordField
-                  name="password"
-                  label="Contraseña"
-                  icon={passwordIcon}
-                  register={register}
-                  type="password"
-                  placeholder="Contraseña"
-                  validation={{
-                    required: "Este campo es obligatorio",
-                    minLength: {
-                      value: 8,
-                      message: "Debe tener al menos 8 caracteres",
-                    },
-                    pattern: {
-                      value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
-                      message: "Debe contener mayúscula, minúscula y número",
-                    },
-                  }}
-                  disabled={isLoading}
-                />
-                {errors.password && (
-                  <p
-                    role="alert"
-                    className="text-red-500 text-xs mt-1 animate-fade-in-down"
-                  >
-                    {errors.password.message}
-                  </p>
-                )}
-
-                {/* Remember me and Forgot Password */}
-                <div className="flex flex-row justify-between items-center my-6">
-                    <div className="flex items-center">
-                        <input
-                            type="checkbox"
-                            id="remember-me"
-                            disabled={isLoading}
-                            className="mr-2 w-4 h-4 text-brand rounded focus:ring-brand"
-                        />
-                        <label
-                            htmlFor="remember-me"
-                            className="text-sm text-gray-600"
-                        >
-                            Recuérdame
-                        </label>
-                    </div>
-                    <Link
-                        to="/recover-email"
-                        className="text-sm text-brand hover:underline transition duration-300"
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                noValidate
+                aria-label="Formulario de inicio de sesión"
+                className="w-full"
+              >
+                {/* Email Input */}
+                <div className="mb-4">
+                  <InputField
+                    name="email"
+                    label="Email"
+                    icon={emailIcon}
+                    register={register}
+                    placeholder="Correo electrónico"
+                    validation={{
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "Correo electrónico inválido",
+                      },
+                    }}
+                    disabled={isLoading}
+                  />
+                  {errors.email && (
+                    <p
+                      role="alert"
+                      className="text-red-500 text-xs mt-1 animate-fade-in-down"
                     >
-                        ¿Has olvidado tu contraseña?
-                    </Link>
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
-              </div>
 
-              {/* Rest of the component remains the same */}
-              {/* Divider, Google Sign Up, Login Button, Registration Link */}
+                {/* Password Input */}
+                <div className="mb-4">
+                  <PasswordField
+                    name="password"
+                    label="Contraseña"
+                    icon={passwordIcon}
+                    register={register}
+                    type="password"
+                    placeholder="Contraseña"
+                    validation={{
+                      required: "Este campo es obligatorio",
+                      minLength: {
+                        value: 8,
+                        message: "Debe tener al menos 8 caracteres",
+                      },
+                      pattern: {
+                        value: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$/,
+                        message: "Debe contener mayúscula, minúscula y número",
+                      },
+                    }}
+                    disabled={isLoading}
+                  />
+                  {errors.password && (
+                    <p
+                      role="alert"
+                      className="text-red-500 text-xs mt-1 animate-fade-in-down"
+                    >
+                      {errors.password.message}
+                    </p>
+                  )}
 
-              {/* Divider */}
-              <div className="flex items-center justify-center my-6">
-                <div className="flex-grow border-t border-gray-300"></div>
-                <span className="px-4 text-gray-500 text-sm">o</span>
-                <div className="flex-grow border-t border-gray-300"></div>
-              </div>
+                  {/* Remember me and Forgot Password */}
+                  <div className="flex flex-row justify-between items-center my-4 sm:my-6">
+                      <div className="flex items-center">
+                          <input
+                              type="checkbox"
+                              id="remember-me"
+                              disabled={isLoading}
+                              className="mr-2 w-4 h-4 text-brand rounded focus:ring-brand"
+                          />
+                          <label
+                              htmlFor="remember-me"
+                              className="text-sm text-gray-600"
+                          >
+                              Recuérdame
+                          </label>
+                      </div>
+                      <Link
+                          to="/recover-email"
+                          className="text-xs xs:text-xs sm:text-sm md:text-base text-brand hover:underline transition duration-300"
+                      >
+                          ¿Has olvidado tu contraseña?
+                      </Link>
+                  </div>
+                </div>
 
-              {/* Google Sign Up and Login Button */}
-              <div className="space-y-4">
-                <GoogleSignUp
-                  content={"Inicia sesión con Google"}
-                  setUser={setUser}
-                  setAccesToken={setAccessToken}
-                  setHasPetsState={setHasPetsState}
-                  setErrorState={setErrorState}
-                  setIsnewUserState={setIsNewUserState}
-                  disabled={isLoading}
-                  className="w-full"
-                />
+                {/* Divider */}
+                <div className="flex items-center justify-center my-4 sm:my-6">
+                  <div className="flex-grow border-t border-gray-300"></div>
+                  <span className="px-4 text-gray-500 text-xs xs:text-xs sm:text-sm md:text-base">o</span>
+                  <div className="flex-grow border-t border-gray-300"></div>
+                </div>
 
-                <ButtonPrimary
-                  text={"Iniciar Sesión"}
-                  disabled={isLoading}
-                  className="w-full"
-                />
-              </div>
+                {/* Google Sign Up and Login Button */}
+                <div className="space-y-3 sm:space-y-4 ">
+                  <GoogleSignUp
+                    content={"Inicia sesión con Google"}
+                    setUser={setUser}
+                    setAccesToken={setAccessToken}
+                    setHasPetsState={setHasPetsState}
+                    setErrorState={setErrorState}
+                    setIsnewUserState={setIsNewUserState}
+                    disabled={isLoading}
+                    className="w-full"
+                  />
 
-              {/* Registration Link */}
-              <p className="mt-6 text-center text-sm text-gray-600 mt-6">
-                ¿Aún no tienes una cuenta?{" "}
-                <Link
-                  to="/register"
-                  className="
-                    text-brand 
-                    font-semibold 
-                    hover:underline 
-                    transition 
-                    duration-300
-                  "
-                >
-                  Regístrate aquí
-                </Link>
-              </p>
-            </form>
+                  <ButtonPrimary
+                    text={"Iniciar Sesión"}
+                    disabled={isLoading}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Registration Link */}
+                <p className="mt-4 sm:mt-6 text-center text-xs xs:text-xs sm:text-sm md:text-base text-gray-600">
+                  ¿Aún no tienes una cuenta?{" "}
+                  <Link
+                    to="/register"
+                    className="
+                      text-brand 
+                      font-semibold 
+                      hover:underline 
+                      transition 
+                      duration-300
+                    "
+                  >
+                    Regístrate aquí
+                  </Link>
+                </p>
+              </form>
+            </div>
           </div>
         </div>
       </div>

@@ -70,13 +70,13 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
     <button
       type="button"
       onClick={handleGoogleSignUp}
-      className="block mx-auto flex items-center justify-between w-full max-w-md bg-white text-black border-solid border-2 border-gray-100 px-5 py-2.5 rounded-full mt-8 text-lg font-medium"
+      className="block mx-auto flex items-center justify-between w-full max-w-md bg-white text-black border-solid border-2 border-gray-100 px-5 xs:px-5.5 sm:px-6 md:px-6.5 lg:px-7 xl:px-7 2xl:px-7.5 3xl:px-8 4xl:px-8 py-3 xs:py-3.5 sm:py-4 md:py-4.5 lg:py-5 xl:py-5 2xl:py-5.5 3xl:py-6 4xl:py-6 rounded-full mt-8 text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-3xl 3xl:text-3xl 4xl:text-4xl font-medium"
       aria-label="Registrarse con Google"
     >
       <img
         src={logo}
         alt="Google Logo"
-        className="w-6" 
+        className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10 3xl:w-10 3xl:h-10 4xl:w-11 4xl:h-11" 
       />
       <span className="flex-grow text-center">{content}</span>
     </button>
