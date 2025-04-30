@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import jsQR from 'jsqr';
 import { getQrId } from '../../Utils/Helpers/GetQrId/GetQrId';
 //importing screens
@@ -13,6 +13,7 @@ import { ErrorLinkScreen } from '../../Components/ScannerScreens/ErrorLinkScreen
 import { NavButton } from '../../Components/NavButton/NavButton';
 
 export const Scanner = () => {
+  const navigate = useNavigate();
   const [hasPermission, setHasPermission] = useState(null);
   const [scannedResult, setScannedResult] = useState(null);
   const [scanning, setScanning] = useState(false);
@@ -195,7 +196,7 @@ export const Scanner = () => {
     <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 relative">
       {/* Header */}
       <div className="w-full mb-6 text-center">
-        <NavButton onClick={() => navigate(-1)} />
+        <NavButton onClick={() => navigate(-1)}  />
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 p-4">
           <span className="text-[#EC9126]">Escaner</span> medalla QR
         </h2>
