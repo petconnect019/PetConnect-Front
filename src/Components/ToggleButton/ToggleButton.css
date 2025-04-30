@@ -13,6 +13,70 @@
     box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+@media (min-width: 375px) {
+    .toggle-container {
+        width: 340px;
+        height: 44px;
+        padding: 0 18px;
+    }
+}
+
+@media (min-width: 576px) {
+    .toggle-container {
+        width: 380px;
+        height: 48px;
+        padding: 0 20px;
+    }
+}
+
+@media (min-width: 768px) {
+    .toggle-container {
+        width: 420px;
+        height: 52px;
+        padding: 0 22px;
+    }
+}
+
+@media (min-width: 992px) {
+    .toggle-container {
+        width: 460px;
+        height: 56px;
+        padding: 0 24px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .toggle-container {
+        width: 500px;
+        height: 60px;
+        padding: 0 26px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .toggle-container {
+        width: 540px;
+        height: 64px;
+        padding: 0 28px;
+    }
+}
+
+@media (min-width: 1680px) {
+    .toggle-container {
+        width: 580px;
+        height: 68px;
+        padding: 0 30px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .toggle-container {
+        width: 620px;
+        height: 72px;
+        padding: 0 32px;
+    }
+}
+
 /* Ensure text stays visible */
 .toggle-text-container {
     display: flex;
@@ -23,9 +87,67 @@
 
 /* Smooth text animation */
 .toggle-text {
-    font-size: 16px;
     font-weight: bold;
     transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    font-size: 14px;
+    white-space: nowrap;
+    padding: 0 5px;
+}
+
+@media (min-width: 375px) {
+    .toggle-text {
+        font-size: 16px;
+        padding: 0 6px;
+    }
+}
+
+@media (min-width: 576px) {
+    .toggle-text {
+        font-size: 18px;
+        padding: 0 7px;
+    }
+}
+
+@media (min-width: 768px) {
+    .toggle-text {
+        font-size: 20px;
+        padding: 0 8px;
+    }
+}
+
+@media (min-width: 992px) {
+    .toggle-text {
+        font-size: 22px;
+        padding: 0 9px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .toggle-text {
+        font-size: 24px;
+        padding: 0 10px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .toggle-text {
+        font-size: 26px;
+        padding: 0 11px;
+    }
+}
+
+@media (min-width: 1680px) {
+    .toggle-text {
+        font-size: 28px;
+        padding: 0 12px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .toggle-text {
+        font-size: 30px;
+        padding: 0 13px;
+    }
 }
 
 .text-inactive {
@@ -52,8 +174,128 @@
     z-index: 1;
 }
 
+@media (min-width: 375px) {
+    .toggle-button {
+        width: 170px;
+        height: 38px;
+        top: 3px;
+        left: 3px;
+    }
+}
+
+@media (min-width: 576px) {
+    .toggle-button {
+        width: 190px;
+        height: 42px;
+        top: 3px;
+        left: 3px;
+    }
+}
+
+@media (min-width: 768px) {
+    .toggle-button {
+        width: 210px;
+        height: 46px;
+        top: 3px;
+        left: 3px;
+    }
+}
+
+@media (min-width: 992px) {
+    .toggle-button {
+        width: 230px;
+        height: 50px;
+        top: 3px;
+        left: 3px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .toggle-button {
+        width: 250px;
+        height: 54px;
+        top: 3px;
+        left: 3px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .toggle-button {
+        width: 270px;
+        height: 58px;
+        top: 3px;
+        left: 3px;
+    }
+}
+
+@media (min-width: 1680px) {
+    .toggle-button {
+        width: 290px;
+        height: 62px;
+        top: 3px;
+        left: 3px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .toggle-button {
+        width: 310px;
+        height: 66px;
+        top: 3px;
+        left: 3px;
+    }
+}
+
 /* Soft button movement */
 .toggle-button.active {
     transform: translateX(144px);
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 375px) {
+    .toggle-button.active {
+        transform: translateX(164px);
+    }
+}
+
+@media (min-width: 576px) {
+    .toggle-button.active {
+        transform: translateX(184px);
+    }
+}
+
+@media (min-width: 768px) {
+    .toggle-button.active {
+        transform: translateX(204px);
+    }
+}
+
+@media (min-width: 992px) {
+    .toggle-button.active {
+        transform: translateX(224px);
+    }
+}
+
+@media (min-width: 1200px) {
+    .toggle-button.active {
+        transform: translateX(244px);
+    }
+}
+
+@media (min-width: 1440px) {
+    .toggle-button.active {
+        transform: translateX(264px);
+    }
+}
+
+@media (min-width: 1680px) {
+    .toggle-button.active {
+        transform: translateX(284px);
+    }
+}
+
+@media (min-width: 1920px) {
+    .toggle-button.active {
+        transform: translateX(304px);
+    }
 }
