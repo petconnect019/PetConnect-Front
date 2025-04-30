@@ -18,6 +18,7 @@ import { FooterNav } from "../../Components/FooterNav/FooterNav";
 import { NavButton } from "../../Components/NavButton/NavButton";
 import SharedImg from '../../assets/images/shared.png'
 import LocationImg from '../../assets/images/Location.png'
+import { useFetchUpdatePet } from "../../Hooks/useFetchUpdatePet/useFetchUpdatePet";
 
 export const PetDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +31,7 @@ export const PetDetails = () => {
   const navigate = useNavigate();
   const { findPet } = pets ?? {};
   const { getPetById, petResult } = useFetchPetById();
+  const { fetchUpdatePet } = useFetchUpdatePet();
 
   const handleBackButton = () => {
     navigate('/home');
@@ -74,6 +76,46 @@ export const PetDetails = () => {
     { title: "Tipo", subtitle: pet?.species },
     { title: "Género", subtitle: pet?.gender },
   ];
+
+  const handleReportLost = async () => {
+    try {
+      let token = sessionStorage.getItem("accessToken");
+      
+      const formData = new FormData();
+      formData.append('name', pet.name);
+      formData.append('birthDate', pet.birthDate);
+      formData.append('breed', pet.breed);
+      formData.append('gender', pet.gender);
+      formData.append('species', pet.species);
+      formData.append('color', pet.color);
+      formData.append('_id', pet._id);
+      formData.append('status', 'Perdido');
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${pet._id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        credentials: 'include',
+        body: formData
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        setPet(prevPet => ({
+          ...prevPet,
+          status: 'Perdido'
+        }));
+        setIsModalOpen(false);
+      } else {
+        console.error('Error al actualizar el estado:', result.message);
+      }
+    } catch (error) {
+      console.error('Error al reportar mascota como perdida:', error);
+    }
+  };
+
   return (
     <>
       {pet ? (
@@ -188,10 +230,7 @@ export const PetDetails = () => {
                 <div className="mt-4 flex justify-center gap-3 sm:gap-4 xs:gap-4 3xl:gap-6 4xl:gap-8">
                   <button
                     className="bg-red-500 text-white text-sm sm:text-base xs:text-base 3xl:text-lg 4xl:text-xl px-3 sm:px-4 xs:px-5 3xl:px-6 4xl:px-8 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                    onClick={() => {
-                      // Lógica para reportar como perdido
-                      setIsModalOpen(false);
-                    }}
+                    onClick={handleReportLost}
                   >
                     Aceptar
                   </button>
