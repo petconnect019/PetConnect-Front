@@ -275,31 +275,31 @@ export const PaymentShop = () => {
     }, []);
 
     return (
-        <div className='w-full flex flex-col items-center justify-center bg-gray-100'>
-            <div className='w-full max-w-2xl bg-white rounded-lg shadow-md p-4 sm:p-6 md:p-8'>
+        <div className='w-auto flex flex-col items-center justify-center bg-gray-100'>
+            <div className='w-screen bg-white p-4 sm:p-6 md:p-8'>
                 <NavButton onClick={() => navigate('/Ecommerce')} />
                 <div className="text-left space-y-4">
                     <div className="bg-white p-4">
                         <div className="border-b border-gray-200 pb-4 mb-4">
-                            <h2 className='text-2xl font-bold text-gray-800'>QR personalizado para tu mascota</h2>
+                            <h2 className='text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl 3xl:text-5xl 4xl:text-5xl font-bold text-gray-800'>QR personalizado para tu mascota</h2>
                         </div>
                         <div className="space-y-4">
                             <ul className="list-none pl-0 space-y-3">
                                 <li className="flex items-center bg-orange-50 p-3 rounded-lg">
-                                    <span className="text-green-500 mr-3 text-xl">✓</span>
-                                    <span className="text-gray-700">Diseño único</span>
+                                    <span className="text-green-500 mr-3 text-xl xs:text-2xl sm:text-3xl md:text-4xl">✓</span>
+                                    <span className="text-gray-700 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl">Diseño único</span>
                                 </li>
                                 <li className="flex items-center bg-orange-50 p-3 rounded-lg">
-                                    <span className="text-green-500 mr-3 text-xl">✓</span>
-                                    <span className="text-gray-700">Vinculación a perfil de mascota</span>
+                                    <span className="text-green-500 mr-3 text-xl xs:text-2xl sm:text-3xl md:text-4xl">✓</span>
+                                    <span className="text-gray-700 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl">Vinculación a perfil de mascota</span>
                                 </li>
                                 <li className="flex items-center bg-orange-50 p-3 rounded-lg">
-                                    <span className="text-green-500 mr-3 text-xl">✓</span>
-                                    <span className="text-gray-700">Acceso a información de contacto</span>
+                                    <span className="text-green-500 mr-3 text-xl xs:text-2xl sm:text-3xl md:text-4xl">✓</span>
+                                    <span className="text-gray-700 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl">Acceso a información de contacto</span>
                                 </li>
                             </ul>
                             <div className="flex items-center mt-6 p-4 bg-teal-50 rounded-lg">
-                                <label htmlFor="quantity" className="font-bold text-gray-700 mx-4">Cantidad:</label>
+                                <label htmlFor="quantity" className="font-bold text-gray-700 mx-4 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl">Cantidad:</label>
                                 <div className="flex justify-center w-full">
                                     <input
                                         type="number"
@@ -317,10 +317,10 @@ export const PaymentShop = () => {
                                                 }));
                                             }
                                         }}
-                                        className="w-full bg-gray-50 p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
+                                        className="w-full bg-gray-50 p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                                     />
                                 </div>
-                                {errors.quantity && <span className="text-red-500 text-sm block mt-2 text-center">{errors.quantity.message}</span>}
+                                {errors.quantity && <span className="text-red-500 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl block mt-2 text-center">{errors.quantity.message}</span>}
                             </div>
                         </div>
                     </div>
@@ -329,7 +329,7 @@ export const PaymentShop = () => {
                         <div className='border-b border-gray-200 pb-4 mb-4' />
                         <div className="space-y-6">
                             <div className="bg-white p-4">
-                                <h2 className="text-xl font-bold text-gray-800 mb-4">Datos del Cliente</h2>
+                                <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-4xl 3xl:text-4xl 4xl:text-4xl font-bold text-gray-800 mb-4">Datos del Cliente</h2>
                                 
                                 <div className="space-y-4">
                                     <div className="relative">
@@ -347,8 +347,9 @@ export const PaymentShop = () => {
                                                 }
                                             }}
                                             disabled={isLoading}
+                                            className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                                         />
-                                        {errors.customerName && <span className="text-red-500 text-sm block mt-1">{errors.customerName.message}</span>}
+                                        {errors.customerName && <span className="text-red-500 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl block mt-1">{errors.customerName.message}</span>}
                                     </div>
 
                                     <div className="relative">
@@ -365,8 +366,9 @@ export const PaymentShop = () => {
                                                 }
                                             }}
                                             disabled={isLoading}
+                                            className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                                         />
-                                        {errors.customerEmail && <span className="text-red-500 text-sm block mt-1">{errors.customerEmail.message}</span>}
+                                        {errors.customerEmail && <span className="text-red-500 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl block mt-1">{errors.customerEmail.message}</span>}
                                     </div>
 
                                     <div className="relative">
@@ -383,14 +385,15 @@ export const PaymentShop = () => {
                                                 }
                                             }}
                                             disabled={isLoading}
+                                            className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                                         />
-                                        {errors.customerPhone && <span className="text-red-500 text-sm block mt-1">{errors.customerPhone.message}</span>}
+                                        {errors.customerPhone && <span className="text-red-500 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl block mt-1">{errors.customerPhone.message}</span>}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="bg-white p-4">
-                                <h2 className="text-xl font-bold text-gray-800 mb-4">Datos de Envío</h2>
+                                <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-4xl 3xl:text-4xl 4xl:text-4xl font-bold text-gray-800 mb-4">Datos de Envío</h2>
 
                                 <div className="space-y-4">
                                     <div className="relative">
@@ -411,8 +414,9 @@ export const PaymentShop = () => {
                                                 }
                                             }}
                                             disabled={isLoading}
+                                            className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                                         />
-                                        {errors.shippingAddress && <span className="text-red-500 text-sm block mt-1">{errors.shippingAddress.message}</span>}
+                                        {errors.shippingAddress && <span className="text-red-500 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl block mt-1">{errors.shippingAddress.message}</span>}
                                     </div>
 
                                     <div className="relative">
@@ -433,8 +437,9 @@ export const PaymentShop = () => {
                                                 }
                                             }}
                                             disabled={isLoading}
+                                            className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                                         />
-                                        {errors.shippingCity && <span className="text-red-500 text-sm block mt-1">{errors.shippingCity.message}</span>}
+                                        {errors.shippingCity && <span className="text-red-500 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl block mt-1">{errors.shippingCity.message}</span>}
                                     </div>
 
                                     <div className="relative">
@@ -455,8 +460,9 @@ export const PaymentShop = () => {
                                                 }
                                             }}
                                             disabled={isLoading}
+                                            className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                                         />
-                                        {errors.shippingState && <span className="text-red-500 text-sm block mt-1">{errors.shippingState.message}</span>}
+                                        {errors.shippingState && <span className="text-red-500 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl block mt-1">{errors.shippingState.message}</span>}
                                     </div>
 
                                     <div className="relative">
@@ -473,15 +479,16 @@ export const PaymentShop = () => {
                                                 }
                                             }}
                                             disabled={isLoading}
+                                            className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                                         />
-                                        {errors.shippingPostalCode && <span className="text-red-500 text-sm block mt-1">{errors.shippingPostalCode.message}</span>}
+                                        {errors.shippingPostalCode && <span className="text-red-500 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl block mt-1">{errors.shippingPostalCode.message}</span>}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div className="mt-6">
-                            <ButtonPrimary text={isLoading ? 'Creando orden...' : 'Crear Orden'} />
+                            <ButtonPrimary text={isLoading ? 'Creando orden...' : 'Crear Orden'} className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl" />
                         </div>
                     </form>
                 </div>
@@ -497,6 +504,7 @@ export const PaymentShop = () => {
                     path="/login"
                     textResponse="Tu sesión ha expirada. Por favor, inicia sesión nuevamente."
                     buttonText="Iniciar sesión"
+                    className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                 />
             ) : error ? (
                 <ModalResponseEpayco
@@ -507,6 +515,7 @@ export const PaymentShop = () => {
                     path="/payment/shop"
                     textResponse={error}
                     buttonText="Volver a intentarlo"
+                    className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                 />
             ) : orderCreated ? (
                 <ModalResponseEpayco
@@ -520,12 +529,13 @@ export const PaymentShop = () => {
                     buttonText="Pagar con ePayco"
                     buttonText2="Revisar tus datos de envío"
                     onClick2={() => setOrderCreated(false)}
+                    className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
                 />
             ) : isLoading ? (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-md">
                     <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md text-center">
                         <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-gray-600">Creando tu orden...</p>
+                        <p className="text-gray-600 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl">Creando tu orden...</p>
                     </div>
                 </div>
             ) : null}
