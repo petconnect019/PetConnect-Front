@@ -11,8 +11,6 @@ import { PetTypeSelector } from "../../Components/PetSelector/PetTypeSelector";
 import { ButtonSecondary } from "../../Components/Buttons/ButtonSecondary";
 import  {useFetchAddPet}  from "../../Hooks/useFetchAddPet/useFetchAddPet";
 
-
-
 export const StepPet = () => {
     const navigate = useNavigate();
     const { register, handleSubmit } = useForm();
@@ -42,30 +40,31 @@ export const StepPet = () => {
     }, [pet, navigate]);   
 
     return (
-        <div className="flex flex-col items-center justify-center">
-                    <div className="p-6 w-screen">
-                        <NavButtonStep  onClick={handleBack} img={Position} text={'2/3'} />
-                        <h2 className="text-2xl font-bold mb-2 text-center">Nombra tu mascota 🐾</h2>
-                        <img className="mx-auto w-auto h-60" src={ImgFrontal} alt="Pet step" />
+        <div className="flex flex-col items-center justify-center w-full">
+            <div className="p-4 sm:p-6 w-full max-w-[375px] sm:max-w-[576px] md:max-w-[768px] lg:max-w-[992px] xl:max-w-[1200px] 2xl:max-w-[1440px] 3xl:max-w-[1680px] 4xl:max-w-[1920px]">
+                <NavButtonStep onClick={handleBack} img={Position} text={'2/3'} />
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl 3xl:text-7xl 4xl:text-8xl font-bold mb-2 text-center">Nombra tu mascota 🐾</h2>
+                <img className="mx-auto w-auto h-40 sm:h-48 md:h-56 lg:h-64 xl:h-72 2xl:h-80 3xl:h-96" src={ImgFrontal} alt="Pet step" />
+    
+                <form onSubmit={handleSubmit(onSubmit)} className="mt-4 sm:mt-6 md:mt-8">
+                    <div className="flex flex-col gap-2 sm:gap-3 md:gap-4">
+                        <InputField
+                            label="Nombre"
+                            icon={Paper}
+                            register={register}
+                            name="name"
+                            placeholder="Nombre"
+                            validation={{ required: "El nombre es obligatorio" }}
+                        />
         
-                        <form onSubmit={handleSubmit(onSubmit)} >
-                            <div className="flex flex-col gap-2">
-        
-                                    <InputField
-                                        label="Nombre"
-                                        icon={Paper}
-                                        register={register}
-                                        name="name"
-                                        placeholder="Nombre"
-                                        validation={{ required: "El nombre es obligatorio" }}
-                                        />
-        
-                                    <PetTypeSelector textLabel="¿Cuál es tu tipo de Mascota?" selectedPet={selectedPet} setSelectedPet={setSelectedPet} />           
-                            </div>
-                            <ButtonPrimary  text='Confirmar' />
-                            <ButtonSecondary path='/home' text='Saltar' />
-                        </form>
+                        <PetTypeSelector textLabel="¿Cuál es tu tipo de Mascota?" selectedPet={selectedPet} setSelectedPet={setSelectedPet} />           
                     </div>
-                </div>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-4 sm:mt-6">
+                        <ButtonPrimary text='Confirmar' />
+                        <ButtonSecondary path='/home' text='Saltar' />
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 };
