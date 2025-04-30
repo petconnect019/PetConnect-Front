@@ -195,16 +195,16 @@ export const Scanner = () => {
       {/* Header */}
       <div className="w-full mb-6 text-center">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 p-4">
-          <span className="text-[#EC9126]">Tag</span> Scanner
+          <span className="text-[#EC9126]">Escaner</span> medalla QR
         </h2>
       </div>
       
       {/* Scanner Container with responsive aspect ratio */}
-      <div className="relative w-full bg-white rounded-2xl overflow-hidden shadow-xl mb-6" style={{aspectRatio: "1/1", maxHeight: "80vh"}}>
+      <div className="relative w-full bg-white rounded-2xl overflow-hidden shadow-xl mb-6 scanner-video-container" style={{aspectRatio: "1/1"}}>
         {/* Always render the video element, but hide it when not scanning */}
         <video
           ref={videoRef}
-          className={`absolute inset-0 w-full h-full object-cover ${scanning ? 'block' : 'hidden'}`}
+          className={` absolute inset-0 w-screen h-screen object-cover ${scanning ? 'block' : 'hidden'}`}
           autoPlay
           playsInline
           muted
@@ -245,7 +245,7 @@ export const Scanner = () => {
       
       {/* Instructions or tip */}
       {!scanning && !scannedResult && (
-        <div className="text-center text-sm text-gray-500 max-w-xs">
+        <div className="text-center text-[0.65rem] xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-base 2xl:text-lg 3xl:text-base 4xl:text-base text-gray-500 scanner-instructions">
           <p>Asegúrate de que el código QR esté bien iluminado y encuadrado para mejores resultados.</p>
         </div>
       )}
