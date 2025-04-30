@@ -29,18 +29,22 @@ export const Home = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="flex flex-col bg-white p-6 pb-24">
+      <div className="flex flex-col bg-white p-4 sm:p-5 md:p-6 pb-24">
         {/* Header */}
-        <header className="flex items-center justify-between bg-white py-4">
-          <img src={logo} alt="Logo" className="w-7 h-7" />
-          <Link to={"/home"} className="text-2xl font-bold">
+        <header className="flex items-center justify-between bg-white py-3 sm:py-4">
+          <img src={logo} alt="Logo" className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 3xl:w-13 3xl:h-13 4xl:w-14 4xl:h-14" />
+          <Link to={"/home"} className="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl 4xl:text-7xl font-bold">
             Pet Connect
           </Link>
           <button 
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200" 
+            className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 3xl:w-13 3xl:h-13 4xl:w-14 4xl:h-14 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200" 
             onClick={() => navigate('/notifications')}
           >
-            <img className='w-10 h-10' src={notification} alt="Notification"/>
+            <img 
+              className='w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 3xl:w-13 3xl:h-13 4xl:w-14 4xl:h-14' 
+              src={notification} 
+              alt="Notification"
+            />
           </button>
         </header>
 
@@ -50,20 +54,20 @@ export const Home = () => {
         {/* QR Section */}
         <section 
           onClick={() => navigate('/ecommerce')} 
-          className="relative flex bg-gradient-to-tr from-orange-900 via-brand to-orange-300 rounded-xl shadow-lg overflow-hidden my-6 cursor-pointer hover:shadow-xl transition-all duration-300 h-[180px]"
+          className="relative flex bg-gradient-to-tr from-orange-900 via-brand to-orange-300 rounded-xl shadow-lg overflow-hidden my-4 sm:my-5 md:my-6 cursor-pointer hover:shadow-xl transition-all duration-300 h-[150px] sm:h-[160px] md:h-[180px]"
         >
-          <div className="z-10 w-3/4 p-6">
-            <h2 className="text-xl text-white font-semibold">
+          <div className="z-10 w-3/4 p-4 sm:p-5 md:p-6">
+            <h2 className="text-lg sm:text-xl text-white font-semibold">
               ¿Aún no has adquirido nuestro QR?
             </h2>
-            <p className="text-sm text-white/90 mt-2">
+            <p className="text-xs sm:text-sm text-white/90 mt-2">
               No dejes su regreso al azar, consíguelo ahora
             </p>
           </div>
           <img 
             src={petImage} 
             alt="Pet-Image" 
-            className="absolute max-w-[200px] h-full object-contain right-0 bottom-0 transform hover:scale-105 transition-transform duration-300" 
+            className="absolute max-w-[180px] sm:max-w-[190px] md:max-w-[200px] h-full object-contain right-0 bottom-0 transform hover:scale-105 transition-transform duration-300" 
           />
         </section>
 
@@ -71,27 +75,27 @@ export const Home = () => {
         <PetsSection petList={petList} navigate={navigate}/>
 
         {/* Buttons Section */}
-        <section className="flex justify-between gap-4 mt-8 mb-4">
+        <section className="flex justify-between gap-3 sm:gap-4 mt-12 sm:mt-14 md:mt-16 mb-16 sm:mb-20 md:mb-24">
           <button 
             onClick={() => navigate('/check-protection')} 
-            className="flex flex-col items-center p-4 bg-teal-50 w-1/2 rounded-xl text-sm hover:bg-blue-50 transition-all duration-300 hover:shadow-md"
+            className="flex flex-col items-center p-2 sm:p-3 md:p-4 bg-teal-50 w-1/2 rounded-xl text-xs sm:text-sm hover:bg-blue-50 transition-all duration-300 hover:shadow-md"
           >
             <img 
               src={iconoHomeUno} 
               alt="Icono-Proteccion" 
-              className="w-16 h-16 object-cover rounded-full mb-2" 
+              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 object-cover rounded-full mb-1 sm:mb-2" 
             />
             <span className="font-medium text-gray-700">Revisar Protección</span>
           </button>
           
           <button 
             onClick={() => navigate('/ecommerce')} 
-            className="flex flex-col items-center p-4 bg-teal-50 w-1/2 rounded-xl text-sm hover:bg-green-50 transition-all duration-300 hover:shadow-md"
+            className="flex flex-col items-center p-2 sm:p-3 md:p-4 bg-teal-50 w-1/2 rounded-xl text-xs sm:text-sm hover:bg-green-50 transition-all duration-300 hover:shadow-md"
           >
             <img 
               src={iconoHomeDos} 
               alt="Icono-Tienda" 
-              className="w-16 h-16 object-cover rounded-full mb-2" 
+              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 object-cover rounded-full mb-1 sm:mb-2" 
             />
             <span className="font-medium text-gray-700">Tienda</span>
           </button>
