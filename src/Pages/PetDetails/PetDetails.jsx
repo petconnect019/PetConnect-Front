@@ -79,14 +79,14 @@ export const PetDetails = () => {
       {pet ? (
         <section className="flex flex-col items-center sm:py-12 xs:py-6 md:py-8 lg:py-10 xl:py-12 3xl:py-14 4xl:py-16">
           <div className="w-full max-w-md sm:max-w-xl md:max-w-2xl xs:max-w-sm lg:max-w-xl xl:max-w-2xl 2xl:max-w-3xl 3xl:max-w-4xl 4xl:max-w-5xl bg-white p-4 sm:p-6 xs:p-5 md:p-7 lg:p-8 xl:p-9 3xl:p-10 4xl:p-12">
-            <div className="relative flex items-center justify-center mt-4 w-full">
+            <div className="flex items-center mt-2 mb-3 xs:mb-4 sm:mb-6 md:mb-8 text-center w-full p-1">
               <div className="absolute left-0">
                 <NavButton onClick={handleBackButton}/>
               </div>
-              <h1 className="text-center text-xl sm:text-2xl xs:text-xl md:text-3xl 3xl:text-4xl 4xl:text-5xl font-bold text-gray-800">
+              <h1 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl 4xl:text-5xl font-bold text-gray-800 flex-grow text-center">
                 Detalles de la Mascota
               </h1>
-              <div className="absolute right-0">
+              <div className="absolute right-3">
                 <img className="w-6 h-6 xs:w-6 xs:h-6 sm:w-7 sm:h-7 3xl:w-8 3xl:h-8 4xl:w-9 4xl:h-9" src={SharedImg} alt="SharedImg" />
               </div>
             </div>

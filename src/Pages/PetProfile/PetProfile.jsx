@@ -165,11 +165,13 @@ export const PetProfile = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center w-full bg-gray-50">
       <div className="bg-white w-full max-w-md md:max-w-2xl lg:max-w-4xl space-y-3 xs:space-y-4 sm:space-y-6 md:space-y-8">
-        <div className="flex items-center mt-2 mb-3 xs:mb-4 sm:mb-6 md:mb-8 text-center w-full p-1">
-          <NavButton onClick={() => navigate(-1)} />
-          <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl 4xl:text-5xl font-bold text-gray-800 flex-grow text-center">
+        <div className="flex items-center mt-2 mb-3 xs:mb-4 sm:mb-6 md:mb-8 w-full relative">
+          <div className="absolute left-0 pl-2">
+            <NavButton onClick={() => navigate(-1)} />
+          </div>
+          <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl 4xl:text-5xl font-bold text-gray-800 w-full text-center">
             Perfil de tu mascota
           </h2>
         </div>

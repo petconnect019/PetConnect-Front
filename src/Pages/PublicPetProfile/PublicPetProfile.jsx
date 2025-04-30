@@ -4,11 +4,12 @@ import { useFetchPetById } from "../../Hooks/useFetchPetById/useFetchPetById";
 import { usePet } from '../../Contexts/PetContext/PetContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import { GridItem } from '../../Components/GridItem/GridItem';
-import { ArrowLeft, Share2 } from 'lucide-react';
 import { ImSpinner2 } from 'react-icons/im';
 import defaultCat from '../../assets/images/CatProfilePfp.png'
 import defaultDog from '../../assets/images/DogProfilePfp.png'
 import defaultOwner from '../../assets/images/DefaultProfile.png'
+import {NavButton} from '../../Components/NavButton/NavButton';
+import SharedImg from '../../assets/images/shared.png'
 
 export const PublicPetProfile = () => {
   const { pet_id } = useParams();
@@ -83,20 +84,16 @@ export const PublicPetProfile = () => {
       {petData ? (
           <div className="bg-white min-h-screen rounded-3xl">
           {/* Header */}
-          <div className="grid grid-cols-[auto_1fr_auto] items-center p-4 xs:p-5 sm:p-6 md:p-7 lg:p-8 xl:p-9 2xl:p-10">
-            <button 
-              onClick={handleGoBack} 
-              className="hover:bg-orange-100 p-2 rounded-full"
-            >
-              <ArrowLeft size={24} className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11" />
-            </button>
-            <h1 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-semibold text-gray-800 text-center">Detalles de la mascota</h1>
-            <button 
-              onClick={handleShare}
-              className="hover:bg-orange-100 p-2 rounded-full"
-            >
-              <Share2 size={24} className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11" />
-            </button>
+          <div className="grid grid-cols-[auto_1fr_auto] items-center mt-2 mb-3 xs:mb-4 sm:mb-6 md:mb-8 w-full p-1 max-w-7xl mx-auto">
+            <div className="flex justify-start">
+              <NavButton onClick={handleGoBack}/>
+            </div>
+            <h1 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl 4xl:text-5xl font-bold text-gray-800 text-center">
+              Detalles de la mascota
+            </h1>
+            <div className="flex justify-end">
+              <img className="w-6 h-6 xs:w-6 xs:h-6 sm:w-7 sm:h-7 3xl:w-8 3xl:h-8 4xl:w-9 4xl:h-9" src={SharedImg} alt="SharedImg" />
+            </div>
           </div>
     
           {/* Pet Photo Carousel */}
