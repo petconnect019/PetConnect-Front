@@ -136,10 +136,10 @@ export const Register = () => {
             <div className="mb-6 pl-2">
               <NavButton onClick={() => navigate(-1)} />
             </div>
-            <header className="mb-4 sm:mb-6 text-center">
+            <header className="mb-4 sm:mb-6 text-left ml-2">
               <h2
                 className="
-              text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-4xl 3xl:text-4xl 4xl:text-4xl
+              text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl 3xl:text-5xl 4xl:text-5xl
               font-extrabold 
               text-gray-900 
               mb-2 
