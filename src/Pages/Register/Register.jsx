@@ -16,6 +16,7 @@ import { InputField } from "../../Components/InputField/InputField.jsx";
 import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
 import emailIcon from '../../assets/images/emailIcon.png'
 import passwordIcon from '../../assets/images/Lock.png'
+import { NavButton } from "../../Components/NavButton/NavButton.jsx";
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -113,7 +114,7 @@ export const Register = () => {
       >
         <div
           className="
-        flex flex-col pt-2 w-screen items-center
+        flex flex-col p-4 w-full items-center
       "
         >
           {/* Toastify Container with improved positioning */}
@@ -131,11 +132,14 @@ export const Register = () => {
             className="z-50"
           />
 
-          <div className="p-2 sm:p-4 mt-8 ">
-            <header className="mb-6 text-center">
+          <div className=" sm:p-4 md:p-6 lg:p-8  w-auto">
+            <div className="mb-6 pl-2">
+              <NavButton onClick={() => navigate(-1)} />
+            </div>
+            <header className="mb-4 sm:mb-6 text-center">
               <h2
                 className="
-              text-3xl 
+              text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl
               font-extrabold 
               text-gray-900 
               mb-2 
@@ -146,8 +150,8 @@ export const Register = () => {
               </h2>
               <p
                 className="
+              text-sm xs:text-sm sm:text-base md:text-lg lg:text-xl
               text-gray-600 
-              text-sm 
               font-medium
             "
               >
@@ -159,10 +163,10 @@ export const Register = () => {
               onSubmit={handleSubmit(onSubmit)}
               noValidate
               aria-label="Formulario de registro"
-              className=" w-[20rem]"
+              className="w-screen p-2"
             >
               {/* Email Input */}
-              <div className="mb-4 ">
+              <div className="mb-4">
                 <InputField
                   name="email"
                   label="Email"
@@ -183,7 +187,7 @@ export const Register = () => {
                     role="alert"
                     className="
                   text-red-500 
-                  text-xs 
+                  text-xs xs:text-xs sm:text-sm md:text-base
                   mt-1 
                   animate-fade-in-down
                 "
@@ -220,7 +224,7 @@ export const Register = () => {
                     role="alert"
                     className="
                   text-red-500 
-                  text-xs 
+                  text-xs xs:text-xs sm:text-sm md:text-base
                   mt-1 
                   animate-fade-in-down
                 "
@@ -254,7 +258,7 @@ export const Register = () => {
                     role="alert"
                     className="
                   text-red-500 
-                  text-xs 
+                  text-xs xs:text-xs sm:text-sm md:text-base
                   mt-1 
                   animate-fade-in-down
                 "
@@ -272,8 +276,7 @@ export const Register = () => {
                     id="terms"
                     disabled={isLoading}
                     className="
-                  w-4 
-                  h-4 
+                  w-4 h-4 
                   text-brand 
                   rounded 
                   focus:ring-brand
@@ -285,7 +288,7 @@ export const Register = () => {
                   <label
                     htmlFor="terms"
                     className="
-                  text-xs 
+                  text-xs xs:text-xs sm:text-sm md:text-base
                   text-gray-600
                   leading-tight
                 "
@@ -301,7 +304,7 @@ export const Register = () => {
                     role="alert"
                     className="
                   text-red-500 
-                  text-xs 
+                  text-xs xs:text-xs sm:text-sm md:text-base
                   mt-1 
                   animate-fade-in-down
                 "
@@ -315,7 +318,7 @@ export const Register = () => {
               <p
                 className="
               text-center 
-              text-sm 
+              text-xs xs:text-xs sm:text-sm md:text-base
               text-gray-600 
               mt-6
               mb-6
@@ -342,31 +345,31 @@ export const Register = () => {
               flex 
               items-center 
               justify-center 
-              my-6
+              my-4 sm:my-6
             "
               >
                 <div className="flex-grow border-t border-gray-300"></div>
-                <span className="px-4 text-gray-500 text-sm">o</span>
+                <span className="px-4 text-gray-500 text-xs xs:text-xs sm:text-sm md:text-base">o</span>
                 <div className="flex-grow border-t border-gray-300"></div>
               </div>
 
               {/* Google Sign Up and Register Button */}
               <div className="space-y-4">
                 <GoogleSignUp
-                  content={"Regístrate con Google"}
+                  content={"Continuar con Google"}
                   setUser={false}
                   setAccesToken={setAccessToken}
                   setHasPetsState={false}
                   setErrorState={setErrorState}
                   setIsnewUserState={false}
                   disabled={isLoading}
-                  className="w-full"
+                  className="w-full max-w-[400px] mx-auto 4xl:max-w-[500px]"
                 />
 
                 <ButtonPrimary
                   text={"Registrarse"}
                   disabled={isLoading}
-                  className="w-full"
+                  className="w-full max-w-[400px] mx-auto 4xl:max-w-[500px]"
                 />
               </div>
             </form>

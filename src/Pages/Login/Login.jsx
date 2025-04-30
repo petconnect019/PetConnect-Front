@@ -122,7 +122,7 @@ export const Login = () => {
         >
           <div
             className="
-              flex flex-col p-4 w-full  
+              flex flex-col p-2 pt-4 w-full  
             "
           >
             <ToastContainer
