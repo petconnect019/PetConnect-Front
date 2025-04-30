@@ -68,7 +68,7 @@ export const Welcome = () => {
           <h2 className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-500 mb-6 xs:mb-8 sm:mb-10">
             Ingresa a tu cuenta para continuar
           </h2>
-          <div className="w-full max-w-[300px] xs:max-w-[350px] sm:max-w-[400px] md:max-w-[450px] lg:max-w-[500px] xl:max-w-[550px] 2xl:max-w-[600px] 3xl:max-w-[650px] 4xl:max-w-[700px]">
+          <div className="w-screen max-w-[300px] xs:max-w-[350px] sm:max-w-[400px] md:max-w-[450px] lg:max-w-[500px] xl:max-w-[550px] 2xl:max-w-[600px] 3xl:max-w-[650px] 4xl:max-w-[700px]">
             <GoogleSignUp
               content={"Inicia sesión con Google"}
               setUser={setUser}
