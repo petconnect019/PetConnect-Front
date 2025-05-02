@@ -175,39 +175,15 @@ export const PaymentShop = () => {
 
     const handlePayWithEpayco = useCallback(async () => {
         try {
-            setShowSpinner(true);
+            const orderId = sessionStorage.getItem('currentOrderId');
+            if (!orderId) {
+                throw new Error('No se encontró la orden');
+            }
+
             const token = sessionStorage.getItem('accessToken');
             if (!token || await isTokenExpired(token)) {
                 throw new Error('Sesión expirada');
             }
-
-            // Crear la orden antes de procesar el pago
-            const orderData = {
-                quantity: parseInt(formData.quantity),
-                customer: {
-                    name: formData.customerName.trim(),
-                    email: formData.customerEmail.trim(),
-                    phone: formData.customerPhone.trim()
-                },
-                shipping: {
-                    address: formData.shippingAddress.trim(),
-                    city: formData.shippingCity.trim(),
-                    state: formData.shippingState.trim(),
-                    country: formData.shippingCountry.trim(),
-                    postalCode: formData.shippingPostalCode.trim()
-                },
-                status: 'pending',
-                paymentStatus: 'pending'
-            };
-
-            const data = await OrderService.createOrder(orderData);
-            
-            if (!data.success) {
-                throw new Error(data.message || 'Error al crear la orden');
-            }
-
-            const orderId = data.order._id;
-            sessionStorage.setItem('currentOrderId', orderId);
 
             // Cargar el script de ePayco usando la función optimizada
             const ePayco = await loadEpaycoScript();
@@ -285,19 +261,21 @@ export const PaymentShop = () => {
             } else if (error.message === 'No se pudo cargar el script de ePayco') {
                 setError('No se pudo conectar con ePayco. Por favor, intenta nuevamente.');
             }
-        } finally {
-            setShowSpinner(false);
         }
     }, [formData, loadEpaycoScript]);
 
     const handleStartPayment = useCallback(() => {
         setOrderCreated(false);
         setShowSpinner(true);
-        handlePayWithEpayco();
-    }, [handlePayWithEpayco]);
+        
+        // Esperar 1.5 segundos antes de iniciar el pago
+        setTimeout(() => {
+            handlePayWithEpayco();
+        }, 1000);
+    }, []);
 
     return (
-        <div className='w-auto flex flex-col items-center justify-center bg-gray-100'>
+        <div className='w-auto flex flex-col items-center justify-center'>
             <div className='w-screen bg-white p-4 sm:p-6 md:p-8'>
                 <NavButton onClick={() => navigate('/Ecommerce')} />
                 <div className="text-left space-y-4">
@@ -347,9 +325,7 @@ export const PaymentShop = () => {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit((data) => {
-                        setOrderCreated(true);
-                    })} className="p-2 bg-white">
+                    <form onSubmit={handleSubmit(createOrder)} className="p-2 bg-white">
                         <div className='border-b border-gray-200 pb-4 mb-4' />
                         <div className="space-y-6">
                             <div className="bg-white p-4">
