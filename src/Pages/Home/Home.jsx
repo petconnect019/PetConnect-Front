@@ -28,7 +28,7 @@ export const Home = () => {
   useFetchPets(hasPetsUser);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div >
       <div className="flex flex-col bg-white p-4 sm:p-5 md:p-6 pb-24">
         {/* Header */}
         <header className="flex items-center justify-between bg-white py-3 sm:py-4">

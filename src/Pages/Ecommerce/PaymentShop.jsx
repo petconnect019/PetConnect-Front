@@ -234,7 +234,7 @@ export const PaymentShop = () => {
                 style_checkout: 'onePageCheckout',
                 styleOnePageCheckout: {
                     colorPrimary: '#5046E5',           // Color principal
-                    logoHeader: 'https://i.imgur.com/HoQVGlz.png', // Logo de PetConnect
+                    logoHeader: '', // Logo de PetConnect
                     bankLogos: 'on',                   // Mostrar logos de bancos
                     colorHeader: '#4338CA',            // Color del encabezado
                     colorBtn: '#10B981',               // Color del botón principal (verde)
