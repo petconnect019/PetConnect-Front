@@ -13,13 +13,9 @@ export const Settings = () => {
     try {
       await logout();
       console.log('Cerrando sesión...');
-      setShowModal(false);
-      setTimeout(() => {
         navigate('/login');
-      }, 1000);
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
-      setShowModal(false);
     }
   };
 
