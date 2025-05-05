@@ -1,14 +1,40 @@
 import { useNavigate } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
 import { FooterNav } from '../../Components/FooterNav/FooterNav';
+import { useAuth } from '../../Contexts/AuthContext/AuthContext';
+import { ModalLogout } from '../../Components/ModalBasic/ModalLogout';
 
 export const Settings = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      console.log('Cerrando sesión...');
+      setShowModal(false);
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      setShowModal(false);
+    }
+  };
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <div className="flex-1 w-screen max-w-[375px] xs:max-w-[576px] sm:max-w-[768px] md:max-w-[992px] lg:max-w-[1200px] xl:max-w-[1440px] 2xl:max-w-[1680px] 3xl:max-w-[1920px] mx-auto px-4 xs:px-5 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 3xl:px-16 4xl:px-18">   
-        <div className="xs:p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 2xl:p-14 3xl:p-16 4xl:p-18">
+        <div className="xs:p-1 sm:p-6 md:p-8 lg:p-10 xl:p-12 2xl:p-14 3xl:p-16 4xl:p-18">
           <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl 3xl:text-9xl 4xl:text-10xl font-bold text-center text-gray-800 mb-6 xs:mb-8 sm:mb-10 md:mb-12 lg:mb-14 xl:mb-16 2xl:mb-18 3xl:mb-20 4xl:mb-22">
             Configuración
           </h1>
@@ -55,7 +81,10 @@ export const Settings = () => {
 
       {/* Botón de cerrar sesión fijo al fondo */}
       <div className="w-screen max-w-[375px] xs:max-w-[576px] sm:max-w-[768px] md:max-w-[992px] lg:max-w-[1200px] xl:max-w-[1440px] 2xl:max-w-[1680px] 3xl:max-w-[1920px] mx-auto px-4 xs:px-5 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14 3xl:px-16 4xl:px-18 mt-auto mb-20">
-        <button className="w-full bg-red-500 hover:bg-red-600 text-white px-4 xs:px-5 sm:px-6 md:px-7 lg:px-8 xl:px-9 2xl:px-10 3xl:px-11 4xl:px-12 py-2 xs:py-2.5 sm:py-3 md:py-3.5 lg:py-4 xl:py-4.5 2xl:py-5 3xl:py-5.5 4xl:py-6 rounded-lg transition-colors flex items-center justify-center">
+        <button 
+          onClick={handleOpenModal}
+          className="w-full bg-brand text-white px-4 xs:px-5 sm:px-6 md:px-7 lg:px-8 xl:px-9 2xl:px-10 3xl:px-11 4xl:px-12 py-2 xs:py-2.5 sm:py-3 md:py-3.5 lg:py-4 xl:py-4.5 2xl:py-5 3xl:py-5.5 4xl:py-6 rounded-lg transition-colors flex items-center justify-center"
+        >
           <svg className="w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10 3xl:w-11 3xl:h-11 4xl:w-12 4xl:h-12 mr-2 xs:mr-2.5 sm:mr-3 md:mr-3.5 lg:mr-4 xl:mr-4.5 2xl:mr-5 3xl:mr-5.5 4xl:mr-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
@@ -64,6 +93,11 @@ export const Settings = () => {
       </div>
 
       <FooterNav navigate={navigate} />
+      <ModalLogout 
+        isOpen={showModal}
+        onClose={handleCloseModal}
+        onConfirm={handleLogout}
+      />
     </div>
   );
-}
+};
