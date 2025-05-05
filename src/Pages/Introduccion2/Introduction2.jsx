@@ -5,7 +5,7 @@ export const Introduction2 = () => {
     const navigate = useNavigate();
 
     const handleContinue = () => {
-        navigate('/Welcome');
+        navigate('/notification-request');
     }
 
     return (
