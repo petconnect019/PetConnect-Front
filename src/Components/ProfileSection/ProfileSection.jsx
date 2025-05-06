@@ -12,6 +12,7 @@ export const ProfileSection = ({ navigate }) => {
 
 
     const handleNavigate = () => {
+        const userData = JSON.parse(sessionStorage.getItem("userData"));
         navigate(`/user-profile-config/${userData._id}`);
     }
 
