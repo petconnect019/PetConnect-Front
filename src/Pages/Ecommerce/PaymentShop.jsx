@@ -104,9 +104,10 @@ export const PaymentShop = () => {
     useEffect(() => {
         const subscription = watch((value, { name }) => {
             if (name === 'quantity') {
+                const quantityValue = parseInt(value.quantity) || 1;
                 setFormData(prev => ({
                     ...prev,
-                    quantity: parseInt(value.quantity) || 1
+                    quantity: quantityValue
                 }));
             }
         });
@@ -115,11 +116,47 @@ export const PaymentShop = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-        setValue(name, value);
+        if (name === 'quantity') {
+            // Permitir borrar el valor
+            if (value === '') {
+                setValue(name, '');
+                setFormData(prev => ({
+                    ...prev,
+                    [name]: ''
+                }));
+                return;
+            }
+
+            const numValue = parseInt(value);
+            if (!isNaN(numValue)) {
+                // Validar el rango solo cuando se ingresa un número válido
+                if (numValue > 10) {
+                    setValue(name, 10);
+                    setFormData(prev => ({
+                        ...prev,
+                        [name]: 10
+                    }));
+                } else if (numValue < 1) {
+                    setValue(name, 1);
+                    setFormData(prev => ({
+                        ...prev,
+                        [name]: 1
+                    }));
+                } else {
+                    setValue(name, numValue);
+                    setFormData(prev => ({
+                        ...prev,
+                        [name]: numValue
+                    }));
+                }
+            }
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+            setValue(name, value);
+        }
     };
 
     const createOrder = async (formData) => {
@@ -138,6 +175,7 @@ export const PaymentShop = () => {
             }
 
             console.log('Cantidad a enviar:', quantity);
+            console.log('formData completo:', formData);
 
             const orderData = {
                 quantity: quantity,
@@ -345,47 +383,11 @@ export const PaymentShop = () => {
                                             min: { value: 1, message: "La cantidad mínima es 1" },
                                             max: { value: 10, message: "La cantidad máxima es 10" }
                                         })}
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            if (value === '') {
-                                                setValue('quantity', '');
-                                                setFormData(prev => ({
-                                                    ...prev,
-                                                    quantity: 1
-                                                }));
-                                            } else {
-                                                const numValue = parseInt(value);
-                                                if (!isNaN(numValue)) {
-                                                    if (numValue > 10) {
-                                                        setValue('quantity', 10);
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            quantity: 10
-                                                        }));
-                                                    } else if (numValue < 1) {
-                                                        setValue('quantity', 1);
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            quantity: 1
-                                                        }));
-                                                    } else {
-                                                        setValue('quantity', numValue);
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            quantity: numValue
-                                                        }));
-                                                    }
-                                                }
-                                            }
-                                        }}
+                                        onChange={handleInputChange}
                                         onBlur={(e) => {
                                             const value = e.target.value;
                                             if (value === '' || parseInt(value) < 1) {
-                                                setValue('quantity', 1);
-                                                setFormData(prev => ({
-                                                    ...prev,
-                                                    quantity: 1
-                                                }));
+                                                handleInputChange({ target: { name: 'quantity', value: '1' } });
                                             }
                                         }}
                                         className="w-full bg-gray-50 p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-xl 4xl:text-xl"
