@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../Contexts/AuthContext/AuthContext.jsx";
-import { GoogleSignUp } from "../../Components/GoogleAuth/GoogleSignUp.jsx";
+import { GoogleSignUp } from "../../Components/GoogleAuth/GoogleSignUp";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -251,16 +251,15 @@ export const Login = () => {
 
                 {/* Google Sign Up and Login Button */}
                 <div className="space-y-3 sm:space-y-4 ">
-                  <GoogleSignUp
-                    content={"Inicia sesión con Google"}
-                    setUser={setUser}
-                    setAccesToken={setAccessToken}
-                    setHasPetsState={setHasPetsState}
-                    setErrorState={setErrorState}
-                    setIsnewUserState={setIsNewUserState}
-                    disabled={isLoading}
-                    className="w-full"
-                  />
+                <GoogleSignUp
+                  content={"Inicia sesión con Google"}
+                  setUser={setUser}
+                  setAccesToken={setAccessToken}
+                  setHasPetsState={setHasPetsState}
+                  setErrorState={setErrorState}
+                  setIsnewUserState={setIsNewUserState}
+                  className="w-full"
+                />
 
                   <ButtonPrimary
                     text={"Iniciar Sesión"}

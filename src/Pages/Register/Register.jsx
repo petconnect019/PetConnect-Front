@@ -20,6 +20,11 @@ import { NavButton } from "../../Components/NavButton/NavButton.jsx";
 
 export const Register = () => {
   const navigate = useNavigate();
+
+  // Local states // Estados locales que cambian con el customHook y con el Componente de Google
+  const [user, setUser] = useState(null);
+  const [hasPetsState, setHasPetsState] = useState(false);
+  const [isNewUserState, setIsNewUserState] = useState(false);
   // Esquema de validación con Yup
   const {
     register,
@@ -83,10 +88,27 @@ export const Register = () => {
     }
   }, [accessToken, userResult]);
 
+  // Efecto para manejar los estados de Google
+  useEffect(() => {
+    if (user && accessToken) {
+      login(accessToken, user);
+      changeHasPetsUser(hasPetsState);
+      if (isNewUserState) {
+        navigate("/step-user");
+      } else {
+        navigate("/home");
+      }
+    }
+  }, [user, accessToken, hasPetsState, isNewUserState]);
+
   // Manejo de error
   useEffect(() => {
     if (errorState) {
-      toast.error(errorState);
+      if (errorState.includes('Google')) {
+        toast.error('Error en la autenticación con Google. Por favor, intente nuevamente.');
+      } else {
+        toast.error(errorState);
+      }
     }
   }, [errorState]);
 
@@ -355,15 +377,14 @@ export const Register = () => {
 
               {/* Google Sign Up and Register Button */}
               <div className="space-y-4">
-                <GoogleSignUp
-                  content={"Continuar con Google"}
-                  setUser={false}
+              <GoogleSignUp
+                  content={"Inicia sesión con Google"}
+                  setUser={setUser}
                   setAccesToken={setAccessToken}
-                  setHasPetsState={false}
+                  setHasPetsState={setHasPetsState}
                   setErrorState={setErrorState}
-                  setIsnewUserState={false}
-                  disabled={isLoading}
-                  className="w-full max-w-[400px] mx-auto 4xl:max-w-[500px]"
+                  setIsnewUserState={setIsNewUserState}
+                  className="w-full"
                 />
 
                 <ButtonPrimary
