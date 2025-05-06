@@ -15,7 +15,7 @@ import { useFetchUpdateUser } from "../../Hooks/useFetchUpdateUser/useFetchUpdat
 
 export const StepUser = () => {
     const navigate = useNavigate();
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, setValue } = useForm();
     const [profileImage, setProfileImage] = useState(DefaultProfile);
     const [filePfp, setFilePfp] = useState(null);
     const [phone, setPhone] = useState(""); 
@@ -25,22 +25,59 @@ export const StepUser = () => {
 
     // Obtener datos iniciales del usuario
     useEffect(() => {
-        const storedUserData = sessionStorage.getItem("userData");
-        if (storedUserData) {
-            try {
-                const userData = JSON.parse(storedUserData);
-                if (userData && userData.name) {
-                    setPhone(userData.phone || "");
-                    setDepartment(userData.state || "");
-                    if (userData.state) {
-                        setCity(ciudadesPorDepartamento[userData.state] || []);
+        const loadUserData = () => {
+            const storedUserData = sessionStorage.getItem("userData");
+            if (storedUserData) {
+                try {
+                    const userData = JSON.parse(storedUserData);
+                    if (userData) {
+                        // Establecer valores en el formulario
+                        setValue('name', userData.name || '');
+                        setValue('gender', userData.gender || '');
+                        setValue('country', userData.country || 'Colombia');
+                        setValue('address', userData.address || '');
+                        
+                        // Establecer valores en los estados
+                        setPhone(userData.phone || "");
+                        setDepartment(userData.state || "");
+                        
+                        // Verificar y establecer la ciudad si existe
+                        if (userData.state) {
+                            const ciudades = ciudadesPorDepartamento[userData.state] || [];
+                            setCity(ciudades);
+                            if (userData.city && ciudades.includes(userData.city)) {
+                                setValue('city', userData.city);
+                            }
+                        }
+                        
+                        // Establecer imagen de perfil si existe
+                        if (userData.profile_picture) {
+                            setProfileImage(userData.profile_picture);
+                        }
                     }
+                } catch (error) {
+                    console.error("Error al parsear datos del usuario:", error);
                 }
-            } catch (error) {
-                console.error("Error al parsear datos del usuario:", error);
             }
-        }
-    }, []);
+        };
+
+        // Cargar datos al montar el componente
+        loadUserData();
+
+        // Agregar listener para cambios en sessionStorage
+        const handleStorageChange = (e) => {
+            if (e.key === "userData") {
+                loadUserData();
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+
+        // Limpiar listener al desmontar
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+        };
+    }, [setValue]);
 
     const handleDepartamentoChange = (event) => {
         const deptoSelection = event.target.value;
