@@ -21,12 +21,21 @@ export const Settings = () => {
   
   const handleProfile = () => {
     const userData = JSON.parse(sessionStorage.getItem("userData"));
-    console.log("Datos del usuario en Settings:", userData);
+    console.log("Datos completos del usuario en Settings:", userData);
+    console.log("Tipo de userData:", typeof userData);
+    console.log("ID del usuario:", userData?._id);
+    
     if (userData && userData._id) {
       console.log("Navegando a perfil con ID:", userData._id);
       navigate(`/user-profile-config/${userData._id}`);
     } else {
       console.error("No se encontró el ID del usuario en Settings");
+      // Intentar obtener el ID de otra fuente si es necesario
+      const alternativeUserData = JSON.parse(localStorage.getItem("userData"));
+      if (alternativeUserData && alternativeUserData._id) {
+        console.log("Usando ID alternativo:", alternativeUserData._id);
+        navigate(`/user-profile-config/${alternativeUserData._id}`);
+      }
     }
   };
 
