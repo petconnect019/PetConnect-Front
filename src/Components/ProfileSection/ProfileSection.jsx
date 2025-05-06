@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
+import { useUserId } from "../../Contexts/UserIdContext/UserIdContext";
 import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken';
 import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
 
@@ -9,22 +10,15 @@ export const ProfileSection = ({ navigate }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const { isAuthenticated } = useAuth();
+    const { userId } = useUserId();
 
 
     const handleNavigate = () => {
-        if (!userData) {
-            console.error("No hay datos del usuario disponibles");
-            return;
-        }
-
-        // Intentar obtener el ID de diferentes ubicaciones posibles
-        const userId = userData._id || (userData._doc && userData._doc._id);
-        
         if (userId) {
             console.log("Navegando a perfil con ID:", userId);
             navigate(`/user-profile-config/${userId}`);
         } else {
-            console.error("No se encontró el ID del usuario en los datos disponibles");
+            console.error("No se encontró el ID del usuario");
         }
     }
 
@@ -39,12 +33,7 @@ export const ProfileSection = ({ navigate }) => {
                         const parsedData = JSON.parse(storedUserData);
                         console.log("Datos del usuario obtenidos del sessionStorage:", parsedData);
                         if (parsedData && typeof parsedData === 'object') {
-                            // Asegurarnos de que el ID esté en la raíz del objeto
-                            const userDataWithId = {
-                                ...parsedData,
-                                _id: parsedData._id || (parsedData._doc && parsedData._doc._id)
-                            };
-                            setUserData(userDataWithId);
+                            setUserData(parsedData);
                             setIsLoading(false);
                             return;
                         }
