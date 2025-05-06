@@ -43,33 +43,32 @@ export const useFetchUpdateUser = () => {
                     state: formData.get('state'),
                     city: formData.get('city'),
                     address: formData.get('address'),
-                    profile_picture: DefaultProfile
+                    profile_picture: currentUserData.profile_picture || DefaultProfile
                 };
                 
                 console.log("Datos del usuario a guardar:", updatedUserData);
                 sessionStorage.setItem("userData", JSON.stringify(updatedUserData));
 
-                const formDataPhoto = new FormData();
+                // Solo actualizamos la foto si se proporciona una nueva
                 if (filePfp) {
+                    const formDataPhoto = new FormData();
                     formDataPhoto.append("profile_picture", filePfp);
+                    
+                    const responsePhoto = await FetchUpdatePhotoU(formDataPhoto, token);
+                    if (responsePhoto.ok) {
+                        const finalUserData = {
+                            ...updatedUserData,
+                            profile_picture: responsePhoto.profilePicture
+                        };
+                        console.log("Datos finales del usuario:", finalUserData);
+                        sessionStorage.setItem("userData", JSON.stringify(finalUserData));
+                        setUserFetched(finalUserData);
+                    } else {
+                        console.error("No se pudo actualizar la foto:", responsePhoto.message);
+                        setError("No se pudo actualizar la foto de perfil");
+                    }
                 } else {
-                    const response = await fetch(DefaultProfile);
-                    const blob = await response.blob();
-                    formDataPhoto.append("profile_picture", blob, "default-profile.png");
-                }
-
-                const responsePhoto = await FetchUpdatePhotoU(formDataPhoto, token);
-                if (responsePhoto.ok) {
-                    const finalUserData = {
-                        ...updatedUserData,
-                        profile_picture: responsePhoto.profilePicture || DefaultProfile
-                    };
-                    console.log("Datos finales del usuario:", finalUserData);
-                    sessionStorage.setItem("userData", JSON.stringify(finalUserData));
-                    setUserFetched(finalUserData);
-                } else {
-                    console.error("No se pudo actualizar la foto:", responsePhoto.message);
-                    setError("No se pudo actualizar la foto de perfil");
+                    setUserFetched(updatedUserData);
                 }
             } else {
                 console.error("Error al actualizar usuario:", responseUser.message);
