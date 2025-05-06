@@ -60,30 +60,44 @@ export const UserProfileConfig = () => {
 
   useEffect(() => {
     const subscription = watch((values) => {
+      const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
+      if (!storedUserData) return;
+
       const hasFormChanges = 
-        values.name !== user?.name ||
-        values.email !== user?.email ||
-        phone !== user?.phone ||
-        department !== user?.department ||
-        city !== user?.city ||
-        gender !== user?.gender;
+        values.name !== storedUserData.name ||
+        values.email !== storedUserData.email ||
+        phone !== storedUserData.phone ||
+        department !== storedUserData.department ||
+        city !== storedUserData.city ||
+        gender !== storedUserData.gender;
+
+      console.log("Cambios detectados:", {
+        name: values.name !== storedUserData.name,
+        email: values.email !== storedUserData.email,
+        phone: phone !== storedUserData.phone,
+        department: department !== storedUserData.department,
+        city: city !== storedUserData.city,
+        gender: gender !== storedUserData.gender,
+        filePfp: filePfp !== null
+      });
 
       setIsModified(hasFormChanges || filePfp !== null);
     });
     return () => subscription.unsubscribe();
-  }, [watch, user, filePfp, phone, department, city, gender]);
+  }, [watch, filePfp, phone, department, city, gender]);
 
   const onSubmitForm = async (dataForm) => {
-    const userData = {
-      name: dataForm.name,
-      email: dataForm.email,
-      phone: phone,
-      department: department,
-      city: city,
-      gender: gender,
-    };
+    const formDataUser = new FormData();
+    formDataUser.append('name', dataForm.name);
+    formDataUser.append('email', dataForm.email);
+    formDataUser.append('phone', phone);
+    formDataUser.append('gender', gender);
+    formDataUser.append('department', department);
+    formDataUser.append('city', city);
+    
+    console.log("Datos enviados:", Object.fromEntries(formDataUser));
 
-    updateUser(userData, filePfp);
+    await updateUser(formDataUser, filePfp);
   };
 
   const handleImageChange = (event) => {
@@ -255,7 +269,7 @@ export const UserProfileConfig = () => {
 
           <button
             type="submit"
-            disabled={!isModified}
+            disabled={isModified}
             className="w-full bg-orange-500 mt-2 xs:mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-7 2xl:mt-8 text-white py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 xl:py-7 2xl:py-8 rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl"
           >
             Guardar cambios
