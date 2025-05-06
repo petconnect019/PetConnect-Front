@@ -122,7 +122,13 @@ export const ProfileSection = ({ navigate }) => {
 
     return (
         <section 
-            onClick={() => navigate(`/user-profile-config/${userData._id}`)} 
+            onClick={() => {
+                if (userData && userData._id) {
+                    navigate(`/user-profile-config/${userData._id}`);
+                } else {
+                    console.error("No se encontró el ID del usuario");
+                }
+            }} 
             className="flex items-center cursor-pointer"
         >
             <img 
