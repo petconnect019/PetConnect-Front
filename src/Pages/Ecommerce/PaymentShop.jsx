@@ -309,11 +309,27 @@ export const PaymentShop = () => {
                                         max="10"
                                         value={formData.quantity}
                                         onChange={(e) => {
-                                            const value = parseInt(e.target.value);
-                                            if (value >= 1 && value <= 10) {
+                                            const value = e.target.value;
+                                            if (value === '') {
                                                 setFormData(prev => ({
                                                     ...prev,
-                                                    quantity: value
+                                                    quantity: ''
+                                                }));
+                                            } else {
+                                                const numValue = parseInt(value);
+                                                if (!isNaN(numValue) && numValue >= 1 && numValue <= 10) {
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        quantity: numValue
+                                                    }));
+                                                }
+                                            }
+                                        }}
+                                        onBlur={(e) => {
+                                            if (e.target.value === '') {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    quantity: 1
                                                 }));
                                             }
                                         }}
