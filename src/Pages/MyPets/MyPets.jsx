@@ -3,6 +3,7 @@ import { usePet } from "../../Contexts/PetContext/PetContext";
 import defaultDog from "../../assets/images/DogProfilePfp.png";
 import defaultCat from "../../assets/images/CatProfilePfp.png";
 import { NavButton } from "../../Components/NavButton/NavButton";
+import { AiFillHome } from "react-icons/ai";
 
 export const MyPets = ()=> {
     const navigate = useNavigate();
@@ -22,8 +23,9 @@ export const MyPets = ()=> {
                             <button 
                                 key={index + pet.id} 
                                 onClick={()=> navigate(`/pet-details/${pet.id}`)} 
-                                className="flex flex-col justify-between items-center p-3 bg-amber-100 w-9/20 h-35 rounded-lg text-sm hover:bg-green-600 transition"
+                                className="flex flex-col justify-between items-center p-3 bg-red-50 w-9/20 h-35 rounded-lg text-sm hover:bg-green-600 transition relative"
                             >
+                                <AiFillHome className="absolute top-2 right-1 text-brand w-5 h-5" />
                                 <img 
                                     src={pet.profile_picture || (pet.species === "dog" ? defaultDog : defaultCat)} 
                                     alt="Profile-picture" 

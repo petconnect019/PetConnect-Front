@@ -17,6 +17,7 @@ export const ProfileSection = ({ navigate }) => {
                 if (storedUserData) {
                     try {
                         const parsedData = JSON.parse(storedUserData);
+                        console.log("Datos del usuario obtenidos del sessionStorage:", parsedData);
                         if (parsedData && typeof parsedData === 'object') {
                             setUserData(parsedData);
                             setIsLoading(false);
@@ -121,7 +122,7 @@ export const ProfileSection = ({ navigate }) => {
 
     return (
         <section 
-            onClick={() => navigate("/user-profile-config")} 
+            onClick={() => navigate(`/user-profile-config/${userData._id}`)} 
             className="flex items-center cursor-pointer"
         >
             <img 
