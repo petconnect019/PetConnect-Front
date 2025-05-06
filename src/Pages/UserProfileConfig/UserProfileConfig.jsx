@@ -53,7 +53,7 @@ export const UserProfileConfig = () => {
     if (storedUserData) {
       setProfileImage(storedUserData.profile_picture || DefaultProfile);
       setPhone(storedUserData.phone || "");
-      setDepartment(storedUserData.department || "");
+      setDepartment(storedUserData.state || "");
       setCity(storedUserData.city || []);
       setGender(storedUserData.gender || "");
       setCountry(storedUserData.country || "Colombia");
@@ -72,7 +72,7 @@ export const UserProfileConfig = () => {
         values.name !== storedUserData.name ||
         values.email !== storedUserData.email ||
         phone !== storedUserData.phone ||
-        department !== storedUserData.department ||
+        department !== storedUserData.state ||
         city !== storedUserData.city ||
         gender !== storedUserData.gender ||
         country !== storedUserData.country ||
@@ -82,7 +82,7 @@ export const UserProfileConfig = () => {
         name: values.name !== storedUserData.name,
         email: values.email !== storedUserData.email,
         phone: phone !== storedUserData.phone,
-        department: department !== storedUserData.department,
+        department: department !== storedUserData.state,
         city: city !== storedUserData.city,
         gender: gender !== storedUserData.gender,
         country: country !== storedUserData.country,
