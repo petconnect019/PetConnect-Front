@@ -12,8 +12,20 @@ export const ProfileSection = ({ navigate }) => {
 
 
     const handleNavigate = () => {
-        const userData = JSON.parse(sessionStorage.getItem("userData"));
-        navigate(`/user-profile-config/${userData._id}`);
+        if (!userData) {
+            console.error("No hay datos del usuario disponibles");
+            return;
+        }
+
+        // Intentar obtener el ID de diferentes ubicaciones posibles
+        const userId = userData._id || (userData._doc && userData._doc._id);
+        
+        if (userId) {
+            console.log("Navegando a perfil con ID:", userId);
+            navigate(`/user-profile-config/${userId}`);
+        } else {
+            console.error("No se encontró el ID del usuario en los datos disponibles");
+        }
     }
 
 
@@ -27,7 +39,12 @@ export const ProfileSection = ({ navigate }) => {
                         const parsedData = JSON.parse(storedUserData);
                         console.log("Datos del usuario obtenidos del sessionStorage:", parsedData);
                         if (parsedData && typeof parsedData === 'object') {
-                            setUserData(parsedData);
+                            // Asegurarnos de que el ID esté en la raíz del objeto
+                            const userDataWithId = {
+                                ...parsedData,
+                                _id: parsedData._id || (parsedData._doc && parsedData._doc._id)
+                            };
+                            setUserData(userDataWithId);
                             setIsLoading(false);
                             return;
                         }

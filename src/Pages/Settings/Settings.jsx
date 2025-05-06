@@ -22,20 +22,20 @@ export const Settings = () => {
   const handleProfile = () => {
     const userData = JSON.parse(sessionStorage.getItem("userData"));
     console.log("Datos completos del usuario en Settings:", userData);
-    console.log("Tipo de userData:", typeof userData);
-    console.log("ID del usuario:", userData?._id);
     
-    if (userData && userData._id) {
-      console.log("Navegando a perfil con ID:", userData._id);
-      navigate(`/user-profile-config/${userData._id}`);
+    if (!userData) {
+      console.error("No se encontraron datos del usuario en sessionStorage");
+      return;
+    }
+
+    // Verificar si el ID está en la raíz del objeto o en _doc
+    const userId = userData._id || (userData._doc && userData._doc._id);
+    
+    if (userId) {
+      console.log("Navegando a perfil con ID:", userId);
+      navigate(`/user-profile-config/${userId}`);
     } else {
-      console.error("No se encontró el ID del usuario en Settings");
-      // Intentar obtener el ID de otra fuente si es necesario
-      const alternativeUserData = JSON.parse(localStorage.getItem("userData"));
-      if (alternativeUserData && alternativeUserData._id) {
-        console.log("Usando ID alternativo:", alternativeUserData._id);
-        navigate(`/user-profile-config/${alternativeUserData._id}`);
-      }
+      console.error("No se encontró el ID del usuario en ninguna ubicación");
     }
   };
 
