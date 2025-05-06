@@ -185,6 +185,9 @@ export const PaymentShop = () => {
                 throw new Error('Sesión expirada');
             }
 
+            console.log('Cantidad seleccionada:', formData.quantity);
+            console.log('Tipo de cantidad:', typeof formData.quantity);
+
             // Cargar el script de ePayco usando la función optimizada
             const ePayco = await loadEpaycoScript();
             
@@ -197,13 +200,16 @@ export const PaymentShop = () => {
                 test: true
             });
             
+            const amount = (formData.quantity || 1) * 15000;
+            console.log('Monto calculado:', amount);
+            
             // Abrir el checkout con interfaz mejorada
             handler.open({
                 // Parámetros de compra (obligatorios)
                 name: 'Códigos QR PetConnect',
                 description: `Orden de ${formData.quantity || 1} códigos QR para tu mascota`,
                 currency: 'cop',
-                amount: (formData.quantity || 1) * 15000,
+                amount: amount,
                 tax_base: '0',
                 tax: '0',
                 country: 'co',
