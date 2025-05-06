@@ -21,6 +21,7 @@ import EditImg from "../../assets/images/EditImage.png";
 import { ImSpinner2 } from "react-icons/im";
 import { City as ciudadesPorDepartamento } from '../../Utils/Data-Schema/City';
 import { Department as departamentos } from '../../Utils/Data-Schema/Department';
+import { FaInfoCircle } from "react-icons/fa";
 
 export const UserProfileConfig = () => {
   const navigate = useNavigate();
@@ -132,6 +133,23 @@ export const UserProfileConfig = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const calculateCompletionPercentage = () => {
+    const fields = [
+      profileImage !== DefaultProfile,
+      watch("name"),
+      watch("email"),
+      phone,
+      gender,
+      country,
+      address,
+      department,
+      city
+    ];
+    
+    const completedFields = fields.filter(Boolean).length;
+    return Math.round((completedFields / fields.length) * 100);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center w-full bg-gray-50">
       <div className="bg-white w-full max-w-md md:max-w-2xl lg:max-w-4xl space-y-3 xs:space-y-4 sm:space-y-6 md:space-y-8">
@@ -144,17 +162,18 @@ export const UserProfileConfig = () => {
           </h2>
         </div>
 
-        <div className="flex flex-row justify-between items-center p-2 xs:p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 2xl:p-12 space-x-4 xs:space-x-6 sm:space-x-8 md:space-x-10 lg:space-x-12 xl:space-x-14 2xl:space-x-16">
-          <div className="relative w-16 h-16 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 2xl:w-56 2xl:h-56 3xl:w-64 3xl:h-64 4xl:w-72 4xl:h-72 flex justify-center items-center">
+        <div className=" flex flex-row justify-between items-center p-2 xs:p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 2xl:p-12 space-x-4 xs:space-x-6 sm:space-x-8 md:space-x-10 lg:space-x-12 xl:space-x-14 2xl:space-x-16">
+          <div className=" relative w-auto h-30 xs:w-28 xs:h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 2xl:w-64 2xl:h-64 3xl:w-72 3xl:h-72 4xl:w-80 4xl:h-80 flex justify-center items-center">
             <label htmlFor="profile-upload" className="cursor-pointer flex justify-center items-center">
               <img
                 src={profileImage}
                 alt="Profile"
-                className="w-18 h-18 xs:w-20 xs:h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 xl:w-48 xl:h-48 2xl:w-56 2xl:h-56 3xl:w-64 3xl:h-64 4xl:w-72 4xl:h-72 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
+                className="w-26 h-26 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
+                style={{ objectFit: 'cover', objectPosition: 'center' }}
               />
-              <span className="absolute bottom-12 xs:bottom-14 sm:bottom-18 md:bottom-24 lg:bottom-30 xl:bottom-36 2xl:bottom-42 3xl:bottom-48 4xl:bottom-42 right-0 rounded-md p-1 xs:p-1.5 md:p-2 lg:p-2.5 xl:p-3 2xl:p-3.5">
+              <span className="absolute bottom-21 xs:bottom-28 sm:bottom-32 md:bottom-40 lg:bottom-48 xl:bottom-56 2xl:bottom-64 3xl:bottom-72 4xl:bottom-80 right-0 rounded-md p-1 xs:p-1.5 md:p-2 lg:p-2.5 xl:p-3 2xl:p-3.5">
                 <img
-                  className="w-4 h-4 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 2xl:w-9 2xl:h-9 3xl:w-10 3xl:h-10 4xl:w-11 4xl:h-11 rounded-lg"
+                  className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11 3xl:w-12 3xl:h-12 4xl:w-13 4xl:h-13 rounded-lg"
                   src={EditImg}
                   alt="EditImgIcon"
                 />
@@ -167,6 +186,28 @@ export const UserProfileConfig = () => {
               className="hidden"
               onChange={handleImageChange}
             />
+          </div>
+          <div className="flex-1 w-full text-left space-y-2 xs:space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7 2xl:space-y-8">
+            <div className="mb-2">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600">
+                  Progreso del perfil
+                </span>
+                <span className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600">
+                  {calculateCompletionPercentage()}%
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 xs:h-3 sm:h-4 md:h-5 lg:h-6 xl:h-7 2xl:h-8">
+                <div 
+                  className="bg-brand h-full rounded-full transition-all duration-300"
+                  style={{ width: `${calculateCompletionPercentage()}%` }}
+                ></div>
+              </div>
+            </div>
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-3xl 4xl:text-2xl text-justify text-gray-600">
+              <FaInfoCircle className="inline align-text-bottom text-brand mr-1" />
+              Completa tu perfil para una comunicación más efectiva en una eventual pérdida de tu mascota
+            </p>
           </div>
         </div>
 
