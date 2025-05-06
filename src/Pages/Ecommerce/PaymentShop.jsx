@@ -117,12 +117,39 @@ export const PaymentShop = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         if (name === 'quantity') {
-            const numValue = parseInt(value) || 1;
-            setFormData(prev => ({
-                ...prev,
-                [name]: numValue
-            }));
-            setValue(name, numValue);
+            // Permitir borrar el valor
+            if (value === '') {
+                setValue(name, '');
+                setFormData(prev => ({
+                    ...prev,
+                    [name]: ''
+                }));
+                return;
+            }
+
+            const numValue = parseInt(value);
+            if (!isNaN(numValue)) {
+                // Validar el rango solo cuando se ingresa un número válido
+                if (numValue > 10) {
+                    setValue(name, 10);
+                    setFormData(prev => ({
+                        ...prev,
+                        [name]: 10
+                    }));
+                } else if (numValue < 1) {
+                    setValue(name, 1);
+                    setFormData(prev => ({
+                        ...prev,
+                        [name]: 1
+                    }));
+                } else {
+                    setValue(name, numValue);
+                    setFormData(prev => ({
+                        ...prev,
+                        [name]: numValue
+                    }));
+                }
+            }
         } else {
             setFormData(prev => ({
                 ...prev,
