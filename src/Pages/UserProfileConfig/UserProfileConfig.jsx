@@ -47,16 +47,16 @@ export const UserProfileConfig = () => {
       return;
     }
 
-    if (user) {
-      setProfileImage(user.profile_picture || DefaultProfile);
-      setPhone(user.phone || "");
-      setDepartment(user.department || "");
-      setCity(user.city || []);
-      setGender(user.gender || "");
-      setValue("name", user.name || "");
-      setValue("email", user.email || "");
+    if (storedUserData) {
+      setProfileImage(storedUserData.profile_picture || DefaultProfile);
+      setPhone(storedUserData.phone || "");
+      setDepartment(storedUserData.department || "");
+      setCity(storedUserData.city || []);
+      setGender(storedUserData.gender || "");
+      setValue("name", storedUserData.name || "");
+      setValue("email", storedUserData.email || "");
     }
-  }, [user, setValue, user_id, navigate]);
+  }, [setValue, user_id, navigate]);
 
   useEffect(() => {
     const subscription = watch((values) => {
