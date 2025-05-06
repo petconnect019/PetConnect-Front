@@ -31,6 +31,7 @@ export const UserProfileConfig = () => {
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState([]);
   const [department, setDepartment] = useState("");
+  const [gender, setGender] = useState("");
   const [isModified, setIsModified] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const { user } = useAuth();
@@ -51,6 +52,7 @@ export const UserProfileConfig = () => {
       setPhone(user.phone || "");
       setDepartment(user.department || "");
       setCity(user.city || []);
+      setGender(user.gender || "");
       setValue("name", user.name || "");
       setValue("email", user.email || "");
     }
@@ -63,12 +65,13 @@ export const UserProfileConfig = () => {
         values.email !== user?.email ||
         phone !== user?.phone ||
         department !== user?.department ||
-        city !== user?.city;
+        city !== user?.city ||
+        gender !== user?.gender;
 
       setIsModified(hasFormChanges || filePfp !== null);
     });
     return () => subscription.unsubscribe();
-  }, [watch, user, filePfp, phone, department, city]);
+  }, [watch, user, filePfp, phone, department, city, gender]);
 
   const onSubmitForm = async (dataForm) => {
     const userData = {
@@ -77,6 +80,7 @@ export const UserProfileConfig = () => {
       phone: phone,
       department: department,
       city: city,
+      gender: gender,
     };
 
     updateUser(userData, filePfp);
@@ -163,13 +167,29 @@ export const UserProfileConfig = () => {
 
         <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-2 xs:space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7 2xl:space-y-8 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8">
           <InputField
-            label="Nombre"
+            label="Nombre Completo"
             icon={Paper}
             register={register}
             name="name"
             placeholder="Tu nombre"
             validation={{ required: "El nombre es obligatorio" }}
           />
+
+          <div>
+            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+              Género
+            </label>
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+            >
+              <option value="">Seleccione un género</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
 
           <InputField
             label="Correo electrónico"
