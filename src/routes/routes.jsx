@@ -25,7 +25,7 @@ import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
 import { Chat } from "../Pages/Chat/Chat";
 import { Settings } from "../Pages/Settings/Settings";
-import { UserProfileConfig } from "../UserProfileConfig/UserProfileConfig";
+import { UserProfileConfig } from "../Pages/UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";
 import { SplashScreen } from "../Pages/SplashScreen/SplashScreen";
 import { NewPet1 } from "../Pages/NewPet1/NewPet1";
@@ -121,7 +121,7 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><NewPet1 /></ProtectRoute>,
   },
   {
-    path: '/user-profile-config',
+    path: '/user-profile-config/:user_id',
     element: <ProtectRoute><UserProfileConfig /></ProtectRoute>,
   },
   {

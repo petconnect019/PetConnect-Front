@@ -20,7 +20,14 @@ export const Settings = () => {
   };
   
   const handleProfile = () => {
-    navigate('/user-profile-config');
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    console.log("Datos del usuario en Settings:", userData);
+    if (userData && userData._id) {
+      console.log("Navegando a perfil con ID:", userData.id);
+      navigate(`/user-profile-config/${userData._id}`);
+    } else {
+      console.error("No se encontró el ID del usuario en Settings");
+    }
   };
 
   const handleMyPets = () => {
