@@ -380,8 +380,8 @@ export const PaymentShop = () => {
                                             validation={{
                                                 required: "El número de teléfono es obligatorio",
                                                 pattern: {
-                                                    value: /^[0-9]{10}$/,
-                                                    message: "El teléfono debe tener 10 dígitos numéricos, sin espacios ni caracteres especiales"
+                                                    value: /^[0-9]{12}$/,
+                                                    message: "El teléfono debe tener 12 dígitos numéricos, sin espacios ni caracteres especiales"
                                                 }
                                             }}
                                             disabled={isLoading}
