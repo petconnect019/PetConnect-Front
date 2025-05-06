@@ -202,6 +202,8 @@ export const PaymentShop = () => {
             if (data.success) {
                 setOrderCreated(true);
                 sessionStorage.setItem('currentOrderId', data.order._id);
+                // Guardar la cantidad en sessionStorage
+                sessionStorage.setItem('orderQuantity', quantity.toString());
             } else {
                 throw new Error(data.message || 'Error al crear la orden');
             }
@@ -245,13 +247,14 @@ export const PaymentShop = () => {
                 throw new Error('Sesión expirada');
             }
 
-            const quantity = parseInt(formData.quantity);
-            if (isNaN(quantity) || quantity < 1) {
+            // Obtener la cantidad guardada en sessionStorage
+            const savedQuantity = parseInt(sessionStorage.getItem('orderQuantity'));
+            if (isNaN(savedQuantity) || savedQuantity < 1) {
                 throw new Error('Cantidad inválida');
             }
 
-            console.log('Cantidad seleccionada:', quantity);
-            console.log('Tipo de cantidad:', typeof quantity);
+            console.log('Cantidad seleccionada:', savedQuantity);
+            console.log('Tipo de cantidad:', typeof savedQuantity);
 
             // Cargar el script de ePayco usando la función optimizada
             const ePayco = await loadEpaycoScript();
@@ -265,14 +268,14 @@ export const PaymentShop = () => {
                 test: true
             });
             
-            const amount = quantity * 15000;
+            const amount = savedQuantity * 15000;
             console.log('Monto calculado:', amount);
             
             // Abrir el checkout con interfaz mejorada
             handler.open({
                 // Parámetros de compra (obligatorios)
                 name: 'Códigos QR PetConnect',
-                description: `Orden de ${quantity} códigos QR para tu mascota`,
+                description: `Orden de ${savedQuantity} códigos QR para tu mascota`,
                 currency: 'cop',
                 amount: amount,
                 tax_base: '0',
