@@ -3,11 +3,18 @@ import { useAuth } from "../../Contexts/AuthContext/AuthContext";
 import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken';
 import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
 
+
 export const ProfileSection = ({ navigate }) => {
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const { isAuthenticated } = useAuth();
+
+
+    const handleNavigate = () => {
+        navigate(`/user-profile-config/${userData._id}`);
+    }
+
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -122,13 +129,7 @@ export const ProfileSection = ({ navigate }) => {
 
     return (
         <section 
-            onClick={() => {
-                if (userData && userData._id) {
-                    navigate(`/user-profile-config/${userData._id}`);
-                } else {
-                    console.error("No se encontró el ID del usuario");
-                }
-            }} 
+            onClick={handleNavigate}
             className="flex items-center cursor-pointer"
         >
             <img 
