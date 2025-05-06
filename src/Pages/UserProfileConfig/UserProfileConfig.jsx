@@ -32,6 +32,8 @@ export const UserProfileConfig = () => {
   const [city, setCity] = useState([]);
   const [department, setDepartment] = useState("");
   const [gender, setGender] = useState("");
+  const [country, setCountry] = useState("");
+  const [address, setAddress] = useState("");
   const [isModified, setIsModified] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const { user } = useAuth();
@@ -53,6 +55,8 @@ export const UserProfileConfig = () => {
       setDepartment(storedUserData.department || "");
       setCity(storedUserData.city || []);
       setGender(storedUserData.gender || "");
+      setCountry(storedUserData.country || "Colombia");
+      setAddress(storedUserData.address || "");
       setValue("name", storedUserData.name || "");
       setValue("email", storedUserData.email || "");
     }
@@ -69,7 +73,9 @@ export const UserProfileConfig = () => {
         phone !== storedUserData.phone ||
         department !== storedUserData.department ||
         city !== storedUserData.city ||
-        gender !== storedUserData.gender;
+        gender !== storedUserData.gender ||
+        country !== storedUserData.country ||
+        address !== storedUserData.address;
 
       console.log("Cambios detectados:", {
         name: values.name !== storedUserData.name,
@@ -78,13 +84,15 @@ export const UserProfileConfig = () => {
         department: department !== storedUserData.department,
         city: city !== storedUserData.city,
         gender: gender !== storedUserData.gender,
+        country: country !== storedUserData.country,
+        address: address !== storedUserData.address,
         filePfp: filePfp !== null
       });
 
       setIsModified(hasFormChanges || filePfp !== null);
     });
     return () => subscription.unsubscribe();
-  }, [watch, filePfp, phone, department, city, gender]);
+  }, [watch, filePfp, phone, department, city, gender, country, address]);
 
   const onSubmitForm = async (dataForm) => {
     const formDataUser = new FormData();
@@ -92,8 +100,10 @@ export const UserProfileConfig = () => {
     formDataUser.append('email', dataForm.email);
     formDataUser.append('phone', phone);
     formDataUser.append('gender', gender);
-    formDataUser.append('department', department);
+    formDataUser.append('country', country);
+    formDataUser.append('state', department);
     formDataUser.append('city', city);
+    formDataUser.append('address', address);
     
     console.log("Datos enviados:", Object.fromEntries(formDataUser));
 
@@ -203,6 +213,32 @@ export const UserProfileConfig = () => {
               <option value="Femenino">Femenino</option>
               <option value="Otros">Otros</option>
             </select>
+          </div>
+
+          <div>
+            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+              País
+            </label>
+            <select
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+            >
+              <option value="Colombia">Colombia</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+              Dirección
+            </label>
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              placeholder="Tu dirección"
+            />
           </div>
 
           <InputField
