@@ -28,7 +28,7 @@ export const PaymentShop = () => {
         shippingPostalCode: ''
     });
 
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm({
         mode: 'onChange',
         defaultValues: formData
     });
@@ -100,6 +100,19 @@ export const PaymentShop = () => {
         checkSession();
     }, []);
 
+    // Agregar un efecto para sincronizar la cantidad
+    useEffect(() => {
+        const subscription = watch((value, { name }) => {
+            if (name === 'quantity') {
+                setFormData(prev => ({
+                    ...prev,
+                    quantity: parseInt(value.quantity) || 1
+                }));
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [watch]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -119,8 +132,15 @@ export const PaymentShop = () => {
                 throw new Error('Sesión expirada');
             }
 
+            const quantity = parseInt(formData.quantity);
+            if (isNaN(quantity) || quantity < 1) {
+                throw new Error('Cantidad inválida');
+            }
+
+            console.log('Cantidad a enviar:', quantity);
+
             const orderData = {
-                quantity: parseInt(formData.quantity),
+                quantity: quantity,
                 customer: {
                     name: formData.customerName.trim(),
                     email: formData.customerEmail.trim(),
@@ -136,6 +156,8 @@ export const PaymentShop = () => {
                 status: 'pending',
                 paymentStatus: 'pending'
             };
+
+            console.log('Datos de la orden:', orderData);
 
             const data = await OrderService.createOrder(orderData);
             
@@ -185,8 +207,13 @@ export const PaymentShop = () => {
                 throw new Error('Sesión expirada');
             }
 
-            console.log('Cantidad seleccionada:', formData.quantity);
-            console.log('Tipo de cantidad:', typeof formData.quantity);
+            const quantity = parseInt(formData.quantity);
+            if (isNaN(quantity) || quantity < 1) {
+                throw new Error('Cantidad inválida');
+            }
+
+            console.log('Cantidad seleccionada:', quantity);
+            console.log('Tipo de cantidad:', typeof quantity);
 
             // Cargar el script de ePayco usando la función optimizada
             const ePayco = await loadEpaycoScript();
@@ -200,14 +227,14 @@ export const PaymentShop = () => {
                 test: true
             });
             
-            const amount = (formData.quantity || 1) * 15000;
+            const amount = quantity * 15000;
             console.log('Monto calculado:', amount);
             
             // Abrir el checkout con interfaz mejorada
             handler.open({
                 // Parámetros de compra (obligatorios)
                 name: 'Códigos QR PetConnect',
-                description: `Orden de ${formData.quantity || 1} códigos QR para tu mascota`,
+                description: `Orden de ${quantity} códigos QR para tu mascota`,
                 currency: 'cop',
                 amount: amount,
                 tax_base: '0',
@@ -313,26 +340,48 @@ export const PaymentShop = () => {
                                         name="quantity"
                                         min="1"
                                         max="10"
-                                        value={formData.quantity}
+                                        {...register('quantity', {
+                                            required: "La cantidad es obligatoria",
+                                            min: { value: 1, message: "La cantidad mínima es 1" },
+                                            max: { value: 10, message: "La cantidad máxima es 10" }
+                                        })}
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             if (value === '') {
+                                                setValue('quantity', '');
                                                 setFormData(prev => ({
                                                     ...prev,
-                                                    quantity: ''
+                                                    quantity: 1
                                                 }));
                                             } else {
                                                 const numValue = parseInt(value);
-                                                if (!isNaN(numValue) && numValue >= 1 && numValue <= 10) {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        quantity: numValue
-                                                    }));
+                                                if (!isNaN(numValue)) {
+                                                    if (numValue > 10) {
+                                                        setValue('quantity', 10);
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            quantity: 10
+                                                        }));
+                                                    } else if (numValue < 1) {
+                                                        setValue('quantity', 1);
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            quantity: 1
+                                                        }));
+                                                    } else {
+                                                        setValue('quantity', numValue);
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            quantity: numValue
+                                                        }));
+                                                    }
                                                 }
                                             }
                                         }}
                                         onBlur={(e) => {
-                                            if (e.target.value === '') {
+                                            const value = e.target.value;
+                                            if (value === '' || parseInt(value) < 1) {
+                                                setValue('quantity', 1);
                                                 setFormData(prev => ({
                                                     ...prev,
                                                     quantity: 1
