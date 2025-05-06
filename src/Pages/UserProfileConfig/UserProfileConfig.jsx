@@ -44,8 +44,17 @@ export const UserProfileConfig = () => {
   useEffect(() => {
     // Verificar que el ID del usuario en la URL coincida con el usuario actual
     const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
-    if (storedUserData && storedUserData._id !== user_id) {
-      console.error("ID de usuario no coincide");
+    if (!storedUserData) {
+      console.error("No se encontraron datos del usuario");
+      navigate('/home');
+      return;
+    }
+
+    // Obtener el ID del usuario de diferentes ubicaciones posibles
+    const storedUserId = storedUserData._id || (storedUserData._doc && storedUserData._doc._id);
+    
+    if (!storedUserId || storedUserId !== user_id) {
+      console.error("ID de usuario no coincide o no está disponible");
       navigate('/home');
       return;
     }
