@@ -42,57 +42,63 @@ export const ChangePassword = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-8 bg-white rounded-lg shadow-md">
-      <NavButton onClick={() => navigate(-1)} />
-      <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-        Cambiar Contraseña
-      </h2>
-      {serverError && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-          {serverError}
+    <div className="flex flex-col items-center justify-between min-h-screen w-full">
+      <div className='w-screen space-y-2 xs:space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7 2xl:space-y-8 px-4 xs:px-6 sm:px-8 md:px-10 lg:px-12 xl:px-14 2xl:px-16'>
+        <NavButton onClick={() => navigate(-1)} />
+        <div className="p-4 xs:p-6 sm:p-8 md:p-10 lg:p-12 xl:p-14 2xl:p-16">
+          <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl 4xl:text-9xl font-semibold text-center text-gray-800 mb-4 xs:mb-5 sm:mb-6 md:mb-7 lg:mb-8 xl:mb-9 2xl:mb-10 3xl:mb-11 4xl:mb-12">
+            Cambiar Contraseña
+          </h2>
+          {serverError && (
+            <div className="mb-3 xs:mb-4 sm:mb-5 md:mb-6 lg:mb-7 xl:mb-8 2xl:mb-9 3xl:mb-10 4xl:mb-11 p-2 xs:p-2.5 sm:p-3 md:p-3.5 lg:p-4 xl:p-4.5 2xl:p-5 3xl:p-5.5 4xl:p-6 bg-red-100 border border-red-400 text-red-700 rounded text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl 3xl:text-5xl 4xl:text-6xl">
+              {serverError}
+            </div>
+          )}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 xs:space-y-4 sm:space-y-5 md:space-y-6 lg:space-y-7 xl:space-y-8 2xl:space-y-9 3xl:space-y-10 4xl:space-y-11">
+            <PasswordField
+              label="Contraseña Actual"
+              name="currentPassword"
+              register={register}
+              validation={{
+                required: 'La contraseña actual es requerida'
+              }}
+            />
+
+            <PasswordField
+              label="Nueva Contraseña"
+              name="newPassword"
+              register={register}
+              validation={{
+                required: 'La nueva contraseña es requerida',
+                minLength: {
+                  value: 6,
+                  message: 'La contraseña debe tener al menos 6 caracteres'
+                }
+              }}
+            />
+
+            <PasswordField
+              label="Confirmar Nueva Contraseña"
+              name="confirmPassword"
+              register={register}
+              validation={{
+                required: 'La confirmación de contraseña es requerida',
+                validate: value => value === watch('newPassword') || 'Las contraseñas no coinciden'
+              }}
+            />
+          </form>
         </div>
-      )}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <PasswordField
-          label="Contraseña Actual"
-          name="currentPassword"
-          register={register}
-          validation={{
-            required: 'La contraseña actual es requerida'
-          }}
-        />
-
-        <PasswordField
-          label="Nueva Contraseña"
-          name="newPassword"
-          register={register}
-          validation={{
-            required: 'La nueva contraseña es requerida',
-            minLength: {
-              value: 6,
-              message: 'La contraseña debe tener al menos 6 caracteres'
-            }
-          }}
-        />
-
-        <PasswordField
-          label="Confirmar Nueva Contraseña"
-          name="confirmPassword"
-          register={register}
-          validation={{
-            required: 'La confirmación de contraseña es requerida',
-            validate: value => value === watch('newPassword') || 'Las contraseñas no coinciden'
-          }}
-        />
-
+      </div>
+      <div className="w-full px-4 xs:px-6 sm:px-8 md:px-10 lg:px-12 xl:px-14 2xl:px-16 pb-4 xs:pb-6 sm:pb-8 md:pb-10 lg:pb-12 xl:pb-14 2xl:pb-16">
         <button
           type="submit"
           disabled={isLoading}
-          className="block mx-auto w-full max-w-md bg-brand text-white py-3 xs:py-3.5 sm:py-4 md:py-4.5 lg:py-5 xl:py-5 2xl:py-5.5 3xl:py-6 4xl:py-6 rounded-full mt-5 text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-3xl 3xl:text-3xl 4xl:text-4xl font-medium shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleSubmit(onSubmit)}
+          className="block mx-auto w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[360px] md:max-w-[400px] lg:max-w-[440px] xl:max-w-[480px] 2xl:max-w-[520px] 3xl:max-w-[560px] 4xl:max-w-[600px] bg-brand text-white py-2.5 xs:py-3 sm:py-3.5 md:py-4 lg:py-4.5 xl:py-5 2xl:py-5.5 3xl:py-6 4xl:py-6.5 rounded-full text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl 3xl:text-5xl 4xl:text-6xl font-medium shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Cambiando contraseña...' : 'Cambiar Contraseña'}
         </button>
-      </form>
+      </div>
     </div>
   );
 };
