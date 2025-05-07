@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavButton } from '../../Components/NavButton/NavButton';
+import { changePassword } from '../../Utils/Fetch/FetchChangePassword/FetchChangePassword';
 
 export const ChangePassword = () => {
   const navigate = useNavigate();
@@ -10,6 +11,8 @@ export const ChangePassword = () => {
     confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,6 +20,11 @@ export const ChangePassword = () => {
       ...formData,
       [name]: value
     });
+    // Limpiar errores cuando el usuario comienza a escribir
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    setServerError('');
   };
 
   const validateForm = () => {
@@ -40,13 +48,17 @@ export const ChangePassword = () => {
     const validationErrors = validateForm();
     
     if (Object.keys(validationErrors).length === 0) {
+      setIsLoading(true);
+      setServerError('');
+      
       try {
-        // Aquí iría la lógica para enviar la solicitud al backend
-        console.log('Datos del formulario:', formData);
-        // Después de un cambio exitoso, redirigir al usuario
+        await changePassword(formData.currentPassword, formData.newPassword);
         navigate('/profile');
       } catch (error) {
         console.error('Error al cambiar la contraseña:', error);
+        setServerError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setErrors(validationErrors);
@@ -59,6 +71,11 @@ export const ChangePassword = () => {
       <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
         Cambiar Contraseña
       </h2>
+      {serverError && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          {serverError}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
@@ -119,9 +136,12 @@ export const ChangePassword = () => {
 
         <button
           type="submit"
-          className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          disabled={isLoading}
+          className={`w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          Cambiar Contraseña
+          {isLoading ? 'Cambiando contraseña...' : 'Cambiar Contraseña'}
         </button>
       </form>
     </div>
