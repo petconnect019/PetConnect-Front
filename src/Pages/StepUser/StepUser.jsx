@@ -12,6 +12,7 @@ import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep";
 import {City as ciudadesPorDepartamento} from '../../Utils/Data-Schema/City'
 import {Department as departamentos} from '../../Utils/Data-Schema/Department'
 import { useFetchUpdateUser } from "../../Hooks/useFetchUpdateUser/useFetchUpdateUser";
+import { ModalSpinner } from "../../Components/ModalBasic/ModalRegister";
 
 export const StepUser = () => {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ export const StepUser = () => {
     const [city, setCity] = useState("");
     const [department, setDepartment] = useState("");
     const { updateUser, isLoading, error } = useFetchUpdateUser();
+    const [showSpinner, setShowSpinner] = useState(false);
 
     // Obtener datos iniciales del usuario
     useEffect(() => {
@@ -36,16 +38,12 @@ export const StepUser = () => {
                         setValue('gender', userData.gender || '');
                         setValue('country', userData.country || 'Colombia');
                         setValue('address', userData.address || '');
+                        setValue('city', userData.city || '');
                         
                         // Establecer valores en los estados
                         setPhone(userData.phone || "");
                         setDepartment(userData.state || "");
-                        
-                        // Verificar y establecer la ciudad si existe
-                        if (userData.state) {
-                            const ciudades = ciudadesPorDepartamento[userData.state] || [];
-                            setCity(userData.city || "");
-                        }
+                        setCity(userData.city || "");
                         
                         // Establecer imagen de perfil si existe
                         if (userData.profile_picture) {
@@ -80,6 +78,13 @@ export const StepUser = () => {
         const deptoSelection = event.target.value;
         setDepartment(deptoSelection);
         setCity("");
+        setValue('city', '');
+    };
+
+    const handleCityChange = (event) => {
+        const selectedCity = event.target.value;
+        setCity(selectedCity);
+        setValue('city', selectedCity);
     };
 
     const handleImageChange = (event) => {
@@ -92,28 +97,30 @@ export const StepUser = () => {
     };
 
     const onSubmitForm = async (dataForm) => { 
-        if (!dataForm.city) {
-            alert("Por favor, seleccione una ciudad");
-            return;
-        }
+    
 
-        const formDataUser = new FormData();
-        formDataUser.append('name', dataForm.name);
-        formDataUser.append('phone', phone);
-        formDataUser.append('gender', dataForm.gender);
-        formDataUser.append('country', dataForm.country);
-        formDataUser.append('state', department);
-        formDataUser.append('city', dataForm.city);
-        formDataUser.append('address', dataForm.address);
-        
-        console.log("Datos enviados:", Object.fromEntries(formDataUser));
+        setShowSpinner(true);
+        setTimeout(async () => {
+            const formDataUser = new FormData();
+            formDataUser.append('name', dataForm.name);
+            formDataUser.append('phone', phone);
+            formDataUser.append('gender', dataForm.gender);
+            formDataUser.append('country', dataForm.country);
+            formDataUser.append('state', department);
+            formDataUser.append('city', dataForm.city);
+            formDataUser.append('address', dataForm.address);
+            
+            console.log("Datos enviados:", Object.fromEntries(formDataUser));
 
-        await updateUser(formDataUser, filePfp);
-        navigate("/step-pet");
+            await updateUser(formDataUser, filePfp);
+            setShowSpinner(false);
+            navigate("/step-pet");
+        }, 1000);
     };
 
     return (
         <div className="flex flex-col items-center justify-center ">
+            {showSpinner && <ModalSpinner />}
             <div className="w-screen p-2 3xl:p-4 4xl:p-6">
                 <NavButtonStep onClick={()=>navigate('/register')} text={'1/3'} />
                 <div className="mb-4 p-2 text-center">
@@ -196,7 +203,7 @@ export const StepUser = () => {
                             className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-7 4xl:p-6 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22" 
                             disabled={!department}
                             value={city}
-                            onChange={(e) => setCity(e.target.value)}
+                            onChange={handleCityChange}
                         >
                             <option value="" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">Seleccione una ciudad</option>
                             {ciudadesPorDepartamento[department]?.map((ciudad) => (
