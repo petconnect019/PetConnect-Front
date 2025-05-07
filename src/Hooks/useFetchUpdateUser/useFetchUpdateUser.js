@@ -27,11 +27,12 @@ export const useFetchUpdateUser = () => {
                     console.log("Error al refrescar el token:", error);
                     setError("Error al refrescar el token");
                     setIsLoading(false);
-                    return;
+                    return { success: false, error: "Error al refrescar el token" };
                 }
             }
 
             const responseUser = await FetchUpdateUser(formData, token);
+            console.log("Respuesta del backend en hook:", responseUser);
             
             if (responseUser.ok) {
                 const currentUserData = JSON.parse(sessionStorage.getItem("userData")) || {};
@@ -68,20 +69,23 @@ export const useFetchUpdateUser = () => {
                     } else {
                         console.error("No se pudo actualizar la foto:", responsePhoto.message);
                         setError("No se pudo actualizar la foto de perfil");
-                        return;
+                        return { success: false, error: "No se pudo actualizar la foto de perfil" };
                     }
                 } else {
                     setUserFetched(updatedUserData);
                 }
                 
                 setIsSuccess(true);
+                return { success: true, data: responseUser };
             } else {
                 console.error("Error al actualizar usuario:", responseUser.message);
                 setError(responseUser.message || "Error al actualizar el usuario");
+                return { success: false, error: responseUser.message || "Error al actualizar el usuario" };
             }
         } catch (error) {
             console.error("Error al actualizar usuario:", error);
             setError(error.message || "Error al actualizar el usuario");
+            return { success: false, error: error.message || "Error al actualizar el usuario" };
         } finally {
             setIsLoading(false);
         }

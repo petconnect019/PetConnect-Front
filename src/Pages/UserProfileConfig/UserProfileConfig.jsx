@@ -31,7 +31,7 @@ export const UserProfileConfig = () => {
   const [profileImage, setProfileImage] = useState(DefaultProfile);
   const [filePfp, setFilePfp] = useState(null);
   const [phone, setPhone] = useState("");
-  const [city, setCity] = useState([]);
+  const [city, setCity] = useState("");
   const [department, setDepartment] = useState("");
   const [gender, setGender] = useState("");
   const [country, setCountry] = useState("");
@@ -116,7 +116,14 @@ export const UserProfileConfig = () => {
     
     console.log("Datos enviados:", Object.fromEntries(formDataUser));
 
-    await updateUser(formDataUser, filePfp);
+    const response = await updateUser(formDataUser, filePfp);
+    console.log("Respuesta del backend:", response);
+
+    if (response.success) {
+      setModalOpen(true);
+    } else {
+      console.error("Error en la actualización:", response.error);
+    }
   };
 
   const handleImageChange = (event) => {
