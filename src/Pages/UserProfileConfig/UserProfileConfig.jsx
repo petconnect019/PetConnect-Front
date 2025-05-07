@@ -179,7 +179,7 @@ export const UserProfileConfig = () => {
                 className="w-26 h-26 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
                 style={{ objectFit: 'cover', objectPosition: 'center' }}
               />
-              <span className="absolute bottom-21 xs:bottom-28 sm:bottom-32 md:bottom-40 lg:bottom-48 xl:bottom-56 2xl:bottom-64 3xl:bottom-72 4xl:bottom-80 right-0 rounded-md p-1 xs:p-1.5 md:p-2 lg:p-2.5 xl:p-3 2xl:p-3.5">
+              <span className="absolute bottom-21 xs:bottom-19 sm:bottom-32 md:bottom-40 lg:bottom-48 xl:bottom-56 2xl:bottom-64 3xl:bottom-72 4xl:bottom-80 right-0 rounded-md p-1 xs:p-1.5 md:p-2 lg:p-2.5 xl:p-3 2xl:p-3.5">
                 <img
                   className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11 3xl:w-12 3xl:h-12 4xl:w-13 4xl:h-13 rounded-lg"
                   src={EditImg}
