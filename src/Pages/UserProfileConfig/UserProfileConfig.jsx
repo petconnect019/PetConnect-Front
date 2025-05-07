@@ -157,29 +157,29 @@ export const UserProfileConfig = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full bg-gray-50">
-      <div className="bg-white w-full max-w-md md:max-w-2xl lg:max-w-4xl space-y-3 xs:space-y-4 sm:space-y-6 md:space-y-8">
-        <div className="flex items-center mt-2 mb-3 xs:mb-4 sm:mb-6 md:mb-8 w-full relative">
+    <div className="flex flex-col items-center justify-center w-full">
+      <div className="w-screen space-y-2 xs:space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7 2xl:space-y-8">
+        <div className="flex items-center mt-2 mb-2 xs:mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-7 2xl:mb-8 w-full relative">
           <div className="absolute left-0 pl-2">
             <NavButton onClick={() => navigate(-1)} />
           </div>
-          <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl 4xl:text-5xl font-bold text-gray-800 w-full text-center">
+          <h2 className="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-gray-800 w-full text-center">
             Perfil de Usuario
           </h2>
         </div>
 
-        <div className=" flex flex-row justify-between items-center p-2 xs:p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 2xl:p-12 space-x-4 xs:space-x-6 sm:space-x-8 md:space-x-10 lg:space-x-12 xl:space-x-14 2xl:space-x-16">
-          <div className=" relative w-auto h-30 xs:w-28 xs:h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 2xl:w-64 2xl:h-64 3xl:w-72 3xl:h-72 4xl:w-80 4xl:h-80 flex justify-center items-center">
+        <div className="flex flex-row justify-between items-center p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 space-x-2 xs:space-x-3 sm:space-x-4 md:space-x-5 lg:space-x-6 xl:space-x-7 2xl:space-x-8">
+          <div className="relative w-24 h-24 xs:w-28 xs:h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 2xl:w-64 2xl:h-64 flex justify-center items-center">
             <label htmlFor="profile-upload" className="cursor-pointer flex justify-center items-center">
               <img
                 src={profileImage}
                 alt="Profile"
-                className="w-26 h-26 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
+                className="w-25 h-25 xs:w-24 xs:h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 xl:w-52 xl:h-52 2xl:w-60 2xl:h-60 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
                 style={{ objectFit: 'cover', objectPosition: 'center' }}
               />
-              <span className="absolute bottom-21 xs:bottom-19 sm:bottom-32 md:bottom-40 lg:bottom-48 xl:bottom-56 2xl:bottom-64 3xl:bottom-72 4xl:bottom-80 right-0 rounded-md p-1 xs:p-1.5 md:p-2 lg:p-2.5 xl:p-3 2xl:p-3.5">
+              <span className=" absolute top-0 right-0 rounded-md p-1 xs:p-1.5 xs:right-1 xs:top-1 sm:p-2 md:p-2.5 lg:p-3 xl:p-3.5 2xl:p-4">
                 <img
-                  className="w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11 3xl:w-12 3xl:h-12 4xl:w-13 4xl:h-13 rounded-lg"
+                  className="w-5 h-5 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10 rounded-lg"
                   src={EditImg}
                   alt="EditImgIcon"
                 />
@@ -203,27 +203,27 @@ export const UserProfileConfig = () => {
                   {calculateCompletionPercentage()}%
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 xs:h-3 sm:h-4 md:h-5 lg:h-6 xl:h-7 2xl:h-8">
+              <div className="w-full bg-gray-200 rounded-full h-1.5 xs:h-2 sm:h-2.5 md:h-3 lg:h-3.5 xl:h-4 2xl:h-5">
                 <div 
                   className="bg-brand h-full rounded-full transition-all duration-300"
                   style={{ width: `${calculateCompletionPercentage()}%` }}
                 ></div>
               </div>
             </div>
-            <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-3xl 4xl:text-2xl text-justify text-gray-600">
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-justify text-gray-600">
               <FaInfoCircle className="inline align-text-bottom text-brand mr-1" />
               Completa tu perfil para una comunicación más efectiva en una eventual pérdida de tu mascota
             </p>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 my-3 xs:my-4 sm:my-5 md:my-6 lg:my-7 xl:my-8 2xl:my-9 w-full" />
+        <div className="border-t border-gray-200 my-2 xs:my-3 sm:my-4 md:my-5 lg:my-6 xl:my-7 2xl:my-8 w-full" />
 
         {isLoading && (
           <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/30 backdrop-blur-sm">
             <div className="flex flex-col items-center">
-              <ImSpinner2 className="text-orange-500 animate-spin w-6 h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 2xl:w-18 2xl:h-18" />
-              <p className="mt-3 xs:mt-4 sm:mt-5 md:mt-6 lg:mt-7 xl:mt-8 2xl:mt-9 text-orange-600 font-semibold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">
+              <ImSpinner2 className="text-orange-500 animate-spin w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11" />
+              <p className="mt-2 xs:mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-7 2xl:mt-8 text-orange-600 font-semibold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">
                 Cargando...
               </p>
             </div>
@@ -231,7 +231,7 @@ export const UserProfileConfig = () => {
         )}
 
         {error && (
-          <div className="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-red-500 text-white rounded-lg mb-3 xs:mb-4 sm:mb-5 md:mb-6 lg:mb-7 xl:mb-8 2xl:mb-9">
+          <div className="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-red-500 text-white rounded-lg mb-2 xs:mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-7 2xl:mb-8">
             <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">{error}</p>
           </div>
         )}
@@ -247,13 +247,13 @@ export const UserProfileConfig = () => {
           />
 
           <div>
-            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+            <label className="block mb-1 xs:mb-2 sm:mb-3 md:mb-4 lg:mb-5 xl:mb-6 2xl:mb-7 font-semibold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-700">
               Género
             </label>
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
             >
               <option value="">Seleccione un género</option>
               <option value="Masculino">Masculino</option>
@@ -263,27 +263,27 @@ export const UserProfileConfig = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+            <label className="block mb-1 xs:mb-2 sm:mb-3 md:mb-4 lg:mb-5 xl:mb-6 2xl:mb-7 font-semibold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-700">
               País
             </label>
             <select
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
             >
               <option value="Colombia">Colombia</option>
             </select>
           </div>
 
           <div>
-            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+            <label className="block mb-1 xs:mb-2 sm:mb-3 md:mb-4 lg:mb-5 xl:mb-6 2xl:mb-7 font-semibold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-700">
               Dirección
             </label>
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
               placeholder="Tu dirección"
             />
           </div>
@@ -298,20 +298,20 @@ export const UserProfileConfig = () => {
           />
 
           <div className="relative">
-            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+            <label className="block mb-1 xs:mb-2 sm:mb-3 md:mb-4 lg:mb-5 xl:mb-6 2xl:mb-7 font-semibold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-700">
               Teléfono
             </label>
             <PhoneInput
               country={'co'}
               value={phone}
               onChange={setPhone}
-              inputClass="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              inputClass="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
               containerClass="w-full"
             />
           </div>
 
           <div>
-            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+            <label className="block mb-1 xs:mb-2 sm:mb-3 md:mb-4 lg:mb-5 xl:mb-6 2xl:mb-7 font-semibold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-700">
               Departamento
             </label>
             <select
@@ -320,7 +320,7 @@ export const UserProfileConfig = () => {
                 setDepartment(e.target.value);
                 setCity([]);
               }}
-              className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
             >
               <option value="">Seleccione un departamento</option>
               {departamentos.map((dept) => (
@@ -332,13 +332,13 @@ export const UserProfileConfig = () => {
           </div>
 
           <div>
-            <label className="block mb-2 font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-gray-700">
+            <label className="block mb-1 xs:mb-2 sm:mb-3 md:mb-4 lg:mb-5 xl:mb-6 2xl:mb-7 font-semibold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-700">
               Ciudad
             </label>
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
               disabled={!department}
             >
               <option value="">Seleccione una ciudad</option>
