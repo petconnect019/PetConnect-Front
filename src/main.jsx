@@ -6,6 +6,7 @@ import { ResetPasswordProvider } from './Contexts/ResetPasswordContext/ResetPass
 import { HasPetsUserProvider } from './Contexts/HasPetsUser/HasPetsUser.jsx'
 import { PetProvider } from './Contexts/PetContext/PetContext.jsx'
 import { FetchedPetsProvider } from './Contexts/IsFetchedPets/IsFetchedPets.jsx'
+import { UserIdProvider } from './Contexts/UserIdContext/UserIdContext.jsx'
 import { PrimeReactProvider } from 'primereact/api';
 
 const updateSW = registerSW({
@@ -23,9 +24,11 @@ createRoot(document.getElementById('root')).render(
       <HasPetsUserProvider>
         <PetProvider>
           <FetchedPetsProvider>
-            <PrimeReactProvider>
-              <App />
-            </PrimeReactProvider>
+            <UserIdProvider>
+              <PrimeReactProvider>
+                <App />
+              </PrimeReactProvider>
+            </UserIdProvider>
           </FetchedPetsProvider>
         </PetProvider>
       </HasPetsUserProvider>

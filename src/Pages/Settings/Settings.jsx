@@ -2,40 +2,31 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
+import { useUserId } from '../../Contexts/UserIdContext/UserIdContext';
 import { ModalLogout } from '../../Components/ModalBasic/ModalLogout';
 
 export const Settings = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { userId } = useUserId();
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = async () => {
     try {
       await logout();
       console.log('Cerrando sesión...');
-        navigate('/login');
+      navigate('/login');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
   };
   
   const handleProfile = () => {
-    const userData = JSON.parse(sessionStorage.getItem("userData"));
-    console.log("Datos completos del usuario en Settings:", userData);
-    
-    if (!userData) {
-      console.error("No se encontraron datos del usuario en sessionStorage");
-      return;
-    }
-
-    // Verificar si el ID está en la raíz del objeto o en _doc
-    const userId = userData._id || (userData._doc && userData._doc._id);
-    
     if (userId) {
       console.log("Navegando a perfil con ID:", userId);
       navigate(`/user-profile-config/${userId}`);
     } else {
-      console.error("No se encontró el ID del usuario en ninguna ubicación");
+      console.error("No se encontró el ID del usuario");
     }
   };
 
