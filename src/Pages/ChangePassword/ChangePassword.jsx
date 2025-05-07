@@ -7,6 +7,7 @@ import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefr
 import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
 import { PasswordField } from '../../Components/InputField/PasswordField';
 import { ButtonPrimary } from '../../Components/Buttons/ButtonPrimary';
+import { ModalSpinner } from '../../Components/ModalBasic/ModalSpinner';
 
 export const ChangePassword = () => {
   const navigate = useNavigate();
@@ -99,6 +100,12 @@ export const ChangePassword = () => {
           {isLoading ? 'Cambiando contraseña...' : 'Cambiar Contraseña'}
         </button>
       </div>
+      {isLoading && (
+        <ModalSpinner>
+          <h3 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl 3xl:text-7xl 4xl:text-8xl font-semibold text-gray-800 mb-2 xs:mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-7 2xl:mb-8 3xl:mb-9 4xl:mb-10">Cambiando contraseña</h3>
+          <p className="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl 4xl:text-7xl text-gray-600">Por favor espera mientras actualizamos tu contraseña...</p>
+        </ModalSpinner>
+      )}
     </div>
   );
 };
