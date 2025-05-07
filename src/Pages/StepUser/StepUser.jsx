@@ -15,12 +15,12 @@ import { useFetchUpdateUser } from "../../Hooks/useFetchUpdateUser/useFetchUpdat
 
 export const StepUser = () => {
     const navigate = useNavigate();
-    const { register, handleSubmit, setValue } = useForm();
+    const { register, handleSubmit, setValue,watch } = useForm();
     const [profileImage, setProfileImage] = useState(DefaultProfile);
     const [filePfp, setFilePfp] = useState(null);
     const [phone, setPhone] = useState(""); 
-    const [city,setCity] = useState([])
-    const [department , setDepartment] = useState("")
+    const [city, setCity] = useState("");
+    const [department, setDepartment] = useState("");
     const { updateUser, isLoading, error } = useFetchUpdateUser();
 
     // Obtener datos iniciales del usuario
@@ -44,10 +44,7 @@ export const StepUser = () => {
                         // Verificar y establecer la ciudad si existe
                         if (userData.state) {
                             const ciudades = ciudadesPorDepartamento[userData.state] || [];
-                            setCity(ciudades);
-                            if (userData.city && ciudades.includes(userData.city)) {
-                                setValue('city', userData.city);
-                            }
+                            setCity(userData.city || "");
                         }
                         
                         // Establecer imagen de perfil si existe
@@ -82,7 +79,7 @@ export const StepUser = () => {
     const handleDepartamentoChange = (event) => {
         const deptoSelection = event.target.value;
         setDepartment(deptoSelection);
-        setCity(ciudadesPorDepartamento[deptoSelection] || []);
+        setCity("");
     };
 
     const handleImageChange = (event) => {
@@ -197,10 +194,12 @@ export const StepUser = () => {
                         <select 
                             {...register("city")}
                             className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-7 4xl:p-6 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22" 
-                            disabled={!city.length}
+                            disabled={!department}
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
                         >
                             <option value="" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">Seleccione una ciudad</option>
-                            {city.map((ciudad) => (
+                            {ciudadesPorDepartamento[department]?.map((ciudad) => (
                                 <option key={ciudad} value={ciudad} className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">
                                     {ciudad}
                                 </option>
