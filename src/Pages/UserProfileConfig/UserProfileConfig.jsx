@@ -11,6 +11,7 @@ import { useFetchUpdateUser } from "../../Hooks/useFetchUpdateUser/useFetchUpdat
 import { NavButton } from "../../Components/NavButton/NavButton";
 import { ModalResponse } from "../../Components/ModalBasic/ModalResponse";
 import { InputField } from "../../Components/InputField/InputField";
+import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -174,10 +175,10 @@ export const UserProfileConfig = () => {
               <img
                 src={profileImage}
                 alt="Profile"
-                className="w-25 h-25 xs:w-24 xs:h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 xl:w-52 xl:h-52 2xl:w-60 2xl:h-60 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
+                className="w-21 h-21 xs:w-24 xs:h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-44 lg:h-44 xl:w-52 xl:h-52 2xl:w-60 2xl:h-60 rounded-full object-cover border-1 border-orange-100 hover:border-orange-200 transition-all"
                 style={{ objectFit: 'cover', objectPosition: 'center' }}
               />
-              <span className=" absolute top-0 right-0 rounded-md p-1 xs:p-1.5 xs:right-1 xs:top-1 sm:p-2 md:p-2.5 lg:p-3 xl:p-3.5 2xl:p-4">
+              <span className=" absolute top-1 right-0 rounded-md p-1 xs:p-1.5 xs:right-1 xs:top-1 sm:p-2 md:p-2.5 lg:p-3 xl:p-3.5 2xl:p-4">
                 <img
                   className="w-5 h-5 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10 rounded-lg"
                   src={EditImg}
@@ -253,7 +254,7 @@ export const UserProfileConfig = () => {
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
+              className="w-full h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
             >
               <option value="">Seleccione un género</option>
               <option value="Masculino">Masculino</option>
@@ -269,7 +270,7 @@ export const UserProfileConfig = () => {
             <select
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
+              className="w-full h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
             >
               <option value="Colombia">Colombia</option>
             </select>
@@ -283,7 +284,7 @@ export const UserProfileConfig = () => {
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
+              className="w-full h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
               placeholder="Tu dirección"
             />
           </div>
@@ -305,7 +306,7 @@ export const UserProfileConfig = () => {
               country={'co'}
               value={phone}
               onChange={setPhone}
-              inputClass="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
+              inputClass="w-full h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
               containerClass="w-full"
             />
           </div>
@@ -320,7 +321,7 @@ export const UserProfileConfig = () => {
                 setDepartment(e.target.value);
                 setCity([]);
               }}
-              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
+              className="w-full h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
             >
               <option value="">Seleccione un departamento</option>
               {departamentos.map((dept) => (
@@ -338,7 +339,7 @@ export const UserProfileConfig = () => {
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-14 2xl:h-16 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
+              className="w-full h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22 bg-gray-100 rounded-lg text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-gray-600 focus:ring-2 focus:ring-orange-300 focus:outline-none px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-7 2xl:px-8"
               disabled={!department}
             >
               <option value="">Seleccione una ciudad</option>
@@ -350,12 +351,11 @@ export const UserProfileConfig = () => {
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-orange-500 mt-2 xs:mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-7 2xl:mt-8 text-white py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 xl:py-7 2xl:py-8 rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl"
-          >
-            Guardar cambios
-          </button>
+          <ButtonPrimary 
+            text="Guardar cambios" 
+            disabled={isLoading}
+            className="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-10 xl:mt-12 2xl:mt-14"
+          />
         </form>
 
         {modalOpen && (
