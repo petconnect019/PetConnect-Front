@@ -1,67 +1,43 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { NavButton } from '../../Components/NavButton/NavButton';
 import { changePassword } from '../../Utils/Fetch/FetchChangePassword/FetchChangePassword';
+import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken';
+import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
+import { PasswordField } from '../../Components/InputField/PasswordField';
+import { ButtonPrimary } from '../../Components/Buttons/ButtonPrimary';
 
 export const ChangePassword = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  });
-  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState('');
+  const { register, handleSubmit, formState: { errors }, watch } = useForm();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-    // Limpiar errores cuando el usuario comienza a escribir
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
+  const onSubmit = async (data) => {
+    setIsLoading(true);
     setServerError('');
-  };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.currentPassword) {
-      newErrors.currentPassword = 'La contraseña actual es requerida';
-    }
-    if (!formData.newPassword) {
-      newErrors.newPassword = 'La nueva contraseña es requerida';
-    } else if (formData.newPassword.length < 6) {
-      newErrors.newPassword = 'La contraseña debe tener al menos 6 caracteres';
-    }
-    if (formData.newPassword !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden';
-    }
-    return newErrors;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
-    
-    if (Object.keys(validationErrors).length === 0) {
-      setIsLoading(true);
-      setServerError('');
-      
-      try {
-        await changePassword(formData.currentPassword, formData.newPassword);
-        navigate('/profile');
-      } catch (error) {
-        console.error('Error al cambiar la contraseña:', error);
-        setServerError(error.message);
-      } finally {
-        setIsLoading(false);
+    try {
+      // Verificamos si el token está expirado y lo refrescamos si es necesario
+      if (isTokenExpired(localStorage.getItem('token'))) {
+        try {
+          await FetchRefreshToken();
+        } catch (refreshError) {
+          setServerError('Su sesión ha expirado. Por favor, inicie sesión nuevamente.');
+          setIsLoading(false);
+          return;
+        }
       }
-    } else {
-      setErrors(validationErrors);
+
+      await changePassword(data.currentPassword, data.newPassword);
+      // Navegar a la página de perfil del usuario
+      navigate('/home');
+    } catch (error) {
+      console.error('Error al cambiar la contraseña:', error);
+      setServerError(error.message || 'Error al cambiar la contraseña. Por favor, intente nuevamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -76,70 +52,43 @@ export const ChangePassword = () => {
           {serverError}
         </div>
       )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-            Contraseña Actual
-          </label>
-          <input
-            type="password"
-            id="currentPassword"
-            name="currentPassword"
-            value={formData.currentPassword}
-            onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.currentPassword ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {errors.currentPassword && (
-            <span className="text-sm text-red-500">{errors.currentPassword}</span>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <PasswordField
+          label="Contraseña Actual"
+          name="currentPassword"
+          register={register}
+          validation={{
+            required: 'La contraseña actual es requerida'
+          }}
+        />
 
-        <div className="space-y-2">
-          <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-            Nueva Contraseña
-          </label>
-          <input
-            type="password"
-            id="newPassword"
-            name="newPassword"
-            value={formData.newPassword}
-            onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.newPassword ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {errors.newPassword && (
-            <span className="text-sm text-red-500">{errors.newPassword}</span>
-          )}
-        </div>
+        <PasswordField
+          label="Nueva Contraseña"
+          name="newPassword"
+          register={register}
+          validation={{
+            required: 'La nueva contraseña es requerida',
+            minLength: {
+              value: 6,
+              message: 'La contraseña debe tener al menos 6 caracteres'
+            }
+          }}
+        />
 
-        <div className="space-y-2">
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-            Confirmar Nueva Contraseña
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {errors.confirmPassword && (
-            <span className="text-sm text-red-500">{errors.confirmPassword}</span>
-          )}
-        </div>
+        <PasswordField
+          label="Confirmar Nueva Contraseña"
+          name="confirmPassword"
+          register={register}
+          validation={{
+            required: 'La confirmación de contraseña es requerida',
+            validate: value => value === watch('newPassword') || 'Las contraseñas no coinciden'
+          }}
+        />
 
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-            isLoading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
+          className="block mx-auto w-full max-w-md bg-brand text-white py-3 xs:py-3.5 sm:py-4 md:py-4.5 lg:py-5 xl:py-5 2xl:py-5.5 3xl:py-6 4xl:py-6 rounded-full mt-5 text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-3xl 3xl:text-3xl 4xl:text-4xl font-medium shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Cambiando contraseña...' : 'Cambiar Contraseña'}
         </button>
