@@ -35,7 +35,6 @@ export const UserProfileConfig = () => {
   const [gender, setGender] = useState("");
   const [country, setCountry] = useState("");
   const [address, setAddress] = useState("");
-  const [isModified, setIsModified] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const { user } = useAuth();
 
@@ -125,7 +124,6 @@ export const UserProfileConfig = () => {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
       setFilePfp(file);
-      setIsModified(true);
       event.target.value = "";
     }
   };
@@ -354,7 +352,6 @@ export const UserProfileConfig = () => {
 
           <button
             type="submit"
-            disabled={isModified}
             className="w-full bg-orange-500 mt-2 xs:mt-3 sm:mt-4 md:mt-5 lg:mt-6 xl:mt-7 2xl:mt-8 text-white py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 xl:py-7 2xl:py-8 rounded-full hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl"
           >
             Guardar cambios
