@@ -9,10 +9,12 @@ export const useFetchUpdateUser = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [userFetched, setUserFetched] = useState(null);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const updateUser = async (formData, filePfp = null) => {
         setIsLoading(true);
         setError(null);
+        setIsSuccess(false);
 
         try {
             let token = sessionStorage.getItem('accessToken');
@@ -66,10 +68,13 @@ export const useFetchUpdateUser = () => {
                     } else {
                         console.error("No se pudo actualizar la foto:", responsePhoto.message);
                         setError("No se pudo actualizar la foto de perfil");
+                        return;
                     }
                 } else {
                     setUserFetched(updatedUserData);
                 }
+                
+                setIsSuccess(true);
             } else {
                 console.error("Error al actualizar usuario:", responseUser.message);
                 setError(responseUser.message || "Error al actualizar el usuario");
@@ -86,6 +91,7 @@ export const useFetchUpdateUser = () => {
         updateUser,
         isLoading,
         error,
-        userFetched
+        userFetched,
+        isSuccess
     };
 };
