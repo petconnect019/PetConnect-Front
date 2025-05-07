@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
-import { useUserId } from "../../Contexts/UserIdContext/UserIdContext";
 import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken';
 import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
-
 
 export const ProfileSection = ({ navigate }) => {
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const { isAuthenticated } = useAuth();
-    const { userId } = useUserId();
-
 
     const handleNavigate = () => {
-        if (userId) {
-            console.log("Navegando a perfil con ID:", userId);
-            navigate(`/user-profile-config/${userId}`);
+        const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
+        if (storedUserData) {
+            const userId = storedUserData._id || (storedUserData._doc && storedUserData._doc._id);
+            if (userId) {
+                console.log("Navegando a perfil con ID:", userId);
+                navigate(`/user-profile-config/${userId}`);
+            } else {
+                console.error("No se encontró el ID del usuario en los datos almacenados");
+            }
         } else {
-            console.error("No se encontró el ID del usuario");
+            console.error("No se encontraron datos del usuario");
         }
     }
-
 
     useEffect(() => {
         const fetchUserProfile = async () => {

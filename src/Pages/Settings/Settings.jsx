@@ -2,13 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
-import { useUserId } from '../../Contexts/UserIdContext/UserIdContext';
 import { ModalLogout } from '../../Components/ModalBasic/ModalLogout';
 
 export const Settings = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { userId } = useUserId();
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = async () => {
@@ -22,11 +20,17 @@ export const Settings = () => {
   };
   
   const handleProfile = () => {
-    if (userId) {
-      console.log("Navegando a perfil con ID:", userId);
-      navigate(`/user-profile-config/${userId}`);
+    const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
+    if (storedUserData) {
+      const userId = storedUserData._id || (storedUserData._doc && storedUserData._doc._id);
+      if (userId) {
+        console.log("Navegando a perfil con ID:", userId);
+        navigate(`/user-profile-config/${userId}`);
+      } else {
+        console.error("No se encontró el ID del usuario en los datos almacenados");
+      }
     } else {
-      console.error("No se encontró el ID del usuario");
+      console.error("No se encontraron datos del usuario");
     }
   };
 

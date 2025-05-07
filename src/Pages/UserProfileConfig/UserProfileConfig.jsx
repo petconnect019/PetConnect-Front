@@ -50,7 +50,6 @@ export const UserProfileConfig = () => {
       return;
     }
 
-    // Obtener el ID del usuario de diferentes ubicaciones posibles
     const storedUserId = storedUserData._id || (storedUserData._doc && storedUserData._doc._id);
     
     if (!storedUserId || storedUserId !== user_id) {
