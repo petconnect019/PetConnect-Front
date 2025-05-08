@@ -1,11 +1,12 @@
 // React & Hooks
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 // Context & Custom Hooks
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
 import { useFetchUpdateUser } from "../../Hooks/useFetchUpdateUser/useFetchUpdateUser";
+import { useFetchUserProfile } from "../../Hooks/useFetchUserProfile/useFetchUserProfile";
 
 // Components
 import { NavButton } from "../../Components/NavButton/NavButton";
@@ -37,71 +38,71 @@ export const UserProfileConfig = () => {
   const [country, setCountry] = useState("");
   const [address, setAddress] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [isModified, setIsModified] = useState(false);
   const { user } = useAuth();
+  const { fetchUserProfile, userData, isLoading: isLoadingProfile, error: profileError } = useFetchUserProfile();
+  const hasLoadedProfile = useRef(false);
 
   const { updateUser, isLoading, error, isSuccess } = useFetchUpdateUser();
 
   useEffect(() => {
-    // Verificar que el ID del usuario en la URL coincida con el usuario actual
-    const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
-    if (!storedUserData) {
-      console.error("No se encontraron datos del usuario");
-      navigate('/home');
-      return;
-    }
+    const loadUserProfile = async () => {
+      if (hasLoadedProfile.current) return;
+      
+      const result = await fetchUserProfile();
+      if (result.success) {
+        const userData = result.userData;
+        console.log("Datos del usuario cargados:", userData);
+        setProfileImage(userData.profile_picture || DefaultProfile);
+        setPhone(userData.phone || "");
+        setDepartment(userData.state || "");
+        setCity(userData.city || "");
+        setGender(userData.gender || "");
+        setCountry(userData.country || "Colombia");
+        setAddress(userData.address || "");
+        setValue("name", userData.name || "");
+        setValue("email", userData.email || "");
+        hasLoadedProfile.current = true;
+      } else {
+        console.error("Error al cargar el perfil:", result.error);
+        navigate('/home');
+      }
+    };
 
-    const storedUserId = storedUserData._id || (storedUserData._doc && storedUserData._doc._id);
-    
-    if (!storedUserId || storedUserId !== user_id) {
-      console.error("ID de usuario no coincide o no está disponible");
-      navigate('/home');
-      return;
-    }
-
-    if (storedUserData) {
-      setProfileImage(storedUserData.profile_picture || DefaultProfile);
-      setPhone(storedUserData.phone || "");
-      setDepartment(storedUserData.state || "");
-      setCity(storedUserData.city || []);
-      setGender(storedUserData.gender || "");
-      setCountry(storedUserData.country || "Colombia");
-      setAddress(storedUserData.address || "");
-      setValue("name", storedUserData.name || "");
-      setValue("email", storedUserData.email || "");
-    }
-  }, [setValue, user_id, navigate]);
+    loadUserProfile();
+  }, [setValue, navigate, fetchUserProfile]);
 
   useEffect(() => {
-    const subscription = watch((values) => {
-      const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
-      if (!storedUserData) return;
+    if (!userData) return;
 
+    const subscription = watch((values) => {
       const hasFormChanges = 
-        values.name !== storedUserData.name ||
-        values.email !== storedUserData.email ||
-        phone !== storedUserData.phone ||
-        department !== storedUserData.state ||
-        city !== storedUserData.city ||
-        gender !== storedUserData.gender ||
-        country !== storedUserData.country ||
-        address !== storedUserData.address;
+        values.name !== userData.name ||
+        values.email !== userData.email ||
+        phone !== userData.phone ||
+        department !== userData.state ||
+        city !== userData.city ||
+        gender !== userData.gender ||
+        country !== userData.country ||
+        address !== userData.address;
 
       console.log("Cambios detectados:", {
-        name: values.name !== storedUserData.name,
-        email: values.email !== storedUserData.email,
-        phone: phone !== storedUserData.phone,
-        department: department !== storedUserData.state,
-        city: city !== storedUserData.city,
-        gender: gender !== storedUserData.gender,
-        country: country !== storedUserData.country,
-        address: address !== storedUserData.address,
+        name: values.name !== userData.name,
+        email: values.email !== userData.email,
+        phone: phone !== userData.phone,
+        department: department !== userData.state,
+        city: city !== userData.city,
+        gender: gender !== userData.gender,
+        country: country !== userData.country,
+        address: address !== userData.address,
         filePfp: filePfp !== null
       });
 
       setIsModified(hasFormChanges || filePfp !== null);
     });
+
     return () => subscription.unsubscribe();
-  }, [watch, filePfp, phone, department, city, gender, country, address]);
+  }, [watch, filePfp, phone, department, city, gender, country, address, userData]);
 
   const onSubmitForm = async (dataForm) => {
     const formDataUser = new FormData();
@@ -120,6 +121,20 @@ export const UserProfileConfig = () => {
     console.log("Respuesta del backend:", response);
 
     if (response.success) {
+      // Actualizamos los datos en sessionStorage
+      const updatedUserData = {
+        ...userData,
+        name: dataForm.name,
+        email: dataForm.email,
+        phone: phone,
+        gender: gender,
+        country: country,
+        state: department,
+        city: city,
+        address: address,
+        profile_picture: response.data?.profile_picture || userData.profile_picture
+      };
+      sessionStorage.setItem("userData", JSON.stringify(updatedUserData));
       setModalOpen(true);
     } else {
       console.error("Error en la actualización:", response.error);
@@ -227,7 +242,7 @@ export const UserProfileConfig = () => {
 
         <div className="border-t border-gray-200 my-2 xs:my-3 sm:my-4 md:my-5 lg:my-6 xl:my-7 2xl:my-8 w-full" />
 
-        {isLoading && (
+        {(isLoadingProfile || isLoading) && (
           <div className="fixed inset-0 z-50 flex justify-center items-center bg-black/30 backdrop-blur-sm">
             <div className="flex flex-col items-center">
               <ImSpinner2 className="text-orange-500 animate-spin w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 2xl:w-11 2xl:h-11" />
@@ -238,9 +253,11 @@ export const UserProfileConfig = () => {
           </div>
         )}
 
-        {error && (
+        {(profileError || error) && (
           <div className="p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 bg-red-500 text-white rounded-lg mb-2 xs:mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-7 2xl:mb-8">
-            <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">{error}</p>
+            <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">
+              {profileError || error}
+            </p>
           </div>
         )}
 
