@@ -4,7 +4,7 @@ import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { IoChatbubble, IoTime } from 'react-icons/io5';
 import { IoSearch } from 'react-icons/io5';
 import defaultProfilePic from '../../assets/images/DefaultProfile.png';
-import socket from '../../Utils/Socket/Socket';
+import { socket } from '../../Utils/socket';
 
 export const ConversationList = ({ onSelectConversation, selectedChat, searchQuery }) => {
   const [conversations, setConversations] = useState([]);
