@@ -9,6 +9,7 @@ import { fetchGetMessages } from '../../Utils/Fetch/FetchChat/FetchChat';
 import { socket, subscribeToMessages, subscribeToChatRequests, subscribeToPetMessages } from '../../Utils/socket';
 import defaultProfilePic from '../../assets/images/DefaultProfile.png';
 import { FooterNav } from '../../Components/FooterNav/FooterNav';
+import { NavButton } from '../../Components/NavButton/NavButton';
 
 // Componente MessageList inline para solucionar problemas de estilo
 const MessageList = ({ messages, currentUser }) => {
@@ -296,7 +297,7 @@ export const Messages = () => {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="min-h-screen flex flex-col bg-gray-50 pb-16">
             {/* Header */}
             <header className="flex items-center px-4 py-3 bg-white border-b border-gray-200 h-14 md:h-16 shrink-0">
                 {(!showSidebar && selectedChat) ? (
@@ -316,7 +317,10 @@ export const Messages = () => {
                     </>
                 ) : (
                     <>
-                        <h1 className="text-lg font-semibold text-gray-800">Mensajes</h1>
+                        <div className="flex items-center">
+                            <NavButton onClick={() => navigate('/home')} />
+                            <h1 className="ml-2 text-lg font-semibold text-gray-800">Mensajes</h1>
+                        </div>
                         <div className="ml-auto relative max-w-xs w-full">
                             <IoSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <input
@@ -365,7 +369,7 @@ export const Messages = () => {
                                     currentUser={user}
                                 />
                             </div>
-                            <div className="p-4 bg-white border-t border-gray-200">
+                            <div className="p-4 bg-white border-t border-gray-200 mb-16">
                                 <MessageInput 
                                     chatId={selectedChat._id}
                                     onMessageSent={handleNewMessage}
@@ -394,7 +398,7 @@ export const Messages = () => {
             </div>
 
             {/* Footer Navigation */}
-            <div className="mt-auto ">
+            <div className="fixed bottom-0 left-0 right-0 z-50">
                 <FooterNav navigate={navigate} />
             </div>
         </div>
