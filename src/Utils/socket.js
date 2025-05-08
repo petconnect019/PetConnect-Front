@@ -7,21 +7,28 @@ export const socket = io(SOCKET_URL, {
   withCredentials: true,
   reconnection: true,
   reconnectionAttempts: 5,
-  reconnectionDelay: 1000
+  reconnectionDelay: 1000,
+  transports: ['websocket'],
+  upgrade: false
 });
 
 // Manejar reconexión automática
 socket.on('disconnect', (reason) => {
   console.log('Socket desconectado:', reason);
-  if (reason === 'io server disconnect') {
-    // el servidor desconectó el socket
-    socket.connect();
+  console.log('Tipo de transporte actual:', socket.io.engine.transport.name);
+  
+  if (reason === 'io server disconnect' || reason === 'transport close') {
+    // Intentar reconectar solo si la desconexión no fue intencional
+    setTimeout(() => {
+      socket.connect();
+    }, 1000);
   }
 });
 
 // Manejar errores de conexión
 socket.on('connect_error', (error) => {
   console.error('Error de conexión:', error);
+  console.log('Tipo de transporte actual:', socket.io.engine.transport.name);
 });
 
 // Función para conectar el socket con el token
@@ -35,11 +42,14 @@ export const connectSocket = (token) => {
   socket.auth = { token };
   
   // Conectar el socket
-  socket.connect();
+  if (!socket.connected) {
+    socket.connect();
+  }
 
   // Manejar reconexión exitosa
   socket.on('connect', () => {
     console.log('Socket conectado exitosamente');
+    console.log('Tipo de transporte:', socket.io.engine.transport.name);
   });
 };
 
@@ -69,4 +79,4 @@ export const subscribeToPetMessages = (callback) => {
   });
 };
 
-export default socket; 
+export default socket;
