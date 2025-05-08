@@ -1,32 +1,33 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { ConversationList } from '../../Components/ChatComponents/ConversationList';
 import { MessageInput } from '../../Components/ChatComponents/MessageInput';
-import { NewChatButton } from '../../Components/ChatComponents/NewChatButton';
 import { IoArrowBack, IoEllipsisVertical, IoSearch } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchGetMessages } from '../../Utils/Fetch/FetchChat/FetchChat';
-import { socket, subscribeToMessages, subscribeToChatRequests, subscribeToPetMessages } from '../../Utils/socket';
-import defaultProfilePic from '../../assets/images/DefaultProfile.png';
+import { socket } from '../../Utils/socket';
 import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import { NavButton } from '../../Components/NavButton/NavButton';
 
-// Componente MessageList inline para solucionar problemas de estilo
-const MessageList = ({ messages, currentUser }) => {
+// Memoizar el componente MessageList
+const MemoizedMessageList = memo(({ messages, currentUser }) => {
   const messagesEndRef = useRef(null);
   
-  console.log("MessageList Inline renderizado con:", { 
-    messages: messages?.length || 0, 
-    currentUser: currentUser?.id || 'no user'
-  });
+  // Evitar logs innecesarios en producción
+  if (process.env.NODE_ENV === 'development') {
+    console.log("MessageList renderizado con:", { 
+      messages: messages?.length || 0, 
+      currentUser: currentUser?.id || 'no user'
+    });
+  }
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, scrollToBottom]);
 
   // Agrupar mensajes por fecha
   const groupMessagesByDate = (messages) => {
@@ -47,14 +48,15 @@ const MessageList = ({ messages, currentUser }) => {
     return groups;
   };
 
-  const groupedMessages = groupMessagesByDate(messages || []);
+  const groupedMessages = useMemo(() => {
+    return groupMessagesByDate(messages || []);
+  }, [messages]);
 
   // Función para obtener el nombre del remitente
   const getSenderName = (message) => {
     if (message.senderId === currentUser?.id) {
       return currentUser?.name || "Tú";
     }
-    // Intentar obtener el nombre del remitente de diferentes propiedades posibles
     return message.senderName || 
            (message.senderId && message.senderId.name) || 
            "Usuario";
@@ -64,17 +66,12 @@ const MessageList = ({ messages, currentUser }) => {
   const SentMessage = ({ message, senderName }) => (
     <div className="flex w-full justify-end mb-1">
       <div className="relative max-w-[65%] min-w-[80px] bg-brand text-white px-2 py-[6px] rounded-lg ml-auto mr-2">
-        {/* Nombre del remitente */}
         <div className="text-[11px] font-medium mb-0.5 text-white">
           {senderName}
         </div>
-
-        {/* Contenido del mensaje */}
         <p className="text-[14px] text-white whitespace-pre-wrap break-words pr-[52px] leading-[19px]">
           {message.content}
         </p>
-
-        {/* Hora del mensaje */}
         <div className="absolute bottom-[4px] right-2 flex items-center">
           <span className="text-[11px] text-gray-100 min-w-[55px] text-right">
             {new Date(message.timestamp).toLocaleTimeString([], { 
@@ -87,8 +84,6 @@ const MessageList = ({ messages, currentUser }) => {
             <path d="M11.1548 0.721314C10.9249 0.721314 10.7038 0.809804 10.5359 0.977803L4.06216 7.45155L1.46411 4.85351C1.12945 4.51884 0.585785 4.51884 0.251121 4.85351C-0.0837068 5.18817 -0.0837068 5.73184 0.251121 6.0665L3.45567 9.27105C3.62357 9.43895 3.84474 9.52744 4.06216 9.52744C4.27958 9.52744 4.50075 9.43895 4.66865 9.27105L11.7736 2.16608C12.1083 1.83142 12.1083 1.28775 11.7736 0.953083C11.6057 0.809804 11.3846 0.721314 11.1548 0.721314Z"/>
           </svg>
         </div>
-
-        {/* Triángulo decorativo */}
         <div className="absolute top-0 right-[-8px] w-0 h-0 border-solid border-t-[8px] border-t-brand border-l-[8px] border-l-transparent">
         </div>
       </div>
@@ -99,17 +94,12 @@ const MessageList = ({ messages, currentUser }) => {
   const ReceivedMessage = ({ message, senderName }) => (
     <div className="flex w-full justify-start mb-1">
       <div className="relative max-w-[65%] min-w-[80px] bg-white px-2 py-[6px] rounded-lg ml-2 mr-auto">
-        {/* Nombre del remitente */}
         <div className="text-[11px] font-medium mb-0.5 text-[#1877F2]">
           {senderName}
         </div>
-
-        {/* Contenido del mensaje */}
         <p className="text-[14px] text-[#111b21] whitespace-pre-wrap break-words pr-[52px] leading-[19px]">
           {message.content}
         </p>
-
-        {/* Hora del mensaje */}
         <div className="absolute bottom-[4px] right-2 flex items-center">
           <span className="text-[11px] text-[#667781] min-w-[55px] text-right">
             {new Date(message.timestamp).toLocaleTimeString([], { 
@@ -119,8 +109,6 @@ const MessageList = ({ messages, currentUser }) => {
             })}
           </span>
         </div>
-
-        {/* Triángulo decorativo */}
         <div className="absolute top-0 left-[-8px] w-0 h-0 border-solid border-t-[8px] border-t-white border-r-[8px] border-r-transparent">
         </div>
       </div>
@@ -131,14 +119,11 @@ const MessageList = ({ messages, currentUser }) => {
     <div className="flex flex-col h-full overflow-y-auto bg-[#E4DDD6] p-3">
       {Object.entries(groupedMessages).map(([date, dateMessages]) => (
         <div key={date} className="space-y-1">
-          {/* Separador de fecha */}
           <div className="flex justify-center mb-2">
             <div className="bg-[#E2F3FB] px-3 py-1 rounded-lg text-[11px] text-gray-600 shadow-sm">
               {date}
             </div>
           </div>
-          
-          {/* Mensajes */}
           {dateMessages.map((message, index) => {
             const isCurrentUser = message.senderId === currentUser?.id;
             const senderName = getSenderName(message);
@@ -152,7 +137,7 @@ const MessageList = ({ messages, currentUser }) => {
       <div ref={messagesEndRef} />
     </div>
   );
-};
+});
 
 export const Messages = () => {
     const { isAuthenticated, user } = useAuth();
@@ -162,48 +147,46 @@ export const Messages = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
     const { chat_id } = useParams();
-    const messagesEndRef = useRef(null);
 
-    // Efecto para suscribirse a eventos de socket
+    const currentUser = useMemo(() => user, [user]);
+    const memoizedMessages = useMemo(() => messages, [messages]);
+
     useEffect(() => {
-        if (!isAuthenticated) return;
+        if (chat_id && isAuthenticated) {
+            const loadMessages = async () => {
+                try {
+                    const data = await fetchGetMessages(chat_id);
+                    setMessages(data);
+                } catch (error) {
+                    console.error('Error al cargar mensajes:', error);
+                }
+            };
+            loadMessages();
+        } else {
+            setMessages([]);
+        }
+    }, [chat_id, isAuthenticated]);
+
+    useEffect(() => {
+        if (!isAuthenticated || !chat_id) return;
 
         const handleNewMessage = (data) => {
             if (data.chatId === chat_id) {
-                setMessages(prev => [...prev, data.message]);
-            }
-        };
-
-        const handleChatRequest = (data) => {
-            console.log('Nueva solicitud de chat recibida:', data);
-            if (typeof window.updateConversationList === 'function') {
-                window.updateConversationList();
-            }
-            if (!selectedChat && data.chat) {
-                setSelectedChat(data.chat);
-                navigate(`/messages/${data.chat._id}`);
-            }
-        };
-
-        const handlePetMessage = (data) => {
-            console.log('Nuevo mensaje de mascota recibido:', data);
-            if (typeof window.updateConversationList === 'function') {
-                window.updateConversationList();
+                setMessages(prev => {
+                    const messageExists = prev.some(m => m._id === data.message._id);
+                    if (messageExists) return prev;
+                    return [...prev, data.message];
+                });
             }
         };
 
         socket.on('new_message', handleNewMessage);
-        socket.on('chat_request', handleChatRequest);
-        socket.on('pet_message', handlePetMessage);
 
         return () => {
             socket.off('new_message', handleNewMessage);
-            socket.off('chat_request', handleChatRequest);
-            socket.off('pet_message', handlePetMessage);
         };
-    }, [isAuthenticated, chat_id, selectedChat, navigate]);
+    }, [isAuthenticated, chat_id]);
 
-    // Efecto para manejar el chat_id y cargar mensajes
     useEffect(() => {
         if (chat_id && isAuthenticated) {
             const conversationData = sessionStorage.getItem(`conversation_${chat_id}`);
@@ -220,14 +203,13 @@ export const Messages = () => {
             
             setSelectedChat({
                 _id: chat_id,
-                otherUser: { name: `${otherUserName}` }
+                otherUser: { name: otherUserName }
             });
             
             if (window.innerWidth < 768) {
                 setShowSidebar(false);
             }
 
-            // Cargar mensajes del chat
             const loadMessages = async () => {
                 try {
                     const data = await fetchGetMessages(chat_id);
@@ -238,15 +220,12 @@ export const Messages = () => {
             };
 
             loadMessages();
-
-            // Configurar intervalo para actualizar mensajes como respaldo
             const interval = setInterval(loadMessages, 5000);
 
             return () => clearInterval(interval);
         }
     }, [chat_id, isAuthenticated]);
 
-    // Efecto para manejar el responsive
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 768) {
@@ -298,7 +277,6 @@ export const Messages = () => {
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-50 pb-16">
-            {/* Header */}
             <header className="flex items-center px-4 py-3 bg-white border-b border-gray-200 h-14 md:h-16 shrink-0">
                 {(!showSidebar && selectedChat) ? (
                     <>
@@ -335,9 +313,7 @@ export const Messages = () => {
                 )}
             </header>
 
-            {/* Main Container */}
             <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar */}
                 <div 
                     className={`
                         ${showSidebar ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -353,7 +329,6 @@ export const Messages = () => {
                     />
                 </div>
 
-                {/* Chat Area */}
                 <div 
                     className={`
                         flex-1 flex flex-col bg-gray-50
@@ -364,9 +339,9 @@ export const Messages = () => {
                     {selectedChat ? (
                         <>
                             <div className="flex-1 overflow-hidden">
-                                <MessageList 
-                                    messages={messages}
-                                    currentUser={user}
+                                <MemoizedMessageList 
+                                    messages={memoizedMessages}
+                                    currentUser={currentUser}
                                 />
                             </div>
                             <div className="p-4 bg-white border-t border-gray-200 mb-16">
@@ -392,12 +367,6 @@ export const Messages = () => {
                 </div>
             </div>
 
-            {/* New Chat Button */}
-            <div className="fixed right-4 bottom-20 z-30">
-                <NewChatButton onConversationCreated={handleSelectConversation} />
-            </div>
-
-            {/* Footer Navigation */}
             <div className="fixed bottom-0 left-0 right-0 z-50">
                 <FooterNav navigate={navigate} />
             </div>

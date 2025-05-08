@@ -1,7 +1,12 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { FetchLogout } from "../../Utils/Fetch/FetchLogout/FetchLogout";
 
-const AuthContext = createContext({ isAuthenticated: false, login: () => {} });
+const AuthContext = createContext({ 
+  isAuthenticated: false, 
+  user: null,
+  login: () => {}, 
+  logout: () => {} 
+});
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -10,11 +15,19 @@ export const AuthProvider = ({ children }) => {
     return !!(token && userData);
   });
 
+  const [user, setUser] = useState(() => {
+    const userData = sessionStorage.getItem("userData");
+    return userData ? JSON.parse(userData) : null;
+  });
+
   useEffect(() => {
     // Verificar token y datos de usuario en sessionStorage al iniciar
     const token = sessionStorage.getItem("accessToken");
     const userData = sessionStorage.getItem("userData");
     setIsAuthenticated(!!(token && userData));
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
   }, []);
 
   const login = (token, userData) => {
@@ -27,9 +40,11 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.setItem("accessToken", token);
       sessionStorage.setItem("userData", JSON.stringify(userData));
       setIsAuthenticated(true);
+      setUser(userData);
     } catch (error) {
       console.error("Error al guardar datos de autenticación:", error);
       setIsAuthenticated(false);
+      setUser(null);
     }
   };
 
@@ -40,13 +55,22 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.removeItem("userData");
       sessionStorage.removeItem("hasPets");
       setIsAuthenticated(false);
+      setUser(null);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
   };
 
+  // Memoizar el valor del contexto
+  const contextValue = useMemo(() => ({
+    isAuthenticated,
+    user,
+    login,
+    logout
+  }), [isAuthenticated, user]);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
