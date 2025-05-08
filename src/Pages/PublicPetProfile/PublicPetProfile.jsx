@@ -3,6 +3,7 @@ import { useIsFetchedPets } from '../../Contexts/IsFetchedPets/IsFetchedPets';
 import { useFetchPetById } from "../../Hooks/useFetchPetById/useFetchPetById";
 import { usePet } from '../../Contexts/PetContext/PetContext';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { GridItem } from '../../Components/GridItem/GridItem';
 import { ImSpinner2 } from 'react-icons/im';
 import defaultCat from '../../assets/images/CatProfilePfp.png'
@@ -10,6 +11,7 @@ import defaultDog from '../../assets/images/DogProfilePfp.png'
 import defaultOwner from '../../assets/images/DefaultProfile.png'
 import {NavButton} from '../../Components/NavButton/NavButton';
 import SharedImg from '../../assets/images/shared.png'
+import { fetchCreateConversation } from '../../Utils/Fetch/FetchChat/FetchChat';
 
 export const PublicPetProfile = () => {
   const { pet_id } = useParams();
@@ -21,6 +23,8 @@ export const PublicPetProfile = () => {
   const { isFetchedPets } = fetchedPets ?? {};
   const [petData, setPetData] = useState(null);
   const [userData, setUserData] = useState(null);
+  const { isAuthenticated } = useAuth();
+  const [isContactingOwner, setIsContactingOwner] = useState(false);
 
   useEffect(() => {
     // Obtener datos del usuario del sessionStorage
@@ -69,6 +73,39 @@ export const PublicPetProfile = () => {
       .catch(err => {
         console.error('Error al copiar el enlace', err);
       });
+  };
+
+  const handleContactOwner = async () => {
+    if (!isAuthenticated) {
+      // Guardar el ID de la mascota en sessionStorage para redirigir después del registro
+      sessionStorage.setItem('redirectToPetId', pet_id);
+      navigate('/register');
+      return;
+    }
+
+    try {
+      setIsContactingOwner(true);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/pet/${pet_id}/start`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error al crear la conversación');
+      }
+
+      const data = await response.json();
+      navigate(`/chat/${data.chat._id}`);
+    } catch (error) {
+      console.error('Error al crear la conversación:', error);
+      alert('No se pudo iniciar la conversación. Por favor, intenta de nuevo.');
+    } finally {
+      setIsContactingOwner(false);
+    }
   };
 
   const petDetails = [
@@ -143,9 +180,15 @@ export const PublicPetProfile = () => {
           {/* Contact Owner Button */}
           <div className="mx-4 xs:mx-5 sm:mx-6 md:mx-7 lg:mx-8 xl:mx-9 2xl:mx-10 mt-6 xs:mt-7 sm:mt-8 md:mt-9 lg:mt-10 xl:mt-11 2xl:mt-12 mb-6 xs:mb-7 sm:mb-8 md:mb-9 lg:mb-10 xl:mb-11 2xl:mb-12">
             <button 
-              className="w-full bg-[#EC9126] text-white py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 xl:py-7 2xl:py-8 rounded-lg hover:bg-orange-600 transition-colors font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl"
+              onClick={handleContactOwner}
+              disabled={isContactingOwner}
+              className={`w-full ${
+                isContactingOwner 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-[#EC9126] hover:bg-orange-600'
+              } text-white py-2 xs:py-3 sm:py-4 md:py-5 lg:py-6 xl:py-7 2xl:py-8 rounded-lg transition-colors font-semibold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl`}
             >
-              Contactar Propietario
+              {isContactingOwner ? 'Iniciando chat...' : 'Contactar Propietario'}
             </button>
           </div>
         </div>
