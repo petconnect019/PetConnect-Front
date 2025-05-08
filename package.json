@@ -26,6 +26,7 @@
     "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^7.1.5",
     "react-toastify": "^11.0.5",
+    "socket.io-client": "^4.8.1",
     "vite-plugin-pwa": "^0.21.1",
     "yup": "^1.6.1"
   },

@@ -23,7 +23,6 @@ import { PetProfile } from "../Pages/PetProfile/PetProfile";
 import { PublicPetProfile } from "../Pages/PublicPetProfile/PublicPetProfile";
 import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
-import { Chat } from "../Pages/Chat/Chat";
 import { Settings } from "../Pages/Settings/Settings";
 import { UserProfileConfig } from "../Pages/UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";
@@ -142,8 +141,8 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><Messages /></ProtectRoute>,
   },
   {
-    path: '/chat/:chat_id',
-    element: <ProtectRoute><Chat /></ProtectRoute>,
+    path: '/messages/:chat_id',
+    element: <ProtectRoute><Messages /></ProtectRoute>,
   },
   {
     path: '/settings',
