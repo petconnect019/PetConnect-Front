@@ -4,6 +4,7 @@ import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { IoChatbubble, IoTime } from 'react-icons/io5';
 import { IoSearch } from 'react-icons/io5';
 import defaultProfilePic from '../../assets/images/DefaultProfile.png';
+import { socket } from '../../Utils/socket';
 
 export const ConversationList = ({ onSelectConversation, selectedChat, searchQuery }) => {
   const [conversations, setConversations] = useState([]);
@@ -36,12 +37,22 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
   }, []);
 
   useEffect(() => {
-    loadConversations();
-
-    // Actualizar conversaciones cada 5 segundos como respaldo
-    const interval = setInterval(loadConversations, 5000);
-
-    return () => clearInterval(interval);
+    if (isAuthenticated) {
+      loadConversations();
+      
+      // Suscribirse a eventos de socket para actualizaciones en tiempo real
+      const handleNewMessage = () => {
+        loadConversations();
+      };
+      
+      socket.on('new_message', handleNewMessage);
+      socket.on('chat_request', handleNewMessage);
+      
+      return () => {
+        socket.off('new_message', handleNewMessage);
+        socket.off('chat_request', handleNewMessage);
+      };
+    }
   }, [isAuthenticated]);
 
   const filteredConversations = conversations.filter(conversation => 
@@ -189,4 +200,4 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
       </div>
     </div>
   );
-}; 
+};
