@@ -1,190 +1,26 @@
-import { useState, useEffect, useRef, useMemo, memo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { ConversationList } from '../../Components/ChatComponents/ConversationList';
 import { MessageInput } from '../../Components/ChatComponents/MessageInput';
+import { MessageList } from '../../Components/ChatComponents/MessageList';
 import { IoArrowBack, IoEllipsisVertical, IoSearch } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchGetMessages } from '../../Utils/Fetch/FetchChat/FetchChat';
-import { socket } from '../../Utils/socket';
 import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import { NavButton } from '../../Components/NavButton/NavButton';
-
-// Memoizar el componente MessageList
-const MemoizedMessageList = memo(({ messages, currentUser }) => {
-  const messagesEndRef = useRef(null);
-  
-  // Evitar logs innecesarios en producción
-  if (process.env.NODE_ENV === 'development') {
-    console.log("MessageList renderizado con:", { 
-      messages: messages?.length || 0, 
-      currentUser: currentUser?.id || 'no user'
-    });
-  }
-
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
-
-  // Agrupar mensajes por fecha
-  const groupMessagesByDate = (messages) => {
-    const groups = {};
-    messages.forEach(message => {
-      const date = new Date(message.timestamp);
-      const dateStr = date.toLocaleDateString('es-ES', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-      if (!groups[dateStr]) {
-        groups[dateStr] = [];
-      }
-      groups[dateStr].push(message);
-    });
-    return groups;
-  };
-
-  const groupedMessages = useMemo(() => {
-    return groupMessagesByDate(messages || []);
-  }, [messages]);
-
-  // Función para obtener el nombre del remitente
-  const getSenderName = (message) => {
-    if (message.senderId === currentUser?.id) {
-      return currentUser?.name || "Tú";
-    }
-    return message.senderName || 
-           (message.senderId && message.senderId.name) || 
-           "Usuario";
-  };
-
-  // Componente para mensajes enviados (usuario actual)
-  const SentMessage = ({ message, senderName }) => (
-    <div className="w-full flex justify-end mb-1 xs:mb-1.5 sm:mb-2 md:mb-2.5 lg:mb-3 xl:mb-3.5">
-      <div className="relative max-w-[65%] min-w-[80px] xs:min-w-[90px] sm:min-w-[100px] md:min-w-[110px] lg:min-w-[120px] xl:min-w-[130px] bg-brand text-white px-2 xs:px-2.5 sm:px-3 md:px-3.5 lg:px-4 xl:px-4.5 py-[6px] xs:py-[8px] sm:py-[10px] md:py-[12px] lg:py-[14px] xl:py-[16px] rounded-lg">
-        <div className="text-[11px] xs:text-[12px] sm:text-[13px] md:text-[14px] lg:text-[15px] xl:text-[16px] font-medium mb-0.5 text-white">
-          {senderName}
-        </div>
-        <p className="text-[14px] xs:text-[15px] sm:text-[16px] md:text-[17px] lg:text-[18px] xl:text-[19px] whitespace-pre-wrap break-words pr-[52px] leading-[19px] xs:leading-[20px] sm:leading-[21px] md:leading-[22px] lg:leading-[23px] xl:leading-[24px]">
-          {message.content}
-        </p>
-        <div className="absolute bottom-[4px] xs:bottom-[5px] sm:bottom-[6px] md:bottom-[7px] lg:bottom-[8px] xl:bottom-[9px] right-2 xs:right-2.5 sm:right-3 md:right-3.5 lg:right-4 xl:right-4.5 flex items-center">
-          <span className="text-[11px] xs:text-[12px] sm:text-[13px] md:text-[14px] lg:text-[15px] xl:text-[16px] text-gray-100 min-w-[55px] text-right">
-            {new Date(message.timestamp).toLocaleTimeString([], { 
-              hour: '2-digit', 
-              minute: '2-digit',
-              hour12: false
-            })}
-          </span>
-          <svg className="w-[18px] h-[18px] xs:w-[20px] xs:h-[20px] sm:w-[22px] sm:h-[22px] md:w-[24px] md:h-[24px] lg:w-[26px] lg:h-[26px] xl:w-[28px] xl:h-[28px] text-white ml-0.5" viewBox="0 0 16 11" fill="currentColor">
-            <path d="M11.1548 0.721314C10.9249 0.721314 10.7038 0.809804 10.5359 0.977803L4.06216 7.45155L1.46411 4.85351C1.12945 4.51884 0.585785 4.51884 0.251121 4.85351C-0.0837068 5.18817 -0.0837068 5.73184 0.251121 6.0665L3.45567 9.27105C3.62357 9.43895 3.84474 9.52744 4.06216 9.52744C4.27958 9.52744 4.50075 9.43895 4.66865 9.27105L11.7736 2.16608C12.1083 1.83142 12.1083 1.28775 11.7736 0.953083C11.6057 0.809804 11.3846 0.721314 11.1548 0.721314Z"/>
-          </svg>
-        </div>
-        <div className="absolute top-0 right-[-8px] xs:right-[-9px] sm:right-[-10px] md:right-[-11px] lg:right-[-12px] xl:right-[-13px] w-0 h-0 border-solid border-t-[8px] xs:border-t-[9px] sm:border-t-[10px] md:border-t-[11px] lg:border-t-[12px] xl:border-t-[13px] border-t-brand border-l-[8px] xs:border-l-[9px] sm:border-l-[10px] md:border-l-[11px] lg:border-l-[12px] xl:border-l-[13px] border-l-transparent" />
-      </div>
-    </div>
-  );
-
-  // Componente para mensajes recibidos
-  const ReceivedMessage = ({ message, senderName }) => (
-    <div className="flex w-full justify-start mb-1">
-      <div className="relative max-w-[65%] min-w-[80px] bg-white px-2 py-[6px] rounded-lg ml-2 mr-auto">
-        <div className="text-[11px] font-medium mb-0.5 text-[#1877F2]">
-          {senderName}
-        </div>
-        <p className="text-[14px] text-[#111b21] whitespace-pre-wrap break-words pr-[52px] leading-[19px]">
-          {message.content}
-        </p>
-        <div className="absolute bottom-[4px] right-2 flex items-center">
-          <span className="text-[11px] text-[#667781] min-w-[55px] text-right">
-            {new Date(message.timestamp).toLocaleTimeString([], { 
-              hour: '2-digit', 
-              minute: '2-digit',
-              hour12: false
-            })}
-          </span>
-        </div>
-        <div className="absolute top-0 left-[-8px] w-0 h-0 border-solid border-t-[8px] border-t-white border-r-[8px] border-r-transparent">
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="flex flex-col h-full overflow-y-auto bg-[#E4DDD6] p-3">
-      {Object.entries(groupedMessages).map(([date, dateMessages]) => (
-        <div key={date} className="space-y-1">
-          <div className="flex justify-center mb-2">
-            <div className="bg-[#E2F3FB] px-3 py-1 rounded-lg text-[11px] text-gray-600 shadow-sm">
-              {date}
-            </div>
-          </div>
-          {dateMessages.map((message, index) => {
-            const isCurrentUser = message.senderId === currentUser?.id;
-            const senderName = getSenderName(message);
-            
-            return isCurrentUser ? 
-              <SentMessage key={message._id || index} message={message} senderName={senderName} /> : 
-              <ReceivedMessage key={message._id || index} message={message} senderName={senderName} />;
-          })}
-        </div>
-      ))}
-      <div ref={messagesEndRef} />
-    </div>
-  );
-});
+import { useMessages } from '../../Hooks/useMessages';
+import { useSocket } from '../../Hooks/useSocket';
 
 export const Messages = () => {
     const { isAuthenticated, user } = useAuth();
     const [selectedChat, setSelectedChat] = useState(null);
-    const [messages, setMessages] = useState([]);
     const [showSidebar, setShowSidebar] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
     const { chat_id } = useParams();
+    const socket = useSocket();
 
     const currentUser = useMemo(() => user, [user]);
-    const memoizedMessages = useMemo(() => messages, [messages]);
-
-    useEffect(() => {
-        if (chat_id && isAuthenticated) {
-            const loadMessages = async () => {
-                try {
-                    const data = await fetchGetMessages(chat_id);
-                    setMessages(data);
-                } catch (error) {
-                    console.error('Error al cargar mensajes:', error);
-                }
-            };
-            loadMessages();
-        } else {
-            setMessages([]);
-        }
-    }, [chat_id, isAuthenticated]);
-
-    useEffect(() => {
-        if (!isAuthenticated || !chat_id) return;
-
-        const handleNewMessage = (data) => {
-            if (data.chatId === chat_id) {
-                setMessages(prev => {
-                    const messageExists = prev.some(m => m._id === data.message._id);
-                    if (messageExists) return prev;
-                    return [...prev, data.message];
-                });
-            }
-        };
-
-        socket.on('new_message', handleNewMessage);
-
-        return () => {
-            socket.off('new_message', handleNewMessage);
-        };
-    }, [isAuthenticated, chat_id]);
+    const { messages, loading, error, addMessage } = useMessages(chat_id, isAuthenticated);
 
     useEffect(() => {
         if (chat_id && isAuthenticated) {
@@ -208,20 +44,6 @@ export const Messages = () => {
             if (window.innerWidth < 768) {
                 setShowSidebar(false);
             }
-
-            const loadMessages = async () => {
-                try {
-                    const data = await fetchGetMessages(chat_id);
-                    setMessages(data);
-                } catch (error) {
-                    console.error('Error al cargar mensajes:', error);
-                }
-            };
-
-            loadMessages();
-            const interval = setInterval(loadMessages, 5000);
-
-            return () => clearInterval(interval);
         }
     }, [chat_id, isAuthenticated]);
 
@@ -263,10 +85,6 @@ export const Messages = () => {
         setShowSidebar(true);
         setSelectedChat(null);
         navigate('/messages');
-    };
-
-    const handleNewMessage = (message) => {
-        setMessages(prev => [...prev, message]);
     };
 
     if (!isAuthenticated) {
@@ -338,15 +156,25 @@ export const Messages = () => {
                     {selectedChat ? (
                         <>
                             <div className="flex-1 overflow-hidden">
-                                <MemoizedMessageList 
-                                    messages={memoizedMessages}
-                                    currentUser={currentUser}
-                                />
+                                {loading ? (
+                                    <div className="h-full flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
+                                    </div>
+                                ) : error ? (
+                                    <div className="h-full flex items-center justify-center text-red-500">
+                                        {error}
+                                    </div>
+                                ) : (
+                                    <MessageList 
+                                        messages={messages}
+                                        currentUser={currentUser}
+                                    />
+                                )}
                             </div>
                             <div className="p-4 bg-white border-t border-gray-200 mb-12">
                                 <MessageInput 
                                     chatId={selectedChat._id}
-                                    onMessageSent={handleNewMessage}
+                                    onMessageSent={addMessage}
                                 />
                             </div>
                         </>
