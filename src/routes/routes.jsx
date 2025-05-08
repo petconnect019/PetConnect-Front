@@ -139,7 +139,7 @@ export const routes = createBrowserRouter([
   },
   {
     path: '/messages',
-    element: <ProtectRoute><MessagesPreview /></ProtectRoute>,
+    element: <ProtectRoute><Messages /></ProtectRoute>,
   },
   {
     path: '/messages/:chat_id',
