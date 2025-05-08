@@ -39,7 +39,7 @@ if (!self.define) {
       .then(() => {
         let promise = registry[uri];
         if (!promise) {
-          throw new Error(`Module ${uri} didn’t register its module`);
+          throw new Error(`Module ${uri} didn't register its module`);
         }
         return promise;
       })
@@ -77,14 +77,25 @@ define(['./workbox-25659a9f'], (function (workbox) { 'use strict';
    * requests for URLs in the manifest.
    * See https://goo.gl/S9QRab
    */
-  workbox.precacheAndRoute([{
-    "url": "index.html",
-    "revision": "0.mrsfi33l1no"
-  }], {});
+  workbox.precacheAndRoute([
+    {
+      url: '/',
+      revision: '0.mrsfi33l1no'
+    },
+    {
+      url: '/index.html',
+      revision: '0.mrsfi33l1no'
+    }
+  ], {});
   workbox.cleanupOutdatedCaches();
-  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
-    allowlist: [/^\/$/]
-  }));
+  workbox.registerRoute(
+    new workbox.NavigationRoute(
+      workbox.createHandlerBoundToURL('/index.html'),
+      {
+        allowlist: [/^\/$/, /^\/[^/]+\/?$/]
+      }
+    )
+  );
   workbox.registerRoute(({
     request
   }) => request.destination === "document", new workbox.NetworkFirst({

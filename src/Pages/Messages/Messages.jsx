@@ -180,7 +180,7 @@ export const Messages = () => {
             }
             if (!selectedChat && data.chat) {
                 setSelectedChat(data.chat);
-                navigate(`/chat/${data.chat._id}`);
+                navigate(`/messages/${data.chat._id}`);
             }
         };
 
@@ -274,7 +274,7 @@ export const Messages = () => {
         }
         
         setSelectedChat(conversation);
-        navigate(`/chat/${conversation._id}`);
+        navigate(`/messages/${conversation._id}`);
         if (window.innerWidth < 768) {
             setShowSidebar(false);
         }
@@ -283,7 +283,7 @@ export const Messages = () => {
     const handleBackToList = () => {
         setShowSidebar(true);
         setSelectedChat(null);
-        navigate('/chat');
+        navigate('/messages');
     };
 
     const handleNewMessage = (message) => {
