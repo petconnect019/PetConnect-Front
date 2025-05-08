@@ -99,7 +99,7 @@ export const PublicPetProfile = () => {
       }
 
       const data = await response.json();
-      navigate(`/chat/${data.chat._id}`);
+      navigate(`/messages/${data.chat._id}`);
     } catch (error) {
       console.error('Error al crear la conversación:', error);
       alert('No se pudo iniciar la conversación. Por favor, intenta de nuevo.');
