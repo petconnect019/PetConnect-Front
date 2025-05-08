@@ -344,7 +344,7 @@ export const Messages = () => {
                                     currentUser={currentUser}
                                 />
                             </div>
-                            <div className="p-4 bg-white border-t border-gray-200 mb-16">
+                            <div className="p-4 bg-white border-t border-gray-200 mb-12">
                                 <MessageInput 
                                     chatId={selectedChat._id}
                                     onMessageSent={handleNewMessage}
