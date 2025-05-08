@@ -1,204 +1,214 @@
 import { useState, useEffect } from 'react';
-import { fetchGetConversations } from '../../Utils/Fetch/FetchChat/FetchChat';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
+import { fetchGetConversations } from '../../Utils/Fetch/FetchChat/FetchChat';
+import { useSocket } from '../../Hooks/useSocket';
+import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
+import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken';
 import { IoChatbubble, IoTime } from 'react-icons/io5';
 import { IoSearch } from 'react-icons/io5';
 import defaultProfilePic from '../../assets/images/DefaultProfile.png';
-import { socket } from '../../Utils/socket';
 
 export const ConversationList = ({ onSelectConversation, selectedChat, searchQuery }) => {
-  const [conversations, setConversations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const { isAuthenticated } = useAuth();
+    const [conversations, setConversations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const { isAuthenticated, user } = useAuth();
+    const socket = useSocket();
 
-  const loadConversations = async () => {
-    if (!isAuthenticated) return;
-    
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchGetConversations();
-      
-      // Formatear los datos para que coincidan con la estructura esperada
-      const formattedData = data.map(conversation => ({
-        _id: conversation._id,
-        otherUser: {
-          name: conversation.otherUser?.name || 'Usuario',
-          profilePicture: conversation.otherUser?.profilePicture || defaultProfilePic
-        },
-        lastMessage: {
-          content: conversation.lastMessage?.content || 'No hay mensajes',
-          timestamp: conversation.lastMessage?.timestamp || conversation.createdAt
-        },
-        unreadCount: conversation.unreadCount || 0,
-        petName: conversation.petName
-      }));
-      
-      setConversations(formattedData);
-    } catch (err) {
-      console.error('Error al cargar conversaciones:', err);
-      setError('Error al cargar las conversaciones. Por favor, intenta de nuevo más tarde.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const loadConversations = async () => {
+        if (!isAuthenticated) return;
 
-  // Exponer la función de actualización globalmente
-  useEffect(() => {
-    window.updateConversationList = loadConversations;
-    return () => {
-      delete window.updateConversationList;
+        try {
+            setLoading(true);
+            setError(null);
+
+            let token = sessionStorage.getItem('accessToken');
+            if (isTokenExpired(token)) {
+                try {
+                    await FetchRefreshToken();
+                    token = sessionStorage.getItem('accessToken');
+                } catch (error) {
+                    console.error('Error al refrescar el token:', error);
+                    setError('Error de autenticación. Por favor, vuelve a iniciar sesión.');
+                    return;
+                }
+            }
+
+            const data = await fetchGetConversations();
+            
+            if (!Array.isArray(data)) {
+                throw new Error('Formato de datos inválido');
+            }
+
+            const formattedConversations = data.map(chat => {
+                const otherUser = chat.participants.find(p => p._id !== user._id);
+                return {
+                    _id: chat._id,
+                    otherUser: {
+                        _id: otherUser?._id,
+                        name: otherUser?.name || 'Usuario',
+                        profilePicture: otherUser?.profile_picture
+                    },
+                    lastMessage: chat.lastMessage,
+                    unreadCount: chat.unreadCount || 0,
+                    petName: chat.petName
+                };
+            });
+
+            setConversations(formattedConversations);
+        } catch (error) {
+            console.error('Error al cargar conversaciones:', error);
+            setError('Error al cargar las conversaciones. Por favor, intenta de nuevo más tarde.');
+        } finally {
+            setLoading(false);
+        }
     };
-  }, []);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadConversations();
-    }
-  }, [isAuthenticated]);
+    useEffect(() => {
+        if (isAuthenticated) {
+            loadConversations();
+            const interval = setInterval(loadConversations, 5000);
+            return () => clearInterval(interval);
+        }
+    }, [isAuthenticated, user]);
 
-  const filteredConversations = conversations.filter(conversation => 
-    conversation.otherUser?.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    useEffect(() => {
+        if (!isAuthenticated || !socket) return;
 
-  if (loading) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center">
-        <div className="animate-spin rounded-full h-6 xs:h-7 sm:h-8 md:h-9 lg:h-10 xl:h-11 w-6 xs:w-7 sm:w-8 md:w-9 lg:w-10 xl:w-11 border-2 border-blue-500 border-t-transparent"></div>
-        <p className="mt-3 xs:mt-3.5 sm:mt-4 md:mt-4.5 lg:mt-5 xl:mt-5.5 text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600">Cargando conversaciones...</p>
-      </div>
+        const handleNewMessage = () => {
+            loadConversations();
+        };
+
+        socket.on('new_message', handleNewMessage);
+
+        return () => {
+            socket.off('new_message', handleNewMessage);
+        };
+    }, [isAuthenticated, socket]);
+
+    const filteredConversations = conversations.filter(conversation => 
+        conversation.otherUser.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (conversation.petName && conversation.petName.toLowerCase().includes(searchQuery.toLowerCase()))
     );
-  }
 
-  if (error) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center p-3 xs:p-3.5 sm:p-4 md:p-4.5 lg:p-5 xl:p-5.5">
-        <div className="text-red-500 mb-3 xs:mb-3.5 sm:mb-4 md:mb-4.5 lg:mb-5 xl:mb-5.5">
-          <svg className="w-8 xs:w-9 sm:w-10 md:w-11 lg:w-12 xl:w-13 h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <p className="text-center text-gray-600 text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl mb-3 xs:mb-3.5 sm:mb-4 md:mb-4.5 lg:mb-5 xl:mb-5.5">{error}</p>
-        <button 
-          onClick={loadConversations} 
-          className="px-3 xs:px-3.5 sm:px-4 md:px-4.5 lg:px-5 xl:px-5.5 py-1.5 xs:py-2 sm:py-2.5 md:py-3 lg:py-3.5 xl:py-4 bg-blue-500 text-white text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl rounded-full hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Reintentar
-        </button>
-      </div>
-    );
-  }
-
-  if (conversations.length === 0) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center p-4 xs:p-4.5 sm:p-5 md:p-5.5 lg:p-6 xl:p-6.5">
-        <div className="bg-blue-50 p-3 xs:p-3.5 sm:p-4 md:p-4.5 lg:p-5 xl:p-5.5 rounded-full mb-3 xs:mb-3.5 sm:mb-4 md:mb-4.5 lg:mb-5 xl:mb-5.5">
-          <IoChatbubble className="text-2xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-4xl text-blue-500" />
-        </div>
-        <h3 className="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold text-gray-800 mb-1.5 xs:mb-2 sm:mb-2.5 md:mb-3 lg:mb-3.5 xl:mb-4">
-          Sin conversaciones
-        </h3>
-        <p className="text-gray-500 text-center text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl max-w-[180px] xs:max-w-[200px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] xl:max-w-[280px]">
-          Inicia una conversación con el dueño de una mascota
-        </p>
-      </div>
-    );
-  }
-
-  if (filteredConversations.length === 0) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center p-4 xs:p-4.5 sm:p-5 md:p-5.5 lg:p-6 xl:p-6.5">
-        <div className="text-gray-400 mb-3 xs:mb-3.5 sm:mb-4 md:mb-4.5 lg:mb-5 xl:mb-5.5">
-          <IoSearch className="w-8 xs:w-9 sm:w-10 md:w-11 lg:w-12 xl:w-13 h-8 xs:h-9 sm:h-10 md:h-11 lg:h-12 xl:h-13" />
-        </div>
-        <p className="text-gray-600 text-center text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl">
-          No se encontraron conversaciones que coincidan con "{searchQuery}"
-        </p>
-      </div>
-    );
-  }
-
-  const formatTime = (timestamp) => {
-    if (!timestamp) return '';
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
-    if (days === 0) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } else if (days === 1) {
-      return 'Ayer';
-    } else if (days < 7) {
-      return date.toLocaleDateString([], { weekday: 'long' });
-    } else {
-      return date.toLocaleDateString([], { day: '2-digit', month: 'short' });
-    }
-  };
-
-  return (
-    <div className="h-full overflow-y-auto bg-white">
-      <div className="divide-y divide-gray-200">
-        {filteredConversations.map((conversation) => {
-          const isSelected = selectedChat && selectedChat._id === conversation._id;
-          const lastMessageTime = conversation.lastMessage?.timestamp || conversation.createdAt;
-          
-          return (
-            <div
-              key={conversation._id}
-              onClick={() => onSelectConversation(conversation)}
-              className={`
-                flex items-center p-3 xs:p-3.5 sm:p-4 md:p-4.5 lg:p-5 xl:p-5.5 cursor-pointer transition-all
-                ${isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'}
-                ${conversation.unreadCount > 0 ? 'bg-blue-50/20' : ''}
-              `}
-            >
-              <div className="relative flex-shrink-0">
-                <div className="w-10 xs:w-11 sm:w-12 md:w-13 lg:w-14 xl:w-15 h-10 xs:h-11 sm:h-12 md:h-13 lg:h-14 xl:h-15 rounded-full overflow-hidden border-2 border-gray-200">
-                  <img 
-                    src={conversation.otherUser?.profilePicture || defaultProfilePic}
-                    alt={conversation.otherUser?.name || 'Usuario'}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.src = defaultProfilePic;
-                    }}
-                  />
-                </div>
-                {conversation.unreadCount > 0 && (
-                  <div className="absolute -top-1 -right-1 w-4 xs:w-4.5 sm:w-5 md:w-5.5 lg:w-6 xl:w-6.5 h-4 xs:h-4.5 sm:h-5 md:h-5.5 lg:h-6 xl:h-6.5 bg-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-[10px] xs:text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px] xl:text-[15px] text-white font-medium">
-                      {conversation.unreadCount}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="ml-3 xs:ml-3.5 sm:ml-4 md:ml-4.5 lg:ml-5 xl:ml-5.5 flex-1 min-w-0">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-gray-900 truncate text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
-                    {conversation.otherUser?.name || 'Usuario'}
-                  </h3>
-                  <span className="text-[10px] xs:text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px] xl:text-[15px] text-gray-500 whitespace-nowrap ml-2">
-                    {formatTime(lastMessageTime)}
-                  </span>
-                </div>
-                
-                <div className="mt-1 xs:mt-1.5 sm:mt-2 md:mt-2.5 lg:mt-3 xl:mt-3.5 flex items-center justify-between">
-                  <p className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-600 truncate pr-3 xs:pr-3.5 sm:pr-4 md:pr-4.5 lg:pr-5 xl:pr-5.5">
-                    {conversation.lastMessage?.content || 'No hay mensajes'}
-                  </p>
-                  {conversation.petName && (
-                    <span className="text-[10px] xs:text-[11px] sm:text-[12px] md:text-[13px] lg:text-[14px] xl:text-[15px] bg-orange-100 text-orange-800 px-1.5 xs:px-2 sm:px-2.5 md:px-3 lg:px-3.5 xl:px-4 py-0.5 xs:py-1 sm:py-1.5 md:py-2 lg:py-2.5 xl:py-3 rounded-full">
-                      {conversation.petName}
-                    </span>
-                  )}
-                </div>
-              </div>
+    if (loading) {
+        return (
+            <div className="h-full flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
             </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="h-full flex items-center justify-center text-red-500 p-4 text-center">
+                {error}
+            </div>
+        );
+    }
+
+    if (conversations.length === 0) {
+        return (
+            <div className="h-full flex flex-col items-center justify-center p-4 text-center">
+                <div className="w-16 h-16 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                    Sin conversaciones
+                </h3>
+                <p className="text-gray-500 text-sm">
+                    Comienza una nueva conversación para chatear con otros usuarios
+                </p>
+            </div>
+        );
+    }
+
+    if (filteredConversations.length === 0) {
+        return (
+            <div className="h-full flex flex-col items-center justify-center p-4 text-center">
+                <div className="w-16 h-16 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                    No se encontraron conversaciones
+                </h3>
+                <p className="text-gray-500 text-sm">
+                    No hay conversaciones que coincidan con tu búsqueda
+                </p>
+            </div>
+        );
+    }
+
+    const formatTime = (timestamp) => {
+        if (!timestamp) return '';
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (days === 0) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else if (days === 1) {
+            return 'Ayer';
+        } else if (days < 7) {
+            return date.toLocaleDateString([], { weekday: 'long' });
+        } else {
+            return date.toLocaleDateString([], { day: '2-digit', month: 'short' });
+        }
+    };
+
+    return (
+        <div className="h-full overflow-y-auto">
+            {filteredConversations.map(conversation => (
+                <button
+                    key={conversation._id}
+                    onClick={() => onSelectConversation(conversation)}
+                    className={`
+                        w-full p-4 flex items-center space-x-3 hover:bg-gray-50
+                        ${selectedChat?._id === conversation._id ? 'bg-gray-100' : ''}
+                        transition-colors duration-200
+                    `}
+                >
+                    <div className="relative">
+                        <img
+                            src={conversation.otherUser.profilePicture || 'https://via.placeholder.com/40'}
+                            alt={conversation.otherUser.name}
+                            className="w-12 h-12 rounded-full object-cover"
+                        />
+                        {conversation.unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                {conversation.unreadCount}
+                            </span>
+                        )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-semibold text-gray-900 truncate">
+                                {conversation.otherUser.name}
+                            </h3>
+                            {conversation.lastMessage && (
+                                <span className="text-xs text-gray-500">
+                                    {formatTime(conversation.lastMessage.timestamp)}
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-gray-500 truncate">
+                                {conversation.lastMessage ? conversation.lastMessage.content : 'No hay mensajes'}
+                            </p>
+                            {conversation.petName && (
+                                <span className="text-xs text-blue-500 bg-blue-50 px-2 py-1 rounded-full">
+                                    {conversation.petName}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                </button>
+            ))}
+        </div>
+    );
 };
