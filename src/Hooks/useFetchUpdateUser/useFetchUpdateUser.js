@@ -35,10 +35,7 @@ export const useFetchUpdateUser = () => {
             console.log("Respuesta del backend en hook:", responseUser);
             
             if (responseUser.ok) {
-                const currentUserData = JSON.parse(sessionStorage.getItem("userData")) || {};
-                
                 const updatedUserData = {
-                    ...currentUserData,
                     name: formData.get('name'),
                     phone: formData.get('phone'),
                     gender: formData.get('gender'),
@@ -46,11 +43,8 @@ export const useFetchUpdateUser = () => {
                     state: formData.get('state'),
                     city: formData.get('city'),
                     address: formData.get('address'),
-                    profile_picture: currentUserData.profile_picture || DefaultProfile
+                    profile_picture: userFetched?.profile_picture || DefaultProfile
                 };
-                
-                console.log("Datos del usuario a guardar:", updatedUserData);
-                sessionStorage.setItem("userData", JSON.stringify(updatedUserData));
 
                 // Solo actualizamos la foto si se proporciona una nueva
                 if (filePfp) {
@@ -63,8 +57,6 @@ export const useFetchUpdateUser = () => {
                             ...updatedUserData,
                             profile_picture: responsePhoto.profilePicture
                         };
-                        console.log("Datos finales del usuario:", finalUserData);
-                        sessionStorage.setItem("userData", JSON.stringify(finalUserData));
                         setUserFetched(finalUserData);
                     } else {
                         console.error("No se pudo actualizar la foto:", responsePhoto.message);
