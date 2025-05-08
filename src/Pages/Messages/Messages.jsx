@@ -394,7 +394,7 @@ export const Messages = () => {
             </div>
 
             {/* Footer Navigation */}
-            <div className="mt-auto z-50">
+            <div className="mt-auto ">
                 <FooterNav navigate={navigate} />
             </div>
         </div>
