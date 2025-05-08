@@ -75,10 +75,10 @@ export const Home = () => {
         <PetsSection petList={petList} navigate={navigate}/>
 
         {/* Buttons Section */}
-        <section className="flex justify-between gap-3 sm:gap-4 mt-12 sm:mt-14 md:mt-16 mb-16 sm:mb-20 md:mb-24">
+        <section className="grid grid-cols-2 gap-3 sm:gap-4 mt-12 sm:mt-14 md:mt-16 mb-16 sm:mb-20 md:mb-24">
           <button 
             onClick={() => navigate('/check-protection')} 
-            className="flex flex-col items-center p-2 sm:p-3 md:p-4 bg-teal-50 w-1/2 rounded-xl text-xs sm:text-sm hover:bg-blue-50 transition-all duration-300 hover:shadow-md"
+            className="flex flex-col items-center p-2 sm:p-3 md:p-4 bg-teal-50 rounded-xl text-xs sm:text-sm hover:bg-blue-50 transition-all duration-300 hover:shadow-md"
           >
             <img 
               src={iconoHomeUno} 
@@ -90,7 +90,7 @@ export const Home = () => {
           
           <button 
             onClick={() => navigate('/ecommerce')} 
-            className="flex flex-col items-center p-2 sm:p-3 md:p-4 bg-teal-50 w-1/2 rounded-xl text-xs sm:text-sm hover:bg-green-50 transition-all duration-300 hover:shadow-md"
+            className="flex flex-col items-center p-2 sm:p-3 md:p-4 bg-teal-50 rounded-xl text-xs sm:text-sm hover:bg-green-50 transition-all duration-300 hover:shadow-md"
           >
             <img 
               src={iconoHomeDos} 
@@ -98,6 +98,18 @@ export const Home = () => {
               className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 object-cover rounded-full mb-1 sm:mb-2" 
             />
             <span className="font-medium text-gray-700">Tienda</span>
+          </button>
+
+          <button 
+            onClick={() => navigate('/scan-qr')} 
+            className="flex flex-col items-center p-2 sm:p-3 md:p-4 bg-orange-50 rounded-xl text-xs sm:text-sm hover:bg-orange-100 transition-all duration-300 hover:shadow-md col-span-2"
+          >
+            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-orange-100 rounded-full flex items-center justify-center mb-1 sm:mb-2">
+              <svg className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v2m0 5h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <span className="font-medium text-gray-700">Escanear QR de Mascotas</span>
           </button>
         </section>
       </div>
