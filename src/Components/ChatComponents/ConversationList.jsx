@@ -73,6 +73,14 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
         }
     };
 
+    // Exponer la función de actualización globalmente
+    useEffect(() => {
+        window.updateConversationList = loadConversations;
+        return () => {
+            delete window.updateConversationList;
+        };
+    }, []);
+
     useEffect(() => {
         if (isAuthenticated) {
             loadConversations();
@@ -89,46 +97,58 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
         };
 
         socket.on('new_message', handleNewMessage);
+        socket.on('chat_request', handleNewMessage);
 
         return () => {
             socket.off('new_message', handleNewMessage);
+            socket.off('chat_request', handleNewMessage);
         };
     }, [isAuthenticated, socket]);
 
     const filteredConversations = conversations.filter(conversation => 
-        conversation.otherUser.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        conversation.otherUser?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conversation.petName && conversation.petName.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     if (loading) {
         return (
-            <div className="h-full flex items-center justify-center">
+            <div className="h-full flex flex-col items-center justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"></div>
+                <p className="mt-4 text-sm text-gray-600">Cargando conversaciones...</p>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="h-full flex items-center justify-center text-red-500 p-4 text-center">
-                {error}
+            <div className="h-full flex flex-col items-center justify-center p-4">
+                <div className="text-red-500 mb-4">
+                    <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <p className="text-center text-gray-600 text-sm mb-4">{error}</p>
+                <button 
+                    onClick={loadConversations} 
+                    className="px-4 py-2 bg-blue-500 text-white text-sm rounded-full hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                    Reintentar
+                </button>
             </div>
         );
     }
 
     if (conversations.length === 0) {
         return (
-            <div className="h-full flex flex-col items-center justify-center p-4 text-center">
-                <div className="w-16 h-16 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
+            <div className="h-full flex flex-col items-center justify-center p-6">
+                <div className="bg-blue-50 p-4 rounded-full mb-4">
+                    <IoChatbubble className="text-3xl text-blue-500" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     Sin conversaciones
                 </h3>
-                <p className="text-gray-500 text-sm">
-                    Comienza una nueva conversación para chatear con otros usuarios
+                <p className="text-gray-500 text-center text-sm max-w-[200px]">
+                    Inicia una conversación con el dueño de una mascota
                 </p>
             </div>
         );
@@ -136,17 +156,12 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
 
     if (filteredConversations.length === 0) {
         return (
-            <div className="h-full flex flex-col items-center justify-center p-4 text-center">
-                <div className="w-16 h-16 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+            <div className="h-full flex flex-col items-center justify-center p-6">
+                <div className="text-gray-400 mb-4">
+                    <IoSearch className="w-10 h-10" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                    No se encontraron conversaciones
-                </h3>
-                <p className="text-gray-500 text-sm">
-                    No hay conversaciones que coincidan con tu búsqueda
+                <p className="text-gray-600 text-center text-sm">
+                    No se encontraron conversaciones que coincidan con "{searchQuery}"
                 </p>
             </div>
         );
@@ -171,53 +186,69 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
     };
 
     return (
-        <div className="h-full overflow-y-auto">
-            {filteredConversations.map(conversation => (
-                <button
-                    key={conversation._id}
-                    onClick={() => onSelectConversation(conversation)}
-                    className={`
-                        w-full p-4 flex items-center space-x-3 hover:bg-gray-50
-                        ${selectedChat?._id === conversation._id ? 'bg-gray-100' : ''}
-                        transition-colors duration-200
-                    `}
-                >
-                    <div className="relative">
-                        <img
-                            src={conversation.otherUser.profilePicture || 'https://via.placeholder.com/40'}
-                            alt={conversation.otherUser.name}
-                            className="w-12 h-12 rounded-full object-cover"
-                        />
-                        {conversation.unreadCount > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                {conversation.unreadCount}
-                            </span>
-                        )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-gray-900 truncate">
-                                {conversation.otherUser.name}
-                            </h3>
-                            {conversation.lastMessage && (
-                                <span className="text-xs text-gray-500">
-                                    {formatTime(conversation.lastMessage.timestamp)}
-                                </span>
-                            )}
+        <div className="h-full overflow-y-auto bg-white">
+            <div className="divide-y divide-gray-200">
+                {filteredConversations.map((conversation) => {
+                    const isSelected = selectedChat && selectedChat._id === conversation._id;
+                    const lastMessageTime = conversation.lastMessage?.timestamp || conversation.createdAt;
+                    
+                    return (
+                        <div
+                            key={conversation._id}
+                            onClick={() => onSelectConversation(conversation)}
+                            className={`
+                                flex items-center p-4 cursor-pointer transition-all
+                                ${isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'}
+                                ${conversation.unreadCount > 0 ? 'bg-blue-50/20' : ''}
+                            `}
+                        >
+                            {/* Avatar */}
+                            <div className="relative flex-shrink-0">
+                                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200">
+                                    <img 
+                                        src={conversation.otherUser?.profilePicture || defaultProfilePic}
+                                        alt={conversation.otherUser?.name || 'Usuario'}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.src = defaultProfilePic;
+                                        }}
+                                    />
+                                </div>
+                                {conversation.unreadCount > 0 && (
+                                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                        <span className="text-xs text-white font-medium">
+                                            {conversation.unreadCount}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Información del chat */}
+                            <div className="ml-4 flex-1 min-w-0">
+                                <div className="flex justify-between items-start">
+                                    <h3 className="font-semibold text-gray-900 truncate">
+                                        {conversation.otherUser?.name || 'Usuario'}
+                                    </h3>
+                                    <span className="text-xs text-gray-500 whitespace-nowrap ml-2">
+                                        {formatTime(lastMessageTime)}
+                                    </span>
+                                </div>
+                                
+                                <div className="mt-1 flex items-center justify-between">
+                                    <p className="text-sm text-gray-600 truncate pr-4">
+                                        {conversation.lastMessage?.content || 'No hay mensajes'}
+                                    </p>
+                                    {conversation.petName && (
+                                        <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">
+                                            {conversation.petName}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex items-center justify-between">
-                            <p className="text-sm text-gray-500 truncate">
-                                {conversation.lastMessage ? conversation.lastMessage.content : 'No hay mensajes'}
-                            </p>
-                            {conversation.petName && (
-                                <span className="text-xs text-blue-500 bg-blue-50 px-2 py-1 rounded-full">
-                                    {conversation.petName}
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                </button>
-            ))}
+                    );
+                })}
+            </div>
         </div>
     );
 };
