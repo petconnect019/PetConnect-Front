@@ -168,6 +168,7 @@ export const Messages = () => {
                                     <MessageList 
                                         messages={messages}
                                         currentUser={currentUser}
+                                        selectedChat={selectedChat}
                                     />
                                 )}
                             </div>
