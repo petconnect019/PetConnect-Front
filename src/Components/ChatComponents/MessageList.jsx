@@ -25,17 +25,11 @@ export const MessageList = ({ messages, currentUser, selectedChat }) => {
         }, {});
     }, [messages]);
 
-    const getSenderName = (message, isSentMessage = false) => {
-        if (isSentMessage) {
-            // Para mensajes enviados, siempre mostrar el nombre del usuario actual
-            return currentUser?.name || 'Tú';
-        } else {
-            // Para mensajes recibidos, mostrar el nombre del otro usuario
-            if (message.senderName) {
-                return message.senderName;
-            }
-            return selectedChat?.otherUser?.name || 'Usuario';
+    const getSenderName = (message) => {
+        if (message.senderId === currentUser?._id) {
+            return 'Tú';
         }
+        return message.senderName || selectedChat?.otherUser?.name || 'Usuario';
     };
 
     if (!messages || messages.length === 0) {
@@ -66,12 +60,12 @@ export const MessageList = ({ messages, currentUser, selectedChat }) => {
                             {message.senderId === currentUser?._id ? (
                                 <SentMessage 
                                     message={message}
-                                    senderName={getSenderName(message, true)}
+                                    senderName={getSenderName(message)}
                                 />
                             ) : (
                                 <ReceivedMessage 
                                     message={message}
-                                    senderName={getSenderName(message, false)}
+                                    senderName={getSenderName(message)}
                                 />
                             )}
                         </div>
