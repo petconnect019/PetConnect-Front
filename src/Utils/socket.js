@@ -6,13 +6,24 @@ export const socket = io(SOCKET_URL, {
   autoConnect: false,
   withCredentials: true,
   reconnection: true,
-  reconnectionAttempts: 5,
+  reconnectionAttempts: Infinity,
   reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  timeout: 20000,
   transports: ['websocket'],
   upgrade: false
 });
 
-// Manejar reconexión automática
+// Manejar eventos de conexión
+socket.on('connect', () => {
+  console.log('Socket conectado exitosamente');
+  console.log('Tipo de transporte:', socket.io.engine.transport.name);
+});
+
+socket.on('connect_error', (error) => {
+  console.error('Error de conexión del socket:', error);
+});
+
 socket.on('disconnect', (reason) => {
   console.log('Socket desconectado:', reason);
   console.log('Tipo de transporte actual:', socket.io.engine.transport.name);
@@ -20,15 +31,11 @@ socket.on('disconnect', (reason) => {
   if (reason === 'io server disconnect' || reason === 'transport close') {
     // Intentar reconectar solo si la desconexión no fue intencional
     setTimeout(() => {
-      socket.connect();
+      if (!socket.connected) {
+        socket.connect();
+      }
     }, 1000);
   }
-});
-
-// Manejar errores de conexión
-socket.on('connect_error', (error) => {
-  console.error('Error de conexión:', error);
-  console.log('Tipo de transporte actual:', socket.io.engine.transport.name);
 });
 
 // Función para conectar el socket con el token
@@ -41,21 +48,17 @@ export const connectSocket = (token) => {
   // Configurar el token de autorización
   socket.auth = { token };
   
-  // Conectar el socket
+  // Conectar el socket solo si no está conectado
   if (!socket.connected) {
     socket.connect();
   }
-
-  // Manejar reconexión exitosa
-  socket.on('connect', () => {
-    console.log('Socket conectado exitosamente');
-    console.log('Tipo de transporte:', socket.io.engine.transport.name);
-  });
 };
 
 // Función para desconectar el socket
 export const disconnectSocket = () => {
-  socket.disconnect();
+  if (socket.connected) {
+    socket.disconnect();
+  }
 };
 
 // Función para suscribirse a eventos de mensajes nuevos
