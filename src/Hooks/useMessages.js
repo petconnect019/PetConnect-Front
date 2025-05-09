@@ -39,14 +39,14 @@ export const useMessages = (chatId, isAuthenticated) => {
     }
   }, [chatId, isAuthenticated]);
 
+  // Cargar mensajes iniciales
   useEffect(() => {
     if (chatId && isAuthenticated) {
       loadMessages();
-      const interval = setInterval(loadMessages, 5000);
-      return () => clearInterval(interval);
     }
   }, [chatId, isAuthenticated, loadMessages]);
 
+  // Manejar mensajes nuevos a través del socket
   useEffect(() => {
     if (!isAuthenticated || !chatId || !socket) return;
 
@@ -60,12 +60,15 @@ export const useMessages = (chatId, isAuthenticated) => {
       }
     };
 
+    // Suscribirse a eventos del socket
     socket.on('new_message', handleNewMessage);
+    socket.on('chat_request', () => loadMessages());
 
     return () => {
       socket.off('new_message', handleNewMessage);
+      socket.off('chat_request', loadMessages);
     };
-  }, [isAuthenticated, chatId, socket]);
+  }, [isAuthenticated, chatId, socket, loadMessages]);
 
   const addMessage = useCallback((message) => {
     setMessages(prev => [...prev, message]);
