@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const SentMessage = ({ message }) => {
+export const SentMessage = ({ message, senderName }) => {
     const formatTime = (timestamp) => {
         return new Date(timestamp).toLocaleTimeString([], { 
             hour: '2-digit', 
@@ -12,6 +12,9 @@ export const SentMessage = ({ message }) => {
         <div className="flex justify-end mb-2">
             <div className="relative max-w-[70%]">
                 <div className="bg-blue-500 text-white rounded-lg py-2 px-4 shadow-sm">
+                    <div className="text-xs text-blue-100 mb-1">
+                        {senderName}
+                    </div>
                     <p className="text-sm whitespace-pre-wrap break-words">
                         {message.content}
                     </p>

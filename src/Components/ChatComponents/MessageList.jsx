@@ -63,7 +63,10 @@ export const MessageList = ({ messages, currentUser, selectedChat }) => {
                     {messages.map((message) => (
                         <div key={message._id}>
                             {message.senderId === currentUser?._id ? (
-                                <SentMessage message={message} />
+                                <SentMessage 
+                                    message={message}
+                                    senderName={getSenderName(message)}
+                                />
                             ) : (
                                 <ReceivedMessage 
                                     message={message}
