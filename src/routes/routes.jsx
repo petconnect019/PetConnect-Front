@@ -32,6 +32,7 @@ import { NewPet1 } from "../Pages/NewPet1/NewPet1";
 import { CheckProtection } from "../Pages/CheckProtection/CheckProtection";
 import { PaymentShop } from "../Pages/Ecommerce/PaymentShop";
 import { ChangePassword } from "../Pages/ChangePassword/ChangePassword";
+import {ScanQR} from '../Pages/ScanQR/ScanQR'
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -160,5 +161,9 @@ export const routes = createBrowserRouter([
   {
     path: '/change-password',
     element: <ProtectRoute><ChangePassword /></ProtectRoute>,
+  },
+  {
+    path: '/scan-qr',
+    element: <ProtectRoute><ScanQR /> </ProtectRoute>
   },
 ]);
