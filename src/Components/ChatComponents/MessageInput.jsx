@@ -1,105 +1,77 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { fetchSendMessage } from '../../Utils/Fetch/FetchChat/FetchChat';
-import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
-import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken';
-import { IoPaperPlane } from 'react-icons/io5';
+import { IoSend, IoAttach, IoImage } from 'react-icons/io5';
 
 export const MessageInput = ({ chatId, onMessageSent }) => {
-    const [message, setMessage] = useState('');
-    const [isSending, setIsSending] = useState(false);
-    const [error, setError] = useState(null);
-    const inputRef = useRef(null);
+  const [message, setMessage] = useState('');
+  const [sending, setSending] = useState(false);
 
-    useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [chatId]);
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    
+    if (!message.trim() || !chatId) return;
+    
+    try {
+      setSending(true);
+      const sentMessage = await fetchSendMessage(chatId, message.trim());
+      setMessage('');
+      
+      if (onMessageSent) {
+        onMessageSent(sentMessage);
+      }
+    } catch (error) {
+      console.error('Error al enviar mensaje:', error);
+      // Aquí se podría mostrar un toast o alerta al usuario
+    } finally {
+      setSending(false);
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  if (!chatId) {
+    return null;
+  }
+
+  return (
+    <form onSubmit={handleSendMessage} className="border-t p-3 bg-white">
+      <div className="flex items-center">
+        <button 
+          type="button" 
+          className="p-2 text-gray-500 hover:text-blue-500 focus:outline-none"
+          title="Adjuntar archivo"
+        >
+          <IoAttach className="text-xl" />
+        </button>
         
-        if (!message.trim() || isSending) return;
-
-        try {
-            setIsSending(true);
-            setError(null);
-
-            let token = sessionStorage.getItem('accessToken');
-            if (isTokenExpired(token)) {
-                try {
-                    await FetchRefreshToken();
-                    token = sessionStorage.getItem('accessToken');
-                } catch (error) {
-                    console.error('Error al refrescar el token:', error);
-                    setError('Error de autenticación. Por favor, vuelve a iniciar sesión.');
-                    return;
-                }
-            }
-
-            const response = await fetchSendMessage(chatId, message.trim());
-            
-            if (response) {
-                onMessageSent(response);
-                setMessage('');
-                if (inputRef.current) {
-                    inputRef.current.focus();
-                }
-            }
-        } catch (error) {
-            console.error('Error al enviar mensaje:', error);
-            setError('Error al enviar el mensaje. Por favor, intenta de nuevo.');
-        } finally {
-            setIsSending(false);
-        }
-    };
-
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSubmit(e);
-        }
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="relative">
-            {error && (
-                <div className="absolute -top-8 left-0 right-0 bg-red-50 text-red-500 text-sm p-2 rounded-t-lg">
-                    {error}
-                </div>
-            )}
-            <div className="flex items-end space-x-2">
-                <div className="flex-1 relative">
-                    <textarea
-                        ref={inputRef}
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Escribe un mensaje..."
-                        className="w-full px-4 py-2 pr-12 bg-gray-50 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
-                        rows="1"
-                        style={{
-                            minHeight: '40px',
-                            maxHeight: '120px',
-                            overflowY: 'auto'
-                        }}
-                    />
-                </div>
-                <button
-                    type="submit"
-                    disabled={!message.trim() || isSending}
-                    className={`
-                        p-2 rounded-full
-                        ${message.trim() && !isSending
-                            ? 'bg-blue-500 text-white hover:bg-blue-600'
-                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        }
-                        transition-colors duration-200
-                    `}
-                >
-                    <IoPaperPlane className="w-5 h-5" />
-                </button>
-            </div>
-        </form>
-    );
+        <button 
+          type="button" 
+          className="p-2 text-gray-500 hover:text-blue-500 focus:outline-none mr-2"
+          title="Enviar imagen"
+        >
+          <IoImage className="text-xl" />
+        </button>
+        
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="flex-1 py-2 px-3 border rounded-full focus:outline-none focus:border-blue-500"
+          placeholder="Escribe un mensaje..."
+          disabled={sending}
+        />
+        
+        <button
+          type="submit"
+          className={`ml-2 p-2 rounded-full text-white ${
+            message.trim() && !sending
+              ? 'bg-blue-500 hover:bg-blue-600' 
+              : 'bg-gray-300 cursor-not-allowed'
+          }`}
+          disabled={!message.trim() || sending}
+          title="Enviar mensaje"
+        >
+          <IoSend className="text-xl" />
+        </button>
+      </div>
+    </form>
+  );
 }; 
