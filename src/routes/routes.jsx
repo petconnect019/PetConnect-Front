@@ -23,6 +23,7 @@ import { PetProfile } from "../Pages/PetProfile/PetProfile";
 import { PublicPetProfile } from "../Pages/PublicPetProfile/PublicPetProfile";
 import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
+import { Chat } from "../Pages/Chat/Chat";
 import { Settings } from "../Pages/Settings/Settings";
 import { UserProfileConfig } from "../Pages/UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";
@@ -31,7 +32,6 @@ import { NewPet1 } from "../Pages/NewPet1/NewPet1";
 import { CheckProtection } from "../Pages/CheckProtection/CheckProtection";
 import { PaymentShop } from "../Pages/Ecommerce/PaymentShop";
 import { ChangePassword } from "../Pages/ChangePassword/ChangePassword";
-import { ScanQR } from "../Pages/ScanQR/ScanQR";
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -74,10 +74,6 @@ export const routes = createBrowserRouter([
   {
     path: '/reset-password',
     element: <ResetPassword />,
-  },
-  {
-    path: '/public-pet-profile/:pet_id',
-    element: <PublicPetProfile />,
   },
 
   // 🔒 Rutas protegidas (Requieren autenticación)
@@ -130,6 +126,10 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><UserProfileConfig /></ProtectRoute>,
   },
   {
+    path: '/public-pet-profile/:pet_id',
+    element: <ProtectRoute><PublicPetProfile /></ProtectRoute>,
+  },
+  {
     path: '/ecommerce',
     element: <ProtectRoute><Ecommerce /></ProtectRoute>,
   },
@@ -142,8 +142,12 @@ export const routes = createBrowserRouter([
     element: <ProtectRoute><Messages /></ProtectRoute>,
   },
   {
-    path: '/messages/:chat_id',
-    element: <ProtectRoute><Messages /></ProtectRoute>,
+    path: '/chat',
+    element: <ProtectRoute><Chat /></ProtectRoute>,
+  },
+  {
+    path: '/chat/:chat_id',
+    element: <ProtectRoute><Chat /></ProtectRoute>,
   },
   {
     path: '/settings',
@@ -156,9 +160,5 @@ export const routes = createBrowserRouter([
   {
     path: '/change-password',
     element: <ProtectRoute><ChangePassword /></ProtectRoute>,
-  },
-  {
-    path: '/scan-qr',
-    element: <ProtectRoute><ScanQR /></ProtectRoute>,
   },
 ]);

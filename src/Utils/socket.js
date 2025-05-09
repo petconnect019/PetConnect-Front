@@ -6,36 +6,22 @@ export const socket = io(SOCKET_URL, {
   autoConnect: false,
   withCredentials: true,
   reconnection: true,
-  reconnectionAttempts: Infinity,
-  reconnectionDelay: 1000,
-  reconnectionDelayMax: 5000,
-  timeout: 20000,
-  transports: ['websocket'],
-  upgrade: false
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000
 });
 
-// Manejar eventos de conexión
-socket.on('connect', () => {
-  console.log('Socket conectado exitosamente');
-  console.log('Tipo de transporte:', socket.io.engine.transport.name);
-});
-
-socket.on('connect_error', (error) => {
-  console.error('Error de conexión del socket:', error);
-});
-
+// Manejar reconexión automática
 socket.on('disconnect', (reason) => {
   console.log('Socket desconectado:', reason);
-  console.log('Tipo de transporte actual:', socket.io.engine.transport.name);
-  
-  if (reason === 'io server disconnect' || reason === 'transport close') {
-    // Intentar reconectar solo si la desconexión no fue intencional
-    setTimeout(() => {
-      if (!socket.connected) {
-        socket.connect();
-      }
-    }, 1000);
+  if (reason === 'io server disconnect') {
+    // el servidor desconectó el socket
+    socket.connect();
   }
+});
+
+// Manejar errores de conexión
+socket.on('connect_error', (error) => {
+  console.error('Error de conexión:', error);
 });
 
 // Función para conectar el socket con el token
@@ -48,17 +34,18 @@ export const connectSocket = (token) => {
   // Configurar el token de autorización
   socket.auth = { token };
   
-  // Conectar el socket solo si no está conectado
-  if (!socket.connected) {
-    socket.connect();
-  }
+  // Conectar el socket
+  socket.connect();
+
+  // Manejar reconexión exitosa
+  socket.on('connect', () => {
+    console.log('Socket conectado exitosamente');
+  });
 };
 
 // Función para desconectar el socket
 export const disconnectSocket = () => {
-  if (socket.connected) {
-    socket.disconnect();
-  }
+  socket.disconnect();
 };
 
 // Función para suscribirse a eventos de mensajes nuevos
@@ -82,4 +69,4 @@ export const subscribeToPetMessages = (callback) => {
   });
 };
 
-export default socket;
+export default socket; 
