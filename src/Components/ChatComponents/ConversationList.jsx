@@ -41,27 +41,55 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
             }
 
             const formattedConversations = data.map(chat => {
-                if (!chat || !chat.participants) {
+                if (!chat) {
                     console.warn('Conversación inválida:', chat);
                     return null;
                 }
 
-                const otherUser = chat.participants.find(p => p._id !== user._id);
+                // Si ya tenemos otherUser directamente, lo usamos
+                if (chat.otherUser) {
+                    return {
+                        _id: chat._id,
+                        otherUser: {
+                            _id: chat.otherUser._id,
+                            name: chat.otherUser.name || 'Usuario',
+                            profilePicture: chat.otherUser.profile_picture
+                        },
+                        lastMessage: chat.lastMessage,
+                        unreadCount: chat.unreadCount || 0,
+                        petName: chat.petName,
+                        petId: chat.petId,
+                        createdAt: chat.createdAt,
+                        updatedAt: chat.updatedAt
+                    };
+                }
 
-                return {
-                    _id: chat._id,
-                    otherUser: {
-                        _id: otherUser._id,
-                        name: otherUser.name || 'Usuario',
-                        profilePicture: otherUser.profile_picture
-                    },
-                    lastMessage: chat.lastMessage,
-                    unreadCount: chat.unreadCount || 0,
-                    petName: chat.petName,
-                    petId: chat.petId,
-                    createdAt: chat.createdAt,
-                    updatedAt: chat.updatedAt
-                };
+                // Si tenemos participants, mantenemos la lógica anterior
+                if (chat.participants) {
+                    const otherUser = chat.participants.find(p => p._id !== user._id);
+                    if (!otherUser) {
+                        console.warn('No se encontró el otro usuario en la conversación:', chat);
+                        return null;
+                    }
+
+                    return {
+                        _id: chat._id,
+                        otherUser: {
+                            _id: otherUser._id,
+                            name: otherUser.name || 'Usuario',
+                            profilePicture: otherUser.profile_picture
+                        },
+                        lastMessage: chat.lastMessage,
+                        unreadCount: chat.unreadCount || 0,
+                        petName: chat.petName,
+                        petId: chat.petId,
+                        createdAt: chat.createdAt,
+                        updatedAt: chat.updatedAt
+                    };
+                }
+
+                console.warn('Formato de conversación no reconocido:', chat);
+                return null;
             }).filter(Boolean);
 
             setConversations(formattedConversations);
