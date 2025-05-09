@@ -76,6 +76,10 @@ export const routes = createBrowserRouter([
     path: '/reset-password',
     element: <ResetPassword />,
   },
+  {
+    path: '/public-pet-profile/:pet_id',
+    element: <PublicPetProfile />,
+  },
 
   // 🔒 Rutas protegidas (Requieren autenticación)
   {
@@ -125,10 +129,6 @@ export const routes = createBrowserRouter([
   {
     path: '/user-profile-config/:user_id',
     element: <ProtectRoute><UserProfileConfig /></ProtectRoute>,
-  },
-  {
-    path: '/public-pet-profile/:pet_id',
-    element: <ProtectRoute><PublicPetProfile /></ProtectRoute>,
   },
   {
     path: '/ecommerce',
