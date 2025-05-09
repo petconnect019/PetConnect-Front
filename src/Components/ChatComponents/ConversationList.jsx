@@ -27,21 +27,15 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
     }
   };
 
-  // Exponer la función de actualización globalmente
-  useEffect(() => {
-    window.updateConversationList = loadConversations;
-    return () => {
-      delete window.updateConversationList;
-    };
-  }, []);
-
   useEffect(() => {
     loadConversations();
 
-    // Actualizar conversaciones cada 5 segundos como respaldo
-    const interval = setInterval(loadConversations, 5000);
-
-    return () => clearInterval(interval);
+    // Exponer la función de actualización globalmente
+    window.updateConversationList = loadConversations;
+    
+    return () => {
+      delete window.updateConversationList;
+    };
   }, [isAuthenticated]);
 
   const filteredConversations = conversations.filter(conversation => 

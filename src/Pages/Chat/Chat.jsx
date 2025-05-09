@@ -192,6 +192,11 @@ export const Chat = () => {
             }
         };
 
+        // Limpiar suscripciones anteriores
+        socket.off('new_message');
+        socket.off('chat_request');
+        socket.off('pet_message');
+
         // Suscribirse a eventos
         socket.on('new_message', handleNewMessage);
         socket.on('chat_request', handleChatRequest);
@@ -203,7 +208,7 @@ export const Chat = () => {
             socket.off('chat_request', handleChatRequest);
             socket.off('pet_message', handlePetMessage);
         };
-    }, [isAuthenticated, chat_id, selectedChat, navigate]);
+    }, [isAuthenticated]); // Solo depende de isAuthenticated
 
     // Efecto para manejar el chat_id y cargar mensajes
     useEffect(() => {
@@ -231,7 +236,7 @@ export const Chat = () => {
                 setShowSidebar(false);
             }
 
-            // Cargar mensajes del chat
+            // Cargar mensajes del chat una sola vez
             const loadMessages = async () => {
                 try {
                     const data = await fetchGetMessages(chat_id);
@@ -242,11 +247,6 @@ export const Chat = () => {
             };
 
             loadMessages();
-
-            // Configurar intervalo para actualizar mensajes como respaldo
-            const interval = setInterval(loadMessages, 5000);
-
-            return () => clearInterval(interval);
         }
     }, [chat_id, isAuthenticated]);
 
