@@ -27,9 +27,9 @@ export const MessageList = ({ messages, currentUser, selectedChat }) => {
 
     const getSenderName = (message) => {
         if (message.senderId === currentUser?._id) {
-            return 'Tú';
+            return currentUser.name || 'Tú';
         }
-        return message.senderName || selectedChat?.otherUser?.name || 'Usuario';
+        return message.name || 'Usuario';
     };
 
     if (!messages || messages.length === 0) {
