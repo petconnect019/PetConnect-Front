@@ -109,27 +109,43 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
         };
     }, []);
 
+    // Cargar conversaciones iniciales
     useEffect(() => {
         if (isAuthenticated) {
             loadConversations();
-            const interval = setInterval(loadConversations, 5000);
-            return () => clearInterval(interval);
         }
     }, [isAuthenticated, user]);
 
+    // Manejar actualizaciones a través del socket
     useEffect(() => {
         if (!isAuthenticated || !socket) return;
 
-        const handleNewMessage = () => {
+        const handleNewMessage = (data) => {
+            setConversations(prev => {
+                const updatedConversations = prev.map(conv => {
+                    if (conv._id === data.chatId) {
+                        return {
+                            ...conv,
+                            lastMessage: data.message,
+                            unreadCount: conv.unreadCount + 1
+                        };
+                    }
+                    return conv;
+                });
+                return updatedConversations;
+            });
+        };
+
+        const handleChatRequest = () => {
             loadConversations();
         };
 
         socket.on('new_message', handleNewMessage);
-        socket.on('chat_request', handleNewMessage);
+        socket.on('chat_request', handleChatRequest);
 
         return () => {
             socket.off('new_message', handleNewMessage);
-            socket.off('chat_request', handleNewMessage);
+            socket.off('chat_request', handleChatRequest);
         };
     }, [isAuthenticated, socket]);
 
