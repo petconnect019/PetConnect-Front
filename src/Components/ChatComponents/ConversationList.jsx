@@ -41,19 +41,29 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
             }
 
             const formattedConversations = data.map(chat => {
-                const otherUser = chat.participants.find(p => p._id !== user._id);
+                if (!chat || !chat.participants || !Array.isArray(chat.participants)) {
+                    console.warn('Conversación inválida:', chat);
+                    return null;
+                }
+
+                const otherUser = chat.participants.find(p => p && p._id !== user._id);
+                if (!otherUser) {
+                    console.warn('No se encontró el otro usuario en la conversación:', chat);
+                    return null;
+                }
+
                 return {
                     _id: chat._id,
                     otherUser: {
-                        _id: otherUser?._id,
-                        name: otherUser?.name || 'Usuario',
-                        profilePicture: otherUser?.profile_picture
+                        _id: otherUser._id,
+                        name: otherUser.name || 'Usuario',
+                        profilePicture: otherUser.profile_picture
                     },
                     lastMessage: chat.lastMessage,
                     unreadCount: chat.unreadCount || 0,
                     petName: chat.petName
                 };
-            });
+            }).filter(Boolean);
 
             setConversations(formattedConversations);
         } catch (error) {
