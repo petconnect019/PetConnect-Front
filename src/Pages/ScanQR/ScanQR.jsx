@@ -107,10 +107,10 @@ export const ScanQR = () => {
           setScannedResult(result);
           stopScanning();
           // Extraer el ID del QR de la URL completa
-          const qrId = result.split('/').pop();
-          console.log('QR Code detectado:', qrId);
+          const _id = result.split('/').pop();
+          console.log('QR Code detectado:', _id);
           // Navegamos a la ruta de la API para escanear el QR
-          navigate(`/public-pet-profile/${qrId}`);
+          navigate(`/public-pet-profile/${_id}`);
           return;
         }
       } catch (error) {
