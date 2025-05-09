@@ -3,7 +3,7 @@ import { SentMessage } from './SentMessage';
 import { ReceivedMessage } from './ReceivedMessage';
 import { MessageDate } from './MessageDate';
 
-export const MessageList = ({ messages, currentUser }) => {
+export const MessageList = ({ messages, currentUser, selectedChat }) => {
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -29,7 +29,12 @@ export const MessageList = ({ messages, currentUser }) => {
         if (message.senderId === currentUser?._id) {
             return currentUser?.name || 'Tú';
         }
-        return message.senderName || 'Usuario';
+        // Si el mensaje tiene senderName, usarlo
+        if (message.senderName) {
+            return message.senderName;
+        }
+        // Si no, usar el nombre del otro usuario de la conversación
+        return selectedChat?.otherUser?.name || 'Usuario';
     };
 
     if (!messages || messages.length === 0) {
