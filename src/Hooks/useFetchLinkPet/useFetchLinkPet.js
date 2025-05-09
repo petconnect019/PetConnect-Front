@@ -3,7 +3,7 @@ import { FetchLinkPetQr } from "../../Utils/Fetch/FetchLinkPetQr/FetchLinkPet";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 
-export const useFetchLinkPet = (qrId, petId) => {
+export const useFetchLinkPet = (_id, petId) => {
   const [linkState, setLinkState] = useState({
     isLoading: false,
     error: null,
@@ -13,7 +13,7 @@ export const useFetchLinkPet = (qrId, petId) => {
   });
 
   const linkPet = async () => {
-    if (!qrId || !petId) return;
+    if (!_id || !petId) return;
     
     setLinkState(prev => ({ ...prev, isLoading: true, error: null }));
     
@@ -29,7 +29,7 @@ export const useFetchLinkPet = (qrId, petId) => {
         }
       }
 
-      const objectQrPet = { qrId, petId };
+      const objectQrPet = { _id, petId };
       const result = await FetchLinkPetQr(objectQrPet, token);
       
       if (!result.ok) {

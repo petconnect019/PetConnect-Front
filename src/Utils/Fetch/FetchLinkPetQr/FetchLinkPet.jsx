@@ -1,6 +1,6 @@
 export const FetchLinkPetQr = async (objectQrPet, token) => {
     // Validación de parámetros
-    if (!objectQrPet?.qrId) {
+    if (!objectQrPet?._id) {
         console.error("El ID del QR no está definido");
         return { ok: false, message: "ID de QR inválido" };
     }
@@ -10,7 +10,7 @@ export const FetchLinkPetQr = async (objectQrPet, token) => {
     }
 
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/qr/link?qrId=${objectQrPet.qrId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/qr/link?_id=${objectQrPet._id}`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
