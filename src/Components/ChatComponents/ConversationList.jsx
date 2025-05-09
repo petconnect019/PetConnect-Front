@@ -41,17 +41,19 @@ export const ConversationList = ({ onSelectConversation, selectedChat, searchQue
             }
 
             const formattedConversations = data.map(chat => {
-                if (!chat || !chat.otherUser) {
+                if (!chat || !chat.participants) {
                     console.warn('Conversación inválida:', chat);
                     return null;
                 }
 
+                const otherUser = chat.participants.find(p => p._id !== user._id);
+
                 return {
                     _id: chat._id,
                     otherUser: {
-                        _id: chat.otherUser._id,
-                        name: chat.otherUser.name || 'Usuario',
-                        profilePicture: chat.otherUser.profile_picture
+                        _id: otherUser._id,
+                        name: otherUser.name || 'Usuario',
+                        profilePicture: otherUser.profile_picture
                     },
                     lastMessage: chat.lastMessage,
                     unreadCount: chat.unreadCount || 0,
