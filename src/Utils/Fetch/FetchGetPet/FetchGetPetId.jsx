@@ -11,15 +11,17 @@ export const FetchPetById = async (id)=> {
 
         const data = await response.json();
 
-        // If the response is not ok, check if it has a redirect property
+        // If the response has a redirect property, return it
+        if (data.redirect) {
+            return {
+                ok: false,
+                message: data.message,
+                redirect: data.redirect
+            };
+        }
+
+        // If the response is not ok, throw an error
         if (!response.ok) {
-            if (data.redirect) {
-                return {
-                    ok: false,
-                    message: data.message,
-                    redirect: data.redirect
-                };
-            }
             throw new Error(data.message || 'Error al obtener la mascota');
         }
 
