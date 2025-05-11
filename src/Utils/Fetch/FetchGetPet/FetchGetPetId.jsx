@@ -9,11 +9,20 @@ export const FetchPetById = async (id)=> {
             }
         });
 
+        const data = await response.json();
+
+        // If the response is not ok, check if it has a redirect property
         if (!response.ok) {
-            throw new Error('Error al obtener la mascota');
+            if (data.redirect) {
+                return {
+                    ok: false,
+                    message: data.message,
+                    redirect: data.redirect
+                };
+            }
+            throw new Error(data.message || 'Error al obtener la mascota');
         }
 
-        const data = await response.json();
         return data;
 
     } catch (error) {

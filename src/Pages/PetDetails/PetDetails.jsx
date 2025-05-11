@@ -30,7 +30,7 @@ export const PetDetails = () => {
   const pets = usePet();
   const navigate = useNavigate();
   const { findPet } = pets ?? {};
-  const { getPetById, petResult } = useFetchPetById();
+  const { getPetById, petResult, redirect } = useFetchPetById();
   const { fetchUpdatePet } = useFetchUpdatePet();
 
   const handleBackButton = () => {
@@ -63,6 +63,13 @@ export const PetDetails = () => {
       setPet(findPet(pet_id));
     }
   }, [petResult, isFetchedPets]);
+
+  // Handle redirect if present
+  useEffect(() => {
+    if (redirect) {
+      navigate(redirect);
+    }
+  }, [redirect, navigate]);
 
   const trigguerGetId = () => {
     getPetById(pet_id);
