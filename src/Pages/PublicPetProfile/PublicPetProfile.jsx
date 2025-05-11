@@ -17,7 +17,7 @@ export const PublicPetProfile = () => {
   const { pet_id } = useParams();
   const navigate = useNavigate();
   const fetchedPets = useIsFetchedPets();
-  const { getPetById, petResult } = useFetchPetById();
+  const { getPetById, petResult, redirect } = useFetchPetById();
   const petUser = usePet();
   const {findPet} = petUser?? {};
   const { isFetchedPets } = fetchedPets ?? {};
@@ -56,6 +56,13 @@ export const PublicPetProfile = () => {
       }
     }
   }, [petResult, isFetchedPets, pet_id, findPet]);
+
+  // Handle redirect if present
+  useEffect(() => {
+    if (redirect) {
+      navigate(redirect);
+    }
+  }, [redirect, navigate]);
 
   const trigguerGetId = () => {
     getPetById(pet_id);
