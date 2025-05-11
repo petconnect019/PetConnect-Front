@@ -18,49 +18,52 @@ export const useFetchPetById = () => {
     setPetState((prev) => ({ ...prev, isLoading: true, redirect: null }));
 
     try {
-      // Fetch the pet by ID
-      const petData = await FetchPetById(id);
+      const response = await FetchPetById(id);
       
-      // Check if the response indicates a redirect
-      if (!petData.ok && petData.redirect) {
+      // Handle redirect case
+      if (response.redirect) {
         setPetState((prev) => ({
           ...prev,
           isSuccess: false,
           isLoading: false,
-          error: petData.message,
-          redirect: petData.redirect
+          error: response.message,
+          redirect: response.redirect
         }));
-        return { success: false, redirect: petData.redirect };
+        return { success: false, redirect: response.redirect };
       }
 
-      if (petData.ok) {
-        // Successfully fetched pet data
+      // Handle successful pet data
+      if (response.ok && response.pet) {
         setPetState((prev) => ({
           ...prev,
           isSuccess: true,
           isLoading: false,
-          petResult: petData.pet,
+          petResult: response.pet,
           redirect: null
         }));
-        //add the pet locally
-        addPet(petData.pet);
-
-        return { success: true, pet: petData };
+        // Add the pet locally
+        addPet(response.pet);
+        return { success: true, pet: response.pet };
       }
-      return {success: false}
+
+      // Handle error case
+      setPetState((prev) => ({
+        ...prev,
+        error: response.message || "Error al obtener la mascota",
+        isLoading: false,
+        redirect: null
+      }));
+      return { success: false, error: response.message };
+
     } catch (error) {
       console.error("Error fetching pet:", error);
       setPetState((prev) => ({
         ...prev,
-        error: error.message || "An unexpected error occurred",
+        error: error.message || "Error al obtener la mascota",
         isLoading: false,
         redirect: null
       }));
-
-      return {
-        success: false,
-        error: error.message || "An unexpected error occurred",
-      };
+      return { success: false, error: error.message };
     }
   };
 
