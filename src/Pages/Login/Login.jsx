@@ -116,7 +116,7 @@ export const Login = () => {
       <div className="h-auto w-full 2xl:min-h-screen 3xl:min-h-screen 4xl:min-h-screen flex  bg-gray-100 xl:items-center xl:justify-center 2xl:items-center 2xl:justify-center 3xl:items-center 3xl:justify-center 4xl:items-center 4xl:justify-center">
         <div
           className={`
-            bg-white w-full  xl:max-w-2xl 2xl:max-w-2xl 3xl:max-w-2xl 4xl:max-w-2xl p-6 rounded-4xl xl:shadow-lg xl:border 2xl:shadow-lg 2xl:border-gray 3xl:shadow-lg 3xl:border 4xl:shadow-lg 4xl:border 4xl:border-gray-100
+            bg-white w-full  xl:max-w-2xl 2xl:max-w-2xl 3xl:max-w-2xl 4xl:max-w-2xl p-6 rounded-4xl xl:shadow-lg xl:border xl:border-gray-100 2xl:shadow-lg 2xl:border-gray-100 3xl:shadow-lg 3xl:border 3xl:border-gray-100 4xl:shadow-lg 4xl:border 4xl:border-gray-100
             ${isLoading ? "blur-sm pointer-events-none" : ""}
           `}
         >
@@ -135,7 +135,7 @@ export const Login = () => {
               className="z-50"
             />
 
-            <div className=" sm:p-4 md:p-6 lg:p-8 ">
+            <div className=" sm:p-4 md:p-6 lg:p-8 2xl:p-2  xl:p-2">
               <div className="mb-6">
                 <NavButton onClick={() => navigate(-1)} />
               </div>
@@ -144,7 +144,7 @@ export const Login = () => {
                 <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-4xl 2xl:text-5xl 3xl:text-5xl 4xl:text-5xl font-extrabold text-gray-900 mb-2 tracking-tight">
                   Bienvenido de nuevo! 👋
                 </h1>
-                <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl 2xl:text-2xl 3xl:text-xl 4xl:text-2xl text-gray-600 font-medium">
+                <p className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-2xl 3xl:text-xl 4xl:text-2xl text-gray-600 font-medium">
                   Continuemos el viaje con tus amigos peludos.
                 </p>
               </header>
@@ -220,18 +220,18 @@ export const Login = () => {
                               type="checkbox"
                               id="remember-me"
                               disabled={isLoading}
-                              className="mr-2 w-4 h-4 text-brand rounded focus:ring-brand"
+                              className="mr-2 w-4 h-4 2xl:h-5 text-brand rounded focus:ring-brand"
                           />
                           <label
                               htmlFor="remember-me"
-                              className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-xl text-gray-600"
+                              className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-xl 3xl:text-lg 4xl:text-xl text-gray-600"
                           >
                               Recuérdame
                           </label>
                       </div>
                       <Link
                           to="/recover-email"
-                          className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-xl text-brand hover:underline transition duration-300"
+                          className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-xl 3xl:text-lg 4xl:text-xl text-brand hover:underline transition duration-300"
                       >
                           ¿Has olvidado tu contraseña?
                       </Link>
@@ -241,7 +241,7 @@ export const Login = () => {
                 {/* Divider */}
                 <div className="flex items-center justify-center my-4 sm:my-6">
                   <div className="flex-grow border-t border-gray-300"></div>
-                  <span className="px-4 text-gray-500 text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-lg">o</span>
+                  <span className="px-4 text-gray-500 text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-xl 3xl:text-lg 4xl:text-xl">o</span>
                   <div className="flex-grow border-t border-gray-300"></div>
                 </div>
 
@@ -265,7 +265,7 @@ export const Login = () => {
                 </div>
 
                 {/* Registration Link */}
-                <p className="mt-4 sm:mt-6 text-center text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-lg 3xl:text-lg 4xl:text-xl text-gray-600">
+                <p className="mt-4 sm:mt-6 text-center text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-xl 3xl:text-xl 4xl:text-xl text-gray-600">
                   ¿Aún no tienes una cuenta?{" "}
                   <Link
                     to="/register"
