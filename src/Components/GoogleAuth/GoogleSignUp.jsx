@@ -72,7 +72,7 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
       onClick={handleGoogleSignUp}
       className="block mx-auto flex items-center justify-between w-full max-w-md bg-white text-black border-solid border-2 border-gray-100 
       px-5 xs:px-5.5 sm:px-6 md:px-6.5 lg:px-7 xl:px-7 2xl:px-7.5 3xl:px-8 4xl:px-10 py-4 xs:py-3.5 sm:py-4 md:py-4.5 lg:py-5 xl:py-2 2xl:py-3 3xl:py-3 4xl:py-3 
-      rounded-full mt-8 
+      rounded-full mt-8 2xl:mt-3 xl:mt-1
       text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-xl 2xl:text-2xl 3xl:text-2xl 4xl:text-2xl font-medium"
       aria-label="Registrarse con Google"
     >
