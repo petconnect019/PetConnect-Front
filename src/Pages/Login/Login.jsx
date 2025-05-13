@@ -116,7 +116,7 @@ export const Login = () => {
       <div className="h-auto w-full 2xl:min-h-screen 3xl:min-h-screen 4xl:min-h-screen flex  bg-gray-100 xl:items-center xl:justify-center 2xl:items-center 2xl:justify-center 3xl:items-center 3xl:justify-center 4xl:items-center 4xl:justify-center">
         <div
           className={`
-            bg-white w-full  xl:max-w-2xl 2xl:max-w-2xl 3xl:max-w-2xl 4xl:max-w-2xl p-6 rounded-4xl xl:shadow-lg xl:border xl:border-gray-100 2xl:shadow-lg 2xl:border-gray-100 3xl:shadow-lg 3xl:border 3xl:border-gray-100 4xl:shadow-lg 4xl:border 4xl:border-gray-100
+            bg-white w-full  xl:max-w-xl 2xl:max-w-2xl 3xl:max-w-2xl 4xl:max-w-2xl p-6 rounded-4xl xl:shadow-lg xl:border xl:border-gray-100 2xl:shadow-lg 2xl:border-gray-100 3xl:shadow-lg 3xl:border 3xl:border-gray-100 4xl:shadow-lg 4xl:border 4xl:border-gray-100
             ${isLoading ? "blur-sm pointer-events-none" : ""}
           `}
         >
@@ -140,7 +140,7 @@ export const Login = () => {
                 <NavButton onClick={() => navigate(-1)} />
               </div>
              
-              <header className="mb-4 sm:mb-6 text-left ml-1">
+              <header className="mb-4 sm:mb-6 text-left ml-1 xl:mb-1">
                 <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-4xl 2xl:text-5xl 3xl:text-5xl 4xl:text-5xl font-extrabold text-gray-900 mb-2 tracking-tight">
                   Bienvenido de nuevo! 👋
                 </h1>
@@ -224,14 +224,14 @@ export const Login = () => {
                           />
                           <label
                               htmlFor="remember-me"
-                              className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-xl 3xl:text-lg 4xl:text-xl text-gray-600"
+                              className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-base 2xl:text-xl 3xl:text-lg 4xl:text-xl text-gray-600"
                           >
                               Recuérdame
                           </label>
                       </div>
                       <Link
                           to="/recover-email"
-                          className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-xl 3xl:text-lg 4xl:text-xl text-brand hover:underline transition duration-300"
+                          className="text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-base 2xl:text-xl 3xl:text-lg 4xl:text-xl text-brand hover:underline transition duration-300"
                       >
                           ¿Has olvidado tu contraseña?
                       </Link>
@@ -265,7 +265,7 @@ export const Login = () => {
                 </div>
 
                 {/* Registration Link */}
-                <p className="mt-4 sm:mt-6 text-center text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-lg 2xl:text-xl 3xl:text-xl 4xl:text-xl text-gray-600">
+                <p className="mt-4 sm:mt-6 text-center text-sm xs:text-base sm:text-base md:text-lg lg:text-lg xl:text-base 2xl:text-xl 3xl:text-xl 4xl:text-xl text-gray-600">
                   ¿Aún no tienes una cuenta?{" "}
                   <Link
                     to="/register"
