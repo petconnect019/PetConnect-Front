@@ -59,7 +59,7 @@ export const Welcome = () => {
     <div className="bg-gray-50">
       <div className="h-auto w-full 2xl:min-h-screen 3xl:min-h-screen 4xl:min-h-screen flex  bg-gray-100 xl:items-center xl:justify-center 2xl:items-center 2xl:justify-center 3xl:items-center 3xl:justify-center 4xl:items-center 4xl:justify-center">
         <div className="bg-white w-full  xl:max-w-xl 2xl:max-w-2xl 3xl:max-w-2xl 4xl:max-w-2xl 2xl:p-16 4xl:p-10 4xl:p-6 rounded-4xl xl:shadow-lg xl:border xl:border-gray-100 2xl:shadow-lg 2xl:border-gray-100 3xl:shadow-lg 3xl:border 3xl:border-gray-100 4xl:shadow-lg 4xl:border 4xl:border-gray-100">
-          <div className="flex flex-col items-center justify-center h-full w-full xl:p-12 2xl:p-10 3xl:p-14 4xl:p-16">
+          <div className="flex flex-col items-center justify-center h-full w-full xl:p-16 2xl:p-10 3xl:p-14 4xl:p-16">
             <img 
               src={logo} 
               alt="Logo" 

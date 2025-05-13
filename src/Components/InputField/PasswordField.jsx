@@ -13,7 +13,7 @@ export const PasswordField = ({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <div className="flex flex-col gap-2 xs:gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-2 2xl:gap-8">
+    <div className="flex flex-col gap-2 xs:gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-2 2xl:gap-4">
       {label && (
         <label 
           htmlFor={name} 
