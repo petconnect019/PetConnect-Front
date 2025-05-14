@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ImageTagContainer } from "../../Components/ImageTagContainer/ImageTagContainer";
 import { AddTagContainer } from "../../Components/AddTagContainer/AddTagContainer";
 import { ToggleButton } from "../../Components/ToggleButton/ToggleButton";
@@ -10,8 +10,10 @@ import { usePet } from "../../Contexts/PetContext/PetContext";
 import { useFetchPets } from "../../Hooks/useFetchPets/useFetchPets";
 import { useFetchScans } from "../../Hooks/useFetchScans/useFetchScans";
 import { useFetchQrsUser } from "../../Hooks/useFetchQrsUser/useFetchQrsUser";
+import { ScannedComponent } from "../../Components/ScannedComponent/ScannedComponent";
 import defaultDog from "../../assets/images/DogProfilePfp.png";
 import defaultCat from "../../assets/images/CatProfilePfp.png";
+import { MdPets } from "react-icons/md";
 
 export const CheckProtection = () => {
   const pets = usePet();
@@ -24,15 +26,105 @@ export const CheckProtection = () => {
   const [protectionRender, setProtectionRender] = useState("tag");
   const [selectedPet, setSelectedPet] = useState(petList?.[0] || null);
   const [refreshQRs, setRefreshQRs] = useState(false);
+  const [scanHistory, setScanHistory] = useState([]);
+  const [isLoadingScans, setIsLoadingScans] = useState(false);
+  const [sortNewest, setSortNewest] = useState(true);
+
+  // Referencia para el script de Leaflet
+  const leafletScriptRef = useRef(null);
+
+  // Cargar la librería de Leaflet si no está cargada
+  useEffect(() => {
+    if (window.L) return; // Si ya está cargada, no hacer nada
+    
+    const loadLeaflet = () => {
+      // Cargar CSS de Leaflet
+      const leafletCSS = document.createElement('link');
+      leafletCSS.rel = 'stylesheet';
+      leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      leafletCSS.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+      leafletCSS.crossOrigin = '';
+      document.head.appendChild(leafletCSS);
+      
+      // Cargar script de Leaflet
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
+      script.crossOrigin = '';
+      script.async = true;
+      script.onload = () => {
+        console.log('Leaflet cargado correctamente');
+      };
+      document.body.appendChild(script);
+      leafletScriptRef.current = script;
+    };
+    
+    loadLeaflet();
+    
+    // Limpiar al desmontar
+    return () => {
+      if (leafletScriptRef.current) {
+        document.body.removeChild(leafletScriptRef.current);
+      }
+    };
+  }, []);
+
+  // Función para cargar los escaneos
+  const fetchScans = async (petId) => {
+    if (!petId) return;
+    
+    setIsLoadingScans(true);
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      if (!token) {
+        console.error('No hay token de acceso');
+        return;
+      }
+      
+      // Obtener historial de escaneos para todos los QRs de la mascota seleccionada
+      const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === petId) || [];
+      
+      const allScanHistory = [];
+      for (const qr of selectedPetQRs) {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/qr/${qr._id}/history`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.history) {
+            allScanHistory.push(...data.history);
+          }
+        }
+      }
+      
+      // Ordenar por fecha y hora (más reciente primero por defecto)
+      const sortedHistory = allScanHistory.sort((a, b) => {
+        const dateA = new Date(`${a.fecha} ${a.hora}`);
+        const dateB = new Date(`${b.fecha} ${b.hora}`);
+        return sortNewest ? dateB - dateA : dateA - dateB;
+      });
+      
+      setScanHistory(sortedHistory);
+    } catch (error) {
+      console.error('Error al obtener el historial de escaneos:', error);
+    } finally {
+      setIsLoadingScans(false);
+    }
+  };
 
   //se hace el fetch con los datos de la mascota seleccionada
   useEffect(() => {
     if (protectionRender === "tag" && selectedPet) {
       getQrsById();
-    } else if (protectionRender === "scans" && selectedPet) {
-      useFetchScans(selectedPet._id);
+    } else if (protectionRender === "scan" && selectedPet && qrsResult?.length > 0) {
+      fetchScans(selectedPet._id);
     }
-  }, [protectionRender, selectedPet, refreshQRs]);
+  }, [protectionRender, selectedPet, refreshQRs, qrsResult, sortNewest]);
 
   //se selecciona la primera mascota al inicializar el componente
   useEffect(() => {
@@ -46,6 +138,11 @@ export const CheckProtection = () => {
     setRefreshQRs(prev => !prev);
   };
 
+  // Manejar el toggle de ordenamiento
+  const handleToggleSort = () => {
+    setSortNewest(prev => !prev);
+  };
+
   //arreglo para medir la cantidad de imagenes de añadir tag renderizar
   const addTagContainer = [
     { id: 1 },
@@ -55,12 +152,6 @@ export const CheckProtection = () => {
     { id: 5 },
     { id: 6 },
   ];
-
-  useEffect(() => {
-    if (qrsResult) {
-      console.log(qrsResult);
-    }
-  }, [qrsResult]);
 
   const count = qrsResult?.length || 0;
   const hasQrs = count > 0;
@@ -133,18 +224,81 @@ export const CheckProtection = () => {
 
       {/* Scan history section */}
       {protectionRender === "scan" && (
-        <div className="flex justify-between items-center px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 3xl:px-14 4xl:px-16 mt-4 mb-4 bg-gray-50 rounded-lg p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-9 4xl:p-10">
-          <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl font-medium text-gray-700">
-            Últimos escaneos
+        <>
+          <div className="flex justify-between items-center px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 3xl:px-14 4xl:px-16 mt-4 mb-4 bg-gray-50 rounded-lg p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-9 4xl:p-10">
+            <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl font-medium text-gray-700">
+              Últimos escaneos {sortNewest ? '(Más recientes)' : '(Más antiguos)'}
+            </div>
+            <button 
+              onClick={handleToggleSort}
+              className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 2xl:w-18 2xl:h-18 3xl:w-20 3xl:h-20 4xl:w-22 4xl:h-22 p-1 sm:p-2 md:p-3 lg:p-4 xl:p-5 2xl:p-6 3xl:p-7 4xl:p-8 bg-white rounded-full shadow-sm cursor-pointer hover:bg-gray-100 transition-colors"
+              title={sortNewest ? 'Ordenar por más antiguos' : 'Ordenar por más recientes'}
+            >
+              <img
+                className="w-full h-full object-contain"
+                src={SortIcon}
+                alt="filter"
+              />
+            </button>
           </div>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 2xl:w-18 2xl:h-18 3xl:w-20 3xl:h-20 4xl:w-22 4xl:h-22 p-1 sm:p-2 md:p-3 lg:p-4 xl:p-5 2xl:p-6 3xl:p-7 4xl:p-8 bg-white rounded-full shadow-sm cursor-pointer hover:bg-gray-100 transition-colors">
-            <img
-              className="w-full h-full object-contain"
-              src={SortIcon}
-              alt="filter"
-            />
+
+          {/* Grid de escaneos */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:gap-8 mt-6">
+            {isLoadingScans ? (
+              // Estado de carga
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={`loading-${index}`} className="bg-white rounded-xl shadow-sm p-4 animate-pulse">
+                  <div className="h-6 bg-gray-200 rounded mb-4 w-3/4"></div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <div className="h-4 bg-gray-200 rounded mb-2 w-1/2"></div>
+                      <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                    <div>
+                      <div className="h-4 bg-gray-200 rounded mb-2 w-1/2"></div>
+                      <div className="h-5 bg-gray-200 rounded w-3/4"></div>
+                    </div>
+                    <div>
+                      <div className="h-4 bg-gray-200 rounded mb-2 w-1/2"></div>
+                      <div className="h-5 bg-gray-200 rounded w-2/3"></div>
+                    </div>
+                    <div>
+                      <div className="h-4 bg-gray-200 rounded mb-2 w-1/2"></div>
+                      <div className="h-5 bg-gray-200 rounded w-2/3"></div>
+                    </div>
+                  </div>
+                  <div className="h-48 bg-gray-200 rounded"></div>
+                </div>
+              ))
+            ) : scanHistory.length > 0 ? (
+              // Mostrar historial de escaneos
+              scanHistory.map((scan, index) => (
+                <ScannedComponent key={`scan-${index}`} scanData={scan} />
+              ))
+            ) : (
+              // Mensaje de no hay datos
+              <div className="col-span-full text-center p-8">
+                <div className="bg-orange-50 p-6 rounded-xl inline-block mb-4">
+                  <MdPets className="text-4xl text-orange-400 mx-auto" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">No hay registros de escaneos</h3>
+                <p className="text-gray-600">
+                  {selectedPetQRs.length > 0 
+                    ? 'No se ha registrado ningún escaneo para esta mascota todavía.' 
+                    : 'Primero debes agregar etiquetas QR para tu mascota.'}
+                </p>
+                {selectedPetQRs.length === 0 && (
+                  <button 
+                    onClick={() => setProtectionRender('tag')}
+                    className="mt-4 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    Añadir etiquetas QR
+                  </button>
+                )}
+              </div>
+            )}
           </div>
-        </div>
+        </>
       )}
 
       {/* QR tags section */}
