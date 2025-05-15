@@ -4,6 +4,7 @@ import { usePet } from "../../Contexts/PetContext/PetContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useFetchPets } from "../../Hooks/useFetchPets/useFetchPets";
+import { useFetchUserProfile } from "../../Hooks/useFetchUserProfile/useFetchUserProfile"; // Añadir esta importación
 import { ProfileSection } from "../../Components/ProfileSection/ProfileSection";
 import { PetsSection } from "../../Components/PetsSection/PetsSection";
 import { FooterNav } from "../../Components/FooterNav/FooterNav";
@@ -12,18 +13,28 @@ import iconoHomeUno from '../../assets/images/iconoHomeUno.png'
 import iconoHomeDos from '../../assets/images/iconoHomeDos.png'
 import logo from '../../assets/images/LogoPetConnect.png'
 import notification from '../../assets/images/Notifications.png'
+import { useEffect } from "react"; // Añadir esta importación
 
 export const Home = () => {
   const auth = useAuth();
   const petsValidation = useHasPetsUser();
   const petsUser = usePet();
   const navigate = useNavigate();
+  const { fetchUserProfile } = useFetchUserProfile(); // Usar el hook para cargar los datos del usuario
 
   if (!auth)
     return <div className="text-center text-gray-600">Cargando...</div>;
 
+  const { isAuthenticated } = auth; // Añadir esta línea
   const { hasPetsUser } = petsValidation;
   const { petList } = petsUser;
+
+  // Asegurarnos de cargar los datos del usuario cuando el componente se monta
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUserProfile();
+    }
+  }, [isAuthenticated]);
 
   useFetchPets(hasPetsUser);
 
@@ -118,5 +129,3 @@ export const Home = () => {
     </div>
   );
 };
-
-// bg-linear-to-r/srgb from-brand to-orange-200

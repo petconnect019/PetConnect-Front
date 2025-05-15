@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
+import DefaultProfile from '../../assets/images/DefaultProfile.png';
 
 export const useFetchUserProfile = () => {
   const [userState, setUserState] = useState({
@@ -47,7 +48,7 @@ export const useFetchUserProfile = () => {
       state: data.state || "",
       city: data.city || "",
       address: data.address || "",
-      profile_picture: data.profile_picture,
+      profile_picture: data.profile_picture || "",
       role: data.role,
       is_active: data.is_active,
       is_profile_public: data.is_profile_public,
@@ -58,8 +59,127 @@ export const useFetchUserProfile = () => {
     };
   };
 
-  const fetchUserProfile = async () => {
-    if (isFetching.current) {
+  // Función para emitir el evento personalizado cuando los datos cambian
+  const notifyUserDataChange = () => {
+    console.log("Notificando cambio en datos de usuario...");
+    const event = new CustomEvent('userDataUpdated');
+    window.dispatchEvent(event);
+  };
+
+  // Función para guardar datos en localStorage y sessionStorage
+  const saveUserData = (userData) => {
+    try {
+      const normalizedData = normalizeUserData(userData);
+      
+      // Asegurarnos de que la imagen de perfil esté incluida en los datos normalizados
+      if (userData.profile_picture && !normalizedData.profile_picture) {
+        normalizedData.profile_picture = userData.profile_picture;
+      }
+      
+      console.log("Guardando datos normalizados:", normalizedData);
+      
+      // Guardar en ambos almacenamientos
+      localStorage.setItem("userData", JSON.stringify(normalizedData));
+      sessionStorage.setItem("userData", JSON.stringify(normalizedData));
+      
+      // Notificar que los datos han cambiado
+      notifyUserDataChange();
+      
+      return normalizedData;
+    } catch (error) {
+      console.error("Error al guardar datos del usuario:", error);
+      return null;
+    }
+  };
+
+  // Función para obtener datos del almacenamiento
+  const getStoredUserData = () => {
+    try {
+      // Primero intentamos obtener de sessionStorage
+      let storedData = sessionStorage.getItem("userData");
+      
+      // Si no hay datos en sessionStorage, intentamos con localStorage
+      if (!storedData) {
+        storedData = localStorage.getItem("userData");
+        
+        // Si encontramos datos en localStorage, los restauramos en sessionStorage
+        if (storedData) {
+          sessionStorage.setItem("userData", storedData);
+        }
+      }
+      
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        if (parsedData && typeof parsedData === 'object') {
+          const normalizedData = normalizeUserData(parsedData);
+          
+          // Asegurarnos de mantener la imagen de perfil si ya existe en los datos almacenados
+          if (parsedData.profile_picture && !normalizedData.profile_picture) {
+            normalizedData.profile_picture = parsedData.profile_picture;
+          }
+          
+          return normalizedData;
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Error al obtener datos almacenados:", error);
+      return null;
+    }
+  };
+
+  // Efecto para sincronizar los datos al iniciar
+  useEffect(() => {
+    const storedData = getStoredUserData();
+    if (storedData) {
+      setUserState({
+        isLoading: false,
+        isSuccess: true,
+        error: null,
+        userData: storedData
+      });
+    }
+    
+    // Escuchar cambios de almacenamiento entre pestañas
+    const handleStorageChange = (event) => {
+      if (event.key === 'userData') {
+        console.log("Cambio detectado en localStorage userData");
+        const storedData = getStoredUserData();
+        if (storedData) {
+          setUserState(prev => ({
+            ...prev,
+            userData: storedData,
+            isSuccess: true
+          }));
+        }
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Escuchar evento personalizado para cambios en los datos del usuario
+    const handleUserDataUpdated = () => {
+      console.log("Evento userDataUpdated recibido en useFetchUserProfile");
+      const storedData = getStoredUserData();
+      if (storedData) {
+        setUserState(prev => ({
+          ...prev,
+          userData: storedData,
+          isSuccess: true
+        }));
+      }
+    };
+    
+    window.addEventListener('userDataUpdated', handleUserDataUpdated);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userDataUpdated', handleUserDataUpdated);
+    };
+  }, []);
+
+  const fetchUserProfile = async (forceRefresh = false) => {
+    if (isFetching.current && !forceRefresh) {
       return { success: true, userData: userState.userData };
     }
 
@@ -67,30 +187,22 @@ export const useFetchUserProfile = () => {
     setUserState(prev => ({ ...prev, isLoading: true }));
 
     try {
-      // Primero intentamos obtener los datos del sessionStorage
-      const storedUserData = sessionStorage.getItem("userData");
-      if (storedUserData) {
-        try {
-          const parsedData = JSON.parse(storedUserData);
-          console.log("Datos del usuario obtenidos del sessionStorage:", parsedData);
-          if (parsedData && typeof parsedData === 'object') {
-            const normalizedData = normalizeUserData(parsedData);
-            console.log("Datos normalizados:", normalizedData);
-            setUserState({
-              isLoading: false,
-              isSuccess: true,
-              error: null,
-              userData: normalizedData
-            });
-            isFetching.current = false;
-            return { success: true, userData: normalizedData };
-          }
-        } catch (parseError) {
-          console.error("Error al parsear datos del usuario:", parseError);
+      // Si no es una actualización forzada, primero intentamos obtener los datos almacenados
+      if (!forceRefresh) {
+        const storedData = getStoredUserData();
+        if (storedData) {
+          setUserState({
+            isLoading: false,
+            isSuccess: true,
+            error: null,
+            userData: storedData
+          });
+          isFetching.current = false;
+          return { success: true, userData: storedData };
         }
       }
 
-      // Si no hay datos en sessionStorage o hubo error al parsear, hacemos la llamada a la API
+      // Si no hay datos almacenados o es una actualización forzada, hacemos la llamada a la API
       let token = sessionStorage.getItem("accessToken");
       
       if (!token) {
@@ -111,7 +223,9 @@ export const useFetchUserProfile = () => {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        // Prevenir el cacheo de la respuesta
+        cache: 'no-store'
       });
 
       const data = await response.json();
@@ -127,12 +241,8 @@ export const useFetchUserProfile = () => {
         throw new Error('Datos de usuario no disponibles');
       }
 
-      // Normalizamos los datos antes de guardarlos
-      const normalizedData = normalizeUserData(userData);
-      console.log("Datos normalizados de la API:", normalizedData);
-
-      // Guardamos los datos normalizados en sessionStorage
-      sessionStorage.setItem("userData", JSON.stringify(normalizedData));
+      // Guardamos los datos normalizados
+      const normalizedData = saveUserData(userData);
 
       setUserState({
         isLoading: false,
@@ -140,6 +250,7 @@ export const useFetchUserProfile = () => {
         error: null,
         userData: normalizedData
       });
+      
       isFetching.current = false;
       return { success: true, userData: normalizedData };
     } catch (error) {
@@ -155,8 +266,43 @@ export const useFetchUserProfile = () => {
     }
   };
 
+  // Función para actualizar datos específicos del usuario en el almacenamiento
+  const updateStoredUserData = (updatedData) => {
+    try {
+      const currentData = getStoredUserData();
+      if (currentData) {
+        const newData = { ...currentData, ...updatedData };
+        
+        // Asegurarnos de que la imagen de perfil se mantenga si no está en los datos actualizados
+        if (currentData.profile_picture && !newData.profile_picture) {
+          newData.profile_picture = currentData.profile_picture;
+        }
+        
+        console.log("Actualizando datos del usuario:", newData);
+        
+        // Guardar los datos actualizados
+        const savedData = saveUserData(newData);
+        
+        // Actualizar el estado local
+        setUserState(prev => ({
+          ...prev,
+          userData: savedData,
+          isSuccess: true
+        }));
+        
+        return { success: true, userData: savedData };
+      }
+      return { success: false, error: "No hay datos de usuario para actualizar" };
+    } catch (error) {
+      console.error("Error al actualizar datos almacenados:", error);
+      return { success: false, error: error.message };
+    }
+  };
+
   return {
     ...userState,
-    fetchUserProfile
+    fetchUserProfile,
+    updateStoredUserData,
+    saveUserData
   };
-}; 
+};

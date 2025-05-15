@@ -1,103 +1,86 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
-import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken';
-import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
+import DefaultProfile from '../../assets/images/DefaultProfile.png';
 
 export const ProfileSection = ({ navigate }) => {
-    const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userData, setUserData] = useState(null);
     const { isAuthenticated } = useAuth();
 
+    // Función para obtener datos directamente del sessionStorage
+    const getUserDataFromSession = () => {
+        try {
+            const storedUserData = sessionStorage.getItem("userData");
+            if (storedUserData) {
+                const parsedData = JSON.parse(storedUserData);
+                console.log("Datos del usuario obtenidos del sessionStorage:", parsedData);
+                setUserData(parsedData);
+                setIsLoading(false);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error al obtener datos del sessionStorage:", error);
+            setError("Error al cargar datos del usuario");
+            setIsLoading(false);
+            return false;
+        }
+    };
+
     const handleNavigate = () => {
-        const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
-        if (storedUserData) {
-            const userId = storedUserData._id || (storedUserData._doc && storedUserData._doc._id);
+        if (userData) {
+            const userId = userData.id || userData._id;
             if (userId) {
                 console.log("Navegando a perfil con ID:", userId);
                 navigate(`/user-profile-config/${userId}`);
             } else {
-                console.error("No se encontró el ID del usuario en los datos almacenados");
+                console.error("No se encontró el ID del usuario en los datos");
             }
         } else {
             console.error("No se encontraron datos del usuario");
         }
-    }
+    };
 
+    // Cargar datos al iniciar y cuando cambia el estado de autenticación
     useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                // Primero intentamos obtener los datos del sessionStorage
-                const storedUserData = sessionStorage.getItem("userData");
-                if (storedUserData) {
-                    try {
-                        const parsedData = JSON.parse(storedUserData);
-                        console.log("Datos del usuario obtenidos del sessionStorage:", parsedData);
-                        if (parsedData && typeof parsedData === 'object') {
-                            setUserData(parsedData);
-                            setIsLoading(false);
-                            return;
-                        }
-                    } catch (parseError) {
-                        console.error("Error al parsear datos del usuario:", parseError);
-                        // Continuamos con la llamada a la API si hay error al parsear
-                    }
-                }
-
-                let token = sessionStorage.getItem("accessToken");
-                
-                if (!token) {
-                    setError("No hay token de acceso disponible");
-                    setIsLoading(false);
-                    return;
-                }
-
-                if (isTokenExpired(token)) {
-                    try {
-                        await FetchRefreshToken();
-                        token = sessionStorage.getItem("accessToken");
-                    } catch (refreshError) {
-                        console.error("Error al refrescar el token:", refreshError);
-                        setError("Error de autenticación");
-                        setIsLoading(false);
-                        return;
-                    }
-                }
-
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Error al obtener el perfil del usuario');
-                }
-
-                const data = await response.json();
-                if (data.user) {
-                    setUserData(data.user);
-                    sessionStorage.setItem("userData", JSON.stringify(data.user));
-                } else {
-                    throw new Error('Datos de usuario no disponibles');
-                }
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Error al obtener el perfil del usuario:", error);
-                setError(error.message);
-                setIsLoading(false);
-            }
-        };
-
         if (isAuthenticated) {
-            fetchUserProfile();
+            setIsLoading(true);
+            getUserDataFromSession();
         } else {
+            setUserData(null);
             setIsLoading(false);
         }
-    }, [isAuthenticated]); 
+    }, [isAuthenticated]);
+    
+    // Escuchar cambios en el sessionStorage
+    useEffect(() => {
+        const handleStorageChange = (event) => {
+            if ((event.key === 'userData' && event.storageArea === sessionStorage) || 
+                (event.type === 'storage' && event.key === 'userData')) {
+                console.log("Detectado cambio en userData del sessionStorage - actualizando perfil");
+                getUserDataFromSession();
+            }
+        };
+        
+        // Para cambios desde otras pestañas
+        window.addEventListener('storage', handleStorageChange);
+        
+        // Para cambios dentro de la misma pestaña (custom event)
+        const handleCustomEvent = () => {
+            console.log("Evento userDataUpdated recibido - actualizando perfil");
+            getUserDataFromSession();
+        };
+        window.addEventListener('userDataUpdated', handleCustomEvent);
+        
+        // Verificar datos al montar el componente
+        getUserDataFromSession();
+        
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('userDataUpdated', handleCustomEvent);
+        };
+    }, []);
 
     if (isLoading) {
         return (
@@ -135,19 +118,28 @@ export const ProfileSection = ({ navigate }) => {
         );
     }
 
+    // Usar imagen por defecto si la del perfil no existe
+    const profileImage = userData.profile_picture || DefaultProfile;
+    // Usar nombre tal como está en el sessionStorage
+    const userName = userData.name || 'Usuario';
+
     return (
         <section 
             onClick={handleNavigate}
             className="flex items-center cursor-pointer"
         >
             <img 
-                src={userData.profile_picture || "/profile.jpg"} 
+                src={profileImage} 
                 alt="Profile" 
                 className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 md:w-22 md:h-22 lg:w-24 lg:h-24 xl:w-26 xl:h-26 2xl:w-28 2xl:h-28 3xl:w-30 3xl:h-30 4xl:w-32 4xl:h-32 rounded-full border border-gray-300 object-cover" 
+                onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = DefaultProfile;
+                }}
             />
             <div className="ml-3 xs:ml-4 sm:ml-5 md:ml-6 lg:ml-7 xl:ml-8">
                 <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold">
-                    {userData.name || 'Usuario'}
+                    {userName}
                 </h2>
                 <p className="text-gray-500 text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">Dueño</p>
             </div>
