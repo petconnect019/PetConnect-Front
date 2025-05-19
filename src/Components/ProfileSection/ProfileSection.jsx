@@ -1,103 +1,97 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
-import { FetchRefreshToken } from '../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken';
-import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
+import { useFetchUserProfile } from '../../Hooks/useFetchUserProfile/useFetchUserProfile';
+import DefaultProfile from '../../assets/images/DefaultProfile.png'
 
 export const ProfileSection = ({ navigate }) => {
+    const { isAuthenticated } = useAuth();
+    const { isLoading: hookLoading, error: hookError, userData: hookUserData, fetchUserProfile } = useFetchUserProfile();
+    
+    // Estado local para gestionar los datos del usuario correctamente
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { isAuthenticated } = useAuth();
+
+    // Recupera manualmente los datos del usuario desde la API para asegurar datos actualizados
+    const fetchUpdatedUserData = async () => {
+        try {
+            setIsLoading(true);
+            
+            // Obtenemos el token de acceso
+            const token = sessionStorage.getItem("accessToken");
+            if (!token) {
+                throw new Error("No hay token de acceso disponible");
+            }
+
+            // Hacemos la llamada directa a la API
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                cache: 'no-store'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error al obtener el perfil del usuario');
+            }
+
+            const data = await response.json();
+            console.log("Datos obtenidos directamente:", data);
+
+            // Verificamos si los datos vienen en el campo profile
+            const profileData = data.profile || data.user || data;
+            
+            if (profileData) {
+                setUserData(profileData);
+                
+                // También guardamos en sessionStorage para mantener consistencia
+                sessionStorage.setItem("userData", JSON.stringify(profileData));
+                
+                setIsLoading(false);
+            } else {
+                throw new Error('Datos de usuario no disponibles');
+            }
+        } catch (err) {
+            console.error("Error al obtener perfil:", err);
+            setError(err.message);
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchUpdatedUserData();
+        } else {
+            setIsLoading(false);
+        }
+    }, [isAuthenticated]);
+
+    // Fallback para usar datos del hook si la obtención directa falla
+    useEffect(() => {
+        if (hookUserData && !userData) {
+            console.log("Usando datos de respaldo del hook:", hookUserData);
+            setUserData(hookUserData);
+        }
+    }, [hookUserData, userData]);
 
     const handleNavigate = () => {
-        const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
-        if (storedUserData) {
-            const userId = storedUserData._id || (storedUserData._doc && storedUserData._doc._id);
+        if (userData) {
+            // Usamos el ID correcto según la estructura
+            const userId = userData._id || userData.id;
             if (userId) {
                 console.log("Navegando a perfil con ID:", userId);
                 navigate(`/user-profile-config/${userId}`);
             } else {
                 console.error("No se encontró el ID del usuario en los datos almacenados");
+                console.error("Datos de usuario disponibles:", userData);
             }
         } else {
             console.error("No se encontraron datos del usuario");
         }
-    }
-
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                // Primero intentamos obtener los datos del sessionStorage
-                const storedUserData = sessionStorage.getItem("userData");
-                if (storedUserData) {
-                    try {
-                        const parsedData = JSON.parse(storedUserData);
-                        console.log("Datos del usuario obtenidos del sessionStorage:", parsedData);
-                        if (parsedData && typeof parsedData === 'object') {
-                            setUserData(parsedData);
-                            setIsLoading(false);
-                            return;
-                        }
-                    } catch (parseError) {
-                        console.error("Error al parsear datos del usuario:", parseError);
-                        // Continuamos con la llamada a la API si hay error al parsear
-                    }
-                }
-
-                let token = sessionStorage.getItem("accessToken");
-                
-                if (!token) {
-                    setError("No hay token de acceso disponible");
-                    setIsLoading(false);
-                    return;
-                }
-
-                if (isTokenExpired(token)) {
-                    try {
-                        await FetchRefreshToken();
-                        token = sessionStorage.getItem("accessToken");
-                    } catch (refreshError) {
-                        console.error("Error al refrescar el token:", refreshError);
-                        setError("Error de autenticación");
-                        setIsLoading(false);
-                        return;
-                    }
-                }
-
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Error al obtener el perfil del usuario');
-                }
-
-                const data = await response.json();
-                if (data.user) {
-                    setUserData(data.user);
-                    sessionStorage.setItem("userData", JSON.stringify(data.user));
-                } else {
-                    throw new Error('Datos de usuario no disponibles');
-                }
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Error al obtener el perfil del usuario:", error);
-                setError(error.message);
-                setIsLoading(false);
-            }
-        };
-
-        if (isAuthenticated) {
-            fetchUserProfile();
-        } else {
-            setIsLoading(false);
-        }
-    }, [isAuthenticated]); 
+    };
 
     if (isLoading) {
         return (
@@ -141,7 +135,7 @@ export const ProfileSection = ({ navigate }) => {
             className="flex items-center cursor-pointer"
         >
             <img 
-                src={userData.profile_picture || "/profile.jpg"} 
+                src={userData.profile_picture || DefaultProfile} 
                 alt="Profile" 
                 className="w-16 h-16 xs:w-18 xs:h-18 sm:w-20 sm:h-20 md:w-22 md:h-22 lg:w-24 lg:h-24 xl:w-26 xl:h-26 2xl:w-28 2xl:h-28 3xl:w-30 3xl:h-30 4xl:w-32 4xl:h-32 rounded-full border border-gray-300 object-cover" 
             />
@@ -149,7 +143,9 @@ export const ProfileSection = ({ navigate }) => {
                 <h2 className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold">
                     {userData.name || 'Usuario'}
                 </h2>
-                <p className="text-gray-500 text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">Dueño</p>
+                <p className="text-gray-500 text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                    {userData.role === "admin" ? "Administrador" : "Dueño"}
+                </p>
             </div>
         </section>
     );

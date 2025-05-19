@@ -17,14 +17,18 @@ import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
 import emailIcon from '../../assets/images/emailIcon.png'
 import passwordIcon from '../../assets/images/Lock.png'
 import { NavButton } from "../../Components/NavButton/NavButton.jsx";
+import { useFetchUserProfile } from "../../Hooks/useFetchUserProfile/useFetchUserProfile";
+
 
 export const Register = () => {
   const navigate = useNavigate();
+  const { fetchUserProfile } = useFetchUserProfile();
 
   // Local states // Estados locales que cambian con el customHook y con el Componente de Google
   const [user, setUser] = useState(null);
   const [hasPetsState, setHasPetsState] = useState(false);
   const [isNewUserState, setIsNewUserState] = useState(false);
+  
   // Esquema de validación con Yup
   const {
     register,
@@ -70,14 +74,14 @@ export const Register = () => {
   };
 
   // Efecto para actualizar estados cuando el customHook cambie
-  useEffect(() => {
-    if (isSuccess) {
-      setAccessToken(accessTokenResult);
-    }
-    if (error) {
-      setErrorState(error);
-    }
-  }, [isSuccess, error]);
+    useEffect(() => {
+      if (isSuccess) {
+        setAccessToken(accessTokenResult);
+      }
+      if (error) {
+        setErrorState(error);
+      }
+    }, [isSuccess, error]);
 
   // Efectos para las acciones de los estados
   useEffect(() => {
@@ -90,14 +94,30 @@ export const Register = () => {
 
   // Efecto para manejar los estados de Google
   useEffect(() => {
+    if (accessToken && userResult) {
+      login(accessToken, userResult);
+      changeHasPetsUser(false);
+      
+      // Usar fetchUserProfile para normalizar y guardar correctamente los datos del usuario
+      fetchUserProfile().then(() => {
+        navigate("/step-user");
+      });
+    }
+  }, [accessToken, userResult]);
+
+  useEffect(() => {
     if (user && accessToken) {
       login(accessToken, user);
       changeHasPetsUser(hasPetsState);
-      if (isNewUserState) {
-        navigate("/step-user");
-      } else {
-        navigate("/home");
-      }
+      
+      // Usar fetchUserProfile para normalizar los datos del usuario de Google
+      fetchUserProfile().then(() => {
+        if (isNewUserState) {
+          navigate("/step-user");
+        } else {
+          navigate("/home");
+        }
+      });
     }
   }, [user, accessToken, hasPetsState, isNewUserState]);
 
