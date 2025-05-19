@@ -15,10 +15,13 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
   const { login } = auth;
   const { changeHasPetsUser } = pets;
 
+  // Uso de variables de entorno para la configuración
+  const API_URL = import.meta.env.VITE_API_URL ;
+  const GOOGLE_CALLBACK_URL = import.meta.env.VITE_GOOGLE_CALLBACK_URL ;
 
   // Use useCallback to avoid recreating this function on every render
   const handleGoogleSignUp = useCallback(() => {
-    const popupUrl = 'https://petconnect-backend-production.up.railway.app/api/auth/google';
+    const popupUrl = GOOGLE_CALLBACK_URL;
     const popupName = 'Google Login';
     const popupFeatures = 'width=500,height=600,left=300,top=200';
     
@@ -32,14 +35,15 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
       }
       
       const messageListener = async (event) => {
-        if (event.origin !== 'https://petconnect-backend-production.up.railway.app' || !event.data) {
+        // Asegúrate de que el origen coincida con tu API_URL
+        if (event.origin !== API_URL && !event.data) {
           return;
         }
         
         window.removeEventListener('message', messageListener);
         
         if (event.data.error) {
-          setErrorState('Este correo no está registrado. Por favor, regístrate.');
+          setErrorState && setErrorState('Este correo no está registrado. Por favor, regístrate.');
           return;
         }
         
@@ -48,6 +52,10 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
           setAccesToken && setAccesToken(event.data.accessToken);
           setHasPetsState && setHasPetsState(!!event.data.hasPets);
           setIsnewUserState && setIsnewUserState(!!event.data.isNewUser);
+          
+          // Si existen las funciones de login y changeHasPetsUser, úsalas
+          login && login(event.data.user, event.data.accessToken);
+          changeHasPetsUser && changeHasPetsUser(!!event.data.hasPets);
         }
       };
       
@@ -64,7 +72,7 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
       console.error('Error al abrir popup:', error);
       window.location.href = popupUrl;
     }
-  }, [login, changeHasPetsUser]);
+  }, [login, changeHasPetsUser, API_URL, GOOGLE_CALLBACK_URL, setUser, setAccesToken, setHasPetsState, setIsnewUserState, setErrorState]);
 
   return (
     <button
