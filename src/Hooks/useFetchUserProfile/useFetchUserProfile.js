@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
-import DefaultProfile from '../../assets/images/DefaultProfile.png';
 
 export const useFetchUserProfile = () => {
   const [userState, setUserState] = useState({
@@ -10,10 +9,11 @@ export const useFetchUserProfile = () => {
     isSuccess: false,
     userData: null
   });
-
+    
   const isFetching = useRef(false);
 
   const normalizeUserData = (data) => {
+    
     // Si los datos vienen de Google, están en _doc
     if (data._doc) {
       return {
@@ -39,7 +39,7 @@ export const useFetchUserProfile = () => {
     }
     // Para usuarios normales, asegurarnos de que todos los campos existan
     return {
-      _id: data._id,
+      id: data._id,
       name: data.name || "",
       email: data.email || "",
       phone: data.phone || "",
@@ -58,6 +58,7 @@ export const useFetchUserProfile = () => {
       __v: data.__v
     };
   };
+  
 
   // Función para emitir el evento personalizado cuando los datos cambian
   const notifyUserDataChange = () => {
@@ -70,6 +71,8 @@ export const useFetchUserProfile = () => {
   const saveUserData = (userData) => {
     try {
       const normalizedData = normalizeUserData(userData);
+      
+      console.log(normalizedData);
       
       // Asegurarnos de que la imagen de perfil esté incluida en los datos normalizados
       if (userData.profile_picture && !normalizedData.profile_picture) {
@@ -84,6 +87,8 @@ export const useFetchUserProfile = () => {
       
       // Notificar que los datos han cambiado
       notifyUserDataChange();
+      
+      console.log(normalizedData);
       
       return normalizedData;
     } catch (error) {

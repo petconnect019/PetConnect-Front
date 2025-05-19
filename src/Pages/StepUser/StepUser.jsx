@@ -98,6 +98,8 @@ export const StepUser = () => {
             setProfileImage(imageUrl);
             setFilePfp(file);
         }
+        console.log(File);
+        
     };
 
     const onSubmitForm = async (dataForm) => { 

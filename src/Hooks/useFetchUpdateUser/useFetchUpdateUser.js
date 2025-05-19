@@ -3,7 +3,6 @@ import { FetchUpdateUser } from "../../Utils/Fetch/FetchUpdateUser/FetchUpdateUs
 import { FetchUpdatePhotoU } from "../../Utils/Fetch/FetchUpdatePhotoU/FetchUpdatePhotoU";
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefreshToken";
-// Import for local reference only, don't use in stored data
 import DefaultProfile from '../../assets/images/DefaultProfile.png';
 
 export const useFetchUpdateUser = () => {
@@ -32,16 +31,11 @@ export const useFetchUpdateUser = () => {
                 }
             }
 
-            // Obtener los datos actuales del usuario desde sessionStorage sin modificarlos
-            const currentUserData = JSON.parse(sessionStorage.getItem('userData')) || {};
-            
             const responseUser = await FetchUpdateUser(formData, token);
             console.log("Respuesta del backend en hook:", responseUser);
             
             if (responseUser.ok) {
-                // Crear un objeto con los datos actualizados manteniendo la estructura original
                 const updatedUserData = {
-                    ...currentUserData, // Mantener todos los datos actuales
                     name: formData.get('name'),
                     phone: formData.get('phone'),
                     gender: formData.get('gender'),
@@ -49,8 +43,7 @@ export const useFetchUpdateUser = () => {
                     state: formData.get('state'),
                     city: formData.get('city'),
                     address: formData.get('address'),
-                    // Mantener la URL de la imagen existente, no usar DefaultProfile aquí
-                    profile_picture: currentUserData.profile_picture 
+                    profile_picture: userFetched?.profile_picture || DefaultProfile
                 };
 
                 // Solo actualizamos la foto si se proporciona una nueva
@@ -60,21 +53,19 @@ export const useFetchUpdateUser = () => {
                     
                     const responsePhoto = await FetchUpdatePhotoU(formDataPhoto, token);
                     if (responsePhoto.ok) {
-                        // Asegurarse de que la respuesta del backend contenga la URL completa de la imagen
-                        updatedUserData.profile_picture = responsePhoto.profilePicture;
-                        console.log("Foto actualizada con URL:", responsePhoto.profilePicture);
+                        const finalUserData = {
+                            ...updatedUserData,
+                            profile_picture: responsePhoto.profilePicture
+                        };
+                        setUserFetched(finalUserData);
                     } else {
                         console.error("No se pudo actualizar la foto:", responsePhoto.message);
                         setError("No se pudo actualizar la foto de perfil");
                         return { success: false, error: "No se pudo actualizar la foto de perfil" };
                     }
+                } else {
+                    setUserFetched(updatedUserData);
                 }
-                
-                // Actualizar el estado local
-                setUserFetched(updatedUserData);
-                
-                // IMPORTANTE: Actualizar el sessionStorage con los datos actualizados
-                sessionStorage.setItem('userData', JSON.stringify(updatedUserData));
                 
                 setIsSuccess(true);
                 return { success: true, data: responseUser };
