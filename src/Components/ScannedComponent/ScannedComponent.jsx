@@ -1,167 +1,104 @@
-import { useRef, useEffect } from 'react';
-import { FiMapPin, FiCalendar, FiClock, FiMap, FiNavigation2 } from 'react-icons/fi';
+import React from 'react';
+import { FiMapPin, FiCalendar, FiClock, FiMap, FiUser } from 'react-icons/fi';
 import { MdPets } from 'react-icons/md';
 import PropTypes from 'prop-types';
 import './ScannedComponent.css';
+import { useNavigate } from 'react-router-dom';
 
 export const ScannedComponent = ({ scanData }) => {
-  const mapRef = useRef(null);
-  const mapInstanceRef = useRef(null);
-  const markerRef = useRef(null);
+  const navigate = useNavigate();
+  if (!scanData) return null;
 
-  useEffect(() => {
-    // Si no hay datos de ubicación o no se ha cargado Leaflet, no renderizar el mapa
-    if (!scanData?.ubicacion?.latitude || !scanData?.ubicacion?.longitude || !window.L) {
-      return;
-    }
+  const { fecha, hora, location, scannedBy } = scanData;
+  const hasLocation = location && location.latitude && location.longitude;
+  const hasUser = scannedBy && scannedBy._id;
+  
+  // Function to format address
+  const formatAddress = () => {
+    if (!location) return 'Ubicación no disponible';
+    
+    const addressParts = [];
+    if (location.address) addressParts.push(location.address);
+    if (location.ciudad) addressParts.push(location.ciudad);
+    if (location.departamento) addressParts.push(location.departamento);
+    
+    return addressParts.length > 0 ? addressParts.join(', ') : 'Ubicación no disponible';
+  };
 
-    // Si ya existe una instancia del mapa, limpiarla
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.remove();
-      mapInstanceRef.current = null;
-    }
-
-    // Inicializar el mapa
-    const map = window.L.map(mapRef.current).setView(
-      [scanData.ubicacion.latitude, scanData.ubicacion.longitude], 
-      15
-    );
-
-    // Añadir tile layer (OpenStreetMap)
-    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    // Crear icono personalizado de mascota
-    const petIcon = window.L.divIcon({
-      html: `<div class="pet-marker">
-              <div class="pet-marker-inner">
-                <i class="pet-icon">🐾</i>
-              </div>
-            </div>`,
-      className: '',
-      iconSize: [40, 40],
-      iconAnchor: [20, 40]
-    });
-
-    // Añadir marcador con icono personalizado
-    const marker = window.L.marker(
-      [scanData.ubicacion.latitude, scanData.ubicacion.longitude], 
-      { icon: petIcon }
-    ).addTo(map);
-
-    // Añadir popup con información
-    marker.bindPopup(`
-      <b>${scanData.mascotaDetectada}</b><br>
-      Escaneado el ${scanData.fecha} a las ${scanData.hora}<br>
-      <small>${scanData.ubicacion.address || `${scanData.departamento}, ${scanData.ciudad}`}</small>
-    `).openPopup();
-
-    // Guardar referencias para limpieza
-    mapInstanceRef.current = map;
-    markerRef.current = marker;
-
-    // Invalidar tamaño del mapa después de que se haya renderizado
-    setTimeout(() => {
-      map.invalidateSize();
-    }, 100);
-
-    // Limpieza al desmontar
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-        markerRef.current = null;
-      }
-    };
-  }, [scanData]);
-
-  const handleOpenMapView = () => {
-    if (scanData?.ubicacion?.latitude && scanData?.ubicacion?.longitude) {
-      // Abrir en la aplicación de mapas nativa usando el esquema mapview
-      window.location.href = `mapview://?latitude=${scanData.ubicacion.latitude}&longitude=${scanData.ubicacion.longitude}`;
+  // Function to handle redirection to user profile
+  const handleViewUserProfile = () => {
+    if (hasUser) {
+      navigate(`/user-profile/${scannedBy._id}`);
     }
   };
 
   return (
-    <div className="w-full bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg hover:scale-[1.01]">
-      {/* Encabezado */}
-      <div className="p-4 bg-gradient-to-r from-orange-100 to-amber-50 border-b">
-        <h3 className="text-lg font-bold text-gray-800 flex items-center">
-          <MdPets className="mr-2 text-orange-500" /> 
-          Mascota detectada
-        </h3>
-      </div>
-
-      {/* Información principal */}
-      <div className="p-4">
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          {/* Departamento */}
-          <div className="flex flex-col">
-            <div className="flex items-center mb-1 text-gray-500 text-sm">
-              <FiMapPin className="mr-1 text-orange-500" /> Departamento
-            </div>
-            <p className="font-medium text-gray-900 truncate">{scanData?.departamento || 'No disponible'}</p>
-          </div>
-
-          {/* Ciudad */}
-          <div className="flex flex-col">
-            <div className="flex items-center mb-1 text-gray-500 text-sm">
-              <FiMapPin className="mr-1 text-orange-500" /> Ciudad
-            </div>
-            <p className="font-medium text-gray-900 truncate">{scanData?.ciudad || 'No disponible'}</p>
-          </div>
-
-          {/* Fecha */}
-          <div className="flex flex-col">
-            <div className="flex items-center mb-1 text-gray-500 text-sm">
-              <FiCalendar className="mr-1 text-orange-500" /> Fecha
-            </div>
-            <p className="font-medium text-gray-900">{scanData?.fecha || 'No disponible'}</p>
-          </div>
-
-          {/* Hora */}
-          <div className="flex flex-col">
-            <div className="flex items-center mb-1 text-gray-500 text-sm">
-              <FiClock className="mr-1 text-orange-500" /> Hora
-            </div>
-            <p className="font-medium text-gray-900">{scanData?.hora || 'No disponible'}</p>
+    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 lg:p-6">
+      <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-800 mb-3">
+        Escaneo registrado
+      </h3>
+      
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="flex items-start">
+          <FiCalendar className="text-orange-500 mr-2 mt-1 flex-shrink-0" />
+          <div>
+            <p className="text-xs sm:text-sm text-gray-500">Fecha</p>
+            <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700">{fecha || 'No disponible'}</p>
           </div>
         </div>
-
-        {/* Mapa */}
-        <div className="mt-4 relative">
-          <div 
-            ref={mapRef} 
-            className="w-full h-48 rounded-lg overflow-hidden border border-gray-200"
-            style={{ background: '#f0f0f0' }}
-          >
-            {(!scanData?.ubicacion?.latitude || !scanData?.ubicacion?.longitude) && (
-              <div className="flex items-center justify-center h-full bg-gray-100 text-gray-500">
-                <FiMap className="mr-2" /> No hay ubicación disponible
+        
+        <div className="flex items-start">
+          <FiClock className="text-orange-500 mr-2 mt-1 flex-shrink-0" />
+          <div>
+            <p className="text-xs sm:text-sm text-gray-500">Hora</p>
+            <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700">{hora || 'No disponible'}</p>
+          </div>
+        </div>
+        
+        <div className="flex items-start col-span-2">
+          <FiMapPin className="text-orange-500 mr-2 mt-1 flex-shrink-0" />
+          <div>
+            <p className="text-xs sm:text-sm text-gray-500">Ubicación</p>
+            <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700">{formatAddress()}</p>
+          </div>
+        </div>
+        
+        {/* User information */}
+        {hasUser && (
+          <div className="flex items-start col-span-2 mt-2">
+            <FiUser className="text-orange-500 mr-2 mt-1 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-xs sm:text-sm text-gray-500">Escaneado por</p>
+              <div className="flex justify-between items-center">
+                <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700">
+                  {scannedBy.name || 'Usuario'}
+                </p>
+                <button 
+                  onClick={handleViewUserProfile}
+                  className="text-xs bg-orange-100 hover:bg-orange-200 text-orange-700 py-1 px-2 rounded transition-colors"
+                >
+                  Ver perfil
+                </button>
               </div>
-            )}
+            </div>
           </div>
-
-          {/* Botón abrir mapa */}
-          {scanData?.ubicacion?.latitude && scanData?.ubicacion?.longitude && (
-            <button 
-              onClick={handleOpenMapView}
-              className="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-orange-50 transition-colors"
-              title="Abrir en aplicación de mapas"
-            >
-              <FiNavigation2 className="text-orange-500" />
-            </button>
-          )}
-        </div>
-
-        {/* Información de quien escaneó */}
-        {scanData?.escaneadoPor && (
-          <div className="mt-4 pt-3 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
-              Escaneado por: <span className="font-medium text-gray-700">{scanData.escaneadoPor.nombre}</span>
+        )}
+      </div>
+      
+      {/* Map placeholder - will be replaced with Leaflet map */}
+      <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+        {hasLocation ? (
+          <div className="text-center">
+            <FiMapPin className="text-orange-400 mx-auto text-2xl mb-2" />
+            <p className="text-gray-500 text-sm">
+              Coordenadas: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
+            </p>
+            <p className="text-gray-600 text-xs mt-1">
+              El mapa será visible cuando se instale react-leaflet
             </p>
           </div>
+        ) : (
+          <p className="text-gray-500">No hay datos de ubicación disponibles</p>
         )}
       </div>
     </div>
@@ -175,15 +112,18 @@ ScannedComponent.propTypes = {
     ciudad: PropTypes.string,
     fecha: PropTypes.string,
     hora: PropTypes.string,
-    ubicacion: PropTypes.shape({
+    location: PropTypes.shape({
       latitude: PropTypes.number,
       longitude: PropTypes.number,
       address: PropTypes.string,
+      ciudad: PropTypes.string,
+      departamento: PropTypes.string
     }),
-    escaneadoPor: PropTypes.shape({
-      id: PropTypes.string,
-      nombre: PropTypes.string,
+    scannedBy: PropTypes.shape({
+      _id: PropTypes.string,
+      name: PropTypes.string,
       email: PropTypes.string,
-    }),
+      profile_picture: PropTypes.string
+    })
   }).isRequired,
 }; 
