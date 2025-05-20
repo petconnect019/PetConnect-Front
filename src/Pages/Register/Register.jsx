@@ -11,14 +11,13 @@ import { registerSchema } from "../../Validations/validationSchema";
 import { ImSpinner2 } from "react-icons/im";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useFetchRegister } from "../../Hooks/useFetchRegister/useFetchRegister"; // Assuming this is the new custom hook
+import { useFetchRegister } from "../../Hooks/useFetchRegister/useFetchRegister";
 import { InputField } from "../../Components/InputField/InputField.jsx";
 import { PasswordField } from "../../Components/InputField/PasswordField.jsx";
 import emailIcon from '../../assets/images/emailIcon.png'
 import passwordIcon from '../../assets/images/Lock.png'
 import { NavButton } from "../../Components/NavButton/NavButton.jsx";
 import { useFetchUserProfile } from "../../Hooks/useFetchUserProfile/useFetchUserProfile";
-
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -74,14 +73,14 @@ export const Register = () => {
   };
 
   // Efecto para actualizar estados cuando el customHook cambie
-    useEffect(() => {
-      if (isSuccess) {
-        setAccessToken(accessTokenResult);
-      }
-      if (error) {
-        setErrorState(error);
-      }
-    }, [isSuccess, error]);
+  useEffect(() => {
+    if (isSuccess) {
+      setAccessToken(accessTokenResult);
+    }
+    if (error) {
+      setErrorState(error);
+    }
+  }, [isSuccess, error]);
 
   // Efectos para las acciones de los estados
   useEffect(() => {
@@ -107,28 +106,6 @@ export const Register = () => {
   }, [accessToken, userResult]);
 
   // Efecto para manejar los estados de Google
-  useEffect(() => {
-    if (accessToken && userResult) {
-      login(accessToken, userResult);
-      changeHasPetsUser(false);
-      
-      // Usar fetchUserProfile para normalizar y guardar correctamente los datos del usuario
-      fetchUserProfile().then(() => {
-        // Check for redirect URL in sessionStorage
-        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
-        if (redirectUrl) {
-          // Clear the redirect URL
-          sessionStorage.removeItem('redirectAfterLogin');
-          // Navigate to the saved URL
-          navigate(redirectUrl);
-        } else {
-          // Default flow
-          navigate("/step-user");
-        }
-      });
-    }
-  }, [accessToken, userResult]);
-
   useEffect(() => {
     if (user && accessToken) {
       login(accessToken, user);
@@ -181,14 +158,14 @@ export const Register = () => {
           />
         </div>
       )}
-      <div className="h-auto w-full 2xl:min-h-screen 3xl:min-h-screen 4xl:min-h-screen flex  bg-gray-100 xl:items-center xl:justify-center 2xl:items-center 2xl:justify-center 3xl:items-center 3xl:justify-center 4xl:items-center 4xl:justify-center">
+      <div className="h-auto w-full 2xl:min-h-screen 3xl:min-h-screen 4xl:min-h-screen flex bg-gray-100 xl:items-center xl:justify-center 2xl:items-center 2xl:justify-center 3xl:items-center 3xl:justify-center 4xl:items-center 4xl:justify-center">
           <div
             className={`
-          bg-white w-full  xl:max-w-xl 2xl:max-w-2xl 3xl:max-w-2xl 4xl:max-w-2xl p-6 xl:p-2 2xl:p-2 rounded-4xl xl:shadow-lg xl:border xl:border-gray-100 2xl:shadow-lg 2xl:border-gray-100 3xl:shadow-lg 3xl:border 3xl:border-gray-100 4xl:shadow-lg 4xl:border 4xl:border-gray-100
+          bg-white w-full xl:max-w-xl 2xl:max-w-2xl 3xl:max-w-2xl 4xl:max-w-2xl p-6 xl:p-2 2xl:p-2 rounded-4xl xl:shadow-lg xl:border xl:border-gray-100 2xl:shadow-lg 2xl:border-gray-100 3xl:shadow-lg 3xl:border 3xl:border-gray-100 4xl:shadow-lg 4xl:border 4xl:border-gray-100
           ${isLoading ? "blur-sm pointer-events-none" : ""}
         `}
           >
-            <div className=" sm:p-4 md:p-6 lg:p-8 2xl:p-2 xl:p-2 w-auto">
+            <div className="sm:p-4 md:p-6 lg:p-8 2xl:p-2 xl:p-2 w-auto">
                 <div className="mb-6 pl-2">
                   <NavButton onClick={() => navigate(-1)} />
                 </div>
@@ -407,7 +384,7 @@ export const Register = () => {
 
                   {/* Google Sign Up and Register Button */}
                   <div className="space-y-4">
-                  <GoogleSignUp
+                    <GoogleSignUp
                       content={"Inicia sesión con Google"}
                       setUser={setUser}
                       setAccesToken={setAccessToken}
@@ -427,7 +404,7 @@ export const Register = () => {
               </div>
             <div
               className="
-            flex flex-col  w-full items-center
+            flex flex-col w-full items-center
           "
             >
               {/* Toastify Container with improved positioning */}
@@ -444,8 +421,6 @@ export const Register = () => {
                 theme="light"
                 className="z-50"
               />
-
-              
             </div>
           </div>
       </div>

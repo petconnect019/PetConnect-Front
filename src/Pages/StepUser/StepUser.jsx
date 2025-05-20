@@ -16,7 +16,7 @@ import { ModalSpinner } from "../../Components/ModalBasic/ModalRegister";
 
 export const StepUser = () => {
     const navigate = useNavigate();
-    const { register, handleSubmit, setValue,watch } = useForm();
+    const { register, handleSubmit, setValue, watch } = useForm();
     const [profileImage, setProfileImage] = useState(DefaultProfile);
     const [filePfp, setFilePfp] = useState(null);
     const [phone, setPhone] = useState(""); 
@@ -45,9 +45,13 @@ export const StepUser = () => {
                         setDepartment(userData.state || "");
                         setCity(userData.city || "");
                         
-                        // Establecer imagen de perfil si existe
-                        if (userData.profile_picture) {
+                        // Establecer imagen de perfil si existe y es válida
+                        if (userData.profile_picture && userData.profile_picture !== 'undefined') {
                             setProfileImage(userData.profile_picture);
+                            console.log("Cargando imagen de perfil:", userData.profile_picture);
+                        } else {
+                            setProfileImage(DefaultProfile);
+                            console.log("Usando imagen por defecto");
                         }
                     }
                 } catch (error) {
@@ -94,13 +98,14 @@ export const StepUser = () => {
             setProfileImage(imageUrl);
             setFilePfp(file);
         }
+        console.log(File);
+        
     };
 
     const onSubmitForm = async (dataForm) => { 
-    
-
         setShowSpinner(true);
-        setTimeout(async () => {
+        
+        try {
             const formDataUser = new FormData();
             formDataUser.append('name', dataForm.name);
             formDataUser.append('phone', phone);
@@ -110,12 +115,22 @@ export const StepUser = () => {
             formDataUser.append('city', dataForm.city);
             formDataUser.append('address', dataForm.address);
             
-            console.log("Datos enviados:", Object.fromEntries(formDataUser));
+            console.log("Datos a enviar:", Object.fromEntries(formDataUser));
 
-            await updateUser(formDataUser, filePfp);
+            const result = await updateUser(formDataUser, filePfp);
+            console.log("Resultado de la actualización:", result);
+
+            if (result.success) {
+                navigate("/step-pet");
+            } else {
+                console.error("Error en la actualización:", result.error);
+                // Aquí podrías mostrar un mensaje de error al usuario
+            }
+        } catch (error) {
+            console.error("Error inesperado:", error);
+        } finally {
             setShowSpinner(false);
-            navigate("/step-pet");
-        }, 1000);
+        }
     };
 
     return (
@@ -133,6 +148,10 @@ export const StepUser = () => {
                             src={profileImage}
                             alt='userImgDefault'
                             className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 xl:w-40 xl:h-40 2xl:w-44 2xl:h-44 3xl:w-48 3xl:h-48 4xl:w-52 4xl:h-52 rounded-full object-cover"
+                            onError={(e) => {
+                                console.log("Error al cargar imagen, cambiando a imagen por defecto");
+                                e.target.src = DefaultProfile;
+                            }}
                         />
                         <span className='absolute bottom-1 right-0'>
                             <img className='rounded-[0.5rem] w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10 3xl:w-11 3xl:h-11 4xl:w-12 4xl:h-12' src={EditImg} alt="EditImgIcon" />
@@ -176,6 +195,7 @@ export const StepUser = () => {
                             <option value="Otro" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-2xl 4xl:text-3xl">Otro</option>
                         </select>
 
+                        {/* Rest of form fields remain the same */}
                         <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">País</label>
                         <select {...register("country")} className="w-full p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-7 4xl:p-6 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22">
                             <option value="" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl 3xl:text-2xl 4xl:text-3xl">Seleccione su país</option>

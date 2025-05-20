@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import BackButton from '../../assets/images/BackButton.png'
 import { FetchRequestEmail } from "../../Utils/Fetch/FetchRequestEmail/FetchRequestEmail";
 import { useState } from "react";
-import EmailImg from '../../assets/images/emailIcon.png'
+import { NavButton } from "../../Components/NavButton/NavButton";
+import { InputField } from "../../Components/InputField/InputField";
+import emailIcon from '../../assets/images/emailIcon.png'
+
 
 export const RecoverEmail = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -38,39 +40,48 @@ export const RecoverEmail = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md ">
-          <nav className="flex justify-between items-center mb-[1rem]">
-            <li onClick={handleBack} className="list-none"><img src={BackButton} alt="" /></li>
-          </nav>
-          <div className="mb-4 p-7">
-            <h2 className="text-2xl font-bold mb-2  text-center">¿Olvidaste tu contraseña? 🔑</h2>
-              <p className="text-gray-600 mt-3 text-sm ">
+    <div className="h-auto w-full xl:min-h-screen 2xl:min-h-screen 3xl:min-h-screen 4xl:min-h-screen flex  bg-gray-100 xl:items-center xl:justify-center 2xl:items-center 2xl:justify-center 3xl:items-center 3xl:justify-center 4xl:items-center 4xl:justify-center">
+      <div className="bg-white  w-full xl:p-9  xl:max-w-xl 2xl:max-w-2xl 3xl:max-w-2xl 4xl:max-w-2xl 2xl:p-16 4xl:p-10 4xl:p-6 2xl:rounded-4xl 3xl:rounded-4xl 4xl:rounded-4xl xl:rounded-4xl xl:shadow-lg xl:border xl:border-gray-100 2xl:shadow-lg 2xl:border-gray-100 3xl:shadow-lg 3xl:border 3xl:border-gray-100 4xl:shadow-lg 4xl:border 4xl:border-gray-100">
+          <NavButton />
+          <div className="mb-4 p-4 ">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-4xl 2xl:text-4xl 3xl:text-4xl 4xl:text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">¿Olvidaste tu contraseña? 🔑</h2>
+              <p className="4xl:p-3 text-sm xs:text-base sm:text-lg md:text-xl lg:text-xl xl:text-xl 2xl:text-2xl 3xl:text-xl 4xl:text-2xl text-gray-600 font-medium ">
               Lo tenemos cubierto. Ingresa tu correo electrónico registrado para restablecer tu contraseña. Te enviaremos un link donde podrás seguir los pasos.
             </p>
           </div>
           
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-4">
-            <div className="flex items-center bg-gray-100 p-3 rounded-lg border border-gray-300">
-              <span className="text-gray-600 mr-2"><img src={EmailImg} alt="emailIcon" /></span>
-              <input
-                type="email"
-                placeholder="Ingresa tu correo"
-                {...register("email", {
-                  required: "El correo es obligatorio",
-                  pattern: {
-                    value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                    message: "Correo inválido",
-                  },
-                })}
-                className="bg-transparent outline-none w-full text-gray-800 placeholder-gray-400"
-              />
-            </div>
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+          <form onSubmit={handleSubmit(onSubmit)} className="p-4">
+          <div className="mb-4">
+                  <InputField
+                    name="email"
+                    label="Email"
+                    icon={emailIcon}
+                    register={register}
+                    placeholder="Correo electrónico"
+                    validation={{
+                      required: "Este campo es obligatorio",
+                      pattern: {
+                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "Correo electrónico inválido",
+                      },
+                    }}
+                   
+                  />
+                  {errors.email && (
+                    <p
+                      role="alert"
+                      className="text-red-500 text-xs mt-1 animate-fade-in-down"
+                    >
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
             <button
               type="submit"
               disabled={loading || disabled}
-              className={`w-full py-2 px-4 rounded-lg text-white transition-all text-sm font-semibold 
+              className={`block mx-auto w-full max-w-xl bg-brand mt-5  md:mt-10 md:ml-0 md:mr-0 md:max-w-4xl
+              text-white py-3 xs:py-3.5 sm:py-4 md:py-4.5 lg:py-5 xl:py-2 2xl:py-3 3xl:py-3 4xl:py-3  rounded-full  
+              text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-xl 2xl:text-2xl 3xl:text-2xl 4xl:text-2xl font-medium shadow-md 
                 ${disabled ? "bg-gray-400 cursor-not-allowed" : "bg-orange-400 hover:bg-orange-600"}`}
             >
               {loading ? "Enviando..." : "Confirmar"}
