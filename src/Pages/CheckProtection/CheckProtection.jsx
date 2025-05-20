@@ -14,60 +14,57 @@ import { ScannedComponent } from "../../Components/ScannedComponent/ScannedCompo
 import defaultDog from "../../assets/images/DogProfilePfp.png";
 import defaultCat from "../../assets/images/CatProfilePfp.png";
 import { MdPets } from "react-icons/md";
+import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
+// Import Leaflet components - add these after installing the packages
+// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+// import L from 'leaflet';
+// import 'leaflet/dist/leaflet.css';
+// import markerIcon from 'leaflet/dist/images/marker-icon.png';
+// import markerIconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 export const CheckProtection = () => {
   const pets = usePet();
   const navigate = useNavigate();
+  const { isFetchedPets } = useIsFetchedPets();
 
   const { petList } = pets ?? {};
   const { getQrsById, isLoading, error, qrsResult } = useFetchQrsUser();
 
+  // Fetch pets if not already fetched
+  useFetchPets(true);
+
   //estados del componente
   const [protectionRender, setProtectionRender] = useState("tag");
-  const [selectedPet, setSelectedPet] = useState(petList?.[0] || null);
+  const [selectedPet, setSelectedPet] = useState(null);
   const [refreshQRs, setRefreshQRs] = useState(false);
   const [scanHistory, setScanHistory] = useState([]);
   const [isLoadingScans, setIsLoadingScans] = useState(false);
   const [sortNewest, setSortNewest] = useState(true);
+  const [mapReady, setMapReady] = useState(false);
 
-  // Referencia para el script de Leaflet
-  const leafletScriptRef = useRef(null);
-
-  // Cargar la librería de Leaflet si no está cargada
+  // Fix Leaflet marker icon issues - uncomment after installing packages
+  /*
   useEffect(() => {
-    if (window.L) return; // Si ya está cargada, no hacer nada
+    // Fix the default icon issue in react-leaflet
+    delete L.Icon.Default.prototype._getIconUrl;
     
-    const loadLeaflet = () => {
-      // Cargar CSS de Leaflet
-      const leafletCSS = document.createElement('link');
-      leafletCSS.rel = 'stylesheet';
-      leafletCSS.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      leafletCSS.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
-      leafletCSS.crossOrigin = '';
-      document.head.appendChild(leafletCSS);
-      
-      // Cargar script de Leaflet
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';
-      script.crossOrigin = '';
-      script.async = true;
-      script.onload = () => {
-        console.log('Leaflet cargado correctamente');
-      };
-      document.body.appendChild(script);
-      leafletScriptRef.current = script;
-    };
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: null,
+      iconUrl: markerIcon,
+      shadowUrl: markerIconShadow,
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      tooltipAnchor: [16, -28],
+      shadowSize: [41, 41]
+    });
     
-    loadLeaflet();
-    
-    // Limpiar al desmontar
-    return () => {
-      if (leafletScriptRef.current) {
-        document.body.removeChild(leafletScriptRef.current);
-      }
-    };
+    setMapReady(true);
   }, []);
+  */
+  
+  // Replace the old Leaflet loading code with this initialization
+  // The old code from lines 38-70 can be removed
 
   // Función para cargar los escaneos
   const fetchScans = async (petId) => {
@@ -126,7 +123,7 @@ export const CheckProtection = () => {
     }
   }, [protectionRender, selectedPet, refreshQRs, qrsResult, sortNewest]);
 
-  //se selecciona la primera mascota al inicializar el componente
+  //se selecciona la primera mascota al inicializar el componente o cuando se cargan las mascotas
   useEffect(() => {
     if (petList?.length > 0) {
       setSelectedPet(petList[0]);
@@ -159,6 +156,107 @@ export const CheckProtection = () => {
 
   // Filtrar QRs para la mascota seleccionada
   const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === selectedPet?._id) || [];
+
+  // Component para mostrar el mapa - uncomment after installing packages
+  /*
+  const ScanLocationMap = ({ scanData }) => {
+    if (!scanData || !scanData.location || !scanData.location.latitude || !scanData.location.longitude) {
+      return (
+        <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+          <p className="text-gray-500">No hay datos de ubicación disponibles</p>
+        </div>
+      );
+    }
+    
+    const position = [scanData.location.latitude, scanData.location.longitude];
+    
+    return (
+      <div className="h-48 rounded-lg overflow-hidden">
+        {mapReady && (
+          <MapContainer 
+            center={position} 
+            zoom={14} 
+            style={{ height: "100%", width: "100%" }}
+            attributionControl={false}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <Marker position={position}>
+              <Popup>
+                {scanData.location.address || 'Ubicación de escaneo'}
+                <br />
+                {scanData.fecha} {scanData.hora}
+              </Popup>
+            </Marker>
+          </MapContainer>
+        )}
+      </div>
+    );
+  };
+  */
+  
+  // Componente para el mapa que muestra todos los escaneos
+  /*
+  const AllScansMap = ({ scanHistory }) => {
+    if (!scanHistory || scanHistory.length === 0) {
+      return null;
+    }
+    
+    // Filtrar escaneos que tienen datos de ubicación
+    const validScans = scanHistory.filter(scan => 
+      scan.location && scan.location.latitude && scan.location.longitude
+    );
+    
+    if (validScans.length === 0) {
+      return null;
+    }
+    
+    // Calcular el centro del mapa (promedio de todas las ubicaciones)
+    const center = validScans.reduce(
+      (acc, scan) => {
+        return [
+          acc[0] + scan.location.latitude / validScans.length,
+          acc[1] + scan.location.longitude / validScans.length
+        ];
+      },
+      [0, 0]
+    );
+    
+    return (
+      <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">Mapa de escaneos</h3>
+        <div className="h-64 sm:h-72 md:h-80 lg:h-96 rounded-lg overflow-hidden">
+          {mapReady && (
+            <MapContainer 
+              center={center} 
+              zoom={12} 
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              {validScans.map((scan, index) => (
+                <Marker 
+                  key={`marker-${index}`} 
+                  position={[scan.location.latitude, scan.location.longitude]}
+                >
+                  <Popup>
+                    <strong>{selectedPet?.name || 'Mascota'}</strong><br />
+                    {scan.location.address || 'Ubicación de escaneo'}<br />
+                    Escaneado: {scan.fecha} {scan.hora}
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          )}
+        </div>
+      </div>
+    );
+  };
+  */
 
   return (
     <div className="w-full max-w-[375px] sm:max-w-[576px] md:max-w-[768px] lg:max-w-[992px] xl:max-w-[1200px] 2xl:max-w-[1440px] 3xl:max-w-[1680px] 4xl:max-w-[1920px] mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-lg">
@@ -242,6 +340,9 @@ export const CheckProtection = () => {
             </button>
           </div>
 
+          {/* Map showing all scan locations - uncomment after installing packages */}
+          {/* {scanHistory.length > 0 && <AllScansMap scanHistory={scanHistory} />} */}
+
           {/* Grid de escaneos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:gap-8 mt-6">
             {isLoadingScans ? (
@@ -274,6 +375,11 @@ export const CheckProtection = () => {
               // Mostrar historial de escaneos
               scanHistory.map((scan, index) => (
                 <ScannedComponent key={`scan-${index}`} scanData={scan} />
+                // Replace the line above with this when the packages are installed
+                // <div key={`scan-${index}`} className="bg-white rounded-xl shadow-sm p-4">
+                //   <ScannedComponent scanData={scan} />
+                //   <ScanLocationMap scanData={scan} />
+                // </div>
               ))
             ) : (
               // Mensaje de no hay datos

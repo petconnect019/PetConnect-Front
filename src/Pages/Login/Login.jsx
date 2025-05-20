@@ -82,10 +82,21 @@ export const Login = () => {
       if (hasPetsState) {
         changeHasPetsUser(true);
       }
-      if (isNewUserState) {
-        navigate("/step-user");
+      
+      // Check if there's a redirect URL saved in sessionStorage
+      const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+      if (redirectUrl) {
+        // Clear the redirect URL from sessionStorage
+        sessionStorage.removeItem('redirectAfterLogin');
+        // Navigate to the saved URL
+        navigate(redirectUrl);
       } else {
-        navigate("/home");
+        // Normal flow based on user state
+        if (isNewUserState) {
+          navigate("/step-user");
+        } else {
+          navigate("/home");
+        }
       }
     }
   }, [user]);

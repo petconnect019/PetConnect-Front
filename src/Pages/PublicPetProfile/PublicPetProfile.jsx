@@ -169,9 +169,10 @@ export const PublicPetProfile = () => {
 
   const handleContactOwner = async () => {
     if (!isAuthenticated) {
-      // Guardar el ID de la mascota en sessionStorage para redirigir después del registro
-      sessionStorage.setItem('redirectToPetId', pet_id);
-      navigate('/register');
+      // Save current path to redirect back after authentication
+      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+      // Give option to login or register
+      navigate('/login');
       return;
     }
 
