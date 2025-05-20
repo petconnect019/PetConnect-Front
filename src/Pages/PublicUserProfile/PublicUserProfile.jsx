@@ -68,7 +68,7 @@ export const PublicUserProfile = () => {
       
       try {
         setLoadingPets(true);
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/user/${user_id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user_id}/pets`);
         const data = await response.json();
         
         if (data && data.ok && data.pets) {
@@ -76,6 +76,8 @@ export const PublicUserProfile = () => {
         }
       } catch (err) {
         console.error('Error al obtener las mascotas del usuario:', err);
+        // No mostramos el error al usuario ya que las mascotas son opcionales
+        setUserPets([]);
       } finally {
         setLoadingPets(false);
       }
@@ -222,10 +224,14 @@ export const PublicUserProfile = () => {
         
         <div className="bg-red-50 p-6 rounded-lg text-center max-w-md mx-auto">
           <p className="text-red-500 font-medium mb-2">
-            {error || 'No se encontró el perfil del usuario'}
+            {error === 'Este perfil no es público' 
+              ? 'Este perfil es privado'
+              : error || 'No se encontró el perfil del usuario'}
           </p>
           <p className="text-gray-600 text-sm">
-            Es posible que el usuario no exista o que no esté disponible en este momento.
+            {error === 'Este perfil no es público'
+              ? 'El usuario ha configurado su perfil como privado.'
+              : 'Es posible que el usuario no exista o que no esté disponible en este momento.'}
           </p>
         </div>
       </div>
@@ -318,11 +324,21 @@ export const PublicUserProfile = () => {
               {userProfile.name}
             </h2>
             
+            {/* User gender */}
+            {userProfile.gender && userProfile.gender !== 'Otro' && (
+              <p className="text-gray-600 text-sm mb-2">
+                {userProfile.gender}
+              </p>
+            )}
+            
             {/* User location */}
             {userProfile.city && userProfile.state && (
               <div className="flex items-center text-gray-600 mb-4">
                 <FiMapPin className="text-orange-500 mr-1" />
-                <p className="text-sm">{userProfile.city}, {userProfile.state}</p>
+                <p className="text-sm">
+                  {userProfile.city}, {userProfile.state}
+                  {userProfile.country && userProfile.country !== 'Colombia' && `, ${userProfile.country}`}
+                </p>
               </div>
             )}
             
