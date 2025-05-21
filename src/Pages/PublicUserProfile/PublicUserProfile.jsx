@@ -40,9 +40,8 @@ export const PublicUserProfile = () => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
-        console.log('Fetching from:', `${import.meta.env.VITE_API_URL}/api/users/${user_id}`);
         
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user_id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/public/${user_id}`);
         console.log('Response status:', response.status);
         
         // Si la respuesta no es ok, intentamos leer el texto del error
@@ -88,9 +87,9 @@ export const PublicUserProfile = () => {
       
       try {
         setLoadingPets(true);
-        console.log('Fetching pets from:', `${import.meta.env.VITE_API_URL}/api/users/${user_id}/pets`);
+        console.log('Fetching pets from:', `${import.meta.env.VITE_API_URL}/api/users/public/${user_id}/pets`);
         
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user_id}/pets`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/public/${user_id}/pets`);
         console.log('Pets response status:', response.status);
 
         if (!response.ok) {
