@@ -40,16 +40,36 @@ export const PublicUserProfile = () => {
     const fetchUserProfile = async () => {
       try {
         setLoading(true);
+        console.log('Fetching from:', `${import.meta.env.VITE_API_URL}/api/users/${user_id}`);
+        
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user_id}`);
+        console.log('Response status:', response.status);
+        
+        // Si la respuesta no es ok, intentamos leer el texto del error
+        if (!response.ok) {
+          const textResponse = await response.text();
+          console.error('Error response:', textResponse);
+          
+          try {
+            // Intentamos parsear como JSON por si acaso
+            const errorData = JSON.parse(textResponse);
+            throw new Error(errorData.message || 'Error del servidor');
+          } catch (parseError) {
+            // Si no es JSON, usamos el texto como está
+            throw new Error(`Error del servidor: ${textResponse}`);
+          }
+        }
+
         const data = await response.json();
+        console.log('Response data:', data);
         
         if (data && data.ok && data.profile) {
           setUserProfile(data.profile);
         } else {
-          throw new Error('No se pudo obtener la información del usuario');
+          throw new Error('Formato de respuesta inválido');
         }
       } catch (err) {
-        console.error('Error al obtener el perfil del usuario:', err);
+        console.error('Error completo:', err);
         setError(err.message || 'Error al cargar el perfil del usuario');
       } finally {
         setLoading(false);
@@ -68,15 +88,27 @@ export const PublicUserProfile = () => {
       
       try {
         setLoadingPets(true);
+        console.log('Fetching pets from:', `${import.meta.env.VITE_API_URL}/api/users/${user_id}/pets`);
+        
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user_id}/pets`);
+        console.log('Pets response status:', response.status);
+
+        if (!response.ok) {
+          const textResponse = await response.text();
+          console.error('Pets error response:', textResponse);
+          throw new Error('Error al obtener las mascotas');
+        }
+
         const data = await response.json();
+        console.log('Pets response data:', data);
         
         if (data && data.ok && data.pets) {
           setUserPets(data.pets);
+        } else {
+          setUserPets([]);
         }
       } catch (err) {
-        console.error('Error al obtener las mascotas del usuario:', err);
-        // No mostramos el error al usuario ya que las mascotas son opcionales
+        console.error('Error completo al obtener mascotas:', err);
         setUserPets([]);
       } finally {
         setLoadingPets(false);
