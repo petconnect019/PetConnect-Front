@@ -88,6 +88,7 @@ export const PublicPetProfile = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
+    
   }, [petData]);
 
   const trigguerGetId = () => {
@@ -176,29 +177,9 @@ export const PublicPetProfile = () => {
       return;
     }
 
-    try {
-      setIsContactingOwner(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/pet/${pet_id}/start`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
-        }
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error al crear la conversación');
-      }
-
-      const data = await response.json();
-      navigate(`/chat/${data.chat._id}`);
-    } catch (error) {
-      console.error('Error al crear la conversación:', error);
-      alert('No se pudo iniciar la conversación. Por favor, intenta de nuevo.');
-    } finally {
-      setIsContactingOwner(false);
-    }
+    setIsContactingOwner(true);
+    navigate(`/user-profile/${petData?.owner?._id}`);
+    setIsContactingOwner(false);
   };
 
   const petDetails = [
@@ -526,7 +507,7 @@ export const PublicPetProfile = () => {
                   {isContactingOwner ? (
                     <>
                       <ImSpinner2 className="animate-spin mr-2" />
-                      <span>Iniciando chat...</span>
+                      <span>Cargando...</span>
                     </>
                   ) : (
                     <>
