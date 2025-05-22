@@ -34,6 +34,7 @@ import { CheckProtection } from "../Pages/CheckProtection/CheckProtection";
 import { PaymentShop } from "../Pages/Ecommerce/PaymentShop";
 import { ChangePassword } from "../Pages/ChangePassword/ChangePassword";
 import {ScanQR} from '../Pages/ScanQR/ScanQR'
+import { PublicUserProfile } from "../Pages/PublicUserProfile/PublicUserProfile";
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -84,6 +85,10 @@ export const routes = createBrowserRouter([
   {
     path: '/qr-landing/:qrId',
     element: <QRScanLanding />,
+  }, 
+  {
+    path: '/user-profile/:user_id',
+    element: <PublicUserProfile />,
   },
 
   // 🔒 Rutas protegidas (Requieren autenticación)
