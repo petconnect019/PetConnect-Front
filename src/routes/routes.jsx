@@ -87,7 +87,7 @@ export const routes = createBrowserRouter([
     element: <QRScanLanding />,
   }, 
   {
-    path: '/public-user-profile/:user_id',
+    path: '/user-profile/:user_id',
     element: <PublicUserProfile />,
   },
 
