@@ -21,7 +21,6 @@ import { MapView } from "../Pages/MapView/MapView";
 import { PetDetails } from "../Pages/PetDetails/PetDetails";
 import { PetProfile } from "../Pages/PetProfile/PetProfile";
 import { PublicPetProfile } from "../Pages/PublicPetProfile/PublicPetProfile";
-import { PublicUserProfile } from "../Pages/PublicUserProfile/PublicUserProfile";
 import { QRScanLanding } from "../Pages/QRScanLanding/QRScanLanding";
 import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
@@ -86,8 +85,90 @@ export const routes = createBrowserRouter([
     path: '/qr-landing/:qrId',
     element: <QRScanLanding />,
   },
+
+  // 🔒 Rutas protegidas (Requieren autenticación)
   {
-    path: '/user-profile/:user_id',
-    element: <PublicUserProfile />,
+    path: '/home',
+    element: <ProtectRoute><Home /></ProtectRoute>,
+  },
+  {
+    path: '/step-pet',
+    element: <ProtectRoute><StepPet /></ProtectRoute>,
+  },
+  {
+    path: '/step-user',
+    element: <ProtectRoute><StepUser /></ProtectRoute>,
+  },
+  {
+    path: '/step-tag/:pet_id',
+    element: <ProtectRoute><StepTag /></ProtectRoute>,
+  },
+  {
+    path: '/scanner/:pet_id',
+    element: <ProtectRoute><Scanner /></ProtectRoute>,
+  },
+  {
+    path: '/notifications',
+    element: <ProtectRoute><Notifications /></ProtectRoute>,
+  },
+  {
+    path: '/map-view',
+    element: <ProtectRoute><MapView /></ProtectRoute>,
+  },
+  {
+    path: '/pet-details/:pet_id',
+    element: <ProtectRoute><PetDetails /></ProtectRoute>,
+  },
+  {
+    path: '/pet-profile/:pet_id',
+    element: <ProtectRoute><PetProfile /></ProtectRoute>,
+  },
+  {
+    path: '/my-pets',
+    element: <ProtectRoute><MyPets /></ProtectRoute>,
+  },
+  {
+    path: '/new_pet_1',
+    element: <ProtectRoute><NewPet1 /></ProtectRoute>,
+  },
+  {
+    path: '/user-profile-config/:user_id',
+    element: <ProtectRoute><UserProfileConfig /></ProtectRoute>,
+  },
+  {
+    path: '/ecommerce',
+    element: <ProtectRoute><Ecommerce /></ProtectRoute>,
+  },
+  {
+    path: '/check-protection',
+    element: <ProtectRoute><CheckProtection /></ProtectRoute>,
+  },
+  {
+    path: '/messages',
+    element: <ProtectRoute><Messages /></ProtectRoute>,
+  },
+  {
+    path: '/chat',
+    element: <ProtectRoute><Chat /></ProtectRoute>,
+  },
+  {
+    path: '/chat/:chat_id',
+    element: <ProtectRoute><Chat /></ProtectRoute>,
+  },
+  {
+    path: '/settings',
+    element: <ProtectRoute><Settings /></ProtectRoute>,
+  },
+  {
+    path: "/payment/shop",
+    element: <ProtectRoute><PaymentShop /></ProtectRoute>
+  },
+  {
+    path: '/change-password',
+    element: <ProtectRoute><ChangePassword /></ProtectRoute>,
+  },
+  {
+    path: '/scan-qr',
+    element: <ProtectRoute><ScanQR /> </ProtectRoute>
   },
 ]);
