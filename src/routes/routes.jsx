@@ -35,6 +35,7 @@ import { PaymentShop } from "../Pages/Ecommerce/PaymentShop";
 import { ChangePassword } from "../Pages/ChangePassword/ChangePassword";
 import {ScanQR} from '../Pages/ScanQR/ScanQR'
 import { PublicUserProfile } from "../Pages/PublicUserProfile/PublicUserProfile";
+import { QRScanLanding } from "../Pages/QRScanLanding/QRScanLanding";
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -175,5 +176,5 @@ export const routes = createBrowserRouter([
   {
     path: '/scan-qr',
     element: <ProtectRoute><ScanQR /> </ProtectRoute>
-  },
+  }
 ]);

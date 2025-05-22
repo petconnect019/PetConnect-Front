@@ -29,10 +29,9 @@ export const PublicUserProfile = () => {
 
   // Predefined messages
   const predefinedMessages = [
-    "¡Hola! Vi que encontraste a mi mascota, ¿podrías darme más detalles?",
-    "Gracias por escanear el código QR de mi mascota, ¿dónde la viste?",
-    "Me gustaría contactarte sobre mi mascota, ¿estás disponible para hablar?",
-    "Tengo algunas preguntas sobre el escaneo de mi mascota, ¿podrías ayudarme?"
+    "¡Hola! acabo de escanear el código QR de tu mascota, ¿me puedes ayudar?",
+    "De casualidad, ¿tienes información sobre la mascota que encontré?",
+    "Hola, soy un usuario de PetConnect y he encontrado a tu mascota. ¿Podrías ayudarme?",
   ];
 
   // Fetch user profile data
@@ -464,7 +463,6 @@ export const PublicUserProfile = () => {
         {/* Footer with disclaimer */}
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>© 2023 PetConnect - Conectando mascotas con familias amorosas</p>
-          <p className="mt-1">La información de contacto solo se muestra si el usuario lo permite.</p>
         </div>
       </div>
 
