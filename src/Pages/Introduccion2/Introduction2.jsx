@@ -14,9 +14,9 @@ export const Introduction2 = () => {
             setIsLargeScreen(width >= 1280);
             
             if (width < 375) { 
-                setEllipseHeight('460px');
+                setEllipseHeight('400px');
             } else if (width < 427) {
-                setEllipseHeight('460px');
+                setEllipseHeight('390px');
             } else if (width < 479) {
                 setEllipseHeight('550px');
             } else if (width < 819) {
