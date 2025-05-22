@@ -16,9 +16,9 @@ export const Introduction1 = () => {
             setIsLargeScreen(width >= 1280);
             
             if (width < 375) { 
-                setEllipseHeight('430px');
+                setEllipseHeight('400px');
             } else if (width < 427) {
-                setEllipseHeight('460px');
+                setEllipseHeight('390px');
             } else if (width < 479) {
                 setEllipseHeight('550px');
             } else if (width < 819) {
@@ -92,7 +92,7 @@ export const Introduction1 = () => {
                                 <div className='flex flex-col justify-center items-center gap-4'>
                                     <button 
                                         onClick={handleContinue}
-                                        className="w-full max-w-md bg-brand text-white py-4 xl:py-5 2xl:py-6 3xl:py-7 4xl:py-8 rounded-full text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                                        className="w-full max-w-md bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 xl:py-5 2xl:py-6 3xl:py-7 4xl:py-8 rounded-full text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                                     >
                                         Continuar
                                     </button>
