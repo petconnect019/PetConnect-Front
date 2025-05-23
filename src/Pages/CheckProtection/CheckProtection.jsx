@@ -20,8 +20,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerIconShadow from 'leaflet/dist/images/marker-shadow.png';
-import { ScanCard } from '../../Components/ScanCard/ScanCard';
-import { AllScansMap } from '../../Components/AllScansMap/AllScansMap';
+import { ScanCard } from "../../Components/ScanCard/ScanCard";
+import { AllScansMap } from "../../Components/AllScansMaps/AllScansMaps";
 
 export const CheckProtection = () => {
   const pets = usePet();
