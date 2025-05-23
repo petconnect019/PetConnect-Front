@@ -14,6 +14,7 @@ export const ScannedComponent = ({ scanData }) => {
   const { fecha, hora, location, scannedBy } = scanData;
   const hasLocation = location && location.latitude && location.longitude;
   const hasUser = scannedBy && scannedBy._id;
+  const position = [location.latitude, location.longitude];
   
   // Function to format address
   const formatAddress = () => {
