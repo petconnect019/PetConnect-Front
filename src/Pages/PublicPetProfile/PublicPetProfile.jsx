@@ -178,6 +178,8 @@ export const PublicPetProfile = () => {
     }
 
     setIsContactingOwner(true);
+    console.log(petData);
+    
     navigate(`/user-profile/${petData?.owner?._id}`);
     setIsContactingOwner(false);
   };
@@ -524,7 +526,6 @@ export const PublicPetProfile = () => {
         {/* Footer con información legal */}
         <div className="mt-10 text-center text-sm text-gray-500">
           <p>© 2023 PetConnect - Conectando mascotas con familias amorosas</p>
-          <p className="mt-1">Al contactar a propietarios, aceptas nuestros términos y políticas.</p>
         </div>
       </div>
     </div>
