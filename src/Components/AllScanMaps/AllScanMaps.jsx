@@ -1,17 +1,13 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-export const ScanMap = ({ 
-  scans, 
-  height = "100%", 
-  zoom = 12,
-  title,
-  showTitle = false,
-  className = "",
-  markerContent = (scan) => `Ubicación de escaneo: ${scan.fecha} ${scan.hora}`
-}) => {
+export const AllScansMap = ({ scanHistory, selectedPet }) => {
+  if (!scanHistory || scanHistory.length === 0) {
+    return null;
+  }
+  
   // Filtrar escaneos que tienen datos de ubicación
-  const validScans = scans.filter(scan => 
+  const validScans = scanHistory.filter(scan => 
     scan.location && scan.location.latitude && scan.location.longitude
   );
   
@@ -31,14 +27,12 @@ export const ScanMap = ({
   );
   
   return (
-    <div className={`bg-white rounded-lg overflow-hidden ${className}`}>
-      {showTitle && title && (
-        <h3 className="text-lg font-semibold text-gray-800 p-4">{title}</h3>
-      )}
-      <div style={{ height }} className="w-full">
+    <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+      <h3 className="text-lg font-semibold text-gray-800 mb-3">Mapa de escaneos</h3>
+      <div className="h-64 sm:h-72 md:h-80 lg:h-96 rounded-lg overflow-hidden">
         <MapContainer 
           center={center} 
-          zoom={zoom} 
+          zoom={12} 
           style={{ height: "100%", width: "100%" }}
         >
           <TileLayer
@@ -51,7 +45,9 @@ export const ScanMap = ({
               position={[scan.location.latitude, scan.location.longitude]}
             >
               <Popup>
-                {typeof markerContent === 'function' ? markerContent(scan) : markerContent}
+                <strong>{selectedPet?.name || 'Mascota'}</strong><br />
+                {scan.location.address || 'Ubicación de escaneo'}<br />
+                Escaneado: {scan.fecha} {scan.hora}
               </Popup>
             </Marker>
           ))}
