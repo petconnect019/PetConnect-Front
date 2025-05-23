@@ -3,18 +3,17 @@ import { ScannedComponent } from '../ScannedComponent/ScannedComponent';
 import 'leaflet/dist/leaflet.css';
 
 const ScanLocationMap = ({ scanData }) => {
-  if (!scanData || !scanData.location || !scanData.location.latitude || !scanData.location.longitude) {
-    return (
-      <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center">
-        <p className="text-gray-500">No hay datos de ubicación disponibles</p>
-      </div>
-    );
+  // Verificar si tenemos datos de ubicación válidos
+  const hasValidLocation = scanData?.location?.latitude && scanData?.location?.longitude;
+  
+  if (!hasValidLocation) {
+    return null; // No renderizar el mapa si no hay datos de ubicación
   }
   
   const position = [scanData.location.latitude, scanData.location.longitude];
   
   return (
-    <div className="h-48 rounded-lg overflow-hidden">
+    <div className="h-48 rounded-lg overflow-hidden mt-4">
       <MapContainer 
         center={position} 
         zoom={14} 
@@ -29,7 +28,9 @@ const ScanLocationMap = ({ scanData }) => {
           <Popup>
             {scanData.location.address || 'Ubicación de escaneo'}
             <br />
-            {scanData.fecha} {scanData.hora}
+            Fecha: {new Date(scanData.scanDate || scanData.createdAt).toLocaleDateString()}
+            <br />
+            Hora: {new Date(scanData.scanDate || scanData.createdAt).toLocaleTimeString()}
           </Popup>
         </Marker>
       </MapContainer>
@@ -38,10 +39,18 @@ const ScanLocationMap = ({ scanData }) => {
 };
 
 export const ScanCard = ({ scanData }) => {
+  const hasLocation = scanData?.location?.latitude && scanData?.location?.longitude;
+
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
       <ScannedComponent scanData={scanData} />
-      <ScanLocationMap scanData={scanData} />
+      {hasLocation ? (
+        <ScanLocationMap scanData={scanData} />
+      ) : (
+        <div className="h-12 mt-4 flex items-center justify-center text-gray-500 text-sm">
+          No hay datos de ubicación disponibles
+        </div>
+      )}
     </div>
   );
-}; 
+};
