@@ -32,6 +32,7 @@ export const PublicPetProfile = () => {
   const [copySuccess, setCopySuccess] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [redirected, setRedirected] = useState(false);
   
   // Referencia para el contenedor del carrusel
   const carouselRef = useRef(null);
@@ -170,6 +171,7 @@ export const PublicPetProfile = () => {
 
   const handleContactOwner = async () => {
     if (!isAuthenticated) {
+      setRedirected(true);
       // Save current path to redirect back after authentication
       sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
       // Give option to login or register
@@ -178,11 +180,16 @@ export const PublicPetProfile = () => {
     }
 
     setIsContactingOwner(true);
-    console.log(petData);
     
     navigate(`/user-profile/${petData?.owner?._id}`);
     setIsContactingOwner(false);
   };
+
+  useEffect(()=> {
+    if (redirected) {
+      navigate(`/user-profile/${petData?.owner?._id}`);
+    }
+  }, [redirected]);
 
   const petDetails = [
     { 
