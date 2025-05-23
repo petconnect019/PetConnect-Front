@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { ScannedComponent } from '../ScannedComponent/ScannedComponent';
+import { ScannedComponent } from '../../Components/ScannedComponent/ScannedComponent';
 import 'leaflet/dist/leaflet.css';
 
 const ScanLocationMap = ({ scanData }) => {
