@@ -15,12 +15,11 @@ import defaultDog from "../../assets/images/DogProfilePfp.png";
 import defaultCat from "../../assets/images/CatProfilePfp.png";
 import { MdPets } from "react-icons/md";
 import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
-// Import Leaflet components - add these after installing the packages
-// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-// import L from 'leaflet';
-// import 'leaflet/dist/leaflet.css';
-// import markerIcon from 'leaflet/dist/images/marker-icon.png';
-// import markerIconShadow from 'leaflet/dist/images/marker-shadow.png';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerIconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 export const CheckProtection = () => {
   const pets = usePet();
@@ -42,8 +41,7 @@ export const CheckProtection = () => {
   const [sortNewest, setSortNewest] = useState(true);
   const [mapReady, setMapReady] = useState(false);
 
-  // Fix Leaflet marker icon issues - uncomment after installing packages
-  /*
+
   useEffect(() => {
     // Fix the default icon issue in react-leaflet
     delete L.Icon.Default.prototype._getIconUrl;
@@ -61,10 +59,7 @@ export const CheckProtection = () => {
     
     setMapReady(true);
   }, []);
-  */
-  
-  // Replace the old Leaflet loading code with this initialization
-  // The old code from lines 38-70 can be removed
+
 
   // Función para cargar los escaneos
   const fetchScans = async (petId) => {
@@ -157,8 +152,8 @@ export const CheckProtection = () => {
   // Filtrar QRs para la mascota seleccionada
   const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === selectedPet?._id) || [];
 
-  // Component para mostrar el mapa - uncomment after installing packages
-  /*
+  // Component para mostrar el mapa 
+
   const ScanLocationMap = ({ scanData }) => {
     if (!scanData || !scanData.location || !scanData.location.latitude || !scanData.location.longitude) {
       return (
@@ -195,10 +190,10 @@ export const CheckProtection = () => {
       </div>
     );
   };
-  */
+
   
   // Componente para el mapa que muestra todos los escaneos
-  /*
+
   const AllScansMap = ({ scanHistory }) => {
     if (!scanHistory || scanHistory.length === 0) {
       return null;
@@ -256,7 +251,7 @@ export const CheckProtection = () => {
       </div>
     );
   };
-  */
+
 
   return (
     <div className="w-full max-w-[375px] sm:max-w-[576px] md:max-w-[768px] lg:max-w-[992px] xl:max-w-[1200px] 2xl:max-w-[1440px] 3xl:max-w-[1680px] 4xl:max-w-[1920px] mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-lg">
@@ -340,8 +335,8 @@ export const CheckProtection = () => {
             </button>
           </div>
 
-          {/* Map showing all scan locations - uncomment after installing packages */}
-          {/* {scanHistory.length > 0 && <AllScansMap scanHistory={scanHistory} />} */}
+          {/* Map showing all scan locations  */}
+          {scanHistory.length > 0 && <AllScansMap scanHistory={scanHistory} />}
 
           {/* Grid de escaneos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:gap-8 mt-6">
@@ -374,12 +369,10 @@ export const CheckProtection = () => {
             ) : scanHistory.length > 0 ? (
               // Mostrar historial de escaneos
               scanHistory.map((scan, index) => (
-                <ScannedComponent key={`scan-${index}`} scanData={scan} />
-                // Replace the line above with this when the packages are installed
-                // <div key={`scan-${index}`} className="bg-white rounded-xl shadow-sm p-4">
-                //   <ScannedComponent scanData={scan} />
-                //   <ScanLocationMap scanData={scan} />
-                // </div>
+                <div key={`scan-${index}`} className="bg-white rounded-xl shadow-sm p-4">
+                  <ScannedComponent scanData={scan} />
+                  <ScanLocationMap scanData={scan} />
+                </div>
               ))
             ) : (
               // Mensaje de no hay datos
