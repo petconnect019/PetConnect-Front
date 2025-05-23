@@ -3,14 +3,15 @@ import { ScannedComponent } from '../ScannedComponent/ScannedComponent';
 import 'leaflet/dist/leaflet.css';
 
 const ScanLocationMap = ({ scanData }) => {
-  // Verificar si tenemos datos de ubicación válidos
-  const hasValidLocation = scanData?.location?.latitude && scanData?.location?.longitude;
+  // Verificar si tenemos datos de ubicación válidos (considerando ambas estructuras posibles)
+  const location = scanData?.location || scanData?.ubicacion;
+  const hasValidLocation = location?.latitude && location?.longitude;
   
   if (!hasValidLocation) {
     return null;
   }
   
-  const position = [scanData.location.latitude, scanData.location.longitude];
+  const position = [location.latitude, location.longitude];
   
   return (
     <div className="h-48 rounded-lg overflow-hidden mt-4">
@@ -26,7 +27,7 @@ const ScanLocationMap = ({ scanData }) => {
         />
         <Marker position={position}>
           <Popup>
-            {scanData.location.address || 'Ubicación de escaneo'}
+            {location.address || 'Ubicación de escaneo'}
             <br />
             Fecha: {new Date(scanData.scanDate || scanData.createdAt).toLocaleDateString()}
             <br />
@@ -39,7 +40,9 @@ const ScanLocationMap = ({ scanData }) => {
 };
 
 export const ScanCard = ({ scanData }) => {
-  const hasLocation = scanData?.location?.latitude && scanData?.location?.longitude;
+  console.log('ScanCard recibió:', scanData); // Debug
+  const location = scanData?.location || scanData?.ubicacion;
+  const hasLocation = location?.latitude && location?.longitude;
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
@@ -47,4 +50,4 @@ export const ScanCard = ({ scanData }) => {
       {hasLocation && <ScanLocationMap scanData={scanData} />}
     </div>
   );
-};
+}; 
