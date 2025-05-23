@@ -7,7 +7,7 @@ const ScanLocationMap = ({ scanData }) => {
   const hasValidLocation = scanData?.location?.latitude && scanData?.location?.longitude;
   
   if (!hasValidLocation) {
-    return null; // No renderizar el mapa si no hay datos de ubicación
+    return null;
   }
   
   const position = [scanData.location.latitude, scanData.location.longitude];
@@ -44,13 +44,7 @@ export const ScanCard = ({ scanData }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
       <ScannedComponent scanData={scanData} />
-      {hasLocation ? (
-        <ScanLocationMap scanData={scanData} />
-      ) : (
-        <div className="h-12 mt-4 flex items-center justify-center text-gray-500 text-sm">
-          No hay datos de ubicación disponibles
-        </div>
-      )}
+      {hasLocation && <ScanLocationMap scanData={scanData} />}
     </div>
   );
 };
