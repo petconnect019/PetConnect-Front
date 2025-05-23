@@ -20,6 +20,20 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerIconShadow from 'leaflet/dist/images/marker-shadow.png';
+import { ScanMap } from '../../Components/Map/ScanMap';
+
+// Configuración global de los iconos de Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: null,
+  iconUrl: markerIcon,
+  shadowUrl: markerIconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
 
 export const CheckProtection = () => {
   const pets = usePet();
@@ -36,87 +50,26 @@ export const CheckProtection = () => {
   const [protectionRender, setProtectionRender] = useState("tag");
   const [selectedPet, setSelectedPet] = useState(null);
   const [refreshQRs, setRefreshQRs] = useState(false);
-  const [scanHistory, setScanHistory] = useState([]);
-  const [isLoadingScans, setIsLoadingScans] = useState(false);
   const [sortNewest, setSortNewest] = useState(true);
-  const [mapReady, setMapReady] = useState(false);
 
+  // Usar el hook useFetchScans para obtener el historial de escaneos
+  const { scans: scanHistory, isLoading: isLoadingScans } = useFetchScans(
+    selectedPet?._id && protectionRender === "scan" ? selectedPet._id : null
+  );
 
-  useEffect(() => {
-    // Fix the default icon issue in react-leaflet
-    delete L.Icon.Default.prototype._getIconUrl;
-    
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: null,
-      iconUrl: markerIcon,
-      shadowUrl: markerIconShadow,
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      tooltipAnchor: [16, -28],
-      shadowSize: [41, 41]
-    });
-    
-    setMapReady(true);
-  }, []);
-
-
-  // Función para cargar los escaneos
-  const fetchScans = async (petId) => {
-    if (!petId) return;
-    
-    setIsLoadingScans(true);
-    try {
-      const token = sessionStorage.getItem('accessToken');
-      if (!token) {
-        console.error('No hay token de acceso');
-        return;
-      }
-      
-      // Obtener historial de escaneos para todos los QRs de la mascota seleccionada
-      const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === petId) || [];
-      
-      const allScanHistory = [];
-      for (const qr of selectedPetQRs) {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/qr/${qr._id}/history`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.history) {
-            allScanHistory.push(...data.history);
-          }
-        }
-      }
-      
-      // Ordenar por fecha y hora (más reciente primero por defecto)
-      const sortedHistory = allScanHistory.sort((a, b) => {
-        const dateA = new Date(`${a.fecha} ${a.hora}`);
-        const dateB = new Date(`${b.fecha} ${b.hora}`);
-        return sortNewest ? dateB - dateA : dateA - dateB;
-      });
-      
-      setScanHistory(sortedHistory);
-    } catch (error) {
-      console.error('Error al obtener el historial de escaneos:', error);
-    } finally {
-      setIsLoadingScans(false);
-    }
-  };
+  // Ordenar el historial según sortNewest
+  const sortedScanHistory = [...(scanHistory || [])].sort((a, b) => {
+    const dateA = new Date(`${a.fecha} ${a.hora}`);
+    const dateB = new Date(`${b.fecha} ${b.hora}`);
+    return sortNewest ? dateB - dateA : dateA - dateB;
+  });
 
   //se hace el fetch con los datos de la mascota seleccionada
   useEffect(() => {
     if (protectionRender === "tag" && selectedPet) {
       getQrsById();
-    } else if (protectionRender === "scan" && selectedPet && qrsResult?.length > 0) {
-      fetchScans(selectedPet._id);
     }
-  }, [protectionRender, selectedPet, refreshQRs, qrsResult, sortNewest]);
+  }, [protectionRender, selectedPet, refreshQRs]);
 
   //se selecciona la primera mascota al inicializar el componente o cuando se cargan las mascotas
   useEffect(() => {
@@ -151,107 +104,6 @@ export const CheckProtection = () => {
 
   // Filtrar QRs para la mascota seleccionada
   const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === selectedPet?._id) || [];
-
-  // Component para mostrar el mapa 
-
-  const ScanLocationMap = ({ scanData }) => {
-    if (!scanData || !scanData.location || !scanData.location.latitude || !scanData.location.longitude) {
-      return (
-        <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500">No hay datos de ubicación disponibles</p>
-        </div>
-      );
-    }
-    
-    const position = [scanData.location.latitude, scanData.location.longitude];
-    
-    return (
-      <div className="h-48 rounded-lg overflow-hidden">
-        {mapReady && (
-          <MapContainer 
-            center={position} 
-            zoom={14} 
-            style={{ height: "100%", width: "100%" }}
-            attributionControl={false}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <Marker position={position}>
-              <Popup>
-                {scanData.location.address || 'Ubicación de escaneo'}
-                <br />
-                {scanData.fecha} {scanData.hora}
-              </Popup>
-            </Marker>
-          </MapContainer>
-        )}
-      </div>
-    );
-  };
-
-  
-  // Componente para el mapa que muestra todos los escaneos
-
-  const AllScansMap = ({ scanHistory }) => {
-    if (!scanHistory || scanHistory.length === 0) {
-      return null;
-    }
-    
-    // Filtrar escaneos que tienen datos de ubicación
-    const validScans = scanHistory.filter(scan => 
-      scan.location && scan.location.latitude && scan.location.longitude
-    );
-    
-    if (validScans.length === 0) {
-      return null;
-    }
-    
-    // Calcular el centro del mapa (promedio de todas las ubicaciones)
-    const center = validScans.reduce(
-      (acc, scan) => {
-        return [
-          acc[0] + scan.location.latitude / validScans.length,
-          acc[1] + scan.location.longitude / validScans.length
-        ];
-      },
-      [0, 0]
-    );
-    
-    return (
-      <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-3">Mapa de escaneos</h3>
-        <div className="h-64 sm:h-72 md:h-80 lg:h-96 rounded-lg overflow-hidden">
-          {mapReady && (
-            <MapContainer 
-              center={center} 
-              zoom={12} 
-              style={{ height: "100%", width: "100%" }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              {validScans.map((scan, index) => (
-                <Marker 
-                  key={`marker-${index}`} 
-                  position={[scan.location.latitude, scan.location.longitude]}
-                >
-                  <Popup>
-                    <strong>{selectedPet?.name || 'Mascota'}</strong><br />
-                    {scan.location.address || 'Ubicación de escaneo'}<br />
-                    Escaneado: {scan.fecha} {scan.hora}
-                  </Popup>
-                </Marker>
-              ))}
-            </MapContainer>
-          )}
-        </div>
-      </div>
-    );
-  };
-
 
   return (
     <div className="w-full max-w-[375px] sm:max-w-[576px] md:max-w-[768px] lg:max-w-[992px] xl:max-w-[1200px] 2xl:max-w-[1440px] 3xl:max-w-[1680px] 4xl:max-w-[1920px] mx-auto p-4 sm:p-6 bg-white rounded-lg shadow-lg">
@@ -336,7 +188,22 @@ export const CheckProtection = () => {
           </div>
 
           {/* Map showing all scan locations  */}
-          {scanHistory.length > 0 && <AllScansMap scanHistory={scanHistory} />}
+          {sortedScanHistory.length > 0 && (
+            <ScanMap 
+              scans={sortedScanHistory}
+              height="400px"
+              title="Mapa de escaneos"
+              showTitle={true}
+              className="mb-6 shadow-sm"
+              markerContent={(scan) => (
+                <>
+                  <strong>{selectedPet?.name || 'Mascota'}</strong><br />
+                  {scan.location.address || 'Ubicación de escaneo'}<br />
+                  Escaneado: {scan.fecha} {scan.hora}
+                </>
+              )}
+            />
+          )}
 
           {/* Grid de escaneos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:gap-8 mt-6">
@@ -366,12 +233,17 @@ export const CheckProtection = () => {
                   <div className="h-48 bg-gray-200 rounded"></div>
                 </div>
               ))
-            ) : scanHistory.length > 0 ? (
+            ) : sortedScanHistory.length > 0 ? (
               // Mostrar historial de escaneos
-              scanHistory.map((scan, index) => (
+              sortedScanHistory.map((scan, index) => (
                 <div key={`scan-${index}`} className="bg-white rounded-xl shadow-sm p-4">
                   <ScannedComponent scanData={scan} />
-                  <ScanLocationMap scanData={scan} />
+                  <ScanMap 
+                    scans={[scan]} 
+                    height="200px"
+                    zoom={14}
+                    className="mt-4"
+                  />
                 </div>
               ))
             ) : (
