@@ -349,11 +349,6 @@ export const CheckProtection = () => {
             </button>
           </div>
 
-          {/* Map showing all scan locations */}
-          {mapReady && scanHistory.length > 0 && (
-            <AllScansMap scanHistory={scanHistory} selectedPet={selectedPet} />
-          )}
-
           {/* Grid de escaneos */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-7 xl:gap-8 mt-6">
             {isLoadingScans ? (

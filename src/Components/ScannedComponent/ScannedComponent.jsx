@@ -88,15 +88,7 @@ export const ScannedComponent = ({ scanData }) => {
       {/* Map placeholder - will be replaced with Leaflet map */}
       <div className="h-48 bg-gray-100 rounded-lg flex items-center justify-center">
         {hasLocation ? (
-          <div className="text-center">
-            <FiMapPin className="text-orange-400 mx-auto text-2xl mb-2" />
-            <p className="text-gray-500 text-sm">
-              Coordenadas: {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
-            </p>
-            <p className="text-gray-600 text-xs mt-1">
-              El mapa será visible cuando se instale react-leaflet
-            </p>
-          </div>
+          
         ) : (
           <p className="text-gray-500">No hay datos de ubicación disponibles</p>
         )}
