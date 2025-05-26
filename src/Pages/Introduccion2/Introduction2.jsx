@@ -130,7 +130,7 @@ export const Introduction2 = () => {
                                 </p>
                                 <button 
                                     onClick={handleContinue}
-                                    className="w-full max-w-md 4xl:max-w-7xl bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 xl:py-5 2xl:py-6 3xl:py-7 4xl:py-8 rounded-full text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl font-medium shadow-lg hover:bg-orange-500 hover:shadow-xl transition-all duration-300 hover:scale-105"
+                                    className="w-full 4xl:ml-250 max-w-md 4xl:max-w-7xl bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 xl:py-5 2xl:py-6 3xl:py-7 4xl:py-8 rounded-full text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-[8rem] font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                                 >
                                     Continuar
                                 </button>
