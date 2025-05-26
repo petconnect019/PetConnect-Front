@@ -117,20 +117,20 @@ export const Introduction2 = () => {
                             <img 
                                 src={Intro} 
                                 alt="Introducción" 
-                                className={`w-full 4xl:max-w-7xl 2xl:max-w-sm xl:max-w-xs object-contain transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                                className={`w-full 4xl:max-w-sm 2xl:max-w-sm xl:max-w-xs object-contain transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
                             />
                         </div>
                         <div className={`xl:w-1/2 2xl:w-1/2 3xl:w-1/2 4xl:w-1/2 flex flex-col justify-center p-16 transition-all duration-700 transform ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
-                            <div className="space-y-8 h-auto 4xl:p-50 gap-4 4xl:gap-7">
-                                <h2 className="text-4xl xl:text-5xl 2xl:text-6xl 3xl:text-7xl 4xl:text-[14rem] 4xl:text-center font-bold text-gray-800">
+                            <div className="space-y-8 h-auto  gap-4 4xl:gap-7">
+                                <h2 className="text-4xl xl:text-5xl 2xl:text-6xl 3xl:text-7xl 4xl:text-5xl 4xl:text-center font-bold text-gray-800">
                                     Gestiona la información sobre tu mascota
                                 </h2>
-                                <p className=" text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-[8rem] 4xl:mb-20 4xl:text-center text-gray-600 leading-relaxed">
+                                <p className="  text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-3xl 4xl:mb-20 4xl:text-center text-gray-600 leading-relaxed">
                                     Administra el perfil de tu mascota y mantén su información siempre disponible.
                                 </p>
                                 <button 
                                     onClick={handleContinue}
-                                    className="w-full 4xl:ml-250 max-w-md 4xl:max-w-7xl bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 xl:py-5 2xl:py-6 3xl:py-7 4xl:py-8 rounded-full text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-[8rem] font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                                    className="w-full max-w-md 4xl:ml-40 4xl:max-w-lg bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 xl:py-5 2xl:py-6 3xl:py-7 4xl:py-4 rounded-full text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-4xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                                 >
                                     Continuar
                                 </button>
