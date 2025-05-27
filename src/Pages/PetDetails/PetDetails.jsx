@@ -151,6 +151,7 @@ export const PetDetails = () => {
               </div>
 
               <img
+                onClick={()=>navigate(`/pet-profile/${pet_id}`)}
                 className="w-24 sm:w-32 h-24 sm:h-32 xs:w-24 xs:h-24 md:w-28 md:h-28 lg:w-30 lg:h-30 xl:w-34 xl:h-34 2xl:w-38 2xl:h-38 3xl:w-42 3xl:h-36 4xl:w-50 4xl:h-50 object-cover rounded-full"
                 src={
                   pet?.profile_picture ||
