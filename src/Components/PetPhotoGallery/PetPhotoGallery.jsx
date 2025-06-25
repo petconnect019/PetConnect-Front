@@ -129,7 +129,7 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
           {isOwner && (
             <button
               onClick={() => handleDeletePhoto(photo._id || `photo_${index}`)}
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity "
               title="Eliminar foto"
             >
               <IoClose size={16} />
@@ -163,7 +163,7 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
           className="flex items-center justify-center bg-[#F8FAFC] rounded-lg aspect-square"
         >
           <img 
-            src={addPetPhoto} 
+            src={petPhoto} 
             alt="Empty slot" 
             className="max-w-full max-h-full object-contain opacity-30"
           />
@@ -212,7 +212,7 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
 
       {/* Modal de preview y confirmación de subida */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-gray-200/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Confirmar subida de fotos</h3>
             
