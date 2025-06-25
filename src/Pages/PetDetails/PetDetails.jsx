@@ -12,8 +12,6 @@ import { ImSpinner2 } from "react-icons/im";
 import defaultDog from "../../assets/images/DogProfilePfp.png";
 import defaultCat from "../../assets/images/CatProfilePfp.png";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
-import petPhoto from '../../assets/images/petPhoto.png'
-import addPetPhoto from '../../assets/images/addPetPhoto.png'
 import { FooterNav } from "../../Components/FooterNav/FooterNav";
 import { NavButton } from "../../Components/NavButton/NavButton";
 import SharedImg from '../../assets/images/shared.png'
@@ -21,6 +19,7 @@ import LocationImg from '../../assets/images/Location.png'
 import { useFetchUpdatePet } from "../../Hooks/useFetchUpdatePet/useFetchUpdatePet";
 import { FaCheck } from "react-icons/fa";
 import { motion, AnimatePresence } from 'framer-motion';
+import { PetPhotoGallery } from "../../Components/PetPhotoGallery/PetPhotoGallery";
 
 export const PetDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -288,27 +287,10 @@ export const PetDetails = () => {
             </div>
 
             {/* Galería de Imagenes de la Mascota */}
-            <div className="p-4 sm:p-6 xs:p-5 3xl:p-8 4xl:p-10">
-              <h1 className="text-xl sm:text-2xl xs:text-xl md:text-3xl 3xl:text-4xl 4xl:text-5xl font-bold mb-3 sm:mb-4 xs:mb-5 3xl:mb-6 4xl:mb-8">
-                Galería de Imágenes
-              </h1>
-              <div className="grid grid-cols-2 gap-4 sm:gap-6 xs:gap-4 md:gap-5 3xl:gap-8 4xl:gap-10">
-                {[addPetPhoto, petPhoto, petPhoto, petPhoto].map((photo, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-center justify-center bg-[#F8FAFC] rounded-lg aspect-square"
-                  >
-                    <div className="flex items-center justify-center w-full h-full p-2">
-                      <img 
-                        src={photo} 
-                        alt={`Pet photo ${index + 1}`} 
-                        className="max-w-full max-h-full object-contain"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <PetPhotoGallery 
+              petId={pet_id} 
+              isOwner={userData?._id === pet?.owner_id}
+            />
           </div>
 
 
