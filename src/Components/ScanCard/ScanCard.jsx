@@ -13,8 +13,7 @@ const ScanLocationMap = ({ scanData }) => {
   
   const position = [location.latitude, location.longitude];
   
-return (
-  position ? (
+  return (
     <div className="h-48 rounded-lg overflow-hidden mt-4">
       <MapContainer 
         center={position} 
@@ -26,11 +25,11 @@ return (
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={position} />
+        <Marker position={position}>
+        </Marker>
       </MapContainer>
     </div>
-  ) : <p className="text-gray-500">No hay datos de ubicación disponibles</p>
-);
+  );
 };
 
 export const ScanCard = ({ scanData }) => {
