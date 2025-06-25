@@ -4,6 +4,7 @@ import { ImSpinner2 } from "react-icons/im";
 import { IoMdAdd } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import addPetPhoto from '../../assets/images/addPetPhoto.png';
+import petPhoto from '../../assets/images/petPhoto.png';
 
 export const PetPhotoGallery = ({ petId, isOwner = false }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -122,7 +123,7 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
             className="max-w-full max-h-full object-cover w-full h-full"
             onError={(e) => {
               // Si la imagen falla, mostrar una imagen por defecto
-              e.target.src = addPetPhoto;
+              e.target.src = petPhoto;
             }}
           />
           {isOwner && (
@@ -179,14 +180,6 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
         <h1 className="text-xl sm:text-2xl xs:text-xl md:text-3xl 3xl:text-4xl 4xl:text-5xl font-bold">
           Galería de Imágenes
         </h1>
-        {isOwner && photos.length < 5 && (
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="bg-[#EC9126] text-white px-3 py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm"
-          >
-            Agregar Fotos
-          </button>
-        )}
       </div>
 
       {/* Input de archivo oculto */}
