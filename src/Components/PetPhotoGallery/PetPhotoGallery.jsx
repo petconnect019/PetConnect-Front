@@ -219,7 +219,7 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
 
       {/* Modal de preview y confirmación de subida */}
       {showUploadModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4">Confirmar subida de fotos</h3>
             
