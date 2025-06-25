@@ -35,7 +35,7 @@ const ScanLocationMap = ({ scanData }) => {
 export const ScanCard = ({ scanData }) => {
   const location = scanData?.location || scanData?.ubicacion;
   const hasLocation = location?.latitude && location?.longitude;
-
+//este es el componente ScanCard que muestra los datos del escaneo y el mapa de ubicación
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
       <ScannedComponent scanData={scanData} />

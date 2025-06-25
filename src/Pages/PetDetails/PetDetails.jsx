@@ -136,7 +136,7 @@ export const PetDetails = () => {
                 Detalles de la Mascota
               </h1>
               <div className="absolute right-3">
-                <img className="w-6 h-6 xs:w-6 xs:h-6 sm:w-7 sm:h-7 3xl:w-8 3xl:h-8 4xl:w-9 4xl:h-9" src={SharedImg} alt="SharedImg" />
+                <img onClick={()=>navigate(`/pet-profile/${pet_id}`)} className="w-6 h-6 xs:w-6 xs:h-6 sm:w-7 sm:h-7 3xl:w-8 3xl:h-8 4xl:w-9 4xl:h-9" src={SharedImg} alt="SharedImg" />
               </div>
             </div>
 
