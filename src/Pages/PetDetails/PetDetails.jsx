@@ -178,7 +178,7 @@ export const PetDetails = () => {
   return (
     <>
       {pet ? (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
+        <div className="min-h-screen bg-gray-50">
           {/* Success notification */}
           <AnimatePresence>
             {copySuccess && (
@@ -197,15 +197,15 @@ export const PetDetails = () => {
 
           <section className="flex flex-col items-center py-6 sm:py-8 md:py-10 lg:py-12">
             {/* Header Card */}
-            <div className="w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl bg-white rounded-3xl shadow-xl border border-orange-100 overflow-hidden">
-              {/* Header with gradient background */}
-              <div className="bg-gradient-to-r from-orange-400 to-orange-500 p-6 relative">
+            <div className="w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              {/* Header */}
+              <div className="bg-orange-500 p-6">
                 <div className="flex items-center justify-between">
                   <button 
                     onClick={handleBackButton}
-                    className="bg-white/20 backdrop-blur-sm p-3 rounded-full hover:bg-white/30 transition-all duration-300"
+                    className="bg-white/20 p-3 rounded-lg text-white hover:bg-white/30 transition-colors"
                   >
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
@@ -217,20 +217,20 @@ export const PetDetails = () => {
                   <div className="relative">
                     <button 
                       onClick={() => setIsShareMenuOpen(!isShareMenuOpen)}
-                      className="bg-white/20 backdrop-blur-sm p-3 rounded-full hover:bg-white/30 transition-all duration-300"
+                      className="bg-white/20 p-3 rounded-lg text-white hover:bg-white/30 transition-colors"
                     >
-                      <FaShare className="w-5 h-5 text-white" />
+                      <FaShare className="w-5 h-5" />
                     </button>
                     
                     {/* Share Menu Dropdown */}
                     {isShareMenuOpen && (
                       <div 
                         ref={shareMenuRef}
-                        className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-xl z-50 border border-gray-100"
+                        className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-lg z-50 border border-gray-200"
                       >
                         <button 
                           onClick={handleShare}
-                          className="flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-orange-50 transition-colors"
+                          className="flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 transition-colors"
                         >
                           <FaShare className="mr-2 w-5 h-5 text-gray-500" />
                           Copiar enlace
@@ -246,19 +246,19 @@ export const PetDetails = () => {
                 {/* Pet Image and Action Buttons */}
                 <div className="flex justify-center items-center gap-8 sm:gap-12 mb-8">
                   {/* QR Button */}
-                  <div className="flex flex-col items-center group">
+                  <div className="flex flex-col items-center">
                     <button
                       onClick={() => navigate(`/scanner/${pet_id}`)}
-                      className="bg-gradient-to-br from-blue-400 to-blue-600 p-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 group-hover:from-blue-500 group-hover:to-blue-700"
+                      className="bg-blue-500 p-4 rounded-lg shadow-sm text-white hover:bg-blue-600 transition-colors"
                     >
-                      <FaQrcode className="w-6 h-6 text-white" />
+                      <FaQrcode className="w-6 h-6" />
                     </button>
                     <p className="text-xs sm:text-sm text-gray-600 mt-2 text-center font-medium">Activar QR</p>
                   </div>
 
                   {/* Pet Image */}
                   <div className="relative">
-                    <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 bg-gradient-to-br from-orange-200 to-orange-300 rounded-full p-1 shadow-xl">
+                    <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 bg-gray-200 rounded-full p-1">
                       <img
                         className="w-full h-full object-cover rounded-full border-4 border-white"
                         src={
@@ -269,19 +269,19 @@ export const PetDetails = () => {
                       />
                     </div>
                     {pet.status === 'Perdido' && (
-                      <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
+                      <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
                         PERDIDO
                       </div>
                     )}
                   </div>
 
                   {/* Lost Button */}
-                  <div className="flex flex-col items-center group">
+                  <div className="flex flex-col items-center">
                     <button
                       onClick={() => setIsModalOpen(true)}
-                      className="bg-gradient-to-br from-red-400 to-red-600 p-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 group-hover:from-red-500 group-hover:to-red-700"
+                      className="bg-red-500 p-4 rounded-lg shadow-sm text-white hover:bg-red-600 transition-colors"
                     >
-                      <FaExclamationTriangle className="w-6 h-6 text-white" />
+                      <FaExclamationTriangle className="w-6 h-6" />
                     </button>
                     <p className="text-xs sm:text-sm text-gray-600 mt-2 text-center font-medium">Reportar Perdida</p>
                   </div>
@@ -305,13 +305,13 @@ export const PetDetails = () => {
                   {petDetails.map((detail, index) => (
                     <div 
                       key={index} 
-                      className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-2xl border border-gray-200 hover:shadow-md transition-all duration-300 group"
+                      className="bg-gray-50 p-4 rounded-lg border border-gray-200"
                     >
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-lg">{detail.icon}</span>
                         <p className="text-xs sm:text-sm text-gray-500 font-medium">{detail.title}</p>
                       </div>
-                      <p className="text-sm sm:text-base font-semibold text-gray-800 group-hover:text-orange-600 transition-colors">
+                      <p className="text-sm sm:text-base font-semibold text-gray-800">
                         {detail.subtitle || 'No especificado'}
                       </p>
                     </div>
@@ -322,7 +322,7 @@ export const PetDetails = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button 
                     onClick={() => navigate(`/pet-profile/${pet_id}`)}
-                    className="bg-gradient-to-r from-orange-400 to-orange-500 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                    className="bg-orange-500 text-white px-8 py-3 rounded-lg font-semibold shadow-sm hover:bg-orange-600 transition-colors flex items-center justify-center gap-2"
                   >
                     <FaEdit className="w-4 h-4" />
                     Editar Perfil
@@ -330,7 +330,7 @@ export const PetDetails = () => {
                   
                   <button 
                     onClick={() => navigate(`/public-pet-profile/${pet_id}`)}
-                    className="bg-gradient-to-r from-blue-400 to-blue-500 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                    className="bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold shadow-sm hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
                   >
                     <FaShare className="w-4 h-4" />
                     Ver Perfil Público
@@ -341,7 +341,7 @@ export const PetDetails = () => {
 
             {/* Gallery Section */}
             <div className="w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mt-6">
-              <div className="bg-white rounded-3xl shadow-xl border border-orange-100 p-6 sm:p-8">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8">
                 <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">
                   Galería de Imágenes
                 </h3>
@@ -349,13 +349,12 @@ export const PetDetails = () => {
                   {[addPetPhoto, petPhoto, petPhoto, petPhoto].map((photo, index) => (
                     <div 
                       key={index} 
-                      className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 aspect-square hover:shadow-lg transition-all duration-300"
+                      className="bg-gray-100 rounded-lg aspect-square overflow-hidden"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       <img 
                         src={photo} 
                         alt={`Pet photo ${index + 1}`} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   ))}
@@ -366,8 +365,8 @@ export const PetDetails = () => {
 
           {/* Modal */}
           {isModalOpen && (
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 sm:p-8 transform transition-all duration-300 scale-100">
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 sm:p-8">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <AiOutlineExclamationCircle className="text-red-500 text-2xl" />
@@ -384,13 +383,13 @@ export const PetDetails = () => {
                   
                   <div className="flex gap-3">
                     <button
-                      className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105"
+                      className="flex-1 bg-red-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-red-600 transition-colors"
                       onClick={handleReportLost}
                     >
                       Confirmar
                     </button>
                     <button
-                      className="flex-1 bg-gray-200 text-gray-700 py-3 px-4 rounded-xl font-semibold hover:bg-gray-300 transition-all duration-300"
+                      className="flex-1 bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
                       onClick={() => setIsModalOpen(false)}
                     >
                       Cancelar
@@ -404,10 +403,10 @@ export const PetDetails = () => {
           <FooterNav navigate={navigate} />
         </div>
       ) : (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 flex justify-center items-center">
+        <div className="min-h-screen bg-gray-50 flex justify-center items-center">
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-              <ImSpinner2 className="text-white text-2xl animate-spin" />
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <ImSpinner2 className="text-orange-500 text-2xl animate-spin" />
             </div>
             <p className="text-gray-600 font-medium">Cargando detalles de la mascota...</p>
           </div>
