@@ -36,7 +36,7 @@ export const ScannedComponent = ({ scanData }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 lg:p-6">
+    <div className="bg-white rounded-xl p-4 sm:p-5 lg:p-6">
       <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-gray-800 mb-3">
         Escaneo registrado
       </h3>
