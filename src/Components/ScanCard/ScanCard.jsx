@@ -40,7 +40,7 @@ const ScanLocationMap = ({ scanData }) => {
 };
 
 export const ScanCard = ({ scanData }) => {
-  console.log('ScanCard recibió:', scanData); // Debug
+  console.log('ScanCard recibió:', scanData);
   const location = scanData?.location || scanData?.ubicacion;
   const hasLocation = location?.latitude && location?.longitude;
 
