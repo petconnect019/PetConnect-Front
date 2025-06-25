@@ -39,7 +39,7 @@ export const ScanCard = ({ scanData }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
       <ScannedComponent scanData={scanData} />
-      {hasLocation? <ScanLocationMap scanData={scanData} /> : <p className="text-gray-500">No hay datos de ubicación disponibles</p>}
+      {hasLocation? <ScanLocationMap scanData={scanData} /> : <p className="text-gray-500 text-center">No hay datos de ubicación disponibles</p>}
     </div>
   );
 }; 
