@@ -26,13 +26,6 @@ const ScanLocationMap = ({ scanData }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <Marker position={position}>
-          <Popup>
-            {location.address || 'Ubicación de escaneo'}
-            <br />
-            Fecha: {new Date(scanData.scanDate || scanData.createdAt).toLocaleDateString()}
-            <br />
-            Hora: {new Date(scanData.scanDate || scanData.createdAt).toLocaleTimeString()}
-          </Popup>
         </Marker>
       </MapContainer>
     </div>
