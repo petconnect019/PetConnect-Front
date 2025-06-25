@@ -87,11 +87,13 @@ export const useFetchPetPhotos = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Recargar todas las fotos después de subir exitosamente
+        const photosResponse = await getPetPhotos(petId);
+        
         setPhotosState((prev) => ({
           ...prev,
           isSuccess: true,
           isLoading: false,
-          photos: [...prev.photos, ...(data.photos || [])],
           uploadProgress: 100,
           error: null
         }));
@@ -117,7 +119,7 @@ export const useFetchPetPhotos = () => {
       }));
       return { success: false, error: error.message };
     }
-  }, []);
+  }, [getPetPhotos]);
 
   // Función para eliminar una foto específica
   const deletePetPhoto = useCallback(async (petId, photoId) => {
@@ -138,11 +140,13 @@ export const useFetchPetPhotos = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Recargar todas las fotos después de eliminar exitosamente
+        await getPetPhotos(petId);
+        
         setPhotosState((prev) => ({
           ...prev,
           isSuccess: true,
           isLoading: false,
-          photos: prev.photos.filter(photo => photo._id !== photoId),
           error: null
         }));
         return { success: true };
@@ -165,7 +169,7 @@ export const useFetchPetPhotos = () => {
       }));
       return { success: false, error: error.message };
     }
-  }, []);
+  }, [getPetPhotos]);
 
   // Función para limpiar el estado
   const clearPhotosState = useCallback(() => {

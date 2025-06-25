@@ -289,7 +289,7 @@ export const PetDetails = () => {
             {/* Galería de Imagenes de la Mascota */}
             <PetPhotoGallery 
               petId={pet_id} 
-              isOwner={userData?._id === pet?.owner_id}
+              isOwner={userData?._id === pet?.owner?._id || userData?._id === pet?.owner}
             />
           </div>
 

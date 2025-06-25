@@ -120,10 +120,14 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
             src={photo.url || photo} 
             alt={`Pet photo ${index + 1}`} 
             className="max-w-full max-h-full object-cover w-full h-full"
+            onError={(e) => {
+              // Si la imagen falla, mostrar una imagen por defecto
+              e.target.src = addPetPhoto;
+            }}
           />
           {isOwner && (
             <button
-              onClick={() => handleDeletePhoto(photo._id)}
+              onClick={() => handleDeletePhoto(photo._id || `photo_${index}`)}
               className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
               title="Eliminar foto"
             >
