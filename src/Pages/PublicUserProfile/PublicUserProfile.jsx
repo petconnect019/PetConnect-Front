@@ -166,7 +166,7 @@ export const PublicUserProfile = () => {
 
     setIsSending(true);
     try {
-      // Using fetch instead of axios
+      // Usar el nuevo endpoint para iniciar chat con un usuario
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/user/${user_id}/start`, {
         method: 'POST',
         headers: {
