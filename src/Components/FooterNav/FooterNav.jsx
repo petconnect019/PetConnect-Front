@@ -5,7 +5,17 @@ export const FooterNav = ({ navigate }) => {
     const location = useLocation();
     const currentPath = location.pathname;
 
-    const isActive = (path) => currentPath === path;
+    const isActive = (path) => {
+        if (path === "/home") {
+            return currentPath === "/home";
+        } else if (path === "/messages") {
+            // Activar para /messages y /chat (con o sin parámetros)
+            return currentPath === "/messages" || currentPath.startsWith("/chat");
+        } else if (path === "/settings") {
+            return currentPath === "/settings";
+        }
+        return false;
+    };
 
     return (
         <footer className="bg-white flex justify-around fixed bottom-0 w-full py-3 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
