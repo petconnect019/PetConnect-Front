@@ -5,21 +5,16 @@ export const FooterNav = ({ navigate }) => {
     const location = useLocation();
     const currentPath = location.pathname;
 
-    console.log("FooterNav - currentPath:", currentPath);
-
     const isActive = (path) => {
-        let result = false;
         if (path === "/home") {
-            result = currentPath === "/home";
+            return currentPath === "/home";
         } else if (path === "/messages") {
             // Activar para /messages y /chat (con o sin parámetros)
-            result = currentPath === "/messages" || currentPath.startsWith("/chat");
+            return currentPath === "/messages" || currentPath.startsWith("/chat");
         } else if (path === "/settings") {
-            result = currentPath === "/settings";
+            return currentPath === "/settings";
         }
-        
-        console.log(`FooterNav - isActive("${path}"):`, result);
-        return result;
+        return false;
     };
 
     return (
@@ -27,7 +22,7 @@ export const FooterNav = ({ navigate }) => {
             <button 
                 onClick={() => navigate("/home")}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 ${
-                    isActive("/home") ? "text-brand" : "text-gray-400 hover:text-brand"
+                    isActive("/home") ? "text-[#EC9216]" : "text-gray-400 hover:text-[#EC9216]"
                 }`}
             >
                 {isActive("/home") ? (
@@ -41,7 +36,7 @@ export const FooterNav = ({ navigate }) => {
             <button 
                 onClick={() => navigate("/messages")}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 ${
-                    isActive("/messages") ? "text-brand" : "text-gray-400 hover:text-brand"
+                    isActive("/messages") ? "text-[#EC9216]" : "text-gray-400 hover:text-[#EC9216]"
                 }`}
             >
                 {isActive("/messages") ? (
@@ -55,7 +50,7 @@ export const FooterNav = ({ navigate }) => {
             <button 
                 onClick={() => navigate("/settings")}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 ${
-                    isActive("/settings") ? "text-brand" : "text-gray-400 hover:text-brand"
+                    isActive("/settings") ? "text-[#EC9216]" : "text-gray-400 hover:text-[#EC9216]"
                 }`}
             >
                 {isActive("/settings") ? (
