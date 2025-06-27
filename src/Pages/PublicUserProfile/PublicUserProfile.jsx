@@ -12,7 +12,7 @@ import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 export const PublicUserProfile = () => {
   const { user_id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -188,10 +188,17 @@ export const PublicUserProfile = () => {
           setMessageSent(false);
           navigate(`/chat/${data.chat._id}`);
         }, 1500);
+      } else {
+        // Si la respuesta es ok pero no hay chat, es un estado inesperado
+        throw new Error(data.message || 'La respuesta del servidor no fue la esperada.');
       }
     } catch (err) {
       console.error('Error al enviar mensaje:', err);
-      alert('No se pudo enviar el mensaje. Por favor, intenta de nuevo.');
+      // Extraer un mensaje de error más útil si es posible
+      const errorMessage = err.message.includes('servidor') 
+        ? 'No se pudo contactar al servidor. Intenta de nuevo más tarde.'
+        : 'No se pudo enviar el mensaje. Por favor, intenta de nuevo.';
+      alert(errorMessage);
     } finally {
       setIsSending(false);
     }
@@ -402,13 +409,15 @@ export const PublicUserProfile = () => {
               )}
             </div>
             
-            {/* Contact button */}
-            <button 
-              onClick={handleContactUser}
-              className="w-full max-w-md mt-6 bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 px-4 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center justify-center"
-            >
-              <FiMessageCircle className="mr-2" /> Contactar ahora
-            </button>
+            {/* Contact button (only show if not viewing your own profile) */}
+            {(user?.id !== user_id) && (
+              <button 
+                onClick={handleContactUser}
+                className="w-full max-w-md mt-6 bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 px-4 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+              >
+                <FiMessageCircle className="mr-2" /> Contactar ahora
+              </button>
+            )}
           </div>
         </div>
         
