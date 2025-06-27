@@ -393,8 +393,8 @@ export const Chat = () => {
                         </div>
                     )}
                 </div>
-            <FooterNav navigate={navigate} />
             </div>
+            <FooterNav navigate={navigate} />
         </div>
     );
 };
