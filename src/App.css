@@ -25,6 +25,11 @@ body {
     --color-brand: #EC9216;
 }
 
+/* Clase para el color brand */
+.text-brand {
+    color: var(--color-brand);
+}
+
 .react-tel-input .form-control {
     width: 100% !important;
     border-radius: 8px !important;

@@ -5,16 +5,21 @@ export const FooterNav = ({ navigate }) => {
     const location = useLocation();
     const currentPath = location.pathname;
 
+    console.log("FooterNav - currentPath:", currentPath);
+
     const isActive = (path) => {
+        let result = false;
         if (path === "/home") {
-            return currentPath === "/home";
+            result = currentPath === "/home";
         } else if (path === "/messages") {
             // Activar para /messages y /chat (con o sin parámetros)
-            return currentPath === "/messages" || currentPath.startsWith("/chat");
+            result = currentPath === "/messages" || currentPath.startsWith("/chat");
         } else if (path === "/settings") {
-            return currentPath === "/settings";
+            result = currentPath === "/settings";
         }
-        return false;
+        
+        console.log(`FooterNav - isActive("${path}"):`, result);
+        return result;
     };
 
     return (
