@@ -10,6 +10,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 export const ScannedComponent = ({ scanData }) => {
   const navigate = useNavigate();
   if (!scanData) return null;
+  console.log(scanData);
+  
 
   const { fecha, hora, location, scannedBy } = scanData;
   const hasLocation = location && location.latitude && location.longitude;
