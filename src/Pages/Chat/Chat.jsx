@@ -8,6 +8,7 @@ import { fetchGetMessages } from '../../Utils/Fetch/FetchChat/FetchChat';
 import { socket, subscribeToMessages, subscribeToChatRequests, subscribeToPetMessages } from '../../Utils/socket';
 import defaultProfilePic from '../../assets/images/DefaultProfile.png';
 import { useRef } from 'react';
+import { FooterNav } from '../../Components/FooterNav/FooterNav';
 
 // Componente MessageList inline para solucionar problemas de estilo
 const MessageList = ({ messages, currentUser }) => {
