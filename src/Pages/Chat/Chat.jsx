@@ -339,7 +339,7 @@ export const Chat = () => {
             </header>
 
             {/* Main Container */}
-            <div className="flex flex-1 overflow-hidden">
+            <div className="flex flex-1 overflow-hidden pb-16">
                 {/* Sidebar */}
                 <div 
                     className={`

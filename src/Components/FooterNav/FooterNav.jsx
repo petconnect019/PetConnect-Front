@@ -23,7 +23,7 @@ export const FooterNav = ({ navigate }) => {
     };
 
     return (
-        <footer className="bg-white flex justify-around fixed bottom-0 w-full py-3 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <footer className="bg-white flex justify-around fixed bottom-0 w-full py-3 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30">
             <button 
                 onClick={() => navigate("/home")}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 ${
