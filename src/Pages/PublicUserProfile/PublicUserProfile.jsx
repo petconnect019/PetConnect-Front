@@ -165,8 +165,11 @@ export const PublicUserProfile = () => {
     if (!messageToSend.trim()) return;
 
     setIsSending(true);
+    const url = `${import.meta.env.VITE_API_URL}/api/chat/user/${user_id}/start`;
+    console.log('Intentando enviar mensaje a:', url);
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/user/${user_id}/start`, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -175,11 +178,15 @@ export const PublicUserProfile = () => {
         body: JSON.stringify({ initialMessage: messageToSend })
       });
 
-      const data = await response.json();
+      console.log('Estado de la respuesta:', response.status);
 
       if (!response.ok) {
-        throw new Error(data.message || 'Error al enviar el mensaje');
+        const errorText = await response.text();
+        console.error('Respuesta del servidor (no OK):', errorText);
+        throw new Error(`El servidor respondió con un error ${response.status}.`);
       }
+      
+      const data = await response.json();
 
       if (data && data.chat) {
         setMessageSent(true);
@@ -195,8 +202,8 @@ export const PublicUserProfile = () => {
       console.error('Error al enviar mensaje:', err);
       
       let errorMessage;
-      if (err.message.includes('no encontrado')) {
-        errorMessage = 'No se pudo encontrar al usuario destinatario.';
+      if (err.message.includes('404')) {
+        errorMessage = 'No se pudo encontrar el recurso solicitado (Error 404).';
       } else if (err.message.includes('contigo mismo')) {
         errorMessage = 'No puedes enviarte mensajes a ti mismo.';
       } else if (err.message.includes('vacío')) {
