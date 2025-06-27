@@ -166,7 +166,6 @@ export const PublicUserProfile = () => {
 
     setIsSending(true);
     try {
-      // Usar el nuevo endpoint para iniciar chat con un usuario
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/user/${user_id}/start`, {
         method: 'POST',
         headers: {
@@ -176,11 +175,12 @@ export const PublicUserProfile = () => {
         body: JSON.stringify({ initialMessage: messageToSend })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Error en la respuesta del servidor');
+        throw new Error(data.message || 'Error al enviar el mensaje');
       }
 
-      const data = await response.json();
       if (data && data.chat) {
         setMessageSent(true);
         setTimeout(() => {
@@ -189,15 +189,24 @@ export const PublicUserProfile = () => {
           navigate(`/chat/${data.chat._id}`);
         }, 1500);
       } else {
-        // Si la respuesta es ok pero no hay chat, es un estado inesperado
-        throw new Error(data.message || 'La respuesta del servidor no fue la esperada.');
+        throw new Error('La respuesta del servidor no fue la esperada');
       }
     } catch (err) {
       console.error('Error al enviar mensaje:', err);
-      // Extraer un mensaje de error más útil si es posible
-      const errorMessage = err.message.includes('servidor') 
-        ? 'No se pudo contactar al servidor. Intenta de nuevo más tarde.'
-        : 'No se pudo enviar el mensaje. Por favor, intenta de nuevo.';
+      
+      let errorMessage;
+      if (err.message.includes('no encontrado')) {
+        errorMessage = 'No se pudo encontrar al usuario destinatario.';
+      } else if (err.message.includes('contigo mismo')) {
+        errorMessage = 'No puedes enviarte mensajes a ti mismo.';
+      } else if (err.message.includes('vacío')) {
+        errorMessage = 'El mensaje no puede estar vacío.';
+      } else if (err.message.includes('no esperada')) {
+        errorMessage = 'Hubo un problema al procesar la respuesta del servidor.';
+      } else {
+        errorMessage = 'No se pudo enviar el mensaje, por favor intente nuevamente.';
+      }
+      
       alert(errorMessage);
     } finally {
       setIsSending(false);
