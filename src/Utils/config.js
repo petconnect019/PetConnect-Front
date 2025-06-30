@@ -42,21 +42,11 @@ const config = {
   isDevelopment,
   isProduction,
   
-  // Configuración del socket
+  // Configuración simplificada del socket (basada en el test exitoso)
   socketOptions: {
     transports: ['websocket', 'polling'],
-    upgrade: true,
-    rememberUpgrade: true,
-    autoConnect: false,
-    forceNew: false,
-    reconnection: true,
-    reconnectionAttempts: 5,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax: 5000,
-    maxReconnectionAttempts: 5,
-    timeout: 20000,
-    pingTimeout: 60000,
-    pingInterval: 25000
+    timeout: 10000,
+    autoConnect: true
   }
 };
 

@@ -445,7 +445,13 @@ export const ChatProvider = ({ children }) => {
           socket: config.socket
         });
         
-        const socket = connectSocket(token, { userId: user.id || user._id });
+        const socketInstance = connectSocket(token, { userId: user.id || user._id });
+        
+        // Forzar conexión inmediata (similar al test exitoso)
+        if (socketInstance && !socketInstance.connected) {
+          console.log('🔧 Forzando conexión del socket...');
+          socketInstance.connect();
+        }
         
         // Verificar estado inicial de conexión con varios intentos
         let attempts = 0;
@@ -468,7 +474,8 @@ export const ChatProvider = ({ children }) => {
           }
         };
         
-        setTimeout(checkConnection, 1000);
+        // Dar más tiempo para la conexión automática
+        setTimeout(checkConnection, 2000);
       } else {
         console.warn('⚠️ No se encontró token de acceso');
         dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });

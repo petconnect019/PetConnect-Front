@@ -12,9 +12,10 @@ let connectionState = {
   lastReconnectTime: null
 };
 
-// Configuración por defecto usando config.js
+// Configuración simplificada basada en el test exitoso
 const DEFAULT_CONFIG = {
-  ...config.socketOptions
+  transports: ['websocket', 'polling'],
+  timeout: 10000
 };
 
 /**
@@ -36,15 +37,14 @@ const connectSocket = (token, options = {}) => {
   connectionState.isConnecting = true;
   connectionState.connectionError = null;
 
-  const config = {
-    ...DEFAULT_CONFIG,
-    ...options,
-    auth: {
-      token: token
-    },
-    query: {
-      userId: options.userId || 'unknown'
-    }
+  // Usar configuración simple como en el test exitoso
+  const socketConfig = {
+    auth: { token },
+    transports: ['websocket', 'polling'],
+    timeout: 10000,
+    autoConnect: true, // Conectar automáticamente como en el test
+    forceNew: false,
+    ...options
   };
 
   try {
@@ -62,7 +62,11 @@ const connectSocket = (token, options = {}) => {
       userId: options.userId
     });
     
-    socket = io(serverUrl, config);
+    console.log('⚙️ Config del socket:', socketConfig);
+    
+    socket = io(serverUrl, socketConfig);
+    
+    console.log('📡 Socket creado, esperando conexión...');
 
     // Eventos de conexión
     socket.on('connect', () => {
