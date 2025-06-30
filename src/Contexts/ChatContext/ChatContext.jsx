@@ -452,11 +452,11 @@ export const ChatProvider = ({ children }) => {
           const connected = isConnected();
           const connectionState = getConnectionState();
           
-          console.log(`🔍 Intento ${attempts} - Estado de conexión:`, {
-            connected,
-            socketId: connectionState.socketId,
-            error: connectionState.connectionError
-          });
+          console.log(`🔍 Intento ${attempts} - Estado de conexión:`);
+          console.log(`   ✅ Conectado: ${connected ? 'SÍ' : 'NO'}`);
+          console.log(`   🆔 Socket ID: ${connectionState.socketId || 'Sin asignar'}`);
+          console.log(`   ❌ Error: ${connectionState.connectionError || 'Ninguno'}`);
+          console.log(`   🔗 URL Socket: ${config.socket}`);
           
           dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: connected });
           

@@ -81,6 +81,12 @@ const connectSocket = (token, options = {}) => {
 
     socket.on('connect_error', (error) => {
       console.error('💥 Error de conexión del socket:', error);
+      console.error('🔍 Detalles del error:');
+      console.error(`   Mensaje: ${error.message}`);
+      console.error(`   Tipo: ${error.type || 'unknown'}`);
+      console.error(`   Código: ${error.code || 'unknown'}`);
+      console.error(`   URL intentada: ${serverUrl}`);
+      
       connectionState.isConnected = false;
       connectionState.isConnecting = false;
       connectionState.connectionError = error.message;
