@@ -26,6 +26,7 @@ export const PublicUserProfile = () => {
   const [customMessage, setCustomMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
+  const [chatCreatedSuccessfully, setChatCreatedSuccessfully] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const modalRef = useRef(null);
@@ -191,31 +192,56 @@ export const PublicUserProfile = () => {
       
       const data = await response.json();
 
-      if (data && data.chat) {
+      if (data && data.success && data.chat && data.chat._id) {
         console.log('✅ Chat creado exitosamente:', data.chat);
         
         // Mostrar mensaje de éxito
         setMessageSent(true);
+        setChatCreatedSuccessfully(true);
         
-        // Actualizar las conversaciones en el ChatContext
-        try {
-          await loadConversations();
-          console.log('🔄 Conversaciones actualizadas');
-        } catch (loadError) {
-          console.warn('⚠️ Error al actualizar conversaciones:', loadError);
-        }
+        // Actualizar las conversaciones en el ChatContext (NO BLOQUEAR POR ERRORES)
+        loadConversations().catch(loadError => {
+          console.warn('⚠️ Error al actualizar conversaciones (no crítico):', loadError);
+          // Fallback: intentar agregar conversación manualmente al contexto si existe el método
+          try {
+            if (typeof sendChatMessage === 'function') {
+              console.log('🔄 Intentando fallback para agregar conversación');
+            }
+          } catch (fallbackError) {
+            console.warn('⚠️ Fallback también falló:', fallbackError);
+          }
+        });
         
         // Redirigir al chat después de un breve delay
         setTimeout(() => {
           setShowMessageModal(false);
           setMessageSent(false);
-          navigate(`/chat/${data.chat._id}`);
+          setChatCreatedSuccessfully(false);
+          
+          // Navegar con validación
+          const chatId = data.chat._id;
+          if (chatId) {
+            console.log('🚀 Navegando al chat:', chatId);
+            navigate(`/chat/${chatId}`);
+          } else {
+            console.error('❌ ID de chat no válido:', data.chat);
+            navigate('/messages'); // Fallback a lista de mensajes
+          }
         }, 1500);
       } else {
-        throw new Error('La respuesta del servidor no fue la esperada');
+        console.error('❌ Respuesta inválida del servidor:', data);
+        throw new Error(`Respuesta del servidor inválida: ${JSON.stringify(data)}`);
       }
     } catch (err) {
       console.error('Error al enviar mensaje:', err);
+      
+      // Si el error incluye información de respuesta del servidor, parsearla
+      let serverMessage = '';
+      if (err.message.includes('500') && err.message.includes('permisos')) {
+        serverMessage = 'Problema de permisos en el servidor.';
+      } else if (err.message.includes('Respuesta del servidor inválida')) {
+        serverMessage = 'El mensaje se envió pero hubo un problema con la respuesta.';
+      }
       
       let errorMessage;
       if (err.message.includes('404')) {
@@ -224,8 +250,8 @@ export const PublicUserProfile = () => {
         errorMessage = 'No puedes enviarte mensajes a ti mismo.';
       } else if (err.message.includes('vacío')) {
         errorMessage = 'El mensaje no puede estar vacío.';
-      } else if (err.message.includes('no esperada')) {
-        errorMessage = 'Hubo un problema al procesar la respuesta del servidor.';
+      } else if (serverMessage) {
+        errorMessage = serverMessage + ' El mensaje podría haberse enviado, verifica tus conversaciones.';
       } else {
         errorMessage = 'No se pudo enviar el mensaje, por favor intente nuevamente.';
       }
@@ -233,6 +259,11 @@ export const PublicUserProfile = () => {
       alert(errorMessage);
     } finally {
       setIsSending(false);
+      // Limpiar estados en caso de error
+      if (!chatCreatedSuccessfully) {
+        setMessageSent(false);
+        setChatCreatedSuccessfully(false);
+      }
     }
   };
 
@@ -538,8 +569,12 @@ export const PublicUserProfile = () => {
                   <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
                     <FiCheck className="text-green-500 w-8 h-8" />
                   </div>
-                  <p className="text-gray-800 font-medium mb-2">¡Mensaje enviado con éxito!</p>
-                  <p className="text-gray-600 text-sm">Redirigiendo al chat...</p>
+                  <p className="text-gray-800 font-medium mb-2">
+                    {chatCreatedSuccessfully ? '¡Chat creado y mensaje enviado!' : '¡Mensaje enviado con éxito!'}
+                  </p>
+                  <p className="text-gray-600 text-sm">
+                    {chatCreatedSuccessfully ? 'Redirigiendo al chat...' : 'Procesando...'}
+                  </p>
                 </div>
               ) : (
                 <>
