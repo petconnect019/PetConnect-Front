@@ -166,58 +166,81 @@ export const ChatProvider = ({ children }) => {
 
   // --- Funciones Expuestas al Resto de la App ---
 
-  const loadConversations = useCallback(async () => {
+  const loadConversations = async () => {
+    // Quitamos useCallback y leemos el token más fresco
+    const currentToken = sessionStorage.getItem('accessToken');
+    if (!currentToken) {
+      return dispatch({ type: ACTIONS.SET_ERROR, payload: 'No autenticado' });
+    }
+
     dispatch({ type: ACTIONS.SET_LOADING, payload: true });
     try {
       const response = await fetch(`${config.api}/api/chat`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { 'Authorization': `Bearer ${currentToken}` },
       });
-      if (!response.ok) throw new Error('Failed to fetch conversations');
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Podríamos llamar a una función de logout global aquí si la tuviéramos
+          dispatch({ type: ACTIONS.SET_ERROR, payload: 'Sesión expirada. Por favor, inicie sesión de nuevo.' });
+        } else {
+          throw new Error('No se pudieron cargar las conversaciones');
+        }
+        return; // Detener ejecución si la respuesta no es ok
+      }
       const data = await response.json();
-      dispatch({ type: ACTIONS.SET_CONVERSATIONS, payload: data.data });
+      dispatch({ type: ACTIONS.SET_CONVERSATIONS, payload: data.data || [] });
     } catch (error) {
       dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
     } finally {
       dispatch({ type: ACTIONS.SET_LOADING, payload: false });
     }
-  }, [token]);
+  };
 
-  const loadMessages = useCallback(async (chatId) => {
+  const loadMessages = async (chatId) => {
+    const currentToken = sessionStorage.getItem('accessToken');
+    if (!currentToken) {
+      return dispatch({ type: ACTIONS.SET_ERROR, payload: 'No autenticado' });
+    }
+
     dispatch({ type: ACTIONS.SET_LOADING, payload: true });
     dispatch({ type: ACTIONS.CLEAR_ACTIVE_CHAT });
     try {
       const response = await fetch(`${config.api}/api/chat/${chatId}/messages`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { 'Authorization': `Bearer ${currentToken}` },
       });
-      if (!response.ok) throw new Error('Failed to fetch messages');
+      if (!response.ok) throw new Error('No se pudieron cargar los mensajes');
       const data = await response.json();
-      dispatch({ type: ACTIONS.SET_ACTIVE_CHAT_MESSAGES, payload: { chatId, messages: data.data } });
+      dispatch({ type: ACTIONS.SET_ACTIVE_CHAT_MESSAGES, payload: { chatId, messages: data.data || [] } });
     } catch (error) {
       dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
     } finally {
       dispatch({ type: ACTIONS.SET_LOADING, payload: false });
     }
-  }, [token]);
+  };
 
-  const sendMessage = useCallback(async (chatId, content) => {
+  const sendMessage = async (chatId, content) => {
+    const currentToken = sessionStorage.getItem('accessToken');
+    if (!currentToken) {
+      return dispatch({ type: ACTIONS.SET_ERROR, payload: 'No autenticado' });
+    }
+
     try {
       const response = await fetch(`${config.api}/api/chat/${chatId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${currentToken}`,
         },
         body: JSON.stringify({ content }),
       });
-      if (!response.ok) throw new Error('Failed to send message');
+      if (!response.ok) throw new Error('No se pudo enviar el mensaje');
       
       // El evento 'new_message' del socket se encargará de actualizar el estado.
-      // No necesitamos hacer nada aquí para evitar duplicados.
       
     } catch (error) {
       dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
     }
-  }, [token]);
+  };
 
   const value = {
     // Estado
