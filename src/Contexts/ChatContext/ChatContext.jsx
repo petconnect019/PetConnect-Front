@@ -438,7 +438,10 @@ export const ChatProvider = ({ children }) => {
       if (token) {
         console.log('🔌 Conectando socket para usuario:', user.name);
         console.log('🔐 Token encontrado (primeros 20 chars):', token.substring(0, 20) + '...');
+        console.log('🔍 DEBUG: Objeto user completo:', JSON.stringify(user, null, 2));
         console.log('👤 ID de usuario:', user.id || user._id);
+        console.log('🔑 user.id:', user.id);
+        console.log('🔑 user._id:', user._id);
         console.log('🔗 Configuración automática:', {
           entorno: config.isDevelopment ? 'desarrollo' : 'producción',
           api: config.api,
