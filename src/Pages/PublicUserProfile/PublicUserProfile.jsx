@@ -8,11 +8,13 @@ import DefaultProfile from '../../assets/images/DefaultProfile.png';
 import defaultDog from '../../assets/images/DogProfilePfp.png';
 import defaultCat from '../../assets/images/CatProfilePfp.png';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
+import { useChat } from '../../Contexts/ChatContext/ChatContext';
 
 export const PublicUserProfile = () => {
   const { user_id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
+  const { loadConversations, sendMessage: sendChatMessage } = useChat();
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -165,7 +167,8 @@ export const PublicUserProfile = () => {
     if (!messageToSend.trim()) return;
 
     setIsSending(true);
-    const url = `${import.meta.env.VITE_API_URL}/api/chat/user/${user_id}/start`;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    const url = `${apiUrl}/api/chat/user/${user_id}/start`;
     console.log('Intentando enviar mensaje a:', url);
 
     try {
@@ -189,7 +192,20 @@ export const PublicUserProfile = () => {
       const data = await response.json();
 
       if (data && data.chat) {
+        console.log('✅ Chat creado exitosamente:', data.chat);
+        
+        // Mostrar mensaje de éxito
         setMessageSent(true);
+        
+        // Actualizar las conversaciones en el ChatContext
+        try {
+          await loadConversations();
+          console.log('🔄 Conversaciones actualizadas');
+        } catch (loadError) {
+          console.warn('⚠️ Error al actualizar conversaciones:', loadError);
+        }
+        
+        // Redirigir al chat después de un breve delay
         setTimeout(() => {
           setShowMessageModal(false);
           setMessageSent(false);

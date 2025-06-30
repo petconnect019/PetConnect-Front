@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IoWifi, IoWifiOutline, IoCloudOffline, IoSync } from 'react-icons/io5';
+import { FiTool } from 'react-icons/fi';
+import { ConnectionDiagnostic } from './ConnectionDiagnostic';
 
 const ConnectionStatus = ({ 
   connected = false, 
@@ -11,6 +13,7 @@ const ConnectionStatus = ({
 }) => {
   const [showStatus, setShowStatus] = useState(false);
   const [lastConnectionTime, setLastConnectionTime] = useState(null);
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
 
   // Mostrar estado solo cuando hay cambios importantes
   useEffect(() => {
@@ -124,18 +127,30 @@ const ConnectionStatus = ({
         </span>
       )}
 
-      {/* Botón de reintentar */}
-      {(status.type === 'error' || status.type === 'disconnected') && onRetry && (
-        <button
-          onClick={onRetry}
-          className={`
-            text-xs px-2 py-1 rounded hover:bg-opacity-20 transition-colors
-            ${status.color} hover:bg-current
-          `}
-          title="Reintentar conexión"
-        >
-          Reintentar
-        </button>
+      {/* Botones de acción */}
+      {(status.type === 'error' || status.type === 'disconnected') && (
+        <div className="flex space-x-1">
+          {onRetry && (
+            <button
+              onClick={onRetry}
+              className={`
+                text-xs px-2 py-1 rounded hover:bg-opacity-20 transition-colors
+                ${status.color} hover:bg-current
+              `}
+              title="Reintentar conexión"
+            >
+              Reintentar
+            </button>
+          )}
+          <button
+            onClick={() => setShowDiagnostic(true)}
+            className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors flex items-center"
+            title="Ver diagnóstico de conexión"
+          >
+            <FiTool className="w-3 h-3 mr-1" />
+            Diagnóstico
+          </button>
+        </div>
       )}
 
       {/* Información adicional */}
@@ -144,8 +159,15 @@ const ConnectionStatus = ({
           {lastConnectionTime.toLocaleTimeString()}
         </span>
       )}
+      
+      {/* Modal de diagnóstico */}
+      <ConnectionDiagnostic 
+        show={showDiagnostic} 
+        onClose={() => setShowDiagnostic(false)} 
+      />
     </div>
   );
 };
 
-export default ConnectionStatus; 
+export default ConnectionStatus;
+export { ConnectionStatus }; 

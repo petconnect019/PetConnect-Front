@@ -58,8 +58,11 @@ export const Chat = () => {
 
   // Cargar conversaciones al montar
   useEffect(() => {
-    if (isAuthenticated) {
-      loadConversations();
+    if (isAuthenticated && typeof loadConversations === 'function') {
+      console.log('🔄 Cargando conversaciones iniciales...');
+      loadConversations().catch(err => {
+        console.error('❌ Error al cargar conversaciones iniciales:', err);
+      });
     }
   }, [isAuthenticated, loadConversations]);
 

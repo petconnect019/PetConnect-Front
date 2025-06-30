@@ -439,15 +439,38 @@ export const ChatProvider = ({ children }) => {
       const token = sessionStorage.getItem('accessToken');
       if (token) {
         console.log('🔌 Conectando socket para usuario:', user.name);
-        connectSocket(token, { userId: user.id || user._id });
+        console.log('🔗 URL del socket:', import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || 'http://localhost:3001');
         
-        // Verificar estado inicial de conexión
-        setTimeout(() => {
+        const socket = connectSocket(token, { userId: user.id || user._id });
+        
+        // Verificar estado inicial de conexión con varios intentos
+        let attempts = 0;
+        const checkConnection = () => {
+          attempts++;
           const connected = isConnected();
+          const connectionState = getConnectionState();
+          
+          console.log(`🔍 Intento ${attempts} - Estado de conexión:`, {
+            connected,
+            socketId: connectionState.socketId,
+            error: connectionState.connectionError
+          });
+          
           dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: connected });
-        }, 1000);
+          
+          // Si no está conectado y no hay error de socket, intentar de nuevo
+          if (!connected && attempts < 3 && !connectionState.connectionError) {
+            setTimeout(checkConnection, 2000);
+          }
+        };
+        
+        setTimeout(checkConnection, 1000);
+      } else {
+        console.warn('⚠️ No se encontró token de acceso');
+        dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
       }
     } else {
+      console.log('🔌 Desconectando socket - usuario no autenticado');
       disconnectSocket();
       dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
     }
