@@ -317,7 +317,6 @@ export const PetProfile = () => {
             register={register}
             placeholder="Color de tu mascota"
             name="color"
-            validation={{ required: "El color es obligatorio" }}
           />
 
           <PetTypeSelector
