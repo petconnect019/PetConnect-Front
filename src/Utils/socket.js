@@ -263,9 +263,12 @@ const isConnected = () => {
  * @param {Function} callback - Función callback
  */
 const on = (event, callback) => {
-  if (socket) {
+  if (socket && typeof callback === 'function') {
     socket.on(event, callback);
+    return true;
   }
+  console.warn(`⚠️ No se pudo agregar listener para evento: ${event}`);
+  return false;
 };
 
 /**
@@ -275,12 +278,18 @@ const on = (event, callback) => {
  */
 const off = (event, callback) => {
   if (socket) {
-    if (callback) {
-      socket.off(event, callback);
-    } else {
-      socket.off(event);
+    try {
+      if (callback) {
+        socket.off(event, callback);
+      } else {
+        socket.off(event);
+      }
+      return true;
+    } catch (error) {
+      console.warn(`⚠️ Error al remover listener para evento ${event}:`, error);
     }
   }
+  return false;
 };
 
 /**
@@ -293,7 +302,23 @@ const emit = (event, data) => {
     socket.emit(event, data);
     return true;
   }
+  console.warn(`⚠️ No se pudo emitir evento ${event}: socket no está conectado`);
   return false;
+};
+
+/**
+ * Obtener la instancia actual del socket
+ */
+const getSocket = () => socket;
+
+/**
+ * Forzar reconexión del socket
+ */
+const forceReconnect = () => {
+  if (socket) {
+    socket.disconnect();
+    socket.connect();
+  }
 };
 
 // Exportar la instancia actual del socket y las funciones
@@ -311,7 +336,9 @@ export {
   isConnected,
   on,
   off,
-  emit
+  emit,
+  getSocket,
+  forceReconnect
 };
 
 // Exportar como default para compatibilidad
@@ -329,5 +356,7 @@ export default {
   isConnected,
   on,
   off,
-  emit
+  emit,
+  getSocket,
+  forceReconnect
 }; 

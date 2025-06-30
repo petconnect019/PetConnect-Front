@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { useAuth } from '../AuthContext/AuthContext';
-import { socket, connectSocket, disconnectSocket } from '../../Utils/socket';
-import { fetchGetConversations, fetchSendMessage, fetchGetMessages } from '../../Utils/Fetch/FetchChat/FetchChat';
+import { connectSocket, disconnectSocket, on, off, isConnected, getConnectionState } from '../../Utils/socket';
+// import { fetchGetConversations, fetchSendMessage, fetchGetMessages } from '../../Utils/Fetch/FetchChat/FetchChat';
 
 // Tipos de acciones
 const CHAT_ACTIONS = {
@@ -102,10 +102,10 @@ const chatReducer = (state, action) => {
     case CHAT_ACTIONS.SET_CONVERSATIONS:
       return {
         ...state,
-        conversations: action.payload.conversations,
-        conversationsPagination: action.payload.pagination,
+        conversations: action.payload.conversations || [],
+        conversationsPagination: action.payload.pagination || {},
         conversationsLoading: false,
-        unreadCount: action.payload.conversations.reduce((acc, conv) => acc + (conv.unreadCount || 0), 0)
+        unreadCount: (action.payload.conversations || []).reduce((acc, conv) => acc + (conv.unreadCount || 0), 0)
       };
       
     case CHAT_ACTIONS.ADD_CONVERSATION:
@@ -232,10 +232,18 @@ export const ChatProvider = ({ children }) => {
     if (isAuthenticated && user) {
       const token = sessionStorage.getItem('accessToken');
       if (token) {
-        connectSocket(token);
+        console.log('🔌 Conectando socket para usuario:', user.name);
+        connectSocket(token, { userId: user.id || user._id });
+        
+        // Verificar estado inicial de conexión
+        setTimeout(() => {
+          const connected = isConnected();
+          dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: connected });
+        }, 1000);
       }
     } else {
       disconnectSocket();
+      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
     }
 
     return () => {
@@ -250,13 +258,32 @@ export const ChatProvider = ({ children }) => {
     // Conexión establecida
     const handleConnect = () => {
       dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: true });
-      console.log('🔌 Socket conectado');
+      dispatch({ type: CHAT_ACTIONS.CLEAR_ERROR });
+      console.log('✅ Socket conectado exitosamente');
     };
 
     // Conexión perdida
     const handleDisconnect = (reason) => {
       dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
       console.log('❌ Socket desconectado:', reason);
+      
+      // Solo mostrar error si no fue desconexión manual
+      if (reason !== 'io client disconnect') {
+        dispatch({ 
+          type: CHAT_ACTIONS.SET_ERROR, 
+          payload: 'Conexión perdida. Intentando reconectar...' 
+        });
+      }
+    };
+
+    // Error de conexión
+    const handleConnectError = (error) => {
+      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
+      dispatch({ 
+        type: CHAT_ACTIONS.SET_ERROR, 
+        payload: 'Error de conexión. Verificando...' 
+      });
+      console.error('💥 Error de conexión del socket:', error);
     };
 
     // Nuevo mensaje recibido
@@ -289,7 +316,10 @@ export const ChatProvider = ({ children }) => {
     // Nuevo chat creado
     const handleChatCreated = (data) => {
       console.log('🆕 Nuevo chat creado:', data);
-      loadConversations(); // Recargar conversaciones
+      // Recargar conversaciones si la función está disponible
+      if (typeof loadConversations === 'function') {
+        loadConversations();
+      }
     };
 
     // Mensajes marcados como leídos
@@ -325,23 +355,25 @@ export const ChatProvider = ({ children }) => {
     };
 
     // Configurar listeners
-    socket.on('connect', handleConnect);
-    socket.on('disconnect', handleDisconnect);
-    socket.on('new_message', handleNewMessage);
-    socket.on('chat_created', handleChatCreated);
-    socket.on('messages_read', handleMessagesRead);
-    socket.on('user_typing', handleUserTyping);
+    on('connect', handleConnect);
+    on('disconnect', handleDisconnect);
+    on('connect_error', handleConnectError);
+    on('new_message', handleNewMessage);
+    on('chat_created', handleChatCreated);
+    on('messages_read', handleMessagesRead);
+    on('user_typing', handleUserTyping);
 
     // Cleanup
     return () => {
-      socket.off('connect', handleConnect);
-      socket.off('disconnect', handleDisconnect);
-      socket.off('new_message', handleNewMessage);
-      socket.off('chat_created', handleChatCreated);
-      socket.off('messages_read', handleMessagesRead);
-      socket.off('user_typing', handleUserTyping);
+      off('connect', handleConnect);
+      off('disconnect', handleDisconnect);
+      off('connect_error', handleConnectError);
+      off('new_message', handleNewMessage);
+      off('chat_created', handleChatCreated);
+      off('messages_read', handleMessagesRead);
+      off('user_typing', handleUserTyping);
     };
-  }, [isAuthenticated, state.activeChat]);
+      }, [isAuthenticated, state.activeChat, loadConversations]);
 
   // Cargar conversaciones
   const loadConversations = useCallback(async (options = {}) => {
@@ -362,7 +394,8 @@ export const ChatProvider = ({ children }) => {
         ...filters
       });
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat?${queryParams}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/chat?${queryParams}`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
@@ -371,16 +404,16 @@ export const ChatProvider = ({ children }) => {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data && data.success) {
         dispatch({
           type: CHAT_ACTIONS.SET_CONVERSATIONS,
           payload: {
-            conversations: data.data,
-            pagination: data.pagination
+            conversations: data.data || [],
+            pagination: data.pagination || {}
           }
         });
       } else {
-        throw new Error(data.message);
+        throw new Error(data?.message || 'Error al cargar conversaciones');
       }
     } catch (error) {
       console.error('Error al cargar conversaciones:', error);
@@ -410,8 +443,9 @@ export const ChatProvider = ({ children }) => {
         ...(before && { before })
       });
 
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/chat/${chatId}/messages?${queryParams}`,
+        `${apiUrl}/api/chat/${chatId}/messages?${queryParams}`,
         {
           headers: {
             'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
@@ -422,16 +456,16 @@ export const ChatProvider = ({ children }) => {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data && data.success) {
         dispatch({
           type: CHAT_ACTIONS.SET_MESSAGES,
           payload: {
-            messages: data.data,
-            pagination: data.pagination
+            messages: data.data || [],
+            pagination: data.pagination || {}
           }
         });
       } else {
-        throw new Error(data.message);
+        throw new Error(data?.message || 'Error al cargar mensajes');
       }
     } catch (error) {
       console.error('Error al cargar mensajes:', error);
@@ -454,8 +488,9 @@ export const ChatProvider = ({ children }) => {
         ...(options.location && { location: options.location })
       };
 
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/chat/${chatId}/messages`,
+        `${apiUrl}/api/chat/${chatId}/messages`,
         {
           method: 'POST',
           headers: {
@@ -468,11 +503,11 @@ export const ChatProvider = ({ children }) => {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data && data.success) {
         // El mensaje se agregará via socket, no necesitamos agregarlo aquí
         return data.data;
       } else {
-        throw new Error(data.message);
+        throw new Error(data?.message || 'Error al enviar mensaje');
       }
     } catch (error) {
       console.error('Error al enviar mensaje:', error);
@@ -518,6 +553,25 @@ export const ChatProvider = ({ children }) => {
     dispatch({ type: CHAT_ACTIONS.CLEAR_ERROR });
   }, []);
 
+  // Verificar estado de conexión
+  const checkConnection = useCallback(() => {
+    const connected = isConnected();
+    const connectionState = getConnectionState();
+    
+    dispatch({ 
+      type: CHAT_ACTIONS.SET_CONNECTED, 
+      payload: connected 
+    });
+    
+    console.log('🔍 Estado de conexión verificado:', {
+      connected,
+      socketId: connectionState.socketId,
+      error: connectionState.connectionError
+    });
+    
+    return connected;
+  }, []);
+
   // Valor del contexto
   const contextValue = {
     // Estado
@@ -530,7 +584,8 @@ export const ChatProvider = ({ children }) => {
     selectChat,
     closeChat,
     searchConversations,
-    clearError
+    clearError,
+    checkConnection
   };
 
   return (

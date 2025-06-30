@@ -19,27 +19,30 @@ export const Chat = () => {
   const navigate = useNavigate();
   const { chat_id } = useParams();
   const { isAuthenticated, user } = useAuth();
+  const chatContext = useChat();
+  
   const {
     // Estado
-    conversations,
-    activeChat,
-    messages,
-    loading,
-    error,
-    connected,
-    searchQuery,
-    unreadCount,
-    showSidebar,
+    conversations = [],
+    activeChat = null,
+    messages = [],
+    loading = false,
+    error = null,
+    connected = false,
+    searchQuery = '',
+    unreadCount = 0,
+    showSidebar = true,
     
     // Acciones
-    loadConversations,
-    loadMessages,
-    sendMessage,
-    selectChat,
-    closeChat,
-    searchConversations,
-    clearError
-  } = useChat();
+    loadConversations = () => {},
+    loadMessages = () => {},
+    sendMessage = () => {},
+    selectChat = () => {},
+    closeChat = () => {},
+    searchConversations = () => {},
+    clearError = () => {},
+    checkConnection = () => {}
+  } = chatContext || {};
 
   // Estado local para UI
   const [showSearchBar, setShowSearchBar] = useState(false);
@@ -133,7 +136,12 @@ export const Chat = () => {
   const Header = () => (
     <header className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 h-16 shrink-0 relative">
       {/* Estado de conexión */}
-      <ConnectionStatus connected={connected} />
+      <ConnectionStatus 
+        connected={connected} 
+        error={error}
+        onRetry={checkConnection}
+        compact={true}
+      />
       
       {(!showSidebar && activeChat) ? (
         // Header del chat activo
@@ -230,7 +238,10 @@ export const Chat = () => {
   if (!isAuthenticated) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
-        <LoadingSpinner size="large" message="Verificando autenticación..." />
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Verificando autenticación...</p>
+        </div>
       </div>
     );
   }
@@ -242,11 +253,24 @@ export const Chat = () => {
 
       {/* Error Message */}
       {error && (
-        <ErrorMessage 
-          message={error} 
-          onClose={clearError}
-          type="warning"
-        />
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mx-4 my-2">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3 flex-1">
+              <p className="text-sm font-medium text-red-800">{error}</p>
+            </div>
+            <button
+              onClick={clearError}
+              className="ml-auto text-red-600 hover:text-red-800 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Main Container */}
@@ -261,11 +285,14 @@ export const Chat = () => {
         >
           {loading && !conversations.length ? (
             <div className="flex items-center justify-center h-full">
-              <LoadingSpinner message="Cargando conversaciones..." />
+              <div className="text-center">
+                <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                <p className="text-gray-600 text-sm">Cargando conversaciones...</p>
+              </div>
             </div>
           ) : (
             <ConversationList 
-              conversations={conversations}
+              conversations={conversations || []}
               selectedChat={activeChat}
               searchQuery={searchQuery}
               onSelectConversation={handleSelectConversation}
@@ -287,17 +314,17 @@ export const Chat = () => {
               {/* Messages Area */}
               <div className="flex-1 overflow-hidden">
                 <MessageList 
-                  messages={messages}
+                  messages={messages || []}
                   currentUser={user}
                   loading={loading}
-                  chatId={activeChat._id}
+                  chatId={activeChat?._id}
                 />
               </div>
               
               {/* Message Input */}
               <div className="p-4 bg-white border-t border-gray-200">
                 <MessageInput 
-                  chatId={activeChat._id}
+                  chatId={activeChat?._id}
                   onMessageSent={handleSendMessage}
                   disabled={!connected}
                 />
