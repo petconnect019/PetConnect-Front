@@ -56,6 +56,11 @@ const connectSocket = (token, options = {}) => {
       api: config.api,
       socket: config.socket
     });
+    console.log('🔐 Autenticación:', {
+      tokenExiste: !!token,
+      tokenLength: token ? token.length : 0,
+      userId: options.userId
+    });
     
     socket = io(serverUrl, config);
 
@@ -108,12 +113,19 @@ const connectSocket = (token, options = {}) => {
 
     // Eventos específicos de la aplicación
     socket.on('auth_success', (data) => {
-      console.log('🔐 Autenticación exitosa:', data);
+      console.log('✅ 🔐 Autenticación exitosa:', data);
     });
 
     socket.on('auth_error', (error) => {
-      console.error('🔐 Error de autenticación:', error);
+      console.error('❌ 🔐 Error de autenticación:', error);
+      connectionState.connectionError = `Auth Error: ${error}`;
       disconnectSocket();
+    });
+
+    // Listener adicional para errores específicos
+    socket.on('error', (error) => {
+      console.error('❌ Error general del socket:', error);
+      connectionState.connectionError = error.message || error;
     });
 
     // Ping para mantener la conexión activa

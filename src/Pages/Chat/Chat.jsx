@@ -14,6 +14,7 @@ import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import LoadingSpinner from '../../Components/Common/LoadingSpinner';
 import ErrorMessage from '../../Components/Common/ErrorMessage';
 import ConnectionStatus from '../../Components/Common/ConnectionStatus';
+import SocketTest from '../../Components/Common/SocketTest';
 
 export const Chat = () => {
   const navigate = useNavigate();
@@ -221,7 +222,7 @@ export const Chat = () => {
 
   // Componente de estado vacío
   const EmptyState = () => (
-    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+    <div className="flex flex-col items-center justify-center text-center">
       <div className="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
         <IoSearch className="w-10 h-10 text-gray-400" />
       </div>
@@ -334,7 +335,14 @@ export const Chat = () => {
               </div>
             </>
           ) : (
-            <EmptyState />
+            <div className="flex flex-col items-center justify-center p-8">
+              <EmptyState />
+              
+              {/* Test de Diagnóstico - Solo temporal */}
+              <div className="mt-8 w-full max-w-md">
+                <SocketTest />
+              </div>
+            </div>
           )}
         </div>
       </div>

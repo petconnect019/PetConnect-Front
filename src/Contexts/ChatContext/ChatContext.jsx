@@ -437,6 +437,8 @@ export const ChatProvider = ({ children }) => {
       const token = sessionStorage.getItem('accessToken');
       if (token) {
         console.log('🔌 Conectando socket para usuario:', user.name);
+        console.log('🔐 Token encontrado (primeros 20 chars):', token.substring(0, 20) + '...');
+        console.log('👤 ID de usuario:', user.id || user._id);
         console.log('🔗 Configuración automática:', {
           entorno: config.isDevelopment ? 'desarrollo' : 'producción',
           api: config.api,
