@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+import config from './config';
 
 // Variable para almacenar la instancia del socket
 let socket = null;
@@ -11,17 +12,9 @@ let connectionState = {
   lastReconnectTime: null
 };
 
-// Configuración por defecto
+// Configuración por defecto usando config.js
 const DEFAULT_CONFIG = {
-  autoConnect: false,
-  transports: ['websocket', 'polling'],
-  timeout: 20000,
-  reconnection: true,
-  reconnectionAttempts: 5,
-  reconnectionDelay: 1000,
-  reconnectionDelayMax: 5000,
-  maxReconnectionAttempts: 5,
-  randomizationFactor: 0.5
+  ...config.socketOptions
 };
 
 /**
@@ -55,11 +48,14 @@ const connectSocket = (token, options = {}) => {
   };
 
   try {
-    const serverUrl = import.meta.env.VITE_SOCKET_URL || 
-                     import.meta.env.VITE_API_URL?.replace('/api', '') || 
-                     'http://localhost:3001';
+    const serverUrl = config.socket;
 
     console.log('🔌 Conectando socket a:', serverUrl);
+    console.log('🔧 Configuración detectada:', {
+      entorno: config.isDevelopment ? 'desarrollo' : 'producción',
+      api: config.api,
+      socket: config.socket
+    });
     
     socket = io(serverUrl, config);
 

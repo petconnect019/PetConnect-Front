@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../AuthContext/AuthContext';
 import { connectSocket, disconnectSocket, on, off, isConnected, getConnectionState } from '../../Utils/socket';
+import config from '../../Utils/config';
 // import { fetchGetConversations, fetchSendMessage, fetchGetMessages } from '../../Utils/Fetch/FetchChat/FetchChat';
 
 // Tipos de acciones
@@ -250,8 +251,7 @@ export const ChatProvider = ({ children }) => {
         ...filters
       });
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiUrl}/api/chat?${queryParams}`, {
+      const response = await fetch(`${config.api}/api/chat?${queryParams}`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
@@ -301,9 +301,8 @@ export const ChatProvider = ({ children }) => {
         ...(before && { before })
       });
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const response = await fetch(
-        `${apiUrl}/api/chat/${chatId}/messages?${queryParams}`,
+        `${config.api}/api/chat/${chatId}/messages?${queryParams}`,
         {
           headers: {
             'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
@@ -348,9 +347,8 @@ export const ChatProvider = ({ children }) => {
         ...(options.location && { location: options.location })
       };
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const response = await fetch(
-        `${apiUrl}/api/chat/${chatId}/messages`,
+        `${config.api}/api/chat/${chatId}/messages`,
         {
           method: 'POST',
           headers: {
@@ -439,7 +437,11 @@ export const ChatProvider = ({ children }) => {
       const token = sessionStorage.getItem('accessToken');
       if (token) {
         console.log('🔌 Conectando socket para usuario:', user.name);
-        console.log('🔗 URL del socket:', import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || 'http://localhost:3001');
+        console.log('🔗 Configuración automática:', {
+          entorno: config.isDevelopment ? 'desarrollo' : 'producción',
+          api: config.api,
+          socket: config.socket
+        });
         
         const socket = connectSocket(token, { userId: user.id || user._id });
         

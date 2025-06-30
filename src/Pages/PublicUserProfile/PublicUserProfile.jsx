@@ -9,6 +9,7 @@ import defaultDog from '../../assets/images/DogProfilePfp.png';
 import defaultCat from '../../assets/images/CatProfilePfp.png';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import { useChat } from '../../Contexts/ChatContext/ChatContext';
+import config from '../../Utils/config';
 
 export const PublicUserProfile = () => {
   const { user_id } = useParams();
@@ -42,7 +43,7 @@ export const PublicUserProfile = () => {
       try {
         setLoading(true);
         
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/public/${user_id}`);
+        const response = await fetch(`${config.api}/api/users/public/${user_id}`);
         console.log('Response status:', response.status);
         
         // Si la respuesta no es ok, intentamos leer el texto del error
@@ -88,9 +89,9 @@ export const PublicUserProfile = () => {
       
       try {
         setLoadingPets(true);
-        console.log('Fetching pets from:', `${import.meta.env.VITE_API_URL}/api/users/public/${user_id}/pets`);
+        console.log('Fetching pets from:', `${config.api}/api/users/public/${user_id}/pets`);
         
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/public/${user_id}/pets`);
+        const response = await fetch(`${config.api}/api/users/public/${user_id}/pets`);
         console.log('Pets response status:', response.status);
 
         if (!response.ok) {
@@ -167,8 +168,7 @@ export const PublicUserProfile = () => {
     if (!messageToSend.trim()) return;
 
     setIsSending(true);
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-    const url = `${apiUrl}/api/chat/user/${user_id}/start`;
+    const url = `${config.api}/api/chat/user/${user_id}/start`;
     console.log('Intentando enviar mensaje a:', url);
 
     try {
