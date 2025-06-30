@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../AuthContext/AuthContext';
 import { connectSocket, disconnectSocket, on, off, isConnected, getConnectionState } from '../../Utils/socket';
 // import { fetchGetConversations, fetchSendMessage, fetchGetMessages } from '../../Utils/Fetch/FetchChat/FetchChat';
@@ -141,8 +141,8 @@ const chatReducer = (state, action) => {
     case CHAT_ACTIONS.SET_MESSAGES:
       return {
         ...state,
-        messages: action.payload.messages,
-        messagesPagination: action.payload.pagination,
+        messages: action.payload.messages || [],
+        messagesPagination: action.payload.pagination || {},
         messagesLoading: false
       };
       
@@ -226,154 +226,10 @@ export const useChat = () => {
 export const ChatProvider = ({ children }) => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const { isAuthenticated, user } = useAuth();
-
-  // Conectar socket al autenticarse
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      const token = sessionStorage.getItem('accessToken');
-      if (token) {
-        console.log('🔌 Conectando socket para usuario:', user.name);
-        connectSocket(token, { userId: user.id || user._id });
-        
-        // Verificar estado inicial de conexión
-        setTimeout(() => {
-          const connected = isConnected();
-          dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: connected });
-        }, 1000);
-      }
-    } else {
-      disconnectSocket();
-      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
-    }
-
-    return () => {
-      disconnectSocket();
-    };
-  }, [isAuthenticated, user]);
-
-  // Configurar listeners de socket
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-    // Conexión establecida
-    const handleConnect = () => {
-      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: true });
-      dispatch({ type: CHAT_ACTIONS.CLEAR_ERROR });
-      console.log('✅ Socket conectado exitosamente');
-    };
-
-    // Conexión perdida
-    const handleDisconnect = (reason) => {
-      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
-      console.log('❌ Socket desconectado:', reason);
-      
-      // Solo mostrar error si no fue desconexión manual
-      if (reason !== 'io client disconnect') {
-        dispatch({ 
-          type: CHAT_ACTIONS.SET_ERROR, 
-          payload: 'Conexión perdida. Intentando reconectar...' 
-        });
-      }
-    };
-
-    // Error de conexión
-    const handleConnectError = (error) => {
-      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
-      dispatch({ 
-        type: CHAT_ACTIONS.SET_ERROR, 
-        payload: 'Error de conexión. Verificando...' 
-      });
-      console.error('💥 Error de conexión del socket:', error);
-    };
-
-    // Nuevo mensaje recibido
-    const handleNewMessage = (data) => {
-      const { chatId, message } = data;
-      
-      // Agregar mensaje si es del chat activo
-      if (state.activeChat?._id === chatId) {
-        dispatch({
-          type: CHAT_ACTIONS.ADD_MESSAGE,
-          payload: { ...message, chatId }
-        });
-      }
-      
-      // Actualizar conversación
-      dispatch({
-        type: CHAT_ACTIONS.UPDATE_CONVERSATION,
-        payload: {
-          _id: chatId,
-          lastMessage: {
-            content: message.content,
-            timestamp: message.timestamp,
-            senderId: message.senderId
-          },
-          unreadCount: state.activeChat?._id === chatId ? 0 : 1
-        }
-      });
-    };
-
-    // Nuevo chat creado
-    const handleChatCreated = (data) => {
-      console.log('🆕 Nuevo chat creado:', data);
-      // Recargar conversaciones si la función está disponible
-      if (typeof loadConversations === 'function') {
-        loadConversations();
-      }
-    };
-
-    // Mensajes marcados como leídos
-    const handleMessagesRead = (data) => {
-      dispatch({
-        type: CHAT_ACTIONS.MARK_MESSAGES_READ,
-        payload: { chatId: data.chatId }
-      });
-    };
-
-    // Usuario escribiendo
-    const handleUserTyping = (data) => {
-      dispatch({
-        type: CHAT_ACTIONS.SET_TYPING,
-        payload: {
-          chatId: data.chatId,
-          userId: data.userId,
-          isTyping: true
-        }
-      });
-
-      // Limpiar estado de tipeo después de 3 segundos
-      setTimeout(() => {
-        dispatch({
-          type: CHAT_ACTIONS.SET_TYPING,
-          payload: {
-            chatId: data.chatId,
-            userId: data.userId,
-            isTyping: false
-          }
-        });
-      }, 3000);
-    };
-
-    // Configurar listeners
-    on('connect', handleConnect);
-    on('disconnect', handleDisconnect);
-    on('connect_error', handleConnectError);
-    on('new_message', handleNewMessage);
-    on('chat_created', handleChatCreated);
-    on('messages_read', handleMessagesRead);
-    on('user_typing', handleUserTyping);
-
-    // Cleanup
-    return () => {
-      off('connect', handleConnect);
-      off('disconnect', handleDisconnect);
-      off('connect_error', handleConnectError);
-      off('new_message', handleNewMessage);
-      off('chat_created', handleChatCreated);
-      off('messages_read', handleMessagesRead);
-      off('user_typing', handleUserTyping);
-    };
-      }, [isAuthenticated, state.activeChat, loadConversations]);
+  
+  // Referencias para evitar dependencias circulares
+  const loadConversationsRef = useRef();
+  const loadMessagesRef = useRef();
 
   // Cargar conversaciones
   const loadConversations = useCallback(async (options = {}) => {
@@ -383,7 +239,7 @@ export const ChatProvider = ({ children }) => {
       const {
         page = 1,
         limit = 20,
-        search = state.searchQuery,
+        search = '',
         ...filters
       } = options;
 
@@ -424,10 +280,12 @@ export const ChatProvider = ({ children }) => {
     } finally {
       dispatch({ type: CHAT_ACTIONS.SET_LOADING, payload: false });
     }
-  }, [state.searchQuery]);
+  }, []);
 
   // Cargar mensajes de un chat
   const loadMessages = useCallback(async (chatId, options = {}) => {
+    if (!chatId) return;
+    
     try {
       dispatch({ type: CHAT_ACTIONS.SET_LOADING, payload: true });
       
@@ -480,6 +338,8 @@ export const ChatProvider = ({ children }) => {
 
   // Enviar mensaje
   const sendMessage = useCallback(async (chatId, content, options = {}) => {
+    if (!chatId || !content?.trim()) return;
+    
     try {
       const messageData = {
         content: content.trim(),
@@ -527,10 +387,10 @@ export const ChatProvider = ({ children }) => {
     });
     
     // Cargar mensajes del chat
-    if (chat?._id) {
-      loadMessages(chat._id);
+    if (chat?._id && loadMessagesRef.current) {
+      loadMessagesRef.current(chat._id);
     }
-  }, [loadMessages]);
+  }, []);
 
   // Cerrar chat
   const closeChat = useCallback(() => {
@@ -543,10 +403,7 @@ export const ChatProvider = ({ children }) => {
       type: CHAT_ACTIONS.SET_SEARCH_QUERY,
       payload: query
     });
-    
-    // Recargar conversaciones con búsqueda
-    loadConversations({ search: query, page: 1 });
-  }, [loadConversations]);
+  }, []);
 
   // Limpiar error
   const clearError = useCallback(() => {
@@ -571,6 +428,148 @@ export const ChatProvider = ({ children }) => {
     
     return connected;
   }, []);
+
+  // Asignar funciones a referencias
+  loadConversationsRef.current = loadConversations;
+  loadMessagesRef.current = loadMessages;
+
+  // Conectar socket al autenticarse
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const token = sessionStorage.getItem('accessToken');
+      if (token) {
+        console.log('🔌 Conectando socket para usuario:', user.name);
+        connectSocket(token, { userId: user.id || user._id });
+        
+        // Verificar estado inicial de conexión
+        setTimeout(() => {
+          const connected = isConnected();
+          dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: connected });
+        }, 1000);
+      }
+    } else {
+      disconnectSocket();
+      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
+    }
+
+    return () => {
+      disconnectSocket();
+    };
+  }, [isAuthenticated, user]);
+
+  // Configurar listeners de socket
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    // Handlers de socket
+    const handleConnect = () => {
+      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: true });
+      dispatch({ type: CHAT_ACTIONS.CLEAR_ERROR });
+      console.log('✅ Socket conectado exitosamente');
+    };
+
+    const handleDisconnect = (reason) => {
+      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
+      console.log('❌ Socket desconectado:', reason);
+      
+      if (reason !== 'io client disconnect') {
+        dispatch({ 
+          type: CHAT_ACTIONS.SET_ERROR, 
+          payload: 'Conexión perdida. Intentando reconectar...' 
+        });
+      }
+    };
+
+    const handleConnectError = (error) => {
+      dispatch({ type: CHAT_ACTIONS.SET_CONNECTED, payload: false });
+      dispatch({ 
+        type: CHAT_ACTIONS.SET_ERROR, 
+        payload: 'Error de conexión. Verificando...' 
+      });
+      console.error('💥 Error de conexión del socket:', error);
+    };
+
+    const handleNewMessage = (data) => {
+      const { chatId, message } = data;
+      
+      if (state.activeChat?._id === chatId) {
+        dispatch({
+          type: CHAT_ACTIONS.ADD_MESSAGE,
+          payload: { ...message, chatId }
+        });
+      }
+      
+      dispatch({
+        type: CHAT_ACTIONS.UPDATE_CONVERSATION,
+        payload: {
+          _id: chatId,
+          lastMessage: {
+            content: message.content,
+            timestamp: message.timestamp,
+            senderId: message.senderId
+          },
+          unreadCount: state.activeChat?._id === chatId ? 0 : 1
+        }
+      });
+    };
+
+    const handleChatCreated = (data) => {
+      console.log('🆕 Nuevo chat creado:', data);
+      dispatch({
+        type: CHAT_ACTIONS.ADD_CONVERSATION,
+        payload: data
+      });
+    };
+
+    const handleMessagesRead = (data) => {
+      dispatch({
+        type: CHAT_ACTIONS.MARK_MESSAGES_READ,
+        payload: { chatId: data.chatId }
+      });
+    };
+
+    const handleUserTyping = (data) => {
+      dispatch({
+        type: CHAT_ACTIONS.SET_TYPING,
+        payload: {
+          chatId: data.chatId,
+          userId: data.userId,
+          isTyping: true
+        }
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: CHAT_ACTIONS.SET_TYPING,
+          payload: {
+            chatId: data.chatId,
+            userId: data.userId,
+            isTyping: false
+          }
+        });
+      }, 3000);
+    };
+
+    // Configurar listeners
+    on('connect', handleConnect);
+    on('disconnect', handleDisconnect);
+    on('connect_error', handleConnectError);
+    on('new_message', handleNewMessage);
+    on('chat_created', handleChatCreated);
+    on('messages_read', handleMessagesRead);
+    on('user_typing', handleUserTyping);
+
+    // Cleanup
+    return () => {
+      off('connect', handleConnect);
+      off('disconnect', handleDisconnect);
+      off('connect_error', handleConnectError);
+      off('new_message', handleNewMessage);
+      off('chat_created', handleChatCreated);
+      off('messages_read', handleMessagesRead);
+      off('user_typing', handleUserTyping);
+    };
+  }, [isAuthenticated]);
 
   // Valor del contexto
   const contextValue = {
