@@ -448,7 +448,11 @@ export const ChatProvider = ({ children }) => {
           socket: config.socket
         });
         
-        const socketInstance = connectSocket(token, { userId: user.id || user._id });
+        // Extraer ID correctamente del documento de Mongoose o JSON
+        const userId = user.id || user._id || user._doc?._id || user._doc?.id;
+        console.log('🔧 ID extraído para socket:', userId);
+        
+        const socketInstance = connectSocket(token, { userId });
         
         // Forzar conexión inmediata (similar al test exitoso)
         if (socketInstance && !socketInstance.connected) {
