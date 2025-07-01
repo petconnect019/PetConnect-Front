@@ -124,41 +124,72 @@ export const CalendarIntegration = () => {
       const petName = selectedPet.name;
       const petIcon = selectedPet.species === 'dog' ? '🐕' : '🐱';
 
+      // Asegurar formato correcto de fecha/hora
+      const startDateTime = new Date(appointmentData.datetime);
+      const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000); // +1 hora
+
+      // Verificar que las fechas son válidas
+      if (isNaN(startDateTime.getTime()) || isNaN(endDateTime.getTime())) {
+        throw new Error('Fecha/hora inválida. Por favor verifica la fecha seleccionada.');
+      }
+
       const event = {
         summary: `${petIcon} ${appointmentData.title} - ${petName}`,
-        description: `Cita veterinaria para ${petName}\n\nTipo: ${appointmentData.title}\nNotas: ${appointmentData.notes || 'Sin notas adicionales'}`,
+        description: `Cita veterinaria para ${petName}\n\nTipo: ${appointmentData.title}\nNotas: ${appointmentData.notes || 'Sin notas adicionales'}\n\nCreado desde Pet Connect`,
         start: {
-          dateTime: appointmentData.datetime,
+          dateTime: startDateTime.toISOString(),
           timeZone: 'America/Bogota'
         },
         end: {
-          dateTime: new Date(new Date(appointmentData.datetime).getTime() + 60 * 60 * 1000).toISOString(),
+          dateTime: endDateTime.toISOString(),
           timeZone: 'America/Bogota'
         },
         reminders: {
           useDefault: false,
           overrides: [
-            { method: 'email', minutes: 24 * 60 }, // 1 día antes
+            { method: 'popup', minutes: 24 * 60 }, // 1 día antes
             { method: 'popup', minutes: 60 }, // 1 hora antes
             { method: 'popup', minutes: 15 } // 15 minutos antes
           ]
-        }
+        },
+        location: appointmentData.location || '',
+        colorId: '3' // Color verde para eventos de mascotas
       };
 
       // Agregar veterinario si se proporcionó
-      if (appointmentData.veterinary) {
-        event.attendees = [{ email: appointmentData.veterinary }];
+      if (appointmentData.veterinary && appointmentData.veterinary.trim()) {
+        event.attendees = [{ 
+          email: appointmentData.veterinary.trim(),
+          responseStatus: 'needsAction'
+        }];
       }
 
+      console.log('Evento a crear:', JSON.stringify(event, null, 2));
+
       const createdEvent = await GoogleCalendarAPI.createEvent(event);
-      console.log('Evento creado:', createdEvent);
+      console.log('Evento creado exitosamente:', createdEvent);
       
       // Recargar eventos
       await loadCalendarEvents();
       alert('¡Cita creada exitosamente en Google Calendar!');
     } catch (error) {
       console.error('Error creating calendar event:', error);
-      alert(`Error al crear la cita: ${error.message}`);
+      let errorMessage = 'Error desconocido al crear la cita.';
+      
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.result?.error?.message) {
+        errorMessage = error.result.error.message;
+      } else if (error.body) {
+        try {
+          const errorBody = JSON.parse(error.body);
+          errorMessage = errorBody.error?.message || errorMessage;
+        } catch (e) {
+          // Si no se puede parsear el error, usar el mensaje por defecto
+        }
+      }
+      
+      alert(`Error al crear la cita: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
