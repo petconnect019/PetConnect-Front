@@ -5,7 +5,6 @@ import { VaccineTimeline } from './VaccineTimeline';
 import { useVetDocuments } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
 
 export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents' }) => {
-  const [activeTab, setActiveTab] = useState(initialTab);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);
   const [documents, setDocuments] = useState([]);
@@ -20,11 +19,6 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
       setSelectedPet(petList[0]);
     }
   }, [petList, selectedPet]);
-
-  // Sincronizar con pestaña inicial
-  useEffect(() => {
-    setActiveTab(initialTab);
-  }, [initialTab]);
 
   // Cargar documentos
   const loadDocuments = async () => {
@@ -48,18 +42,6 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
     loadDocuments();
   }, [selectedPet]);
 
-  // Calcular estadísticas
-  const stats = {
-    documents: documents.filter(doc => doc.type !== 'vaccine').length,
-    activeVaccines: documents.filter(doc => 
-      doc.type === 'vaccine' && 
-      doc.status === 'active' && 
-      doc.nextDue && 
-      new Date(doc.nextDue) > new Date()
-    ).length,
-    totalDocuments: documents.length
-  };
-
   if (!petList || petList.length === 0) {
     return <EmptyPetsState navigate={navigate} />;
   }
@@ -77,6 +59,13 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
     );
   }
 
+  // Filtrar documentos según el tipo requerido
+  const filteredDocuments = initialTab === 'vaccines' 
+    ? documents.filter(doc => doc.type === 'vaccine')
+    : initialTab === 'documents'
+    ? documents.filter(doc => doc.type !== 'vaccine')
+    : documents;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -86,8 +75,8 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
             {selectedPet?.name}
           </h2>
           <p className="text-sm text-gray-500">
-            {activeTab === 'documents' ? 'Documentos médicos' :
-             activeTab === 'vaccines' ? 'Control de vacunas' :
+            {initialTab === 'documents' ? 'Documentos médicos' :
+             initialTab === 'vaccines' ? 'Control de vacunas' :
              'Historial médico'}
           </p>
         </div>
@@ -119,88 +108,28 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setActiveTab('documents')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150 ${
-            activeTab === 'documents'
-              ? 'bg-brand text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          <span>📄</span>
-          <span>Documentos</span>
-          <span className="ml-1 text-xs opacity-80">({stats.documents})</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('vaccines')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150 ${
-            activeTab === 'vaccines'
-              ? 'bg-brand text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          <span>💉</span>
-          <span>Vacunas</span>
-          <span className="ml-1 text-xs opacity-80">({stats.activeVaccines})</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('timeline')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150 ${
-            activeTab === 'timeline'
-              ? 'bg-brand text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          <span>📊</span>
-          <span>Historial</span>
-        </button>
-      </div>
-
       {/* Content */}
       <div className="space-y-4">
-        {activeTab === 'documents' && (
+        {initialTab !== 'timeline' ? (
           <div className="grid gap-4">
-            {documents
-              .filter(doc => doc.type !== 'vaccine')
-              .map(doc => (
-                <DocumentCard 
-                  key={doc._id} 
-                  document={doc}
-                />
-              ))}
-            {documents.filter(doc => doc.type !== 'vaccine').length === 0 && (
+            {filteredDocuments.map(doc => (
+              <DocumentCard 
+                key={doc._id} 
+                document={doc}
+              />
+            ))}
+            {filteredDocuments.length === 0 && (
               <EmptyState
-                icon="📄"
-                title="Sin documentos"
-                subtitle="Agrega documentos médicos para tu mascota"
+                icon={initialTab === 'vaccines' ? '💉' : '📄'}
+                title={initialTab === 'vaccines' ? 'Sin vacunas' : 'Sin documentos'}
+                subtitle={initialTab === 'vaccines' 
+                  ? 'Registra las vacunas de tu mascota'
+                  : 'Agrega documentos médicos para tu mascota'
+                }
               />
             )}
           </div>
-        )}
-        
-        {activeTab === 'vaccines' && (
-          <div className="grid gap-4">
-            {documents
-              .filter(doc => doc.type === 'vaccine')
-              .map(doc => (
-                <DocumentCard 
-                  key={doc._id} 
-                  document={doc}
-                />
-              ))}
-            {documents.filter(doc => doc.type === 'vaccine').length === 0 && (
-              <EmptyState
-                icon="💉"
-                title="Sin vacunas"
-                subtitle="Registra las vacunas de tu mascota"
-              />
-            )}
-          </div>
-        )}
-        
-        {activeTab === 'timeline' && (
+        ) : (
           <VaccineTimeline 
             documents={documents}
             selectedPet={selectedPet}

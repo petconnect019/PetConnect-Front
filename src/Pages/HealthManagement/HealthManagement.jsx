@@ -73,23 +73,6 @@ export const HealthManagement = () => {
         
         {activeTab === 'calendar' && (
           <div>
-            {/* Banner informativo */}
-            <div className="mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm">💡</span>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-blue-800 mb-1">
-                    Gestiona todo desde Google Calendar
-                  </h4>
-                  <p className="text-sm text-blue-600">
-                    Conecta tu cuenta para programar citas, crear recordatorios y recibir notificaciones automáticas.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
             <CalendarIntegration />
           </div>
         )}
