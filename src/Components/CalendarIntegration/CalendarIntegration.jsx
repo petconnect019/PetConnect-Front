@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleCalendarAPI } from '../../Utils/GoogleCalendar/GoogleCalendarAPI';
 import { usePet } from '../../Contexts/PetContext/PetContext';
 import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
@@ -21,21 +21,46 @@ export const CalendarIntegration = () => {
   const [selectedPet, setSelectedPet] = useState(null);
   const [configError, setConfigError] = useState(null);
   const [activeView, setActiveView] = useState('overview'); // overview, create
+  const [error, setError] = useState(null);
   
   // Hook para gestionar recordatorios del backend
   const { getReminders, toggleReminder, loading: remindersLoading } = useVetDocuments();
 
+  // Memoizar la función de verificación de conexión
+  const checkGoogleCalendarConnection = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const connected = await GoogleCalendarAPI.isConnected();
+      setIsConnected(connected);
+      setConfigError(null);
+      
+      if (connected) {
+        await loadCalendarEvents();
+      }
+    } catch (error) {
+      console.error('Error checking calendar connection:', error);
+      setConfigError(error.message);
+      setIsConnected(false);
+      setError('Error al verificar la conexión con Google Calendar');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Efecto para verificar la conexión al montar y cuando cambie petList
   useEffect(() => {
-    console.log('PetList actualizado:', petList);
+    checkGoogleCalendarConnection();
+  }, [checkGoogleCalendarConnection]);
+
+  // Efecto para manejar la selección automática de mascota
+  useEffect(() => {
     if (petList && petList.length > 0 && !selectedPet) {
       setSelectedPet(petList[0]);
-      console.log('Mascota seleccionada automáticamente:', petList[0]);
     } else if (!petList || petList.length === 0) {
-      console.log('No hay mascotas disponibles:', petList);
       setSelectedPet(null);
     }
-    checkGoogleCalendarConnection();
-  }, [petList]);
+  }, [petList, selectedPet]);
 
   // Cargar recordatorios cuando cambie la mascota seleccionada
   useEffect(() => {
@@ -60,19 +85,25 @@ export const CalendarIntegration = () => {
     console.log('CalendarIntegration montado - petList:', petList);
   }, []);
 
-  const checkGoogleCalendarConnection = async () => {
+  const loadCalendarEvents = async () => {
     try {
-      const connected = await GoogleCalendarAPI.isConnected();
-      setIsConnected(connected);
-      setConfigError(null);
+      setLoading(true);
+      setError(null);
+      console.log('Cargando eventos del calendario...');
+      const calendarEvents = await GoogleCalendarAPI.getEvents();
+      console.log('Eventos cargados:', calendarEvents);
+      setEvents(calendarEvents || []);
       
-      if (connected) {
-        loadCalendarEvents();
+      if (selectedPet) {
+        const remindersData = await getReminders(selectedPet._id);
+        setReminders(remindersData || []);
       }
     } catch (error) {
-      console.error('Error checking calendar connection:', error);
-      setConfigError(error.message);
-      setIsConnected(false);
+      console.error('Error loading calendar events:', error);
+      setEvents([]);
+      setError('Error al cargar los eventos del calendario');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,27 +146,6 @@ export const CalendarIntegration = () => {
       alert('Desconectado de Google Calendar');
     } catch (error) {
       console.error('Error disconnecting:', error);
-    }
-  };
-
-  const loadCalendarEvents = async () => {
-    try {
-      setLoading(true);
-      console.log('Cargando eventos del calendario...');
-      const calendarEvents = await GoogleCalendarAPI.getEvents();
-      console.log('Eventos cargados:', calendarEvents);
-      setEvents(calendarEvents || []);
-      
-      // También recargar recordatorios si hay mascota seleccionada
-      if (selectedPet) {
-        const remindersData = await getReminders(selectedPet._id);
-        setReminders(remindersData || []);
-      }
-    } catch (error) {
-      console.error('Error loading calendar events:', error);
-      setEvents([]);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -411,319 +421,41 @@ export const CalendarIntegration = () => {
   const stats = getStats();
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-800">
-            Calendario y Recordatorios
-          </h3>
-          {isConnected && (
-            <button
-              onClick={disconnectFromGoogleCalendar}
-              className="text-sm text-red-600 hover:text-red-700 transition-colors duration-150"
-            >
-              Desconectar
-            </button>
-          )}
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => setActiveView('overview')}
-            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors duration-150 ${
-              activeView === 'overview'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            📊 Resumen
-          </button>
-          <button
-            onClick={() => setActiveView('create')}
-            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors duration-150 ${
-              activeView === 'create'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            ➕ Nueva Cita
-          </button>
-        </div>
-      </div>
-
-      {/* Not Connected State */}
-      {!isConnected && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl">🔗</span>
-          </div>
-          <h4 className="font-semibold text-gray-800 mb-2">
-            Conecta con Google Calendar
-          </h4>
-          <button
-            onClick={connectToGoogleCalendar}
-            disabled={loading}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
-          >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Conectando...</span>
-              </>
-            ) : (
-              <>
-                <span>🔗</span>
-                <span>Conectar con Google</span>
-              </>
-            )}
-          </button>
+    <div className="min-h-screen bg-gray-50 p-4">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
+          <p className="font-medium">Error</p>
+          <p className="text-sm">{error}</p>
         </div>
       )}
 
-      {/* Overview */}
-      {isConnected && activeView === 'overview' && (
-        <div className="space-y-4">
-          {/* Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <StatCard 
-              icon="📅" 
-              value={stats.totalEvents} 
-              label="Total Eventos" 
-              color="blue" 
-            />
-            <StatCard 
-              icon="⏰" 
-              value={stats.upcomingEvents} 
-              label="Próximos" 
-              color="green" 
-            />
-            <StatCard 
-              icon="🚨" 
-              value={stats.overdueReminders} 
-              label="Vencidos" 
-              color="red" 
-            />
-            <StatCard 
-              icon="✅" 
-              value={stats.completedEvents} 
-              label="Completados" 
-              color="blue" 
-            />
-          </div>
-
-          {/* Events List */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="font-semibold text-gray-800">
-                Próximos Eventos
-              </h4>
-              <button
-                onClick={loadCalendarEvents}
-                className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-150 flex items-center gap-1"
-              >
-                <span>🔄</span>
-                Actualizar
-              </button>
-            </div>
-
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="bg-gray-100 rounded-xl p-4 animate-pulse">
-                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-                  </div>
-                ))}
-              </div>
-            ) : events.length > 0 ? (
-              <div className="space-y-3">
-                {events.map(event => (
-                  <EventCard
-                    key={event._id || event.id}
-                    event={event}
-                    onToggle={handleReminderToggle}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">📅</span>
-                </div>
-                <h4 className="font-semibold text-gray-800 mb-2">
-                  No hay eventos programados
-                </h4>
-                <p className="text-gray-500 text-sm">
-                  Crea una nueva cita o recordatorio para empezar
-                </p>
-                <button
-                  onClick={() => setActiveView('create')}
-                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-xl text-sm font-medium transition-colors duration-150 flex items-center gap-2 mx-auto"
-                >
-                  <span>➕</span>
-                  Programar Cita
-                </button>
-              </div>
-            )}
-          </div>
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[200px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
         </div>
-      )}
-
-      {/* Create Event Form */}
-      {isConnected && activeView === 'create' && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h4 className="font-semibold text-gray-800 mb-6">
-            Nueva Cita o Recordatorio
-          </h4>
-
-          {/* Pet Selector */}
-          {petList.length > 0 ? (
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Selecciona una mascota
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {petList.map((pet) => (
-                  <button
-                    key={pet._id}
-                    onClick={() => setSelectedPet(pet)}
-                    className={`flex items-center gap-3 p-3 rounded-xl transition-colors duration-150 ${
-                      selectedPet?._id === pet._id
-                        ? 'bg-brand text-white'
-                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                      {pet.species === 'dog' ? '🐕' : '🐱'}
-                    </div>
-                    <span className="font-medium truncate">{pet.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+      ) : (
+        <>
+          {activeView === 'overview' ? (
+            <CalendarOverview
+              stats={getStats()}
+              combinedEvents={getCombinedEvents()}
+              onRefresh={loadCalendarEvents}
+              onReminderToggle={handleReminderToggle}
+              loading={loading}
+              isConnected={isConnected}
+              onConnect={connectToGoogleCalendar}
+              onDisconnect={disconnectFromGoogleCalendar}
+              error={error}
+            />
           ) : (
-            <div className="mb-6 text-center">
-              <p className="text-gray-500 text-sm mb-4">
-                Primero debes agregar una mascota
-              </p>
-              <button
-                onClick={() => window.location.href = '/new-pet1'}
-                className="bg-brand hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
-              >
-                Agregar Mascota
-              </button>
-            </div>
+            <CreateAppointmentForm
+              selectedPet={selectedPet}
+              onCreateAppointment={createVetAppointment}
+              loading={loading}
+              onCancel={() => setActiveView('overview')}
+            />
           )}
-
-          {/* Event Form */}
-          {selectedPet && (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Event Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tipo de evento
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {[
-                    { id: 'checkup', label: 'Chequeo General', icon: '🩺' },
-                    { id: 'vaccine', label: 'Vacunación', icon: '💉' },
-                    { id: 'medication', label: 'Medicación', icon: '💊' },
-                    { id: 'grooming', label: 'Peluquería', icon: '✂️' }
-                  ].map(type => (
-                    <button
-                      key={type.id}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, type: type.id })}
-                      className={`p-3 rounded-xl border-2 transition-colors duration-150 text-left ${
-                        formData.type === type.id
-                          ? 'border-brand bg-orange-50'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
-                          <span className="text-lg">{type.icon}</span>
-                        </div>
-                        <span className="font-medium">{type.label}</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Title */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Título del evento
-                </label>
-                <input
-                  type="text"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Ej: Vacuna antirrábica"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-colors duration-150"
-                />
-              </div>
-
-              {/* Date and Time */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Fecha y hora
-                </label>
-                <input
-                  type="datetime-local"
-                  value={formData.datetime}
-                  onChange={(e) => setFormData({ ...formData, datetime: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-colors duration-150"
-                />
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Descripción (opcional)
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Información adicional sobre la cita..."
-                  rows={3}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-colors duration-150 resize-none"
-                />
-              </div>
-
-              {/* Submit Buttons */}
-              <div className="flex gap-2 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setActiveView('overview')}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition-colors duration-150"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading || !formData.title || !formData.datetime}
-                  className="flex-1 bg-brand hover:bg-orange-600 text-white py-3 rounded-xl font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Guardando...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>💾</span>
-                      <span>Guardar</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
+        </>
       )}
     </div>
   );
@@ -886,80 +618,75 @@ const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading, onCa
 };
 
 // Componente de resumen del calendario
-const CalendarOverview = ({ stats, combinedEvents, onRefresh, onReminderToggle, loading }) => {
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="h-16 bg-gray-200 rounded"></div>
-            <div className="h-16 bg-gray-200 rounded"></div>
+const CalendarOverview = ({
+  stats,
+  combinedEvents,
+  onRefresh,
+  onReminderToggle,
+  loading,
+  isConnected,
+  onConnect,
+  onDisconnect,
+  error
+}) => {
+  return (
+    <div className="space-y-6">
+      {/* Connection Status */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+            <span className="text-gray-700">
+              {isConnected ? 'Conectado a Google Calendar' : 'No conectado'}
+            </span>
           </div>
+          <button
+            onClick={isConnected ? onDisconnect : onConnect}
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150 ${
+              isConnected
+                ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                : 'bg-brand text-white hover:bg-brand-dark'
+            }`}
+            disabled={loading}
+          >
+            {isConnected ? 'Desconectar' : 'Conectar'}
+          </button>
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="space-y-4">
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard
-          icon="📅"
-          value={stats.totalEvents}
-          label="Total Eventos"
-          color="blue"
-        />
-        <StatCard
-          icon="🗓️"
-          value={stats.upcomingEvents}
-          label="Citas Calendar"
-          color="green"
-        />
-        <StatCard
-          icon="⏰"
-          value={stats.pendingReminders}
-          label="Recordatorios"
-          color="orange"
-        />
-        <StatCard
-          icon="🚨"
-          value={stats.overdueReminders}
-          label="Vencidos"
-          color="red"
-        />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {stats.map((stat, index) => (
+          <StatCard key={index} {...stat} />
+        ))}
       </div>
 
-      {/* Combined Events List */}
+      {/* Events List */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-800">Próximos Eventos</h3>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-800">Próximos Eventos</h3>
           <button
             onClick={onRefresh}
-            className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-150 flex items-center gap-1"
+            className="text-sm text-brand hover:text-brand-dark transition-colors duration-150"
+            disabled={loading}
           >
-            <span>🔄</span>
             Actualizar
           </button>
         </div>
 
-        {combinedEvents.length > 0 ? (
-          <div className="space-y-3">
-            {combinedEvents.map((event, index) => (
+        {combinedEvents.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No hay eventos programados
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {combinedEvents.map((event) => (
               <CombinedEventCard
-                key={`${event.type}-${event._id || event.id || index}`}
+                key={event.id}
                 event={event}
                 onReminderToggle={onReminderToggle}
               />
             ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">📅</span>
-            </div>
-            <p className="text-gray-500">No hay eventos próximos</p>
           </div>
         )}
       </div>

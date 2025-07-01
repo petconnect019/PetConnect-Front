@@ -7,7 +7,44 @@ class GoogleCalendarService {
     this.gapi = null;
     this.tokenClient = null;
     this.isInitialized = false;
+    this.isAuthenticated = this.checkStoredAuth();
+  }
+
+  checkStoredAuth() {
+    try {
+      const storedToken = localStorage.getItem('gapi_token');
+      const tokenExpiry = localStorage.getItem('gapi_token_expiry');
+      
+      if (!storedToken || !tokenExpiry) return false;
+      
+      // Verificar si el token ha expirado
+      if (new Date().getTime() > parseInt(tokenExpiry)) {
+        this.clearStoredAuth();
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error checking stored auth:', error);
+      return false;
+    }
+  }
+
+  clearStoredAuth() {
+    localStorage.removeItem('gapi_token');
+    localStorage.removeItem('gapi_token_expiry');
     this.isAuthenticated = false;
+  }
+
+  storeAuth(token) {
+    try {
+      // Guardar token y tiempo de expiración (1 hora desde ahora)
+      localStorage.setItem('gapi_token', JSON.stringify(token));
+      localStorage.setItem('gapi_token_expiry', new Date().getTime() + 3600000);
+      this.isAuthenticated = true;
+    } catch (error) {
+      console.error('Error storing auth:', error);
+    }
   }
 
   // Verificar que las credenciales estén configuradas
@@ -116,27 +153,27 @@ class GoogleCalendarService {
         this.tokenClient.callback = async (resp) => {
           if (resp.error !== undefined) {
             console.error('OAuth error:', resp);
+            this.clearStoredAuth();
             reject(resp);
             return;
           }
           
           console.log('OAuth success:', resp);
-          this.isAuthenticated = true;
+          this.storeAuth(resp);
           resolve(resp);
         };
 
         // Check if already has valid token
-        const currentToken = this.gapi.client.getToken();
-        if (currentToken === null) {
-          // Request new token
-          this.tokenClient.requestAccessToken({ prompt: 'consent' });
-        } else {
-          // Already authenticated
-          this.isAuthenticated = true;
-          resolve(currentToken);
+        if (this.checkStoredAuth()) {
+          resolve({ status: 'already_authenticated' });
+          return;
         }
+
+        // Request new token
+        this.tokenClient.requestAccessToken({ prompt: 'consent' });
       } catch (error) {
         console.error('Authentication error:', error);
+        this.clearStoredAuth();
         reject(error);
       }
     });
@@ -148,12 +185,24 @@ class GoogleCalendarService {
         await this.initialize();
       }
       
+      // Primero verificar el almacenamiento local
+      if (!this.checkStoredAuth()) {
+        return false;
+      }
+
+      // Luego verificar el token actual de gapi
       const token = this.gapi?.client?.getToken();
-      const connected = token !== null && this.isAuthenticated;
+      const connected = token !== null;
+      
+      if (!connected) {
+        this.clearStoredAuth();
+      }
+      
       console.log('Connection status:', { token: !!token, isAuthenticated: this.isAuthenticated, connected });
       return connected;
     } catch (error) {
       console.error('Error checking connection:', error);
+      this.clearStoredAuth();
       return false;
     }
   }
@@ -219,11 +268,17 @@ class GoogleCalendarService {
 
   // Método para desconectar
   disconnect() {
-    if (this.gapi?.client) {
-      this.gapi.client.setToken(null);
+    try {
+      const token = this.gapi?.client?.getToken();
+      if (token !== null) {
+        google.accounts.oauth2.revoke(token.access_token);
+        this.gapi.client.setToken(null);
+      }
+      this.clearStoredAuth();
+    } catch (error) {
+      console.error('Error during disconnect:', error);
+      this.clearStoredAuth();
     }
-    this.isAuthenticated = false;
-    console.log('Disconnected from Google Calendar');
   }
 }
 
