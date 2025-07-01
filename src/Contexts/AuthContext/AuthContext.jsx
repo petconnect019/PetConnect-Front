@@ -4,7 +4,6 @@ import { FetchLogout } from "../../Utils/Fetch/FetchLogout/FetchLogout";
 const AuthContext = createContext({ 
   isAuthenticated: false, 
   user: null,
-  token: null,
   login: () => {}, 
   logout: () => {} 
 });
@@ -21,16 +20,11 @@ export const AuthProvider = ({ children }) => {
     return userData ? JSON.parse(userData) : null;
   });
 
-  const [token, setToken] = useState(() => {
-    return sessionStorage.getItem("accessToken");
-  });
-
   useEffect(() => {
     // Verificar token y datos de usuario en sessionStorage al iniciar
     const token = sessionStorage.getItem("accessToken");
     const userData = sessionStorage.getItem("userData");
     setIsAuthenticated(!!(token && userData));
-    setToken(token);
     if (userData) {
       setUser(JSON.parse(userData));
     }
@@ -47,12 +41,10 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.setItem("userData", JSON.stringify(userData));
       setIsAuthenticated(true);
       setUser(userData);
-      setToken(token);
     } catch (error) {
       console.error("Error al guardar datos de autenticación:", error);
       setIsAuthenticated(false);
       setUser(null);
-      setToken(null);
     }
   };
 
@@ -64,7 +56,6 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.removeItem("hasPets");
       setIsAuthenticated(false);
       setUser(null);
-      setToken(null);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
@@ -74,10 +65,9 @@ export const AuthProvider = ({ children }) => {
   const contextValue = useMemo(() => ({
     isAuthenticated,
     user,
-    token,
     login,
     logout
-  }), [isAuthenticated, user, token]);
+  }), [isAuthenticated, user]);
 
   return (
     <AuthContext.Provider value={contextValue}>

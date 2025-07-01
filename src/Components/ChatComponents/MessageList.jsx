@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import LoadingSpinner from '../Common/LoadingSpinner';
-
+  
 const MessageItem = React.memo(({ message, isCurrentUser }) => {
   const formatTime = (timestamp) => {
     if (!timestamp) return '';
@@ -55,9 +55,9 @@ const MessageList = ({ isLoading, messages = [] }) => {
         <div>
           <h3 className="text-lg font-semibold text-gray-700">Chat Vacío</h3>
           <p className="text-sm text-gray-500">Sé el primero en enviar un mensaje.</p>
-        </div>
       </div>
-    );
+    </div>
+  );
   }
   
   const groupedMessages = groupMessagesByDate(messages);
@@ -81,6 +81,6 @@ const MessageList = ({ isLoading, messages = [] }) => {
       <div ref={messagesEndRef} />
     </div>
   );
-};
+}; 
 
 export default MessageList; 

@@ -13,8 +13,8 @@ import ConnectionStatus from '../../Components/Common/ConnectionStatus';
 import ChatWelcome from '../../Components/ChatComponents/ChatWelcome';
 
 export const Chat = () => {
-  const navigate = useNavigate();
-  const { chat_id } = useParams();
+    const navigate = useNavigate();
+    const { chat_id } = useParams();
   const { isAuthenticated } = useAuth();
   
   // Conectamos al nuevo y simplificado ChatContext
@@ -29,14 +29,14 @@ export const Chat = () => {
   } = useChat();
 
   // Redirigir si no está autenticado
-  useEffect(() => {
-    if (!isAuthenticated) {
+    useEffect(() => {
+        if (!isAuthenticated) {
       navigate('/login');
-    }
+            }
   }, [isAuthenticated, navigate]);
 
   // Efecto para cargar los mensajes cuando el chat_id de la URL cambia
-  useEffect(() => {
+    useEffect(() => {
     if (chat_id) {
       loadMessages(chat_id);
     }
@@ -48,20 +48,20 @@ export const Chat = () => {
   // Determinar si la vista de chat está visible (en móvil)
   const isChatViewVisible = !!activeChat.chatId;
 
-  const handleSelectConversation = (conversation) => {
+    const handleSelectConversation = (conversation) => {
     navigate(`/chat/${conversation._id}`);
   };
 
   const handleSendMessage = async (content) => {
     if (!activeChat.chatId) return;
     await sendMessage(activeChat.chatId, content);
-  };
+    };
 
   const handleBack = () => {
-    navigate('/chat');
-  };
+        navigate('/chat');
+    };
 
-  return (
+    return (
     <div className="flex flex-col h-screen bg-gray-50 font-sans">
       <main className="flex-1 flex overflow-hidden">
         {/* Panel de Conversaciones (Sidebar) */}
@@ -87,18 +87,18 @@ export const Chat = () => {
               selectedConversationId={activeChat.chatId}
               onSelectConversation={handleSelectConversation}
             />
-          )}
+                )}
         </aside>
 
         {/* Panel de Mensajes (Principal) */}
         <section
-          className={`
+                    className={`
             flex-1 flex flex-col bg-white
-            transition-transform duration-300 ease-in-out
+                        transition-transform duration-300 ease-in-out
             ${isChatViewVisible ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
             absolute md:static w-full h-full
-          `}
-        >
+                    `}
+                >
           {error && <ErrorMessage message={error} />}
           
           {activeChat.chatId && selectedConversation ? (
@@ -114,29 +114,29 @@ export const Chat = () => {
                 <h2 className="text-lg font-semibold truncate">
                   {selectedConversation.title}
                 </h2>
-              </div>
+                                    </div>
               
               {/* Lista de Mensajes */}
-              <MessageList
+                                    <MessageList 
                 isLoading={isLoading && activeChat.messages.length === 0}
                 messages={activeChat.messages}
-              />
+                                    />
               
               {/* Input de Mensaje */}
-              <MessageInput
+                                <MessageInput 
                 onSendMessage={handleSendMessage}
                 disabled={connectionState !== 'connected'}
-              />
-            </>
-          ) : (
+                                />
+                        </>
+                    ) : (
             // Pantalla de bienvenida cuando no hay chat seleccionado
             <ChatWelcome />
-          )}
+                    )}
         </section>
       </main>
       <FooterNav />
-    </div>
-  );
+        </div>
+    );
 };
 
 export default Chat;

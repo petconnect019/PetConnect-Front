@@ -34,8 +34,8 @@ const MessageInput = ({ onSendMessage, disabled }) => {
           <IoSend />
         </button>
       </form>
-    </div>
+      </div>
   );
-};
+}; 
 
 export default MessageInput; 

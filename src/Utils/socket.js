@@ -77,7 +77,7 @@ const connectSocket = (token, options = {}) => {
       connectionState.lastReconnectTime = new Date();
     });
 
-    socket.on('disconnect', (reason) => {
+socket.on('disconnect', (reason) => {
       console.log('❌ Socket desconectado:', reason);
       connectionState.isConnected = false;
       connectionState.isConnecting = false;
@@ -85,10 +85,10 @@ const connectSocket = (token, options = {}) => {
       // Intentar reconectar si no fue manual
       if (reason !== 'io client disconnect') {
         console.log('🔄 Intentando reconectar...');
-      }
-    });
+  }
+});
 
-    socket.on('connect_error', (error) => {
+socket.on('connect_error', (error) => {
       console.error('💥 Error de conexión del socket:', error);
       console.error('🔍 Detalles del error:');
       console.error(`   Mensaje: ${error.message}`);
@@ -125,7 +125,7 @@ const connectSocket = (token, options = {}) => {
       connectionState.connectionError = `Auth Error: ${error}`;
       disconnectSocket();
     });
-
+  
     // Listener adicional para errores específicos
     socket.on('error', (error) => {
       console.error('❌ Error general del socket:', error);
@@ -155,7 +155,7 @@ const connectSocket = (token, options = {}) => {
 const disconnectSocket = () => {
   if (socket) {
     console.log('🔌 Desconectando socket...');
-    socket.disconnect();
+  socket.disconnect();
     socket = null;
     connectionState.isConnected = false;
     connectionState.isConnecting = false;
