@@ -10,7 +10,6 @@ import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import LoadingSpinner from '../../Components/Common/LoadingSpinner';
 import ErrorMessage from '../../Components/Common/ErrorMessage';
 import ConnectionStatus from '../../Components/Common/ConnectionStatus';
-import ChatWelcome from '../../Components/ChatComponents/ChatWelcome';
 
 export const Chat = () => {
   const navigate = useNavigate();
