@@ -46,11 +46,11 @@ export const DocumentCard = ({ document }) => {
   };
 
   return (
-    <div className={`bg-gradient-to-r ${getDocumentColor(document.type)} border rounded-xl p-4 hover:shadow-md transition-all duration-300 cursor-pointer group`}>
+    <div className={`bg-gradient-to-r ${getDocumentColor(document.type)} border rounded-xl p-4 hover:bg-opacity-90 transition-colors duration-150 cursor-pointer group`}>
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3 flex-1">
           {/* Icon */}
-          <div className="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+          <div className="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center transition-colors duration-150">
             <span className="text-lg">{getDocumentIcon(document.type)}</span>
           </div>
           
@@ -89,16 +89,16 @@ export const DocumentCard = ({ document }) => {
           
           <div className="flex gap-1">
             {document.fileUrl ? (
-              <button className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105">
+              <button className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-colors duration-150">
                 <span className="text-sm">👁️</span>
               </button>
             ) : (
-              <button className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105">
+              <button className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-colors duration-150">
                 <span className="text-sm">📎</span>
               </button>
             )}
             
-            <button className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105">
+            <button className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-colors duration-150">
               <span className="text-sm">⋯</span>
             </button>
           </div>

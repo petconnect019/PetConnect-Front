@@ -117,13 +117,13 @@ export const CalendarWidget = () => {
           <div className="flex gap-2">
             <button
               onClick={() => navigate('/health-management?tab=calendar')}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200"
+              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-xl text-sm font-medium transition-colors duration-150"
             >
               Conectar
             </button>
             <button
               onClick={() => navigate('/health-management?tab=calendar')}
-              className="flex-1 bg-white hover:bg-gray-50 text-gray-700 py-2 px-4 rounded-xl text-sm font-medium border border-gray-200 transition-all duration-200"
+              className="flex-1 bg-white hover:bg-gray-50 text-gray-700 py-2 px-4 rounded-xl text-sm font-medium border border-gray-200 transition-colors duration-150"
             >
               Ver más
             </button>
@@ -191,14 +191,14 @@ export const CalendarWidget = () => {
           <div className="flex gap-2">
             <button
               onClick={() => navigate('/health-management?tab=calendar')}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-xl text-sm font-medium transition-colors duration-150 flex items-center justify-center gap-2"
             >
               <span>📋</span>
               Nueva Cita
             </button>
             <button
               onClick={() => navigate('/health-management?tab=calendar')}
-              className="flex-1 bg-white/80 hover:bg-white text-gray-700 py-2 px-4 rounded-xl text-sm font-medium border border-white/50 transition-all duration-200 flex items-center justify-center gap-2"
+              className="flex-1 bg-white hover:bg-gray-50 text-gray-700 py-2 px-4 rounded-xl text-sm font-medium border border-gray-200 transition-colors duration-150 flex items-center justify-center gap-2"
             >
               <span>👁️</span>
               Ver Todo
@@ -215,13 +215,13 @@ export const CalendarWidget = () => {
           <p className="text-sm text-gray-600 mb-4">
             Programa la próxima cita veterinaria para {petList.length > 0 ? 'tus mascotas' : 'tu mascota'}
           </p>
-          <button
-            onClick={() => navigate('/health-management?tab=calendar')}
-            className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2 px-6 rounded-xl text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 mx-auto"
-          >
-            <span>➕</span>
-            Programar Cita
-          </button>
+                      <button
+              onClick={() => navigate('/health-management?tab=calendar')}
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-xl text-sm font-medium transition-colors duration-150 flex items-center gap-2 mx-auto"
+            >
+              <span>➕</span>
+              Programar Cita
+            </button>
         </div>
       )}
     </div>

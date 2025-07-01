@@ -20,7 +20,7 @@ export const CalendarIntegration = () => {
   const [reminders, setReminders] = useState([]);
   const [selectedPet, setSelectedPet] = useState(null);
   const [configError, setConfigError] = useState(null);
-  const [activeView, setActiveView] = useState('overview'); // overview, create, reminders
+  const [activeView, setActiveView] = useState('overview'); // overview, create
   
   // Hook para gestionar recordatorios del backend
   const { getReminders, toggleReminder, loading: remindersLoading } = useVetDocuments();
@@ -273,7 +273,7 @@ export const CalendarIntegration = () => {
 
           <button
             onClick={() => window.open('https://console.cloud.google.com/', '_blank')}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:shadow-lg flex items-center gap-2 mx-auto"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-150 flex items-center gap-2 mx-auto"
           >
             <span>🔗</span>
             Abrir Google Cloud Console
@@ -327,7 +327,7 @@ export const CalendarIntegration = () => {
           <button
             onClick={connectToGoogleCalendar}
             disabled={loading}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
           >
             {loading ? (
               <>
@@ -426,7 +426,7 @@ export const CalendarIntegration = () => {
           </div>
           <button
             onClick={disconnectFromGoogleCalendar}
-            className="text-sm text-red-600 hover:text-red-700 transition-colors duration-200"
+            className="text-sm text-red-600 hover:text-red-700 transition-colors duration-150"
           >
             Desconectar
           </button>
@@ -436,7 +436,7 @@ export const CalendarIntegration = () => {
         <div className="flex gap-2">
           <button
             onClick={() => setActiveView('overview')}
-            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
+            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors duration-150 ${
               activeView === 'overview'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -446,23 +446,13 @@ export const CalendarIntegration = () => {
           </button>
           <button
             onClick={() => setActiveView('create')}
-            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
+            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-colors duration-150 ${
               activeView === 'create'
                 ? 'bg-blue-500 text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             ➕ Nueva Cita
-          </button>
-          <button
-            onClick={() => setActiveView('reminders')}
-            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
-              activeView === 'reminders'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            ⏰ Recordatorios ({reminders.filter(r => !r.completed).length})
           </button>
         </div>
       </div>
@@ -478,9 +468,9 @@ export const CalendarIntegration = () => {
               <button
                 key={pet._id}
                 onClick={() => setSelectedPet(pet)}
-                className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
+                className={`flex items-center gap-3 p-3 rounded-xl transition-colors duration-150 ${
                   selectedPet?._id === pet._id
-                    ? 'bg-brand text-white shadow-lg'
+                    ? 'bg-brand text-white'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                 }`}
               >
@@ -514,7 +504,7 @@ export const CalendarIntegration = () => {
             </p>
             <button
               onClick={() => window.location.href = '/new-pet1'}
-              className="bg-brand hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200"
+              className="bg-brand hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
             >
               Agregar Mascota
             </button>
@@ -542,15 +532,7 @@ export const CalendarIntegration = () => {
         />
       )}
 
-      {activeView === 'reminders' && (
-        <RemindersManagement 
-          reminders={reminders}
-          selectedPet={selectedPet}
-          onReminderToggle={handleReminderToggle}
-          onRefresh={loadCalendarEvents}
-          loading={remindersLoading}
-        />
-      )}
+
     </div>
   );
 };
@@ -673,7 +655,7 @@ const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading, onCa
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             placeholder="Información adicional sobre la cita..."
             rows={3}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-all duration-200 resize-none"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-colors duration-150 resize-none"
           />
         </div>
 
@@ -683,7 +665,7 @@ const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading, onCa
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition-all duration-200"
+              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition-colors duration-150"
             >
               Cancelar
             </button>
@@ -691,7 +673,7 @@ const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading, onCa
           <button
             type="submit"
             disabled={loading || !formData.title || !formData.datetime}
-            className="flex-1 bg-brand hover:bg-orange-600 text-white py-3 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 bg-brand hover:bg-orange-600 text-white py-3 rounded-xl font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -763,7 +745,7 @@ const CalendarOverview = ({ stats, combinedEvents, onRefresh, onReminderToggle, 
           <h3 className="font-semibold text-gray-800">Próximos Eventos</h3>
           <button
             onClick={onRefresh}
-            className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200 flex items-center gap-1"
+            className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-150 flex items-center gap-1"
           >
             <span>🔄</span>
             Actualizar
@@ -793,106 +775,7 @@ const CalendarOverview = ({ stats, combinedEvents, onRefresh, onReminderToggle, 
   );
 };
 
-// Componente para gestión de recordatorios
-const RemindersManagement = ({ reminders, selectedPet, onReminderToggle, onRefresh, loading }) => {
-  const [filter, setFilter] = useState('all'); // all, pending, completed, overdue
 
-  const getFilteredReminders = () => {
-    const now = new Date();
-    switch (filter) {
-      case 'pending':
-        return reminders.filter(r => !r.completed && new Date(r.date) >= now);
-      case 'completed':
-        return reminders.filter(r => r.completed);
-      case 'overdue':
-        return reminders.filter(r => !r.completed && new Date(r.date) < now);
-      default:
-        return reminders;
-    }
-  };
-
-  const filteredReminders = getFilteredReminders();
-
-  return (
-    <div className="space-y-4">
-      {/* Filter Tabs */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-800">
-            Recordatorios de {selectedPet?.name || 'mascota'}
-          </h3>
-          <button
-            onClick={onRefresh}
-            className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200"
-          >
-            🔄 Actualizar
-          </button>
-        </div>
-
-        <div className="flex gap-2 mb-4">
-          {[
-            { id: 'all', label: 'Todos', count: reminders.length },
-            { id: 'pending', label: 'Pendientes', count: reminders.filter(r => !r.completed && new Date(r.date) >= new Date()).length },
-            { id: 'overdue', label: 'Vencidos', count: reminders.filter(r => !r.completed && new Date(r.date) < new Date()).length },
-            { id: 'completed', label: 'Completados', count: reminders.filter(r => r.completed).length }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setFilter(tab.id)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                filter === tab.id
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {tab.label}
-              <span className="bg-white/20 text-xs px-1.5 py-0.5 rounded-full">
-                {tab.count}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Reminders List */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="bg-gray-100 rounded-xl p-4 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/3"></div>
-              </div>
-            ))}
-          </div>
-        ) : filteredReminders.length > 0 ? (
-          <div className="space-y-3">
-            {filteredReminders.map(reminder => (
-              <ReminderCard
-                key={reminder._id}
-                reminder={reminder}
-                onToggle={onReminderToggle}
-                detailed={true}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">⏰</span>
-            </div>
-            <h4 className="font-semibold text-gray-800 mb-2">
-              No hay recordatorios {filter !== 'all' ? filter : ''}
-            </h4>
-            <p className="text-gray-500 text-sm">
-              Los recordatorios aparecerán aquí automáticamente cuando crees citas con fechas de seguimiento
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 // Componente de tarjeta de evento combinado
 const CombinedEventCard = ({ event, onReminderToggle }) => {
@@ -910,7 +793,7 @@ const CombinedEventCard = ({ event, onReminderToggle }) => {
   const isOverdue = event.type === 'reminder' && !event.completed && new Date(event.date) < new Date();
 
   return (
-    <div className={`rounded-xl p-4 border transition-all duration-200 ${
+    <div className={`rounded-xl p-4 border transition-colors duration-150 ${
       isOverdue 
         ? 'border-red-200 bg-red-50' 
         : event.type === 'calendar' 
@@ -963,7 +846,7 @@ const CombinedEventCard = ({ event, onReminderToggle }) => {
         {event.type === 'reminder' && (
           <button
             onClick={() => onReminderToggle(event._id)}
-            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors duration-150 ${
               event.completed 
                 ? 'bg-green-500 border-green-500 text-white' 
                 : 'border-gray-300 hover:border-green-500'
@@ -977,106 +860,21 @@ const CombinedEventCard = ({ event, onReminderToggle }) => {
   );
 };
 
-// Componente de tarjeta de recordatorio detallada
-const ReminderCard = ({ reminder, onToggle, detailed = false }) => {
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) return `Vencido hace ${Math.abs(diffDays)} días`;
-    if (diffDays === 0) return 'Hoy';
-    if (diffDays === 1) return 'Mañana';
-    return `En ${diffDays} días`;
-  };
 
-  const isOverdue = !reminder.completed && new Date(reminder.date) < new Date();
-
-  return (
-    <div className={`rounded-xl p-4 border transition-all duration-200 ${
-      isOverdue 
-        ? 'border-red-200 bg-red-50' 
-        : reminder.completed
-          ? 'border-green-200 bg-green-50'
-          : 'border-gray-200 bg-white'
-    }`}>
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <h4 className="font-semibold text-gray-800 text-sm mb-1">{reminder.title}</h4>
-          
-          <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
-            <span>{formatDate(reminder.date)}</span>
-            <span>•</span>
-            <span>{new Date(reminder.date).toLocaleDateString('es-CO')}</span>
-          </div>
-
-          {detailed && reminder.description && (
-            <p className="text-xs text-gray-600 mb-2">{reminder.description}</p>
-          )}
-
-          <div className="flex items-center gap-2">
-            <span className={`text-xs px-2 py-1 rounded-full ${
-              reminder.priority === 'high' 
-                ? 'bg-red-100 text-red-700'
-                : reminder.priority === 'medium'
-                  ? 'bg-orange-100 text-orange-700'
-                  : 'bg-gray-100 text-gray-700'
-            }`}>
-              {reminder.priority} prioridad
-            </span>
-
-            <span className={`text-xs px-2 py-1 rounded-full ${
-              reminder.type === 'vaccine' 
-                ? 'bg-green-100 text-green-700'
-                : reminder.type === 'checkup'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-gray-100 text-gray-700'
-            }`}>
-              {reminder.type}
-            </span>
-
-            {isOverdue && (
-              <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">
-                Vencido
-              </span>
-            )}
-
-            {reminder.completed && (
-              <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
-                Completado
-              </span>
-            )}
-          </div>
-        </div>
-
-        <button
-          onClick={() => onToggle(reminder._id)}
-          className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all duration-200 ml-3 ${
-            reminder.completed 
-              ? 'bg-green-500 border-green-500 text-white' 
-              : 'border-gray-300 hover:border-green-500'
-          }`}
-        >
-          {reminder.completed && <span className="text-xs">✓</span>}
-        </button>
-      </div>
-    </div>
-  );
-};
 
 // Componente de tarjeta de estadística
 const StatCard = ({ icon, value, label, color }) => {
   const colors = {
-    blue: 'from-blue-500 to-blue-600',
-    green: 'from-green-500 to-green-600',
-    orange: 'from-orange-500 to-orange-600',
-    red: 'from-red-500 to-red-600'
+    blue: 'bg-blue-500',
+    green: 'bg-green-500',
+    orange: 'bg-orange-500',
+    red: 'bg-red-500'
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+    <div className="bg-white rounded-xl p-4 border border-gray-100">
       <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${colors[color]} flex items-center justify-center`}>
+        <div className={`w-10 h-10 rounded-lg ${colors[color]} flex items-center justify-center`}>
           <span className="text-white text-sm">{icon}</span>
         </div>
         <div>

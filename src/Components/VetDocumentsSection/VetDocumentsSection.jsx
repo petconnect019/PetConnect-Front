@@ -157,7 +157,7 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
           <button 
             onClick={() => setShowUploadModal(true)}
             disabled={!selectedPet}
-            className="bg-gradient-to-r from-brand to-orange-500 text-white p-2 sm:p-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-brand text-white p-2 sm:p-3 rounded-xl hover:bg-orange-600 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span className="text-lg">📁</span>
           </button>
@@ -165,7 +165,7 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
 
         {/* Stats Cards */}
         {selectedPet && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          <div className="grid grid-cols-3 gap-3 mb-4">
             <StatCard 
               icon="📄" 
               value={stats.totalDocuments} 
@@ -179,16 +179,12 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
               color="green" 
             />
             <StatCard 
-              icon="⏰" 
-              value={stats.upcomingReminders} 
-              label="Próximos" 
-              color="orange" 
-            />
-            <StatCard 
-              icon="🚨" 
-              value={stats.overdueReminders} 
-              label="Vencidos" 
-              color="red" 
+              icon="📅" 
+              value={stats.upcomingReminders + stats.overdueReminders} 
+              label="Ver Calendario" 
+              color="purple"
+              clickable={true}
+              onClick={() => navigate('/health-management?tab=calendar')}
             />
           </div>
         )}
@@ -201,9 +197,9 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
             <button
               key={pet._id}
               onClick={() => setSelectedPet(pet)}
-              className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium transition-all duration-300 ${
+              className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium transition-colors duration-150 ${
                 selectedPet?._id === pet._id
-                  ? 'bg-brand text-white shadow-lg'
+                  ? 'bg-brand text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
@@ -216,42 +212,23 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
         </div>
       )}
 
-      {/* Recordatorios Urgentes */}
-      {selectedPet && (getOverdueReminders().length > 0 || getUpcomingReminders().slice(0, 2).length > 0) && (
+      {/* Recordatorios Urgentes - Solo mostrar si hay recordatorios importantes */}
+      {selectedPet && (getOverdueReminders().length > 0 || getUpcomingReminders().slice(0, 1).length > 0) && (
         <div className="mb-6">
-          <div className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4">
-            <h3 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
-              <span>🚨</span>
-              Recordatorios Importantes
-            </h3>
-            
-            {/* Recordatorios vencidos */}
-            {getOverdueReminders().slice(0, 2).map(reminder => (
-              <ReminderCard 
-                key={reminder._id} 
-                reminder={reminder} 
-                onToggle={handleReminderToggle}
-                variant="overdue"
-              />
-            ))}
-            
-            {/* Próximos recordatorios */}
-            {getUpcomingReminders().slice(0, 2).map(reminder => (
-              <ReminderCard 
-                key={reminder._id} 
-                reminder={reminder} 
-                onToggle={handleReminderToggle}
-                variant="upcoming"
-              />
-            ))}
-
-            <div className="mt-3 pt-3 border-t border-red-200">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span>📅</span>
+                <span className="font-medium text-blue-800">
+                  {getOverdueReminders().length > 0 ? 'Recordatorios pendientes' : 'Próxima cita programada'}
+                </span>
+              </div>
               <button
                 onClick={() => navigate('/health-management?tab=calendar')}
-                className="text-sm text-red-700 hover:text-red-800 font-medium transition-colors duration-200 flex items-center gap-1"
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-150 flex items-center gap-1"
               >
-                <span>📅</span>
-                Ver todos en calendario
+                Ver Calendario
+                <span>→</span>
               </button>
             </div>
           </div>
@@ -264,9 +241,9 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 min-w-0 flex flex-col items-center gap-1 px-2 py-3 rounded-lg text-xs font-medium transition-all duration-300 ${
+            className={`flex-1 min-w-0 flex flex-col items-center gap-1 px-2 py-3 rounded-lg text-xs font-medium transition-colors duration-150 ${
               activeTab === tab.id
-                ? 'bg-white text-brand shadow-sm'
+                ? 'bg-white text-brand'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -352,7 +329,7 @@ const EmptyPetsState = ({ navigate }) => (
       </p>
       <button 
         onClick={() => navigate('/new-pet1')}
-        className="bg-brand text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-orange-600 transition-all duration-300"
+                    className="bg-brand text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-orange-600 transition-colors duration-150"
       >
         Registrar Mascota
       </button>
@@ -360,18 +337,26 @@ const EmptyPetsState = ({ navigate }) => (
   </section>
 );
 
-const StatCard = ({ icon, value, label, color }) => {
+const StatCard = ({ icon, value, label, color, clickable = false, onClick }) => {
   const colors = {
-    blue: 'from-blue-500 to-blue-600',
-    green: 'from-green-500 to-green-600',
-    orange: 'from-orange-500 to-orange-600',
-    red: 'from-red-500 to-red-600'
+    blue: 'bg-blue-500',
+    green: 'bg-green-500',
+    orange: 'bg-orange-500',
+    red: 'bg-red-500',
+    purple: 'bg-purple-500'
   };
 
+  const Component = clickable ? 'button' : 'div';
+
   return (
-    <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-100">
+    <Component
+      onClick={clickable ? onClick : undefined}
+      className={`bg-white rounded-xl p-3 border border-gray-100 ${
+        clickable ? 'hover:border-purple-200 hover:bg-purple-50 transition-colors duration-150 cursor-pointer' : ''
+      }`}
+    >
       <div className="flex items-center gap-2">
-        <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${colors[color]} flex items-center justify-center`}>
+        <div className={`w-8 h-8 rounded-lg ${colors[color]} flex items-center justify-center`}>
           <span className="text-white text-sm">{icon}</span>
         </div>
         <div>
@@ -379,7 +364,7 @@ const StatCard = ({ icon, value, label, color }) => {
           <div className="text-xs text-gray-500">{label}</div>
         </div>
       </div>
-    </div>
+    </Component>
   );
 };
 
@@ -401,10 +386,10 @@ const ErrorState = ({ error, onRetry }) => (
     </div>
     <h3 className="font-semibold text-gray-800 mb-2">Error al cargar datos</h3>
     <p className="text-gray-600 text-sm mb-4">{error}</p>
-    <button 
-      onClick={onRetry}
-      className="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-orange-600 transition-all duration-200"
-    >
+          <button 
+        onClick={onRetry}
+        className="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors duration-150"
+      >
       Reintentar
     </button>
   </div>
@@ -465,7 +450,7 @@ const EmptyState = ({ icon, title, subtitle, action, actionText }) => (
     {action && (
       <button 
         onClick={action}
-        className="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-orange-600 transition-all duration-200"
+        className="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors duration-150"
       >
         {actionText}
       </button>

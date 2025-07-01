@@ -142,14 +142,14 @@ export const ReminderCard = ({ reminder, onComplete, onEdit, onUpdate }) => {
                <>
                  <button 
                    onClick={handleToggleComplete}
-                   className="w-8 h-8 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                   className="w-8 h-8 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg flex items-center justify-center transition-colors duration-150"
                    title="Marcar como completado"
                  >
                    <span className="text-sm">✓</span>
                  </button>
                  <button 
                    onClick={() => onEdit && onEdit(reminder._id || reminder.id)}
-                   className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                   className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-colors duration-150"
                    title="Editar recordatorio"
                  >
                    <span className="text-sm">✏️</span>
@@ -158,7 +158,7 @@ export const ReminderCard = ({ reminder, onComplete, onEdit, onUpdate }) => {
              ) : (
                <button 
                  onClick={handleToggleComplete}
-                 className="w-8 h-8 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                 className="w-8 h-8 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-lg flex items-center justify-center transition-colors duration-150"
                  title="Marcar como pendiente"
                >
                  <span className="text-sm">↺</span>

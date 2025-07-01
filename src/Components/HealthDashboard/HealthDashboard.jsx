@@ -101,7 +101,7 @@ export const HealthDashboard = ({ petList, navigate }) => {
         </div>
         <button
           onClick={() => navigate('/health-management')}
-          className="px-4 py-2 bg-brand hover:bg-orange-600 text-white rounded-xl text-sm font-medium transition-all duration-200 hover:scale-105"
+                        className="px-4 py-2 bg-brand hover:bg-orange-600 text-white rounded-xl text-sm font-medium transition-colors duration-150"
         >
           Ver todo
         </button>
@@ -115,9 +115,9 @@ export const HealthDashboard = ({ petList, navigate }) => {
               <button
                 key={pet._id}
                 onClick={() => setSelectedPet(pet)}
-                className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
+                className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl transition-colors duration-150 ${
                   selectedPet?._id === pet._id
-                    ? 'bg-brand text-white shadow-lg'
+                    ? 'bg-brand text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -217,7 +217,7 @@ export const HealthDashboard = ({ petList, navigate }) => {
       <div className="grid grid-cols-2 gap-4">
         <button
           onClick={() => navigate('/health-management?tab=documents')}
-          className="bg-gradient-to-r from-brand to-orange-500 text-white rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-105"
+          className="bg-brand hover:bg-orange-600 text-white rounded-xl p-4 transition-colors duration-150"
         >
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="text-xl">📄</span>
@@ -227,14 +227,14 @@ export const HealthDashboard = ({ petList, navigate }) => {
         </button>
 
         <button
-          onClick={() => navigate('/health-management?tab=reminders')}
-          className="bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-105"
+          onClick={() => navigate('/health-management?tab=calendar')}
+          className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl p-4 transition-colors duration-150"
         >
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="text-xl">📅</span>
-            <span className="font-semibold">Crear Recordatorio</span>
+            <span className="font-semibold">Ver Calendario</span>
           </div>
-          <p className="text-xs opacity-90">Programa citas y tratamientos</p>
+          <p className="text-xs opacity-90">Programa citas y eventos</p>
         </button>
       </div>
 
