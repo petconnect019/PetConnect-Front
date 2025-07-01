@@ -1076,61 +1076,15 @@ const StatCard = ({ icon, value, label, color }) => {
 
 // Componente para mostrar próximos eventos (LEGACY - mantener por compatibilidad)
 const UpcomingEvents = ({ events, onRefresh }) => {
-  if (events.length === 0) {
-    return (
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-gray-800">Próximas Citas</h3>
-          <button
-            onClick={onRefresh}
-            className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200"
-          >
-            🔄 Actualizar
-          </button>
-        </div>
-        <div className="text-center py-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl">📅</span>
-          </div>
-          <p className="text-gray-500">No hay citas programadas</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-800">Próximas Citas</h3>
-        <button
-          onClick={onRefresh}
-          className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200"
-        >
-          🔄 Actualizar
-        </button>
-      </div>
-      <div className="space-y-3">
-        {events.slice(0, 5).map((event, index) => (
-          <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-            <div className="w-10 h-10 bg-brand rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm">📅</span>
-            </div>
-            <div className="flex-1">
-              <h4 className="font-medium text-gray-800">{event.summary}</h4>
-              <p className="text-sm text-gray-500">
-                {new Date(event.start.dateTime || event.start.date).toLocaleDateString('es-CO', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: event.start.dateTime ? '2-digit' : undefined,
-                  minute: event.start.dateTime ? '2-digit' : undefined
-                })}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="space-y-4">
+      {events.map((event) => (
+        <CombinedEventCard
+          key={event.id}
+          event={event}
+          onReminderToggle={() => {}}
+        />
+      ))}
     </div>
   );
 }; 
