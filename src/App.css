@@ -30,6 +30,69 @@ body {
     color: var(--color-brand);
 }
 
+.bg-brand {
+    background-color: var(--color-brand);
+}
+
+/* Utilidades para el módulo veterinario */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Animaciones personalizadas */
+@keyframes slideInFromBottom {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-slide-in {
+    animation: slideInFromBottom 0.3s ease-out;
+}
+
+.animate-fade-in-scale {
+    animation: fadeInScale 0.2s ease-out;
+}
+
+/* Estilo para cards premium */
+.vet-card {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Efectos de hover premium */
+.premium-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
 .react-tel-input .form-control {
     width: 100% !important;
     border-radius: 8px !important;
