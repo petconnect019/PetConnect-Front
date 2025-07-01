@@ -8,7 +8,7 @@ import DefaultProfile from '../../assets/images/DefaultProfile.png';
 import defaultDog from '../../assets/images/DogProfilePfp.png';
 import defaultCat from '../../assets/images/CatProfilePfp.png';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
-import { useChat } from '../../Contexts/ChatContext/ChatContext';
+import { useChat } from '../../Contexts/ChatContext/ChatContextV2';
 import config from '../../Utils/config';
 
 export const PublicUserProfile = () => {

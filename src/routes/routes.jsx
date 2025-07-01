@@ -24,7 +24,7 @@ import { PublicPetProfile } from "../Pages/PublicPetProfile/PublicPetProfile";
 import { QRScanLanding } from "../Pages/QRScanLanding/QRScanLanding";
 import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
-import { Chat } from "../Pages/Chat/Chat";
+import { ChatV2 as Chat } from "../Pages/Chat/ChatV2";
 import { Settings } from "../Pages/Settings/Settings";
 import { UserProfileConfig } from "../Pages/UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";

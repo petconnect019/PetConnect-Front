@@ -1,8 +1,97 @@
-import React, { useEffect, useRef } from 'react';
-import { IoCheckmark, IoCheckmarkDone } from 'react-icons/io5';
+import React, { useEffect, useRef, memo, useMemo } from 'react';
+import { IoCheckmark, IoCheckmarkDone, IoTime, IoChatbubble } from 'react-icons/io5';
+
+// Componente individual de mensaje optimizado
+const MessageItem = memo(({ message, isOwnMessage, senderName }) => {
+  const messageTime = useMemo(() => {
+    if (!message.timestamp) return '';
+    
+    try {
+      const date = new Date(message.timestamp);
+      return date.toLocaleTimeString('es-ES', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false
+      });
+    } catch (error) {
+      return '';
+    }
+  }, [message.timestamp]);
+
+  const getStatusIcon = () => {
+    if (!isOwnMessage) return null;
+    
+    if (message.read) {
+      return <IoCheckmarkDone className="w-4 h-4 text-blue-100" />;
+    } else if (message.delivered) {
+      return <IoCheckmarkDone className="w-4 h-4 text-blue-200" />;
+    } else if (message.sent) {
+      return <IoCheckmark className="w-4 h-4 text-blue-200" />;
+    }
+    return <IoTime className="w-4 h-4 text-blue-200" />;
+  };
+
+  if (isOwnMessage) {
+    return (
+      <div className="flex w-full justify-end mb-3">
+        <div className="relative max-w-[75%] min-w-[100px] bg-blue-500 text-white px-4 py-2 rounded-lg ml-auto mr-2 shadow-sm">
+          <div className="text-xs font-medium mb-1 text-blue-100">
+            {senderName}
+          </div>
+          <p className="text-sm text-white whitespace-pre-wrap break-words pr-14 leading-relaxed">
+            {message.content}
+          </p>
+          <div className="absolute bottom-2 right-3 flex items-center space-x-1">
+            <span className="text-xs text-blue-100">
+              {messageTime}
+            </span>
+            {getStatusIcon()}
+          </div>
+          {/* Flecha del globo */}
+          <div className="absolute top-4 right-[-8px] w-0 h-0 border-solid border-t-[8px] border-t-blue-500 border-l-[8px] border-l-transparent">
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex w-full justify-start mb-3">
+      <div className="relative max-w-[75%] min-w-[100px] bg-white px-4 py-2 rounded-lg ml-2 mr-auto shadow-sm border border-gray-200">
+        <div className="text-xs font-medium mb-1 text-blue-600">
+          {senderName}
+        </div>
+        <p className="text-sm text-gray-800 whitespace-pre-wrap break-words pr-14 leading-relaxed">
+          {message.content}
+        </p>
+        <div className="absolute bottom-2 right-3">
+          <span className="text-xs text-gray-500">
+            {messageTime}
+          </span>
+        </div>
+        {/* Flecha del globo */}
+        <div className="absolute top-4 left-[-8px] w-0 h-0 border-solid border-t-[8px] border-t-white border-r-[8px] border-r-transparent">
+        </div>
+      </div>
+    </div>
+  );
+});
+
+MessageItem.displayName = 'MessageItem';
+
+// Separador de fecha optimizado
+const DateSeparator = memo(({ date }) => (
+  <div className="flex justify-center my-4">
+    <div className="bg-white px-4 py-2 rounded-full text-xs text-gray-600 shadow-sm border border-gray-200">
+      {date}
+    </div>
+  </div>
+));
+
+DateSeparator.displayName = 'DateSeparator';
 
 // Componente MessageList mejorado con nombres de remitente
-export const MessageList = ({ 
+export const MessageList = memo(({ 
   messages = [], 
   currentUser, 
   loading = false,
@@ -19,8 +108,8 @@ export const MessageList = ({
     scrollToBottom();
   }, [messages]);
 
-  // Agrupar mensajes por fecha
-  const groupMessagesByDate = (messages) => {
+  // Agrupar mensajes por fecha optimizado
+  const groupedMessages = useMemo(() => {
     const groups = {};
     (messages || []).forEach(message => {
       if (!message || !message.timestamp) return;
@@ -43,105 +132,39 @@ export const MessageList = ({
       }
     });
     return groups;
-  };
+  }, [messages]);
 
-  const groupedMessages = groupMessagesByDate(messages);
-
-  // Función para obtener el nombre del remitente
-  const getSenderName = (message) => {
-    if (!message || !message.senderId) return "Usuario";
-    
-    // Si es el usuario actual
-    if (message.senderId === currentUser?.id || 
-        message.senderId === currentUser?._id) {
-      return "Tú";
-    }
-    
-    // Intentar obtener el nombre del remitente de diferentes propiedades posibles
-    return message.senderName || 
-           message.sender?.name ||
-           (message.senderId && typeof message.senderId === 'object' ? message.senderId.name : null) ||
-           "Usuario";
-  };
-
-  // Función para determinar si es el usuario actual
-  const isCurrentUser = (message) => {
-    if (!message || !message.senderId || !currentUser) return false;
-    
-    const senderId = typeof message.senderId === 'object' 
-      ? message.senderId._id || message.senderId.id
-      : message.senderId;
+  // Función para obtener el nombre del remitente optimizada
+  const getSenderName = useMemo(() => {
+    return (message) => {
+      if (!message || !message.senderId) return "Usuario";
       
-    return senderId === currentUser.id || senderId === currentUser._id;
-  };
+      // Si es el usuario actual
+      if (message.senderId === currentUser?.id || 
+          message.senderId === currentUser?._id) {
+        return "Tú";
+      }
+      
+      // Intentar obtener el nombre del remitente de diferentes propiedades posibles
+      return message.senderName || 
+             message.sender?.name ||
+             (message.senderId && typeof message.senderId === 'object' ? message.senderId.name : null) ||
+             "Usuario";
+    };
+  }, [currentUser]);
 
-  // Componente para mensajes enviados (usuario actual)
-  const SentMessage = ({ message, senderName }) => (
-    <div className="flex w-full justify-end mb-3">
-      <div className="relative max-w-[75%] min-w-[100px] bg-blue-500 text-white px-4 py-2 rounded-lg ml-auto mr-2 shadow-sm">
-        <div className="text-xs font-medium mb-1 text-blue-100">
-          {senderName}
-        </div>
-        <p className="text-sm text-white whitespace-pre-wrap break-words pr-14 leading-relaxed">
-          {message.content}
-        </p>
-        <div className="absolute bottom-2 right-3 flex items-center space-x-1">
-          <span className="text-xs text-blue-100">
-            {formatTime(message.timestamp)}
-          </span>
-          {/* Indicador de entrega/lectura */}
-          <div className="text-blue-100">
-            {message.read ? (
-              <IoCheckmarkDone className="w-4 h-4" />
-            ) : (
-              <IoCheckmark className="w-4 h-4" />
-            )}
-          </div>
-        </div>
-        {/* Flecha del globo */}
-        <div className="absolute top-4 right-[-8px] w-0 h-0 border-solid border-t-[8px] border-t-blue-500 border-l-[8px] border-l-transparent">
-        </div>
-      </div>
-    </div>
-  );
-
-  // Componente para mensajes recibidos
-  const ReceivedMessage = ({ message, senderName }) => (
-    <div className="flex w-full justify-start mb-3">
-      <div className="relative max-w-[75%] min-w-[100px] bg-white px-4 py-2 rounded-lg ml-2 mr-auto shadow-sm border border-gray-200">
-        <div className="text-xs font-medium mb-1 text-blue-600">
-          {senderName}
-        </div>
-        <p className="text-sm text-gray-800 whitespace-pre-wrap break-words pr-14 leading-relaxed">
-          {message.content}
-        </p>
-        <div className="absolute bottom-2 right-3">
-          <span className="text-xs text-gray-500">
-            {formatTime(message.timestamp)}
-          </span>
-        </div>
-        {/* Flecha del globo */}
-        <div className="absolute top-4 left-[-8px] w-0 h-0 border-solid border-t-[8px] border-t-white border-r-[8px] border-r-transparent">
-        </div>
-      </div>
-    </div>
-  );
-
-  // Función para formatear tiempo
-  const formatTime = (timestamp) => {
-    if (!timestamp) return '';
-    
-    try {
-      const date = new Date(timestamp);
-      return date.toLocaleTimeString('es-ES', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: false
-      });
-    } catch (error) {
-      return '';
-    }
-  };
+  // Función para determinar si es el usuario actual optimizada
+  const isCurrentUserMessage = useMemo(() => {
+    return (message) => {
+      if (!message || !message.senderId || !currentUser) return false;
+      
+      const senderId = typeof message.senderId === 'object' 
+        ? message.senderId._id || message.senderId.id
+        : message.senderId;
+        
+      return senderId === currentUser.id || senderId === currentUser._id;
+    };
+  }, [currentUser]);
 
   // Loading state
   if (loading && messages.length === 0) {
@@ -164,9 +187,7 @@ export const MessageList = ({
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
+              <IoChatbubble className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Inicia la conversación</h3>
             <p className="text-gray-500 text-sm max-w-xs">
@@ -186,11 +207,7 @@ export const MessageList = ({
       {Object.entries(groupedMessages).map(([date, dateMessages]) => (
         <div key={date} className="space-y-1">
           {/* Separador de fecha */}
-          <div className="flex justify-center my-4">
-            <div className="bg-white px-4 py-2 rounded-full text-xs text-gray-600 shadow-sm border border-gray-200">
-              {date}
-            </div>
-          </div>
+          <DateSeparator date={date} />
           
           {/* Mensajes del día */}
           {dateMessages.map((message, index) => {
@@ -198,36 +215,28 @@ export const MessageList = ({
               console.warn('Mensaje inválido:', message);
               return null;
             }
-            
-            const isCurrentUserMessage = isCurrentUser(message);
+
+            const isOwnMessage = isCurrentUserMessage(message);
             const senderName = getSenderName(message);
-            
-            return isCurrentUserMessage ? 
-              <SentMessage 
-                key={message._id || `${chatId}-${index}`} 
-                message={message} 
-                senderName={senderName} 
-              /> : 
-              <ReceivedMessage 
-                key={message._id || `${chatId}-${index}`} 
-                message={message} 
-                senderName={senderName} 
-              />;
+
+            return (
+              <MessageItem
+                key={message._id || `${message.timestamp}-${index}`}
+                message={message}
+                isOwnMessage={isOwnMessage}
+                senderName={senderName}
+              />
+            );
           })}
         </div>
       ))}
       
-      {/* Marcador para scroll automático */}
+      {/* Referencia para scroll automático */}
       <div ref={messagesEndRef} />
-      
-      {/* Indicador de carga al final */}
-      {loading && messages.length > 0 && (
-        <div className="text-center py-2">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-        </div>
-      )}
     </div>
   );
-};
+});
+
+MessageList.displayName = 'MessageList';
 
 export default MessageList; 

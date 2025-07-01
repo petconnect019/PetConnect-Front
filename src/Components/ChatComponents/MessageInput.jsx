@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { IoSend, IoAttach, IoImage, IoHappy } from 'react-icons/io5';
+import useDebounce from '../../Hooks/useDebounce';
 
-export const MessageInput = ({ 
+export const MessageInput = memo(({ 
   chatId, 
   onMessageSent, 
   disabled = false,
-  placeholder = "Escribe un mensaje..." 
+  placeholder = "Escribe un mensaje...",
+  maxLength = 1000
 }) => {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
@@ -18,7 +20,7 @@ export const MessageInput = ({
     }
   }, [chatId]);
 
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = useCallback(async (e) => {
     e.preventDefault();
     
     if (!message.trim() || !chatId || sending || disabled) {
@@ -52,30 +54,33 @@ export const MessageInput = ({
         inputRef.current.focus();
       }
     }
-  };
+  }, [message, chatId, sending, disabled, onMessageSent]);
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage(e);
     }
-  };
+  }, [handleSendMessage]);
 
   // Manejo de archivos (placeholder para futuras funcionalidades)
-  const handleAttachFile = () => {
+  const handleAttachFile = useCallback(() => {
     console.log('Funcionalidad de adjuntar archivo próximamente');
     // TODO: Implementar funcionalidad de archivos
-  };
+  }, []);
 
-  const handleAttachImage = () => {
+  const handleAttachImage = useCallback(() => {
     console.log('Funcionalidad de adjuntar imagen próximamente');
     // TODO: Implementar funcionalidad de imágenes
-  };
+  }, []);
 
-  const handleAddEmoji = () => {
+  const handleAddEmoji = useCallback(() => {
     console.log('Funcionalidad de emojis próximamente');
     // TODO: Implementar selector de emojis
-  };
+  }, []);
+
+  // Debounce para validaciones en tiempo real
+  const debouncedMessage = useDebounce(message, 300);
 
   if (!chatId) {
     return (
@@ -129,7 +134,7 @@ export const MessageInput = ({
               `}
               placeholder={disabled ? 'Chat no disponible' : placeholder}
               disabled={disabled || sending}
-              maxLength={1000}
+              maxLength={maxLength}
             />
             
             {/* Botón de emojis dentro del input */}
@@ -171,12 +176,12 @@ export const MessageInput = ({
         </div>
         
         {/* Contador de caracteres */}
-        {message.length > 800 && (
+        {message.length > (maxLength * 0.8) && (
           <div className="mt-2 text-right">
             <span className={`text-xs ${
-              message.length > 950 ? 'text-red-500' : 'text-gray-500'
+              message.length > (maxLength * 0.95) ? 'text-red-500' : 'text-gray-500'
             }`}>
-              {message.length}/1000
+              {message.length}/{maxLength}
             </span>
           </div>
         )}
@@ -192,6 +197,8 @@ export const MessageInput = ({
       </form>
     </div>
   );
-};
+});
+
+MessageInput.displayName = 'MessageInput';
 
 export default MessageInput; 

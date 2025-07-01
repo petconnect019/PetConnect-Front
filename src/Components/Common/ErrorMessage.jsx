@@ -1,118 +1,72 @@
-import React from 'react';
-import { IoClose, IoAlertCircle, IoWarning, IoInformationCircle, IoCheckmarkCircle } from 'react-icons/io5';
+import React, { memo } from 'react';
+import { IoClose, IoWarning, IoInformation, IoAlert } from 'react-icons/io5';
 
-const ErrorMessage = ({ 
+/**
+ * Componente de mensaje de error optimizado
+ */
+const ErrorMessage = memo(({ 
   message, 
-  type = 'error', 
   onClose, 
-  className = '',
-  autoClose = false,
-  duration = 5000
+  type = 'error',
+  dismissible = true 
 }) => {
-  // Auto cerrar después del tiempo especificado
-  React.useEffect(() => {
-    if (autoClose && onClose) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, duration);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [autoClose, duration, onClose]);
+  if (!message) return null;
 
-  // Configuración por tipo de mensaje
-  const typeConfig = {
-    error: {
-      bgColor: 'bg-red-50',
-      borderColor: 'border-red-200',
-      textColor: 'text-red-800',
-      iconColor: 'text-red-400',
-      icon: IoAlertCircle
-    },
-    warning: {
-      bgColor: 'bg-yellow-50',
-      borderColor: 'border-yellow-200',
-      textColor: 'text-yellow-800',
-      iconColor: 'text-yellow-400',
-      icon: IoWarning
-    },
-    info: {
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
-      textColor: 'text-blue-800',
-      iconColor: 'text-blue-400',
-      icon: IoInformationCircle
-    },
-    success: {
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
-      textColor: 'text-green-800',
-      iconColor: 'text-green-400',
-      icon: IoCheckmarkCircle
+  const getTypeStyles = () => {
+    switch (type) {
+      case 'warning':
+        return {
+          icon: IoWarning,
+          bgColor: 'bg-yellow-50',
+          borderColor: 'border-yellow-200',
+          textColor: 'text-yellow-800',
+          iconColor: 'text-yellow-400'
+        };
+      case 'info':
+        return {
+          icon: IoInformation,
+          bgColor: 'bg-blue-50',
+          borderColor: 'border-blue-200',
+          textColor: 'text-blue-800',
+          iconColor: 'text-blue-400'
+        };
+      case 'error':
+      default:
+        return {
+          icon: IoAlert,
+          bgColor: 'bg-red-50',
+          borderColor: 'border-red-200',
+          textColor: 'text-red-800',
+          iconColor: 'text-red-400'
+        };
     }
   };
 
-  const config = typeConfig[type] || typeConfig.error;
-  const IconComponent = config.icon;
+  const { icon: Icon, bgColor, borderColor, textColor, iconColor } = getTypeStyles();
 
   return (
-    <div
-      className={`
-        ${config.bgColor} 
-        ${config.borderColor} 
-        border 
-        rounded-lg 
-        p-4 
-        mx-4 
-        my-2
-        ${className}
-      `}
-      role="alert"
-    >
+    <div className={`${bgColor} border ${borderColor} rounded-lg p-4 mx-4 my-2`}>
       <div className="flex items-start">
         <div className="flex-shrink-0">
-          <IconComponent 
-            className={`w-5 h-5 ${config.iconColor}`} 
-            aria-hidden="true" 
-          />
+          <Icon className={`w-5 h-5 ${iconColor}`} />
         </div>
-        
         <div className="ml-3 flex-1">
-          <p className={`text-sm font-medium ${config.textColor}`}>
-            {message}
-          </p>
+          <p className={`text-sm font-medium ${textColor}`}>{message}</p>
         </div>
-        
-        {onClose && (
-          <div className="ml-auto pl-3">
-            <div className="-mx-1.5 -my-1.5">
-              <button
-                type="button"
-                className={`
-                  inline-flex 
-                  rounded-md 
-                  p-1.5 
-                  ${config.textColor} 
-                  hover:bg-opacity-20 
-                  hover:bg-current
-                  focus:outline-none 
-                  focus:ring-2 
-                  focus:ring-offset-2 
-                  focus:ring-offset-transparent
-                  focus:ring-current
-                  transition-colors
-                `}
-                onClick={onClose}
-                aria-label="Cerrar mensaje"
-              >
-                <IoClose className="w-5 h-5" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
+        {dismissible && onClose && (
+          <button
+            onClick={onClose}
+            className={`ml-auto ${textColor} hover:${textColor.replace('800', '600')} transition-colors focus:outline-none`}
+            aria-label="Cerrar mensaje"
+          >
+            <IoClose className="w-4 h-4" />
+          </button>
         )}
       </div>
     </div>
   );
-};
+});
+
+ErrorMessage.displayName = 'ErrorMessage';
 
 export default ErrorMessage; 

@@ -1,173 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { IoWifi, IoWifiOutline, IoCloudOffline, IoSync } from 'react-icons/io5';
-import { FiTool } from 'react-icons/fi';
-import { ConnectionDiagnostic } from './ConnectionDiagnostic';
+import React, { memo } from 'react';
+import { IoCloudOffline, IoRefresh, IoCheckmarkCircle, IoWarning } from 'react-icons/io5';
 
-const ConnectionStatus = ({ 
-  connected = false, 
-  reconnecting = false,
-  error = null,
-  showLabel = false,
-  compact = false,
-  onRetry = null 
+/**
+ * Componente optimizado para mostrar el estado de conexión
+ */
+const ConnectionStatus = memo(({ 
+  connected, 
+  error, 
+  onRetry, 
+  compact = false 
 }) => {
-  const [showStatus, setShowStatus] = useState(false);
-  const [lastConnectionTime, setLastConnectionTime] = useState(null);
-  const [showDiagnostic, setShowDiagnostic] = useState(false);
+  // No mostrar nada si está conectado y no hay error
+  if (connected && !error) {
+    return compact ? null : (
+      <div className="flex items-center text-green-600 text-xs">
+        <IoCheckmarkCircle className="w-3 h-3 mr-1" />
+        <span>Conectado</span>
+      </div>
+    );
+  }
 
-  // Mostrar estado solo cuando hay cambios importantes
-  useEffect(() => {
-    if (!connected || reconnecting || error) {
-      setShowStatus(true);
-    } else {
-      setLastConnectionTime(new Date());
-      // Ocultar después de unos segundos si está conectado
-      const timer = setTimeout(() => {
-        setShowStatus(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [connected, reconnecting, error]);
-
-  // Determinar el estado actual
-  const getStatus = () => {
-    if (reconnecting) {
-      return {
-        type: 'reconnecting',
-        icon: IoSync,
-        color: 'text-yellow-500',
-        bgColor: 'bg-yellow-50',
-        borderColor: 'border-yellow-200',
-        label: 'Reconectando...',
-        animate: true,
-        showIndicator: true
-      };
-    }
-    
+  // Mostrar error o estado de desconexión
+  const getStatusInfo = () => {
     if (error) {
       return {
-        type: 'error',
-        icon: IoCloudOffline,
-        color: 'text-red-500',
-        bgColor: 'bg-red-50',
-        borderColor: 'border-red-200',
-        label: error || 'Error de conexión',
-        animate: false,
-        showIndicator: true
+        icon: IoWarning,
+        color: 'text-amber-600',
+        bgColor: 'bg-amber-50',
+        message: error
       };
     }
     
     if (!connected) {
       return {
-        type: 'disconnected',
-        icon: IoWifiOutline,
-        color: 'text-gray-500',
-        bgColor: 'bg-gray-50',
-        borderColor: 'border-gray-200',
-        label: 'Sin conexión',
-        animate: false,
-        showIndicator: true
+        icon: IoCloudOffline,
+        color: 'text-red-600',
+        bgColor: 'bg-red-50',
+        message: 'Sin conexión'
       };
     }
-    
-    return {
-      type: 'connected',
-      icon: IoWifi,
-      color: 'text-green-500',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
-      label: 'Conectado',
-      animate: false,
-      showIndicator: connected
-    };
   };
 
-  const status = getStatus();
+  const statusInfo = getStatusInfo();
+  
+  if (!statusInfo) return null;
 
-  // Versión compacta - solo el indicador
+  const { icon: Icon, color, bgColor, message } = statusInfo;
+
   if (compact) {
     return (
-      <div className="flex items-center">
-        <div 
-          className={`w-2 h-2 rounded-full ${
-            connected ? 'bg-green-500' : 'bg-red-500'
-          } ${status.animate ? 'animate-pulse' : ''}`}
-          title={status.label}
-        />
+      <div className={`absolute top-2 left-2 z-10 flex items-center px-2 py-1 rounded-full ${bgColor}`}>
+        <Icon className={`w-3 h-3 ${color}`} />
+        <span className={`text-xs ml-1 ${color}`}>{message}</span>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className={`ml-2 p-1 rounded-full hover:bg-white/20 transition-colors ${color}`}
+            title="Reintentar conexión"
+            aria-label="Reintentar conexión"
+          >
+            <IoRefresh className="w-3 h-3" />
+          </button>
+        )}
       </div>
     );
   }
 
-  // No mostrar si está conectado y no se fuerza mostrar
-  if (!showStatus && connected && !showLabel) {
-    return null;
-  }
-
-  const StatusIcon = status.icon;
-
   return (
-    <div className={`
-      flex items-center space-x-2 px-3 py-2 rounded-lg border transition-all duration-300
-      ${status.bgColor} ${status.borderColor}
-      ${showStatus ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}
-    `}>
-      {/* Icono de estado */}
-      <div className="flex-shrink-0">
-        <StatusIcon 
-          className={`w-4 h-4 ${status.color} ${
-            status.animate ? 'animate-spin' : ''
-          }`} 
-        />
+    <div className={`flex items-center justify-between px-4 py-2 ${bgColor} border-l-4 border-${color.split('-')[1]}-500`}>
+      <div className="flex items-center">
+        <Icon className={`w-4 h-4 ${color} mr-2`} />
+        <span className={`text-sm font-medium ${color}`}>{message}</span>
       </div>
-
-      {/* Etiqueta de estado */}
-      {(showLabel || status.showIndicator) && (
-        <span className={`text-xs font-medium ${status.color}`}>
-          {status.label}
-        </span>
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          className={`ml-2 px-3 py-1 text-xs font-medium ${color} hover:bg-white/20 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2`}
+          aria-label="Reintentar conexión"
+        >
+          <IoRefresh className="w-3 h-3 mr-1 inline" />
+          Reintentar
+        </button>
       )}
-
-      {/* Botones de acción */}
-      {(status.type === 'error' || status.type === 'disconnected') && (
-        <div className="flex space-x-1">
-          {onRetry && (
-            <button
-              onClick={onRetry}
-              className={`
-                text-xs px-2 py-1 rounded hover:bg-opacity-20 transition-colors
-                ${status.color} hover:bg-current
-              `}
-              title="Reintentar conexión"
-            >
-              Reintentar
-            </button>
-          )}
-          <button
-            onClick={() => setShowDiagnostic(true)}
-            className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors flex items-center"
-            title="Ver diagnóstico de conexión"
-          >
-            <FiTool className="w-3 h-3 mr-1" />
-            Diagnóstico
-          </button>
-        </div>
-      )}
-
-      {/* Información adicional */}
-      {lastConnectionTime && connected && showLabel && (
-        <span className="text-xs text-gray-400">
-          {lastConnectionTime.toLocaleTimeString()}
-        </span>
-      )}
-      
-      {/* Modal de diagnóstico */}
-      <ConnectionDiagnostic 
-        show={showDiagnostic} 
-        onClose={() => setShowDiagnostic(false)} 
-      />
     </div>
   );
-};
+});
 
-export default ConnectionStatus;
-export { ConnectionStatus }; 
+ConnectionStatus.displayName = 'ConnectionStatus';
+
+export default ConnectionStatus; 
