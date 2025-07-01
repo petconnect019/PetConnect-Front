@@ -411,25 +411,21 @@ export const CalendarIntegration = () => {
   const stats = getStats();
 
   return (
-    <div className="space-y-6">
-      {/* Header con navegación */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <span className="text-green-600">✓</span>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-800">Google Calendar Conectado</h3>
-              <p className="text-sm text-gray-500">Gestión integrada de citas y recordatorios</p>
-            </div>
-          </div>
-          <button
-            onClick={disconnectFromGoogleCalendar}
-            className="text-sm text-red-600 hover:text-red-700 transition-colors duration-150"
-          >
-            Desconectar
-          </button>
+          <h3 className="font-semibold text-gray-800">
+            Calendario y Recordatorios
+          </h3>
+          {isConnected && (
+            <button
+              onClick={disconnectFromGoogleCalendar}
+              className="text-sm text-red-600 hover:text-red-700 transition-colors duration-150"
+            >
+              Desconectar
+            </button>
+          )}
         </div>
 
         {/* Navigation Tabs */}
@@ -457,82 +453,281 @@ export const CalendarIntegration = () => {
         </div>
       </div>
 
-      {/* Pet Selector - Mostrar siempre si hay mascotas */}
-      {petList && petList.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="font-semibold text-gray-800 mb-4">
-            {petList.length > 1 ? 'Selecciona una mascota' : 'Mascota seleccionada'}
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            {petList.map((pet) => (
-              <button
-                key={pet._id}
-                onClick={() => setSelectedPet(pet)}
-                className={`flex items-center gap-3 p-3 rounded-xl transition-colors duration-150 ${
-                  selectedPet?._id === pet._id
-                    ? 'bg-brand text-white'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                }`}
-              >
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  {pet.species === 'dog' ? '🐕' : '🐱'}
-                </div>
-                <span className="font-medium">{pet.name}</span>
-              </button>
-            ))}
+      {/* Not Connected State */}
+      {!isConnected && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+            <span className="text-2xl">🔗</span>
           </div>
-          
-          {/* Info de debugging */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
-              Total mascotas: {petList.length} | Seleccionada: {selectedPet?.name || 'ninguna'}
+          <h4 className="font-semibold text-gray-800 mb-2">
+            Conecta con Google Calendar
+          </h4>
+          <p className="text-gray-500 text-sm mb-6">
+            Sincroniza tus citas veterinarias y recordatorios con tu calendario personal. Recibe notificaciones automáticas y comparte eventos con tu veterinario.
+          </p>
+          <button
+            onClick={connectToGoogleCalendar}
+            disabled={loading}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Conectando...</span>
+              </>
+            ) : (
+              <>
+                <span>🔗</span>
+                <span>Conectar con Google</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+
+      {/* Overview */}
+      {isConnected && activeView === 'overview' && (
+        <div className="space-y-4">
+          {/* Stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <StatCard 
+              icon="📅" 
+              value={stats.totalEvents} 
+              label="Total Eventos" 
+              color="blue" 
+            />
+            <StatCard 
+              icon="⏰" 
+              value={stats.upcomingEvents} 
+              label="Próximos" 
+              color="green" 
+            />
+            <StatCard 
+              icon="🚨" 
+              value={stats.overdueReminders} 
+              label="Vencidos" 
+              color="red" 
+            />
+            <StatCard 
+              icon="✅" 
+              value={stats.completedEvents} 
+              label="Completados" 
+              color="blue" 
+            />
+          </div>
+
+          {/* Events List */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="font-semibold text-gray-800">
+                Próximos Eventos
+              </h4>
+              <button
+                onClick={loadCalendarEvents}
+                className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-150 flex items-center gap-1"
+              >
+                <span>🔄</span>
+                Actualizar
+              </button>
             </div>
+
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="bg-gray-100 rounded-xl p-4 animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                  </div>
+                ))}
+              </div>
+            ) : events.length > 0 ? (
+              <div className="space-y-3">
+                {events.map(event => (
+                  <EventCard
+                    key={event._id || event.id}
+                    event={event}
+                    onToggle={handleReminderToggle}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">📅</span>
+                </div>
+                <h4 className="font-semibold text-gray-800 mb-2">
+                  No hay eventos programados
+                </h4>
+                <p className="text-gray-500 text-sm">
+                  Crea una nueva cita o recordatorio para empezar
+                </p>
+                <button
+                  onClick={() => setActiveView('create')}
+                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-xl text-sm font-medium transition-colors duration-150 flex items-center gap-2 mx-auto"
+                >
+                  <span>➕</span>
+                  Programar Cita
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Create Event Form */}
+      {isConnected && activeView === 'create' && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h4 className="font-semibold text-gray-800 mb-6">
+            Nueva Cita o Recordatorio
+          </h4>
+
+          {/* Pet Selector */}
+          {petList.length > 0 ? (
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Selecciona una mascota
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {petList.map((pet) => (
+                  <button
+                    key={pet._id}
+                    onClick={() => setSelectedPet(pet)}
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-colors duration-150 ${
+                      selectedPet?._id === pet._id
+                        ? 'bg-brand text-white'
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                      {pet.species === 'dog' ? '🐕' : '🐱'}
+                    </div>
+                    <span className="font-medium truncate">{pet.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="mb-6 text-center">
+              <p className="text-gray-500 text-sm mb-4">
+                Primero debes agregar una mascota
+              </p>
+              <button
+                onClick={() => window.location.href = '/new-pet1'}
+                className="bg-brand hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
+              >
+                Agregar Mascota
+              </button>
+            </div>
+          )}
+
+          {/* Event Form */}
+          {selectedPet && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Event Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tipo de evento
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[
+                    { id: 'checkup', label: 'Chequeo General', icon: '🩺' },
+                    { id: 'vaccine', label: 'Vacunación', icon: '💉' },
+                    { id: 'medication', label: 'Medicación', icon: '💊' },
+                    { id: 'grooming', label: 'Peluquería', icon: '✂️' }
+                  ].map(type => (
+                    <button
+                      key={type.id}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, type: type.id })}
+                      className={`p-3 rounded-xl border-2 transition-colors duration-150 text-left ${
+                        formData.type === type.id
+                          ? 'border-brand bg-orange-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+                          <span className="text-lg">{type.icon}</span>
+                        </div>
+                        <span className="font-medium">{type.label}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Título del evento
+                </label>
+                <input
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Ej: Vacuna antirrábica"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-colors duration-150"
+                />
+              </div>
+
+              {/* Date and Time */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fecha y hora
+                </label>
+                <input
+                  type="datetime-local"
+                  value={formData.datetime}
+                  onChange={(e) => setFormData({ ...formData, datetime: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-colors duration-150"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Descripción (opcional)
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Información adicional sobre la cita..."
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-colors duration-150 resize-none"
+                />
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex gap-2 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setActiveView('overview')}
+                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition-colors duration-150"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading || !formData.title || !formData.datetime}
+                  className="flex-1 bg-brand hover:bg-orange-600 text-white py-3 rounded-xl font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Guardando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>💾</span>
+                      <span>Guardar</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           )}
         </div>
       )}
-
-      {/* Mensaje si no hay mascotas */}
-      {(!petList || petList.length === 0) && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <div className="text-center py-8">
-            <div className="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🐕</span>
-            </div>
-            <h3 className="font-semibold text-gray-800 mb-2">No hay mascotas registradas</h3>
-            <p className="text-gray-500 text-sm mb-4">
-              Agrega una mascota para poder programar citas veterinarias
-            </p>
-            <button
-              onClick={() => window.location.href = '/new-pet1'}
-              className="bg-brand hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
-            >
-              Agregar Mascota
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Content based on active view */}
-      {activeView === 'overview' && (
-        <CalendarOverview 
-          stats={stats}
-          combinedEvents={getCombinedEvents()}
-          onRefresh={loadCalendarEvents}
-          onReminderToggle={handleReminderToggle}
-          loading={loading || remindersLoading}
-        />
-      )}
-
-      {activeView === 'create' && (
-        <CreateAppointmentForm 
-          selectedPet={selectedPet}
-          onCreateAppointment={createVetAppointment}
-          loading={loading}
-          onCancel={() => setActiveView('overview')}
-        />
-      )}
-
-
     </div>
   );
 };
@@ -775,8 +970,6 @@ const CalendarOverview = ({ stats, combinedEvents, onRefresh, onReminderToggle, 
   );
 };
 
-
-
 // Componente de tarjeta de evento combinado
 const CombinedEventCard = ({ event, onReminderToggle }) => {
   const formatDate = (dateString) => {
@@ -859,8 +1052,6 @@ const CombinedEventCard = ({ event, onReminderToggle }) => {
     </div>
   );
 };
-
-
 
 // Componente de tarjeta de estadística
 const StatCard = ({ icon, value, label, color }) => {

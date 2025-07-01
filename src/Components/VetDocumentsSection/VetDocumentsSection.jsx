@@ -26,6 +26,10 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
     }
   }, [petList, selectedPet]);
 
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
+
   // Cargar datos cuando cambie la mascota seleccionada
   useEffect(() => {
     const loadVetData = async () => {
@@ -37,16 +41,11 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
         const documentsData = await getDocuments(selectedPet._id);
         setDocuments(documentsData || []);
 
-        // Cargar recordatorios reales del backend
-        const remindersData = await getReminders(selectedPet._id);
-        setReminders(remindersData || []);
-
         // Calcular estadísticas
-        calculateStats(documentsData || [], remindersData || []);
+        calculateStats(documentsData || []);
       } catch (error) {
         console.error('Error al cargar datos veterinarios:', error);
         setDocuments([]);
-        setReminders([]);
       } finally {
         setLoading(false);
       }
@@ -55,7 +54,7 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
     loadVetData();
   }, [selectedPet]);
 
-  const calculateStats = (docs, rems) => {
+  const calculateStats = (docs) => {
     const now = new Date();
     const activeVaccines = docs.filter(doc => 
       doc.type === 'vaccine' && 
@@ -64,23 +63,11 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
       new Date(doc.nextDue) > now
     ).length;
 
-    const upcomingReminders = rems.filter(rem => {
-      if (rem.completed) return false;
-      const reminderDate = new Date(rem.date);
-      const diffDays = Math.ceil((reminderDate - now) / (1000 * 60 * 60 * 24));
-      return diffDays <= 7 && diffDays >= 0;
-    }).length;
-
-    const overdueReminders = rems.filter(rem => {
-      if (rem.completed) return false;
-      return new Date(rem.date) < now;
-    }).length;
-
     setStats({
       totalDocuments: docs.length,
       activeVaccines,
-      upcomingReminders,
-      overdueReminders
+      upcomingReminders: 0,
+      overdueReminders: 0
     });
   };
 
@@ -90,7 +77,7 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
       // Recargar recordatorios
       const remindersData = await getReminders(selectedPet._id);
       setReminders(remindersData || []);
-      calculateStats(documents, remindersData || []);
+      calculateStats(documents);
     } catch (error) {
       console.error('Error al actualizar recordatorio:', error);
     }
@@ -101,7 +88,7 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
     if (selectedPet) {
       const documentsData = await getDocuments(selectedPet._id);
       setDocuments(documentsData || []);
-      calculateStats(documentsData || [], reminders);
+      calculateStats(documentsData || []);
     }
   };
 
