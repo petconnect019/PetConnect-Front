@@ -20,49 +20,84 @@ export const CalendarIntegration = ({ petList }) => {
       const connected = await GoogleCalendarAPI.isConnected();
       setIsConnected(connected);
       setConfigError(null);
+      
       if (connected) {
         loadCalendarEvents();
       }
     } catch (error) {
       console.error('Error checking calendar connection:', error);
       setConfigError(error.message);
+      setIsConnected(false);
     }
   };
 
   const connectToGoogleCalendar = async () => {
     setLoading(true);
     try {
+      console.log('Iniciando proceso de autenticación...');
       await GoogleCalendarAPI.authenticate();
-      setIsConnected(true);
+      
+      // Verificar que realmente estamos conectados
+      const connected = await GoogleCalendarAPI.isConnected();
+      setIsConnected(connected);
       setConfigError(null);
-      await loadCalendarEvents();
+      
+      if (connected) {
+        console.log('Conectado exitosamente, cargando eventos...');
+        await loadCalendarEvents();
+        alert('¡Conectado exitosamente a Google Calendar!');
+      } else {
+        throw new Error('Falló la verificación de conexión después de autenticar');
+      }
     } catch (error) {
       console.error('Error connecting to Google Calendar:', error);
       if (error.message.includes('VITE_GOOGLE')) {
         setConfigError(error.message);
       } else {
-        alert('Error al conectar con Google Calendar. Por favor, intenta de nuevo.');
+        alert(`Error al conectar con Google Calendar: ${error.message}`);
       }
+      setIsConnected(false);
     } finally {
       setLoading(false);
     }
   };
 
+  const disconnectFromGoogleCalendar = async () => {
+    try {
+      GoogleCalendarAPI.disconnect();
+      setIsConnected(false);
+      setEvents([]);
+      alert('Desconectado de Google Calendar');
+    } catch (error) {
+      console.error('Error disconnecting:', error);
+    }
+  };
+
   const loadCalendarEvents = async () => {
     try {
+      console.log('Cargando eventos del calendario...');
       const calendarEvents = await GoogleCalendarAPI.getEvents();
-      setEvents(calendarEvents);
+      console.log('Eventos cargados:', calendarEvents);
+      setEvents(calendarEvents || []);
     } catch (error) {
       console.error('Error loading calendar events:', error);
+      setEvents([]);
     }
   };
 
   const createVetAppointment = async (appointmentData) => {
     setLoading(true);
     try {
+      console.log('Creando cita veterinaria...', appointmentData);
+      
+      // Verificar que estamos autenticados
+      if (!isConnected) {
+        throw new Error('No estás conectado a Google Calendar. Por favor conecta primero.');
+      }
+
       const event = {
         summary: `🐕 ${appointmentData.title} - ${selectedPet?.name}`,
-        description: `Cita veterinaria para ${selectedPet?.name}\n\n${appointmentData.notes || ''}`,
+        description: `Cita veterinaria para ${selectedPet?.name}\n\nTipo: ${appointmentData.title}\nNotas: ${appointmentData.notes || 'Sin notas adicionales'}`,
         start: {
           dateTime: appointmentData.datetime,
           timeZone: 'America/Bogota'
@@ -78,18 +113,23 @@ export const CalendarIntegration = ({ petList }) => {
             { method: 'popup', minutes: 60 }, // 1 hora antes
             { method: 'popup', minutes: 15 } // 15 minutos antes
           ]
-        },
-        attendees: appointmentData.veterinary ? [
-          { email: appointmentData.veterinary }
-        ] : []
+        }
       };
 
-      await GoogleCalendarAPI.createEvent(event);
+      // Agregar veterinario si se proporcionó
+      if (appointmentData.veterinary) {
+        event.attendees = [{ email: appointmentData.veterinary }];
+      }
+
+      const createdEvent = await GoogleCalendarAPI.createEvent(event);
+      console.log('Evento creado:', createdEvent);
+      
+      // Recargar eventos
       await loadCalendarEvents();
       alert('¡Cita creada exitosamente en Google Calendar!');
     } catch (error) {
       console.error('Error creating calendar event:', error);
-      alert('Error al crear la cita en Google Calendar.');
+      alert(`Error al crear la cita: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -230,7 +270,7 @@ export const CalendarIntegration = ({ petList }) => {
             </div>
           </div>
           <button
-            onClick={() => setIsConnected(false)}
+            onClick={disconnectFromGoogleCalendar}
             className="text-sm text-red-600 hover:text-red-700 transition-colors duration-200"
           >
             Desconectar
@@ -271,7 +311,7 @@ export const CalendarIntegration = ({ petList }) => {
       />
 
       {/* Upcoming Events */}
-      <UpcomingEvents events={events} />
+      <UpcomingEvents events={events} onRefresh={loadCalendarEvents} />
     </div>
   );
 };
@@ -405,11 +445,19 @@ const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading }) =>
 };
 
 // Componente para mostrar próximos eventos
-const UpcomingEvents = ({ events }) => {
+const UpcomingEvents = ({ events, onRefresh }) => {
   if (events.length === 0) {
     return (
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <h3 className="font-semibold text-gray-800 mb-4">Próximas Citas</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-800">Próximas Citas</h3>
+          <button
+            onClick={onRefresh}
+            className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200"
+          >
+            🔄 Actualizar
+          </button>
+        </div>
         <div className="text-center py-8">
           <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
             <span className="text-2xl">📅</span>
@@ -422,7 +470,15 @@ const UpcomingEvents = ({ events }) => {
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-      <h3 className="font-semibold text-gray-800 mb-4">Próximas Citas</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold text-gray-800">Próximas Citas</h3>
+        <button
+          onClick={onRefresh}
+          className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200"
+        >
+          🔄 Actualizar
+        </button>
+      </div>
       <div className="space-y-3">
         {events.slice(0, 5).map((event, index) => (
           <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
@@ -432,13 +488,13 @@ const UpcomingEvents = ({ events }) => {
             <div className="flex-1">
               <h4 className="font-medium text-gray-800">{event.summary}</h4>
               <p className="text-sm text-gray-500">
-                {new Date(event.start.dateTime).toLocaleDateString('es-CO', {
+                {new Date(event.start.dateTime || event.start.date).toLocaleDateString('es-CO', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+                  hour: event.start.dateTime ? '2-digit' : undefined,
+                  minute: event.start.dateTime ? '2-digit' : undefined
                 })}
               </p>
             </div>
