@@ -68,7 +68,7 @@ export const HealthManagement = () => {
         )}
         
         {activeTab === 'calendar' && (
-          <CalendarIntegration petList={petList} />
+          <CalendarIntegration />
         )}
       </div>
     </div>
