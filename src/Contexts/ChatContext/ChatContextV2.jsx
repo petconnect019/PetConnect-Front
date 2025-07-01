@@ -110,35 +110,12 @@ export const ChatProvider = ({ children }) => {
     }
     
     try {
-      // Agregar información del usuario actual para mensajes optimistas
-      const messageOptions = {
-        ...options,
-        currentUserId: user?.id || user?._id,
-        currentUserName: user?.name || 'Tú'
-      };
-      
-      return await messagesHook.sendMessage(chatId, content, messageOptions);
+      return await messagesHook.sendMessage(chatId, content, options);
     } catch (error) {
       console.error('Error al enviar mensaje:', error);
       throw error;
     }
-  }, [messagesHook, user]);
-
-  // Función para reintentar envío de mensaje fallido
-  const retryMessage = useCallback(async (chatId, content, originalMessageId, options = {}) => {
-    try {
-      const messageOptions = {
-        ...options,
-        currentUserId: user?.id || user?._id,
-        currentUserName: user?.name || 'Tú'
-      };
-      
-      return await messagesHook.retryMessage(chatId, content, originalMessageId, messageOptions);
-    } catch (error) {
-      console.error('Error al reintentar mensaje:', error);
-      throw error;
-    }
-  }, [messagesHook, user]);
+  }, [messagesHook]);
 
   // Función para iniciar chat con usuario
   const startChatWithUser = useCallback(async (recipientId, initialMessage) => {
@@ -203,14 +180,6 @@ export const ChatProvider = ({ children }) => {
     }
   }, [conversationsHook, messagesHook, activeChat]);
 
-  // Configurar función global de reintento
-  useEffect(() => {
-    window.retryMessage = retryMessage;
-    return () => {
-      delete window.retryMessage;
-    };
-  }, [retryMessage]);
-
   // Valor del contexto optimizado
   const contextValue = useMemo(() => ({
     // Estado de conexión
@@ -245,7 +214,6 @@ export const ChatProvider = ({ children }) => {
     selectChat,
     closeChat,
     sendMessage,
-    retryMessage,
     startChatWithUser,
     
     // Acciones de mensajes
@@ -274,7 +242,6 @@ export const ChatProvider = ({ children }) => {
     selectChat,
     closeChat,
     sendMessage,
-    retryMessage,
     startChatWithUser,
     clearError
   ]);

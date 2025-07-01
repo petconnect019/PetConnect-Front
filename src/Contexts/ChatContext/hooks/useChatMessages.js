@@ -110,33 +110,11 @@ export const useChatMessages = () => {
     }
   }, []);
 
-  // Enviar mensaje con Optimistic Update
+  // Enviar mensaje
   const sendMessage = useCallback(async (chatId, content, options = {}) => {
     if (!chatId || !content?.trim()) {
       throw new Error('Chat ID y contenido son requeridos');
     }
-    
-    // Crear mensaje optimista
-    const optimisticMessage = {
-      _id: `temp_${Date.now()}_${Math.random()}`, // ID temporal
-      chatId, // Incluir chatId para reintentos
-      content: content.trim(),
-      messageType: options.messageType || 'text',
-      attachments: options.attachments || [],
-      location: options.location || null,
-      timestamp: new Date(),
-      senderId: {
-        _id: options.currentUserId || 'current_user',
-        name: options.currentUserName || 'Tú'
-      },
-      isOptimistic: true, // Marca para identificar mensajes optimistas
-      sending: true // Estado de envío
-    };
-
-    // Agregar mensaje optimista inmediatamente
-    console.log('📝 [useChatMessages] Agregando mensaje optimista:', optimisticMessage);
-    addMessage(chatId, optimisticMessage);
-    console.log('✅ [useChatMessages] Mensaje optimista agregado');
     
     try {
       const messageData = {
@@ -165,71 +143,29 @@ export const useChatMessages = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Actualizar el mensaje optimista con los datos reales del servidor
-        updateMessage(chatId, optimisticMessage._id, {
-          _id: data.data._id,
-          senderId: data.data.senderId,
-          timestamp: data.data.timestamp,
-          isOptimistic: false,
-          sending: false
-        });
-        
+        // El mensaje se agregará via socket en tiempo real
         return data.data;
       } else {
         throw new Error(data.message || 'Error al enviar mensaje');
       }
     } catch (error) {
       console.error(`Error al enviar mensaje en chat ${chatId}:`, error);
-      
-      // Marcar el mensaje como fallido en lugar de eliminarlo
-      updateMessage(chatId, optimisticMessage._id, {
-        sending: false,
-        failed: true,
-        error: error.message
-      });
-      
       throw error;
     }
-  }, [addMessage, updateMessage]);
+  }, []);
 
   // Agregar mensaje (generalmente llamado desde socket)
   const addMessage = useCallback((chatId, message) => {
-    console.log('➕ [useChatMessages] addMessage llamado:', { chatId, messageId: message._id, content: message.content });
-    
     setMessagesByChat(prev => {
       const newMap = new Map(prev);
       const existingMessages = newMap.get(chatId) || [];
       
-      console.log(`📊 [useChatMessages] Estado actual del chat ${chatId}: ${existingMessages.length} mensajes`);
-      
-      // Si es un mensaje del socket y ya existe un optimista con el mismo contenido y timestamp similar
-      if (!message.isOptimistic) {
-        const optimisticIndex = existingMessages.findIndex(msg => 
-          msg.isOptimistic && 
-          msg.content === message.content &&
-          Math.abs(new Date(msg.timestamp) - new Date(message.timestamp)) < 5000 // 5 segundos de diferencia
-        );
-        
-        if (optimisticIndex !== -1) {
-          // Reemplazar el mensaje optimista con el real
-          const updatedMessages = [...existingMessages];
-          updatedMessages[optimisticIndex] = { ...message, isOptimistic: false };
-          newMap.set(chatId, updatedMessages);
-          console.log('🔄 [useChatMessages] Reemplazando mensaje optimista con versión real');
-          return newMap;
-        }
-      }
-      
-      // Evitar duplicados por ID
+      // Evitar duplicados
       const messageExists = existingMessages.some(msg => msg._id === message._id);
-      if (messageExists) {
-        console.log('⚠️ [useChatMessages] Mensaje duplicado, ignorando');
-        return prev;
-      }
+      if (messageExists) return prev;
       
       const updatedMessages = [...existingMessages, message];
       newMap.set(chatId, updatedMessages);
-      console.log(`✅ [useChatMessages] Mensaje agregado. Nuevo total: ${updatedMessages.length} mensajes`);
       return newMap;
     });
   }, []);
@@ -339,26 +275,6 @@ export const useChatMessages = () => {
     return Array.from(typingUsers.get(chatId) || []);
   }, [typingUsers]);
 
-  // Reintentar envío de mensaje fallido
-  const retryMessage = useCallback(async (chatId, content, originalMessageId, options = {}) => {
-    try {
-      // Remover el mensaje fallido del estado
-      setMessagesByChat(prev => {
-        const newMap = new Map(prev);
-        const messages = newMap.get(chatId) || [];
-        const filteredMessages = messages.filter(msg => msg._id !== originalMessageId);
-        newMap.set(chatId, filteredMessages);
-        return newMap;
-      });
-      
-      // Reenviar el mensaje
-      await sendMessage(chatId, content, options);
-    } catch (error) {
-      console.error('Error al reintentar envío:', error);
-      throw error;
-    }
-  }, [sendMessage]);
-
   // Limpiar todo el estado
   const clearAll = useCallback(() => {
     setMessagesByChat(new Map());
@@ -380,7 +296,6 @@ export const useChatMessages = () => {
     // Acciones
     loadMessages,
     sendMessage,
-    retryMessage,
     addMessage,
     updateMessage,
     markAsRead,

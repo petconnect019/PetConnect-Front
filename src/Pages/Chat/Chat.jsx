@@ -4,7 +4,7 @@ import { IoArrowBack, IoEllipsisVertical, IoSearch, IoClose, IoWifiOffOutline, I
 
 // Contexto y componentes
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
-import { useChat } from '../../Contexts/ChatContext/ChatContextV2Simple';
+import { useChat } from '../../Contexts/ChatContext/ChatContext';
 import { ConversationList } from '../../Components/ChatComponents/ConversationList';
 import { MessageList } from '../../Components/ChatComponents/MessageList';
 import { MessageInput } from '../../Components/ChatComponents/MessageInput';
@@ -14,7 +14,6 @@ import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import LoadingSpinner from '../../Components/Common/LoadingSpinner';
 import ErrorMessage from '../../Components/Common/ErrorMessage';
 import ConnectionStatus from '../../Components/Common/ConnectionStatus';
-import ChatDebugger from '../../Components/Common/ChatDebugger';
 // import SocketTest from '../../Components/Common/SocketTest'; // Test completado
 
 export const Chat = () => {
@@ -128,22 +127,12 @@ export const Chat = () => {
 
   // Manejar envío de mensaje
   const handleSendMessage = async (content, options = {}) => {
-    if (!activeChat) {
-      console.warn('❌ No hay chat activo');
-      return;
-    }
+    if (!activeChat) return;
     
     try {
-      // Agregar información del usuario actual
-      const messageOptions = {
-        ...options,
-        currentUserId: user?.id || user?._id,
-        currentUserName: user?.name || 'Tú'
-      };
-      
-      await sendMessage(activeChat._id, content, messageOptions);
+      await sendMessage(activeChat._id, content, options);
     } catch (error) {
-      console.error('❌ Error al enviar mensaje:', error);
+      console.error('Error al enviar mensaje:', error);
     }
   };
 
@@ -353,9 +342,6 @@ export const Chat = () => {
 
       {/* Footer Navigation */}
       <FooterNav navigate={navigate} />
-      
-      {/* Debug Component */}
-      <ChatDebugger />
     </div>
   );
 };
