@@ -134,7 +134,9 @@ export const useChatMessages = () => {
     };
 
     // Agregar mensaje optimista inmediatamente
+    console.log('📝 [useChatMessages] Agregando mensaje optimista:', optimisticMessage);
     addMessage(chatId, optimisticMessage);
+    console.log('✅ [useChatMessages] Mensaje optimista agregado');
     
     try {
       const messageData = {
@@ -192,9 +194,13 @@ export const useChatMessages = () => {
 
   // Agregar mensaje (generalmente llamado desde socket)
   const addMessage = useCallback((chatId, message) => {
+    console.log('➕ [useChatMessages] addMessage llamado:', { chatId, messageId: message._id, content: message.content });
+    
     setMessagesByChat(prev => {
       const newMap = new Map(prev);
       const existingMessages = newMap.get(chatId) || [];
+      
+      console.log(`📊 [useChatMessages] Estado actual del chat ${chatId}: ${existingMessages.length} mensajes`);
       
       // Si es un mensaje del socket y ya existe un optimista con el mismo contenido y timestamp similar
       if (!message.isOptimistic) {
@@ -209,16 +215,21 @@ export const useChatMessages = () => {
           const updatedMessages = [...existingMessages];
           updatedMessages[optimisticIndex] = { ...message, isOptimistic: false };
           newMap.set(chatId, updatedMessages);
+          console.log('🔄 [useChatMessages] Reemplazando mensaje optimista con versión real');
           return newMap;
         }
       }
       
       // Evitar duplicados por ID
       const messageExists = existingMessages.some(msg => msg._id === message._id);
-      if (messageExists) return prev;
+      if (messageExists) {
+        console.log('⚠️ [useChatMessages] Mensaje duplicado, ignorando');
+        return prev;
+      }
       
       const updatedMessages = [...existingMessages, message];
       newMap.set(chatId, updatedMessages);
+      console.log(`✅ [useChatMessages] Mensaje agregado. Nuevo total: ${updatedMessages.length} mensajes`);
       return newMap;
     });
   }, []);

@@ -4,7 +4,7 @@ import { IoArrowBack, IoEllipsisVertical, IoSearch, IoClose, IoWifiOffOutline, I
 
 // Contexto y componentes
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
-import { useChat } from '../../Contexts/ChatContext/ChatContext';
+import { useChat } from '../../Contexts/ChatContext/ChatContextV2';
 import { ConversationList } from '../../Components/ChatComponents/ConversationList';
 import { MessageList } from '../../Components/ChatComponents/MessageList';
 import { MessageInput } from '../../Components/ChatComponents/MessageInput';
@@ -14,6 +14,7 @@ import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import LoadingSpinner from '../../Components/Common/LoadingSpinner';
 import ErrorMessage from '../../Components/Common/ErrorMessage';
 import ConnectionStatus from '../../Components/Common/ConnectionStatus';
+import ChatDebugger from '../../Components/Common/ChatDebugger';
 // import SocketTest from '../../Components/Common/SocketTest'; // Test completado
 
 export const Chat = () => {
@@ -127,12 +128,23 @@ export const Chat = () => {
 
   // Manejar envío de mensaje
   const handleSendMessage = async (content, options = {}) => {
-    if (!activeChat) return;
+    console.log('🚀 [Chat.jsx] handleSendMessage llamado:', { 
+      content, 
+      activeChat: activeChat?._id,
+      hasFunction: typeof sendMessage === 'function'
+    });
+    
+    if (!activeChat) {
+      console.warn('❌ No hay chat activo');
+      return;
+    }
     
     try {
+      console.log('📤 Enviando mensaje...');
       await sendMessage(activeChat._id, content, options);
+      console.log('✅ Mensaje enviado exitosamente');
     } catch (error) {
-      console.error('Error al enviar mensaje:', error);
+      console.error('❌ Error al enviar mensaje:', error);
     }
   };
 
@@ -342,6 +354,9 @@ export const Chat = () => {
 
       {/* Footer Navigation */}
       <FooterNav navigate={navigate} />
+      
+      {/* Debug Component */}
+      <ChatDebugger />
     </div>
   );
 };

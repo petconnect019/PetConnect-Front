@@ -46,6 +46,15 @@ export const MessageList = ({
   };
 
   const groupedMessages = groupMessagesByDate(messages);
+  
+  // Debug: Log de mensajes recibidos
+  useEffect(() => {
+    console.log('📋 [MessageList] Mensajes recibidos:', { 
+      count: messages?.length || 0, 
+      chatId,
+      messages: messages?.map(m => ({ id: m._id, content: m.content, optimistic: m.isOptimistic })) || []
+    });
+  }, [messages, chatId]);
 
 
 
