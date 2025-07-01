@@ -9,8 +9,11 @@ export const CalendarIntegration = ({ petList }) => {
   const [configError, setConfigError] = useState(null);
 
   useEffect(() => {
-    if (petList.length > 0) {
+    if (petList && petList.length > 0) {
       setSelectedPet(petList[0]);
+      console.log('Mascota seleccionada automáticamente:', petList[0]);
+    } else {
+      console.log('No hay mascotas disponibles:', petList);
     }
     checkGoogleCalendarConnection();
   }, [petList]);
@@ -89,15 +92,24 @@ export const CalendarIntegration = ({ petList }) => {
     setLoading(true);
     try {
       console.log('Creando cita veterinaria...', appointmentData);
+      console.log('Mascota seleccionada:', selectedPet);
       
       // Verificar que estamos autenticados
       if (!isConnected) {
         throw new Error('No estás conectado a Google Calendar. Por favor conecta primero.');
       }
 
+      // Verificar que hay una mascota seleccionada
+      if (!selectedPet || !selectedPet.name) {
+        throw new Error('Por favor selecciona una mascota antes de crear la cita.');
+      }
+
+      const petName = selectedPet.name;
+      const petIcon = selectedPet.species === 'dog' ? '🐕' : '🐱';
+
       const event = {
-        summary: `🐕 ${appointmentData.title} - ${selectedPet?.name}`,
-        description: `Cita veterinaria para ${selectedPet?.name}\n\nTipo: ${appointmentData.title}\nNotas: ${appointmentData.notes || 'Sin notas adicionales'}`,
+        summary: `${petIcon} ${appointmentData.title} - ${petName}`,
+        description: `Cita veterinaria para ${petName}\n\nTipo: ${appointmentData.title}\nNotas: ${appointmentData.notes || 'Sin notas adicionales'}`,
         start: {
           dateTime: appointmentData.datetime,
           timeZone: 'America/Bogota'
@@ -318,6 +330,7 @@ export const CalendarIntegration = ({ petList }) => {
 
 // Componente para crear citas rápidas
 const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading }) => {
+  console.log('CreateAppointmentForm - selectedPet:', selectedPet);
   const [formData, setFormData] = useState({
     title: '',
     datetime: '',
@@ -336,10 +349,19 @@ const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading }) =>
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.datetime) {
-      alert('Por favor completa los campos requeridos');
+    
+    // Validaciones mejoradas
+    if (!selectedPet || !selectedPet.name) {
+      alert('Error: No hay mascota seleccionada. Por favor selecciona una mascota.');
       return;
     }
+    
+    if (!formData.title || !formData.datetime) {
+      alert('Por favor completa los campos requeridos (tipo de cita y fecha/hora)');
+      return;
+    }
+    
+    console.log('Enviando cita:', { formData, selectedPet });
     onCreateAppointment(formData);
     setFormData({ title: '', datetime: '', veterinary: '', notes: '' });
   };
@@ -348,8 +370,15 @@ const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading }) =>
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
       <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <span>📅</span>
-        Programar Cita para {selectedPet?.name}
+        Programar Cita para {selectedPet?.name || 'mascota'}
       </h3>
+      
+      {/* Debug info - remover en producción */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
+          Debug: selectedPet = {selectedPet ? `${selectedPet.name} (${selectedPet.species})` : 'null/undefined'}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Tipo de cita */}
