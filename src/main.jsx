@@ -21,17 +21,17 @@ const updateSW = registerSW({
 createRoot(document.getElementById('root')).render(
   <AuthProvider>
     <ChatProvider>
-    <ResetPasswordProvider>
-      <HasPetsUserProvider>
-        <PetProvider>
-          <FetchedPetsProvider>
-            <PrimeReactProvider>
-              <App />
-            </PrimeReactProvider>
-          </FetchedPetsProvider>
-        </PetProvider>
-      </HasPetsUserProvider>
-    </ResetPasswordProvider>
+      <ResetPasswordProvider>
+        <HasPetsUserProvider>
+          <PetProvider>
+            <FetchedPetsProvider>
+              <PrimeReactProvider>
+                <App />
+              </PrimeReactProvider>
+            </FetchedPetsProvider>
+          </PetProvider>
+        </HasPetsUserProvider>
+      </ResetPasswordProvider>
     </ChatProvider>
   </AuthProvider>
 );
