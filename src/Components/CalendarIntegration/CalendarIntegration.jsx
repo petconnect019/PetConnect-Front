@@ -6,6 +6,7 @@ export const CalendarIntegration = ({ petList }) => {
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
   const [selectedPet, setSelectedPet] = useState(null);
+  const [configError, setConfigError] = useState(null);
 
   useEffect(() => {
     if (petList.length > 0) {
@@ -18,11 +19,13 @@ export const CalendarIntegration = ({ petList }) => {
     try {
       const connected = await GoogleCalendarAPI.isConnected();
       setIsConnected(connected);
+      setConfigError(null);
       if (connected) {
         loadCalendarEvents();
       }
     } catch (error) {
       console.error('Error checking calendar connection:', error);
+      setConfigError(error.message);
     }
   };
 
@@ -31,10 +34,15 @@ export const CalendarIntegration = ({ petList }) => {
     try {
       await GoogleCalendarAPI.authenticate();
       setIsConnected(true);
+      setConfigError(null);
       await loadCalendarEvents();
     } catch (error) {
       console.error('Error connecting to Google Calendar:', error);
-      alert('Error al conectar con Google Calendar. Por favor, intenta de nuevo.');
+      if (error.message.includes('VITE_GOOGLE')) {
+        setConfigError(error.message);
+      } else {
+        alert('Error al conectar con Google Calendar. Por favor, intenta de nuevo.');
+      }
     } finally {
       setLoading(false);
     }
@@ -86,6 +94,63 @@ export const CalendarIntegration = ({ petList }) => {
       setLoading(false);
     }
   };
+
+  // Mostrar error de configuración si las credenciales no están configuradas
+  if (configError) {
+    return (
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="text-center py-8">
+          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center">
+            <span className="text-3xl">⚙️</span>
+          </div>
+          
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Configuración de Google Calendar Requerida
+          </h2>
+          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            Para usar la integración con Google Calendar, necesitas configurar las credenciales de API.
+          </p>
+
+          <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-4 mb-6 max-w-md mx-auto text-left">
+            <h3 className="font-semibold text-orange-800 mb-2">⚠️ Error de configuración:</h3>
+            <p className="text-sm text-orange-700 mb-3">{configError}</p>
+            
+            <div className="text-sm text-orange-700 space-y-2">
+              <p className="font-medium">Pasos para solucionarlo:</p>
+              <ol className="list-decimal list-inside space-y-1 text-xs">
+                <li>Ve a <a href="https://console.cloud.google.com/" target="_blank" className="underline">Google Cloud Console</a></li>
+                <li>Habilita la Google Calendar API</li>
+                <li>Crea credenciales OAuth 2.0 y API Key</li>
+                <li>Configura las variables en el archivo .env</li>
+                <li>Reinicia el servidor de desarrollo</li>
+              </ol>
+            </div>
+          </div>
+
+          <div className="bg-gray-100 rounded-xl p-4 mb-6 max-w-md mx-auto">
+            <h4 className="font-semibold text-gray-800 mb-2">Agrega a tu archivo .env:</h4>
+            <div className="text-left text-xs font-mono bg-white p-3 rounded border">
+              <div className="text-green-600"># Google Calendar Integration</div>
+              <div>VITE_GOOGLE_CLIENT_ID=tu_client_id_aqui</div>
+              <div>VITE_GOOGLE_API_KEY=tu_api_key_aqui</div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => window.open('https://console.cloud.google.com/', '_blank')}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:shadow-lg flex items-center gap-2 mx-auto"
+          >
+            <span>🔗</span>
+            Abrir Google Cloud Console
+          </button>
+
+          <p className="text-xs text-gray-500 mt-4">
+            Consulta la documentación en GOOGLE_CALENDAR_SETUP.md para instrucciones detalladas
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isConnected) {
     return (

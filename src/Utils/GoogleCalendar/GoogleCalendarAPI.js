@@ -9,23 +9,42 @@ class GoogleCalendarService {
     this.isInitialized = false;
   }
 
+  // Verificar que las credenciales estén configuradas
+  validateCredentials() {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+
+    if (!clientId) {
+      throw new Error('VITE_GOOGLE_CLIENT_ID no está configurado en las variables de entorno');
+    }
+
+    if (!apiKey) {
+      throw new Error('VITE_GOOGLE_API_KEY no está configurado en las variables de entorno');
+    }
+
+    return { clientId, apiKey };
+  }
+
   async initialize() {
     if (this.isInitialized) return;
 
     try {
+      // Validar credenciales antes de inicializar
+      const { clientId, apiKey } = this.validateCredentials();
+
       // Load Google APIs
       await this.loadGoogleAPI();
       
       await this.gapi.load('client', async () => {
         await this.gapi.client.init({
-          apiKey: import.meta.env.VITE_GOOGLE_API_KEY,
+          apiKey: apiKey,
           discoveryDocs: [DISCOVERY_DOC],
         });
       });
 
       // Initialize token client
       this.tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        client_id: clientId,
         scope: SCOPES,
         callback: '',
       });
@@ -78,10 +97,15 @@ class GoogleCalendarService {
   }
 
   async isConnected() {
-    if (!this.isInitialized) {
-      await this.initialize();
+    try {
+      if (!this.isInitialized) {
+        await this.initialize();
+      }
+      return this.gapi?.client?.getToken() !== null;
+    } catch (error) {
+      console.error('Error checking connection:', error);
+      return false;
     }
-    return this.gapi?.client?.getToken() !== null;
   }
 
   async createEvent(eventData) {
