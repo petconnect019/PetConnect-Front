@@ -120,6 +120,11 @@ export const ChatProvider = ({ children }) => {
   // --- Ciclo de Vida del Socket ---
   useEffect(() => {
     if (isAuthenticated && user && token) {
+      console.log('🔌 [ChatContext] Iniciando conexión de socket...');
+      console.log(`   Usuario autenticado: ${user.name} (${user.email})`);
+      console.log(`   Token disponible: ${token ? `${token.substring(0, 20)}...` : 'NONE'}`);
+      console.log(`   URL del socket: ${config.api}`);
+      
       dispatch({ type: ACTIONS.SET_CONNECTION_STATE, payload: 'connecting' });
 
       const newSocket = io(config.api, {
@@ -129,23 +134,27 @@ export const ChatProvider = ({ children }) => {
 
       // --- Listeners Centralizados ---
       newSocket.on('connect', () => {
+        console.log('✅ [ChatContext] Socket conectado exitosamente');
         dispatch({ type: ACTIONS.SET_CONNECTION_STATE, payload: 'connected' });
         // Cargar conversaciones iniciales al conectar
         loadConversations(); 
       });
 
       newSocket.on('disconnect', () => {
+        console.log('🔌 [ChatContext] Socket desconectado');
         dispatch({ type: ACTIONS.SET_CONNECTION_STATE, payload: 'disconnected' });
       });
       
       newSocket.on('connect_error', (err) => {
-        console.error("Socket connection error:", err.message);
+        console.error("❌ [ChatContext] Error de conexión del socket:", err.message);
+        console.error("   Detalles del error:", err);
         dispatch({ type: ACTIONS.SET_ERROR, payload: 'Error de conexión con el chat.' });
         dispatch({ type: ACTIONS.SET_CONNECTION_STATE, payload: 'disconnected' });
       });
 
       // Evento para un nuevo mensaje que llega
       newSocket.on('new_message', ({ message, conversation }) => {
+        console.log('📩 [ChatContext] Nuevo mensaje recibido:', message);
         // 1. Actualizar la lista de conversaciones
         dispatch({ type: ACTIONS.UPDATE_OR_ADD_CONVERSATION, payload: conversation });
         // 2. Si es del chat activo, añadir el mensaje a la vista
@@ -154,13 +163,20 @@ export const ChatProvider = ({ children }) => {
 
       // Evento cuando se crea un chat nuevo (ej. alguien nos contacta)
       newSocket.on('chat_created', (conversation) => {
+        console.log('💬 [ChatContext] Nuevo chat creado:', conversation);
         dispatch({ type: ACTIONS.UPDATE_OR_ADD_CONVERSATION, payload: conversation });
       });
 
       // Función de limpieza al desmontar
       return () => {
+        console.log('🧹 [ChatContext] Desconectando socket...');
         newSocket.disconnect();
       };
+    } else {
+      console.log('⚠️ [ChatContext] No se puede conectar socket:');
+      console.log(`   isAuthenticated: ${isAuthenticated}`);
+      console.log(`   user: ${user ? user.name : 'NONE'}`);
+      console.log(`   token: ${token ? 'DISPONIBLE' : 'NONE'}`);
     }
   }, [isAuthenticated, user, token]);
 
