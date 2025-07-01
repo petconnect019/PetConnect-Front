@@ -167,8 +167,8 @@ export const ChatProvider = ({ children }) => {
   // --- Funciones Expuestas al Resto de la App ---
 
   const loadConversations = async () => {
-    // Quitamos useCallback y leemos el token más fresco
-    const currentToken = sessionStorage.getItem('accessToken');
+    // Usar token del contexto o fallback a sessionStorage
+    const currentToken = token || sessionStorage.getItem('accessToken');
     if (!currentToken) {
       return dispatch({ type: ACTIONS.SET_ERROR, payload: 'No autenticado' });
     }
@@ -180,12 +180,11 @@ export const ChatProvider = ({ children }) => {
       });
       if (!response.ok) {
         if (response.status === 401) {
-          // Podríamos llamar a una función de logout global aquí si la tuviéramos
           dispatch({ type: ACTIONS.SET_ERROR, payload: 'Sesión expirada. Por favor, inicie sesión de nuevo.' });
         } else {
           throw new Error('No se pudieron cargar las conversaciones');
         }
-        return; // Detener ejecución si la respuesta no es ok
+        return;
       }
       const data = await response.json();
       dispatch({ type: ACTIONS.SET_CONVERSATIONS, payload: data.data || [] });
@@ -197,7 +196,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   const loadMessages = async (chatId) => {
-    const currentToken = sessionStorage.getItem('accessToken');
+    const currentToken = token || sessionStorage.getItem('accessToken');
     if (!currentToken) {
       return dispatch({ type: ACTIONS.SET_ERROR, payload: 'No autenticado' });
     }
@@ -219,7 +218,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   const sendMessage = async (chatId, content) => {
-    const currentToken = sessionStorage.getItem('accessToken');
+    const currentToken = token || sessionStorage.getItem('accessToken');
     if (!currentToken) {
       return dispatch({ type: ACTIONS.SET_ERROR, payload: 'No autenticado' });
     }
