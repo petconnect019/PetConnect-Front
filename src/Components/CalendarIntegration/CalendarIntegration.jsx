@@ -410,12 +410,32 @@ export const CalendarIntegration = () => {
       !reminder.completed && new Date(reminder.date) < now
     ).length;
 
-    return {
-      totalEvents: upcomingEvents + pendingReminders,
-      upcomingEvents,
-      pendingReminders,
-      overdueReminders
-    };
+    return [
+      {
+        icon: "📅",
+        value: upcomingEvents + pendingReminders,
+        label: "Total Eventos",
+        color: "blue"
+      },
+      {
+        icon: "🗓️",
+        value: upcomingEvents,
+        label: "Citas Calendar",
+        color: "green"
+      },
+      {
+        icon: "⏰",
+        value: pendingReminders,
+        label: "Recordatorios",
+        color: "orange"
+      },
+      {
+        icon: "🚨",
+        value: overdueReminders,
+        label: "Vencidos",
+        color: "red"
+      }
+    ];
   };
 
   const stats = getStats();
@@ -437,7 +457,7 @@ export const CalendarIntegration = () => {
         <>
           {activeView === 'overview' ? (
             <CalendarOverview
-              stats={getStats()}
+              stats={stats}
               combinedEvents={getCombinedEvents()}
               onRefresh={loadCalendarEvents}
               onReminderToggle={handleReminderToggle}
@@ -655,7 +675,7 @@ const CalendarOverview = ({
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
@@ -682,7 +702,7 @@ const CalendarOverview = ({
           <div className="space-y-4">
             {combinedEvents.map((event) => (
               <CombinedEventCard
-                key={event.id}
+                key={event.id || event._id}
                 event={event}
                 onReminderToggle={onReminderToggle}
               />
