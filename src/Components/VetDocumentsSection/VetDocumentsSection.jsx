@@ -6,8 +6,8 @@ import { VaccineTimeline } from './VaccineTimeline';
 import { CreateReminderModal } from './CreateReminderModal';
 import { getDocumentsByPet, getRemindersByPet } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
 
-export const VetDocumentsSection = ({ petList, navigate }) => {
-  const [activeTab, setActiveTab] = useState('documents');
+export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents' }) => {
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showReminderModal, setShowReminderModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);

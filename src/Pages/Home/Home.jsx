@@ -7,7 +7,7 @@ import { useFetchPets } from "../../Hooks/useFetchPets/useFetchPets";
 import { useFetchUserProfile } from "../../Hooks/useFetchUserProfile/useFetchUserProfile"; // Añadir esta importación
 import { ProfileSection } from "../../Components/ProfileSection/ProfileSection";
 import { PetsSection } from "../../Components/PetsSection/PetsSection";
-import { VetDocumentsSection } from "../../Components/VetDocumentsSection/VetDocumentsSection";
+import { HealthDashboard } from "../../Components/HealthDashboard/HealthDashboard";
 import { FooterNav } from "../../Components/FooterNav/FooterNav";
 import petImage from '../../assets/images/petImage.png'
 import iconoHomeUno from '../../assets/images/iconoHomeUno.png'
@@ -86,8 +86,8 @@ export const Home = () => {
         {/* Pets Section */}
         <PetsSection petList={petList} navigate={navigate}/>
 
-        {/* Vet Documents Section */}
-        <VetDocumentsSection petList={petList} navigate={navigate}/>
+        {/* Health Dashboard Section */}
+        <HealthDashboard petList={petList} navigate={navigate}/>
 
         {/* Buttons Section */}
         <section className="grid grid-cols-2 gap-3 sm:gap-4 mt-12 sm:mt-14 md:mt-16 mb-16 sm:mb-20 md:mb-24">
