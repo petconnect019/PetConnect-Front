@@ -129,7 +129,12 @@ export const ChatProvider = ({ children }) => {
 
       const newSocket = io(config.api, {
         auth: { token: `Bearer ${token}` },
-        transports: ['websocket'],
+        transports: ['polling', 'websocket'],
+        upgrade: true,
+        rememberUpgrade: true,
+        timeout: 120000,
+        forceNew: true,
+        autoConnect: true
       });
 
       // --- Listeners Centralizados ---
