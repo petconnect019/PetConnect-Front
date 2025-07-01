@@ -2,516 +2,276 @@ import React, { useState, useEffect } from 'react';
 import { DocumentCard } from './DocumentCard';
 import { UploadModal } from './UploadModal';
 import { VaccineTimeline } from './VaccineTimeline';
-import { getDocumentsByPet, getRemindersByPet, useVetDocuments } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
+import { useVetDocuments } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
 
 export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents' }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);
   const [documents, setDocuments] = useState([]);
-  const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState({
-    totalDocuments: 0,
-    activeVaccines: 0,
-    upcomingReminders: 0,
-    overdueReminders: 0
-  });
+  const [error, setError] = useState(null);
 
-  const { getDocuments, getReminders, toggleReminder, loading: apiLoading, error } = useVetDocuments();
+  const { getDocuments } = useVetDocuments();
 
+  // Inicializar mascota seleccionada
   useEffect(() => {
     if (petList.length > 0 && !selectedPet) {
       setSelectedPet(petList[0]);
     }
   }, [petList, selectedPet]);
 
+  // Sincronizar con pestaña inicial
   useEffect(() => {
     setActiveTab(initialTab);
   }, [initialTab]);
 
-  // Cargar datos cuando cambie la mascota seleccionada
+  // Cargar documentos
+  const loadDocuments = async () => {
+    if (!selectedPet) return;
+    
+    setLoading(true);
+    setError(null);
+    try {
+      const documentsData = await getDocuments(selectedPet._id);
+      setDocuments(documentsData || []);
+    } catch (error) {
+      console.error('Error al cargar documentos:', error);
+      setError(error.message);
+      setDocuments([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadVetData = async () => {
-      if (!selectedPet) return;
-      
-      setLoading(true);
-      try {
-        // Cargar documentos reales del backend
-        const documentsData = await getDocuments(selectedPet._id);
-        setDocuments(documentsData || []);
-
-        // Calcular estadísticas
-        calculateStats(documentsData || []);
-      } catch (error) {
-        console.error('Error al cargar datos veterinarios:', error);
-        setDocuments([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadVetData();
+    loadDocuments();
   }, [selectedPet]);
 
-  const calculateStats = (docs) => {
-    const now = new Date();
-    const activeVaccines = docs.filter(doc => 
+  // Calcular estadísticas
+  const stats = {
+    documents: documents.filter(doc => doc.type !== 'vaccine').length,
+    activeVaccines: documents.filter(doc => 
       doc.type === 'vaccine' && 
       doc.status === 'active' && 
       doc.nextDue && 
-      new Date(doc.nextDue) > now
-    ).length;
-
-    setStats({
-      totalDocuments: docs.length,
-      activeVaccines,
-      upcomingReminders: 0,
-      overdueReminders: 0
-    });
-  };
-
-  const handleReminderToggle = async (reminderId) => {
-    try {
-      await toggleReminder(reminderId);
-      // Recargar recordatorios
-      const remindersData = await getReminders(selectedPet._id);
-      setReminders(remindersData || []);
-      calculateStats(documents);
-    } catch (error) {
-      console.error('Error al actualizar recordatorio:', error);
-    }
-  };
-
-  const handleDocumentAdded = async () => {
-    // Recargar datos después de agregar documento
-    if (selectedPet) {
-      const documentsData = await getDocuments(selectedPet._id);
-      setDocuments(documentsData || []);
-      calculateStats(documentsData || []);
-    }
-  };
-
-  const tabs = [
-    { id: 'documents', label: 'Documentos', icon: '📄', count: stats.totalDocuments },
-    { id: 'vaccines', label: 'Vacunas', icon: '💉', count: stats.activeVaccines },
-    { id: 'timeline', label: 'Historial', icon: '📊', count: null }
-  ];
-
-  // Filtrar documentos por tipo según tab activo
-  const getFilteredDocuments = () => {
-    if (activeTab === 'vaccines') {
-      return documents.filter(doc => doc.type === 'vaccine');
-    }
-    return documents;
-  };
-
-  // Separar recordatorios por estado
-  const getUpcomingReminders = () => {
-    const now = new Date();
-    return reminders.filter(rem => {
-      if (rem.completed) return false;
-      const reminderDate = new Date(rem.date);
-      return reminderDate >= now;
-    }).sort((a, b) => new Date(a.date) - new Date(b.date));
-  };
-
-  const getOverdueReminders = () => {
-    const now = new Date();
-    return reminders.filter(rem => {
-      if (rem.completed) return false;
-      return new Date(rem.date) < now;
-    });
+      new Date(doc.nextDue) > new Date()
+    ).length,
+    totalDocuments: documents.length
   };
 
   if (!petList || petList.length === 0) {
     return <EmptyPetsState navigate={navigate} />;
   }
 
-  return (
-    <section className="mt-8 sm:mt-10 md:mt-12">
-      {/* Header con estadísticas */}
-      <div className="mb-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold text-gray-800">
-              Gestión Veterinaria
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1">
-              {selectedPet ? `Documentos de ${selectedPet.name}` : 'Selecciona una mascota'}
-            </p>
-          </div>
-          <button 
-            onClick={() => setShowUploadModal(true)}
-            disabled={!selectedPet}
-            className="bg-brand text-white p-2 sm:p-3 rounded-xl hover:bg-orange-600 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span className="text-lg">📁</span>
-          </button>
-        </div>
+  if (loading) {
+    return <LoadingState />;
+  }
 
-        {/* Stats Cards */}
-        {selectedPet && (
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <StatCard 
-              icon="📄" 
-              value={stats.totalDocuments} 
-              label="Documentos" 
-              color="blue" 
-            />
-            <StatCard 
-              icon="💉" 
-              value={stats.activeVaccines} 
-              label="Vacunas Activas" 
-              color="green" 
-            />
-            <StatCard 
-              icon="📅" 
-              value={stats.upcomingReminders + stats.overdueReminders} 
-              label="Ver Calendario" 
-              color="purple"
-              clickable={true}
-              onClick={() => navigate('/health-management?tab=calendar')}
-            />
-          </div>
-        )}
+  if (error) {
+    return (
+      <ErrorState 
+        error={error} 
+        onRetry={loadDocuments}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-gray-800">
+            {selectedPet?.name}
+          </h2>
+          <p className="text-sm text-gray-500">
+            {activeTab === 'documents' ? 'Documentos médicos' :
+             activeTab === 'vaccines' ? 'Control de vacunas' :
+             'Historial médico'}
+          </p>
+        </div>
+        <button 
+          onClick={() => setShowUploadModal(true)}
+          className="bg-brand text-white p-2 rounded-xl hover:bg-orange-600 transition-colors duration-150"
+        >
+          <span className="text-lg">📁</span>
+        </button>
       </div>
 
-      {/* Pet Selector */}
+      {/* Pet Selector (solo si hay más de una mascota) */}
       {petList.length > 1 && (
-        <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide pb-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
           {petList.map((pet) => (
             <button
               key={pet._id}
               onClick={() => setSelectedPet(pet)}
-              className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium transition-colors duration-150 ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-150 ${
                 selectedPet?._id === pet._id
                   ? 'bg-brand text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                {pet.species === 'dog' ? '🐕' : '🐱'}
-              </div>
+              <span>{pet.species === 'dog' ? '🐕' : '🐱'}</span>
               {pet.name}
             </button>
           ))}
         </div>
       )}
 
-      {/* Recordatorios Urgentes - Solo mostrar si hay recordatorios importantes */}
-      {selectedPet && (getOverdueReminders().length > 0 || getUpcomingReminders().slice(0, 1).length > 0) && (
-        <div className="mb-6">
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span>📅</span>
-                <span className="font-medium text-blue-800">
-                  {getOverdueReminders().length > 0 ? 'Recordatorios pendientes' : 'Próxima cita programada'}
-                </span>
-              </div>
-              <button
-                onClick={() => navigate('/health-management?tab=calendar')}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-150 flex items-center gap-1"
-              >
-                Ver Calendario
-                <span>→</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab Navigation */}
-      <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-xl overflow-x-auto scrollbar-hide">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 min-w-0 flex flex-col items-center gap-1 px-2 py-3 rounded-lg text-xs font-medium transition-colors duration-150 ${
-              activeTab === tab.id
-                ? 'bg-white text-brand'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            <div className="flex items-center gap-1">
-              <span className="text-sm">{tab.icon}</span>
-              {tab.count !== null && (
-                <span className="bg-brand text-white text-xs px-1.5 py-0.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
-                  {tab.count}
-                </span>
-              )}
-            </div>
-            <span className="truncate">{tab.label}</span>
-          </button>
-        ))}
+      {/* Tabs */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setActiveTab('documents')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150 ${
+            activeTab === 'documents'
+              ? 'bg-brand text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <span>📄</span>
+          <span>Documentos</span>
+          <span className="ml-1 text-xs opacity-80">({stats.documents})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('vaccines')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150 ${
+            activeTab === 'vaccines'
+              ? 'bg-brand text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <span>💉</span>
+          <span>Vacunas</span>
+          <span className="ml-1 text-xs opacity-80">({stats.activeVaccines})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('timeline')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150 ${
+            activeTab === 'timeline'
+              ? 'bg-brand text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          <span>📊</span>
+          <span>Historial</span>
+        </button>
       </div>
 
-      {/* Content Area */}
-      <div className="min-h-[200px]">
-        {loading || apiLoading ? (
-          <LoadingState />
-        ) : error ? (
-          <ErrorState error={error} onRetry={() => window.location.reload()} />
-        ) : !selectedPet ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🐕</span>
-            </div>
-            <p className="text-gray-500">Selecciona una mascota para ver sus documentos</p>
+      {/* Content */}
+      <div className="space-y-4">
+        {activeTab === 'documents' && (
+          <div className="grid gap-4">
+            {documents
+              .filter(doc => doc.type !== 'vaccine')
+              .map(doc => (
+                <DocumentCard 
+                  key={doc._id} 
+                  document={doc}
+                />
+              ))}
+            {documents.filter(doc => doc.type !== 'vaccine').length === 0 && (
+              <EmptyState
+                icon="📄"
+                title="Sin documentos"
+                subtitle="Agrega documentos médicos para tu mascota"
+              />
+            )}
           </div>
-        ) : (
-          <>
-            {activeTab === 'documents' && (
-              <DocumentsTab 
-                documents={getFilteredDocuments()} 
-                selectedPet={selectedPet}
-                onRefresh={handleDocumentAdded}
+        )}
+        
+        {activeTab === 'vaccines' && (
+          <div className="grid gap-4">
+            {documents
+              .filter(doc => doc.type === 'vaccine')
+              .map(doc => (
+                <DocumentCard 
+                  key={doc._id} 
+                  document={doc}
+                />
+              ))}
+            {documents.filter(doc => doc.type === 'vaccine').length === 0 && (
+              <EmptyState
+                icon="💉"
+                title="Sin vacunas"
+                subtitle="Registra las vacunas de tu mascota"
               />
             )}
-            
-            {activeTab === 'vaccines' && (
-              <VaccinesTab 
-                vaccines={getFilteredDocuments()} 
-                selectedPet={selectedPet}
-                onRefresh={handleDocumentAdded}
-              />
-            )}
-            
-            {activeTab === 'timeline' && (
-              <VaccineTimeline 
-                documents={documents} 
-                selectedPet={selectedPet} 
-              />
-            )}
-          </>
+          </div>
+        )}
+        
+        {activeTab === 'timeline' && (
+          <VaccineTimeline 
+            documents={documents}
+            selectedPet={selectedPet}
+          />
         )}
       </div>
 
-      {/* Modals */}
+      {/* Upload Modal */}
       {showUploadModal && (
         <UploadModal
           isOpen={showUploadModal}
           onClose={() => setShowUploadModal(false)}
+          onUploadComplete={loadDocuments}
           selectedPet={selectedPet}
-          onSuccess={handleDocumentAdded}
         />
       )}
-    </section>
+    </div>
   );
 };
 
-// Componentes auxiliares
-const EmptyPetsState = ({ navigate }) => (
-  <section className="mt-8 sm:mt-10 md:mt-12">
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 sm:p-8 text-center">
-      <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-        <span className="text-2xl">🏥</span>
-      </div>
-      <h3 className="text-lg font-semibold text-gray-800 mb-2">
-        Gestión Veterinaria
-      </h3>
-      <p className="text-gray-600 text-sm mb-4">
-        Registra una mascota para comenzar a gestionar sus documentos médicos
-      </p>
-      <button 
-        onClick={() => navigate('/new-pet1')}
-                    className="bg-brand text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-orange-600 transition-colors duration-150"
-      >
-        Registrar Mascota
-      </button>
+const EmptyState = ({ icon, title, subtitle }) => (
+  <div className="text-center py-8">
+    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+      <span className="text-2xl">{icon}</span>
     </div>
-  </section>
+    <h3 className="font-semibold text-gray-800 mb-2">{title}</h3>
+    <p className="text-gray-500 text-sm">{subtitle}</p>
+  </div>
 );
 
-const StatCard = ({ icon, value, label, color, clickable = false, onClick }) => {
-  const colors = {
-    blue: 'bg-blue-500',
-    green: 'bg-green-500',
-    orange: 'bg-orange-500',
-    red: 'bg-red-500',
-    purple: 'bg-purple-500'
-  };
-
-  const Component = clickable ? 'button' : 'div';
-
-  return (
-    <Component
-      onClick={clickable ? onClick : undefined}
-      className={`bg-white rounded-xl p-3 border border-gray-100 ${
-        clickable ? 'hover:border-purple-200 hover:bg-purple-50 transition-colors duration-150 cursor-pointer' : ''
-      }`}
+const EmptyPetsState = ({ navigate }) => (
+  <div className="text-center py-8">
+    <div className="w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full flex items-center justify-center">
+      <span className="text-2xl">🐕</span>
+    </div>
+    <h3 className="font-semibold text-gray-800 mb-2">No hay mascotas registradas</h3>
+    <p className="text-gray-500 text-sm mb-4">
+      Agrega una mascota para comenzar
+    </p>
+    <button
+      onClick={() => navigate('/new-pet1')}
+      className="bg-brand hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
     >
-      <div className="flex items-center gap-2">
-        <div className={`w-8 h-8 rounded-lg ${colors[color]} flex items-center justify-center`}>
-          <span className="text-white text-sm">{icon}</span>
-        </div>
-        <div>
-          <div className="text-lg font-bold text-gray-800">{value}</div>
-          <div className="text-xs text-gray-500">{label}</div>
-        </div>
-      </div>
-    </Component>
-  );
-};
+      Agregar Mascota
+    </button>
+  </div>
+);
 
 const LoadingState = () => (
-  <div className="space-y-3">
+  <div className="space-y-4">
     {[1, 2, 3].map(i => (
       <div key={i} className="bg-gray-100 rounded-xl p-4 animate-pulse">
-        <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
-        <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+        <div className="h-3 bg-gray-200 rounded w-1/3"></div>
       </div>
     ))}
   </div>
 );
 
 const ErrorState = ({ error, onRetry }) => (
-  <div className="text-center py-12">
+  <div className="text-center py-8">
     <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
       <span className="text-2xl">⚠️</span>
     </div>
     <h3 className="font-semibold text-gray-800 mb-2">Error al cargar datos</h3>
-    <p className="text-gray-600 text-sm mb-4">{error}</p>
-          <button 
-        onClick={onRetry}
-        className="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors duration-150"
-      >
+    <p className="text-gray-500 text-sm mb-4">{error}</p>
+    <button
+      onClick={onRetry}
+      className="bg-brand hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150"
+    >
       Reintentar
     </button>
   </div>
-);
-
-const DocumentsTab = ({ documents, selectedPet, onRefresh }) => (
-  <div className="space-y-3">
-    {documents.length > 0 ? (
-      documents.map((doc) => (
-        <DocumentCard 
-          key={doc._id} 
-          document={doc} 
-          onUpdate={onRefresh}
-          onDelete={onRefresh}
-        />
-      ))
-    ) : (
-      <EmptyState 
-        icon="📄" 
-        title="No hay documentos" 
-        subtitle={`Agrega el primer documento médico de ${selectedPet?.name}`}
-        action={() => {}} 
-        actionText="Subir Documento" 
-      />
-    )}
-  </div>
-);
-
-const VaccinesTab = ({ vaccines, selectedPet, onRefresh }) => (
-  <div className="space-y-3">
-    {vaccines.length > 0 ? (
-      vaccines.map((vaccine) => (
-        <VaccineCard 
-          key={vaccine._id} 
-          vaccine={vaccine} 
-          onUpdate={onRefresh}
-        />
-      ))
-    ) : (
-      <EmptyState 
-        icon="💉" 
-        title="No hay vacunas registradas" 
-        subtitle={`Registra las vacunas de ${selectedPet?.name}`}
-        action={() => {}} 
-        actionText="Agregar Vacuna" 
-      />
-    )}
-  </div>
-);
-
-const EmptyState = ({ icon, title, subtitle, action, actionText }) => (
-  <div className="text-center py-12">
-    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-      <span className="text-2xl">{icon}</span>
-    </div>
-    <h3 className="font-semibold text-gray-800 mb-2">{title}</h3>
-    <p className="text-gray-500 text-sm mb-4">{subtitle}</p>
-    {action && (
-      <button 
-        onClick={action}
-        className="bg-brand text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors duration-150"
-      >
-        {actionText}
-      </button>
-    )}
-  </div>
-);
-
-const VaccineCard = ({ vaccine, onUpdate }) => (
-  <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-    <div className="flex items-start gap-3">
-      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-        <span className="text-green-600">💉</span>
-      </div>
-      <div className="flex-1">
-        <h4 className="font-semibold text-gray-800">{vaccine.title}</h4>
-        <p className="text-sm text-gray-600">
-          Aplicada: {new Date(vaccine.date).toLocaleDateString('es-CO')}
-        </p>
-        {vaccine.nextDue && (
-          <p className="text-sm text-orange-600">
-            Próxima: {new Date(vaccine.nextDue).toLocaleDateString('es-CO')}
-          </p>
-        )}
-        {vaccine.veterinary && (
-          <p className="text-xs text-gray-500 mt-1">{vaccine.veterinary}</p>
-        )}
-      </div>
-      <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-        vaccine.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-      }`}>
-        {vaccine.status === 'active' ? 'Activa' : 'Completada'}
-      </div>
-    </div>
-  </div>
-);
-
-const ReminderCard = ({ reminder, onToggle, variant = 'default' }) => {
-  const variantStyles = {
-    overdue: 'border-red-200 bg-red-50',
-    upcoming: 'border-orange-200 bg-orange-50', 
-    default: 'border-gray-200 bg-white'
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) return `Vencido hace ${Math.abs(diffDays)} días`;
-    if (diffDays === 0) return 'Hoy';
-    if (diffDays === 1) return 'Mañana';
-    return `En ${diffDays} días`;
-  };
-
-  return (
-    <div className={`rounded-lg p-3 border mb-2 last:mb-0 ${variantStyles[variant]}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <h4 className="font-medium text-gray-800 text-sm">{reminder.title}</h4>
-          <p className="text-xs text-gray-600">
-            {formatDate(reminder.date)} • {reminder.priority} prioridad
-          </p>
-        </div>
-        <button
-          onClick={() => onToggle(reminder._id)}
-          className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
-            reminder.completed 
-              ? 'bg-green-500 border-green-500 text-white' 
-              : 'border-gray-300 hover:border-green-500'
-          }`}
-        >
-          {reminder.completed && <span className="text-xs">✓</span>}
-        </button>
-      </div>
-    </div>
-  );
-}; 
+); 

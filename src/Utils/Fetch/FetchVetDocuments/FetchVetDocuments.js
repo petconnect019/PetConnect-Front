@@ -1,14 +1,32 @@
 import { useState } from 'react';
+import { isTokenExpired } from '../../Helpers/IsTokenExpired/IsTokenExpired';
+import { FetchRefreshToken } from '../FetchRefreshToken/FetchRefreshToken';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Función base para hacer peticiones con manejo de errores
 const fetchWithAuth = async (url, options = {}) => {
     try {
+        let token = sessionStorage.getItem('accessToken');
+        
+        if (!token) {
+            throw new Error('Token no proporcionado');
+        }
+
+        if (isTokenExpired(token)) {
+            try {
+                await FetchRefreshToken();
+                token = sessionStorage.getItem('accessToken');
+            } catch (error) {
+                throw new Error('Error al refrescar el token');
+            }
+        }
+
         const response = await fetch(`${API_URL}/api/vet${url}`, {
             credentials: 'include',
             headers: {
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
                 ...options.headers
             },
             ...options

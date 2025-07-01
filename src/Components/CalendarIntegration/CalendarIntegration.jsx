@@ -462,9 +462,6 @@ export const CalendarIntegration = () => {
           <h4 className="font-semibold text-gray-800 mb-2">
             Conecta con Google Calendar
           </h4>
-          <p className="text-gray-500 text-sm mb-6">
-            Sincroniza tus citas veterinarias y recordatorios con tu calendario personal. Recibe notificaciones automáticas y comparte eventos con tu veterinario.
-          </p>
           <button
             onClick={connectToGoogleCalendar}
             disabled={loading}
