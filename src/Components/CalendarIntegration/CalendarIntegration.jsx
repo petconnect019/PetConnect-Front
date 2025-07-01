@@ -3,6 +3,7 @@ import { GoogleCalendarAPI } from '../../Utils/GoogleCalendar/GoogleCalendarAPI'
 import { usePet } from '../../Contexts/PetContext/PetContext';
 import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
 import { useFetchPets } from '../../Hooks/useFetchPets/useFetchPets';
+import { useVetDocuments } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
 
 export const CalendarIntegration = () => {
   // Obtener mascotas del context
@@ -11,23 +12,47 @@ export const CalendarIntegration = () => {
   
   // Cargar mascotas si es necesario
   useFetchPets(hasPetsUser);
+  
+  // Estados principales
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
+  const [reminders, setReminders] = useState([]);
   const [selectedPet, setSelectedPet] = useState(null);
   const [configError, setConfigError] = useState(null);
+  const [activeView, setActiveView] = useState('overview'); // overview, create, reminders
+  
+  // Hook para gestionar recordatorios del backend
+  const { getReminders, toggleReminder, loading: remindersLoading } = useVetDocuments();
 
   useEffect(() => {
     console.log('PetList actualizado:', petList);
-    if (petList && petList.length > 0) {
+    if (petList && petList.length > 0 && !selectedPet) {
       setSelectedPet(petList[0]);
       console.log('Mascota seleccionada automáticamente:', petList[0]);
-    } else {
+    } else if (!petList || petList.length === 0) {
       console.log('No hay mascotas disponibles:', petList);
       setSelectedPet(null);
     }
     checkGoogleCalendarConnection();
   }, [petList]);
+
+  // Cargar recordatorios cuando cambie la mascota seleccionada
+  useEffect(() => {
+    const loadReminders = async () => {
+      if (selectedPet) {
+        try {
+          const remindersData = await getReminders(selectedPet._id);
+          setReminders(remindersData || []);
+        } catch (error) {
+          console.error('Error al cargar recordatorios:', error);
+          setReminders([]);
+        }
+      }
+    };
+
+    loadReminders();
+  }, [selectedPet]);
 
   // Log para debugging
   useEffect(() => {
@@ -95,13 +120,22 @@ export const CalendarIntegration = () => {
 
   const loadCalendarEvents = async () => {
     try {
+      setLoading(true);
       console.log('Cargando eventos del calendario...');
       const calendarEvents = await GoogleCalendarAPI.getEvents();
       console.log('Eventos cargados:', calendarEvents);
       setEvents(calendarEvents || []);
+      
+      // También recargar recordatorios si hay mascota seleccionada
+      if (selectedPet) {
+        const remindersData = await getReminders(selectedPet._id);
+        setReminders(remindersData || []);
+      }
     } catch (error) {
       console.error('Error loading calendar events:', error);
       setEvents([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -169,8 +203,9 @@ export const CalendarIntegration = () => {
       const createdEvent = await GoogleCalendarAPI.createEvent(event);
       console.log('Evento creado exitosamente:', createdEvent);
       
-      // Recargar eventos
+      // Recargar eventos y recordatorios
       await loadCalendarEvents();
+      setActiveView('overview');
       alert('¡Cita creada exitosamente en Google Calendar!');
     } catch (error) {
       console.error('Error creating calendar event:', error);
@@ -315,18 +350,78 @@ export const CalendarIntegration = () => {
     );
   }
 
+  const handleReminderToggle = async (reminderId) => {
+    try {
+      await toggleReminder(reminderId);
+      // Recargar recordatorios
+      if (selectedPet) {
+        const remindersData = await getReminders(selectedPet._id);
+        setReminders(remindersData || []);
+      }
+    } catch (error) {
+      console.error('Error al actualizar recordatorio:', error);
+    }
+  };
+
+  // Combinar y ordenar eventos y recordatorios
+  const getCombinedEvents = () => {
+    const calendarEvents = events.map(event => ({
+      ...event,
+      type: 'calendar',
+      date: event.start?.dateTime || event.start?.date,
+      title: event.summary
+    }));
+
+    const reminderEvents = reminders
+      .filter(reminder => !reminder.completed)
+      .map(reminder => ({
+        ...reminder,
+        type: 'reminder',
+        date: reminder.date,
+        title: reminder.title
+      }));
+
+    return [...calendarEvents, ...reminderEvents]
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .slice(0, 5); // Mostrar solo los próximos 5
+  };
+
+  const getStats = () => {
+    const now = new Date();
+    const upcomingEvents = events.filter(event => 
+      new Date(event.start?.dateTime || event.start?.date) > now
+    ).length;
+
+    const pendingReminders = reminders.filter(reminder => 
+      !reminder.completed && new Date(reminder.date) > now
+    ).length;
+
+    const overdueReminders = reminders.filter(reminder => 
+      !reminder.completed && new Date(reminder.date) < now
+    ).length;
+
+    return {
+      totalEvents: upcomingEvents + pendingReminders,
+      upcomingEvents,
+      pendingReminders,
+      overdueReminders
+    };
+  };
+
+  const stats = getStats();
+
   return (
     <div className="space-y-6">
-      {/* Connection Status */}
+      {/* Header con navegación */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
               <span className="text-green-600">✓</span>
             </div>
             <div>
               <h3 className="font-semibold text-gray-800">Google Calendar Conectado</h3>
-              <p className="text-sm text-gray-500">Sincronización activa</p>
+              <p className="text-sm text-gray-500">Gestión integrada de citas y recordatorios</p>
             </div>
           </div>
           <button
@@ -334,6 +429,40 @@ export const CalendarIntegration = () => {
             className="text-sm text-red-600 hover:text-red-700 transition-colors duration-200"
           >
             Desconectar
+          </button>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setActiveView('overview')}
+            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
+              activeView === 'overview'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            📊 Resumen
+          </button>
+          <button
+            onClick={() => setActiveView('create')}
+            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
+              activeView === 'create'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            ➕ Nueva Cita
+          </button>
+          <button
+            onClick={() => setActiveView('reminders')}
+            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 ${
+              activeView === 'reminders'
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            ⏰ Recordatorios ({reminders.filter(r => !r.completed).length})
           </button>
         </div>
       </div>
@@ -393,21 +522,41 @@ export const CalendarIntegration = () => {
         </div>
       )}
 
-      {/* Quick Create Appointment */}
-      <CreateAppointmentForm 
-        selectedPet={selectedPet}
-        onCreateAppointment={createVetAppointment}
-        loading={loading}
-      />
+      {/* Content based on active view */}
+      {activeView === 'overview' && (
+        <CalendarOverview 
+          stats={stats}
+          combinedEvents={getCombinedEvents()}
+          onRefresh={loadCalendarEvents}
+          onReminderToggle={handleReminderToggle}
+          loading={loading || remindersLoading}
+        />
+      )}
 
-      {/* Upcoming Events */}
-      <UpcomingEvents events={events} onRefresh={loadCalendarEvents} />
+      {activeView === 'create' && (
+        <CreateAppointmentForm 
+          selectedPet={selectedPet}
+          onCreateAppointment={createVetAppointment}
+          loading={loading}
+          onCancel={() => setActiveView('overview')}
+        />
+      )}
+
+      {activeView === 'reminders' && (
+        <RemindersManagement 
+          reminders={reminders}
+          selectedPet={selectedPet}
+          onReminderToggle={handleReminderToggle}
+          onRefresh={loadCalendarEvents}
+          loading={remindersLoading}
+        />
+      )}
     </div>
   );
 };
 
 // Componente para crear citas rápidas
-const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading }) => {
+const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading, onCancel }) => {
   console.log('CreateAppointmentForm - selectedPet:', selectedPet);
   const [formData, setFormData] = useState({
     title: '',
@@ -528,30 +677,418 @@ const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading }) =>
           />
         </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading || !formData.title || !formData.datetime}
-          className="w-full bg-brand hover:bg-orange-600 text-white py-3 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              Creando cita...
-            </>
-          ) : (
-            <>
-              <span>📅</span>
-              Crear Cita en Calendar
-            </>
+        {/* Action Buttons */}
+        <div className="flex gap-3">
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition-all duration-200"
+            >
+              Cancelar
+            </button>
           )}
-        </button>
+          <button
+            type="submit"
+            disabled={loading || !formData.title || !formData.datetime}
+            className="flex-1 bg-brand hover:bg-orange-600 text-white py-3 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Creando cita...
+              </>
+            ) : (
+              <>
+                <span>📅</span>
+                Crear Cita en Calendar
+              </>
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-// Componente para mostrar próximos eventos
+// Componente de resumen del calendario
+const CalendarOverview = ({ stats, combinedEvents, onRefresh, onReminderToggle, loading }) => {
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 animate-pulse">
+          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="h-16 bg-gray-200 rounded"></div>
+            <div className="h-16 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard
+          icon="📅"
+          value={stats.totalEvents}
+          label="Total Eventos"
+          color="blue"
+        />
+        <StatCard
+          icon="🗓️"
+          value={stats.upcomingEvents}
+          label="Citas Calendar"
+          color="green"
+        />
+        <StatCard
+          icon="⏰"
+          value={stats.pendingReminders}
+          label="Recordatorios"
+          color="orange"
+        />
+        <StatCard
+          icon="🚨"
+          value={stats.overdueReminders}
+          label="Vencidos"
+          color="red"
+        />
+      </div>
+
+      {/* Combined Events List */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-800">Próximos Eventos</h3>
+          <button
+            onClick={onRefresh}
+            className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200 flex items-center gap-1"
+          >
+            <span>🔄</span>
+            Actualizar
+          </button>
+        </div>
+
+        {combinedEvents.length > 0 ? (
+          <div className="space-y-3">
+            {combinedEvents.map((event, index) => (
+              <CombinedEventCard
+                key={`${event.type}-${event._id || event.id || index}`}
+                event={event}
+                onReminderToggle={onReminderToggle}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">📅</span>
+            </div>
+            <p className="text-gray-500">No hay eventos próximos</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Componente para gestión de recordatorios
+const RemindersManagement = ({ reminders, selectedPet, onReminderToggle, onRefresh, loading }) => {
+  const [filter, setFilter] = useState('all'); // all, pending, completed, overdue
+
+  const getFilteredReminders = () => {
+    const now = new Date();
+    switch (filter) {
+      case 'pending':
+        return reminders.filter(r => !r.completed && new Date(r.date) >= now);
+      case 'completed':
+        return reminders.filter(r => r.completed);
+      case 'overdue':
+        return reminders.filter(r => !r.completed && new Date(r.date) < now);
+      default:
+        return reminders;
+    }
+  };
+
+  const filteredReminders = getFilteredReminders();
+
+  return (
+    <div className="space-y-4">
+      {/* Filter Tabs */}
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-800">
+            Recordatorios de {selectedPet?.name || 'mascota'}
+          </h3>
+          <button
+            onClick={onRefresh}
+            className="text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200"
+          >
+            🔄 Actualizar
+          </button>
+        </div>
+
+        <div className="flex gap-2 mb-4">
+          {[
+            { id: 'all', label: 'Todos', count: reminders.length },
+            { id: 'pending', label: 'Pendientes', count: reminders.filter(r => !r.completed && new Date(r.date) >= new Date()).length },
+            { id: 'overdue', label: 'Vencidos', count: reminders.filter(r => !r.completed && new Date(r.date) < new Date()).length },
+            { id: 'completed', label: 'Completados', count: reminders.filter(r => r.completed).length }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setFilter(tab.id)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                filter === tab.id
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {tab.label}
+              <span className="bg-white/20 text-xs px-1.5 py-0.5 rounded-full">
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Reminders List */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        {loading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-gray-100 rounded-xl p-4 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+              </div>
+            ))}
+          </div>
+        ) : filteredReminders.length > 0 ? (
+          <div className="space-y-3">
+            {filteredReminders.map(reminder => (
+              <ReminderCard
+                key={reminder._id}
+                reminder={reminder}
+                onToggle={onReminderToggle}
+                detailed={true}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">⏰</span>
+            </div>
+            <h4 className="font-semibold text-gray-800 mb-2">
+              No hay recordatorios {filter !== 'all' ? filter : ''}
+            </h4>
+            <p className="text-gray-500 text-sm">
+              Los recordatorios aparecerán aquí automáticamente cuando crees citas con fechas de seguimiento
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Componente de tarjeta de evento combinado
+const CombinedEventCard = ({ event, onReminderToggle }) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Hoy';
+    if (diffDays === 1) return 'Mañana';
+    if (diffDays < 0) return `Hace ${Math.abs(diffDays)} días`;
+    return `En ${diffDays} días`;
+  };
+
+  const isOverdue = event.type === 'reminder' && !event.completed && new Date(event.date) < new Date();
+
+  return (
+    <div className={`rounded-xl p-4 border transition-all duration-200 ${
+      isOverdue 
+        ? 'border-red-200 bg-red-50' 
+        : event.type === 'calendar' 
+          ? 'border-blue-200 bg-blue-50'
+          : 'border-orange-200 bg-orange-50'
+    }`}>
+      <div className="flex items-start gap-3">
+        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+          event.type === 'calendar' 
+            ? 'bg-blue-500 text-white' 
+            : isOverdue
+              ? 'bg-red-500 text-white'
+              : 'bg-orange-500 text-white'
+        }`}>
+          <span className="text-sm">
+            {event.type === 'calendar' ? '📅' : '⏰'}
+          </span>
+        </div>
+        
+        <div className="flex-1">
+          <h4 className="font-semibold text-gray-800 text-sm">{event.title}</h4>
+          <p className="text-xs text-gray-600 mb-1">
+            {formatDate(event.date)} • {new Date(event.date).toLocaleTimeString('es-CO', { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            })}
+          </p>
+          
+          {event.type === 'reminder' && (
+            <div className="flex items-center gap-2 mt-2">
+              <span className={`text-xs px-2 py-1 rounded-full ${
+                event.priority === 'high' 
+                  ? 'bg-red-100 text-red-700'
+                  : event.priority === 'medium'
+                    ? 'bg-orange-100 text-orange-700'
+                    : 'bg-gray-100 text-gray-700'
+              }`}>
+                {event.priority} prioridad
+              </span>
+              
+              {isOverdue && (
+                <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">
+                  Vencido
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {event.type === 'reminder' && (
+          <button
+            onClick={() => onReminderToggle(event._id)}
+            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+              event.completed 
+                ? 'bg-green-500 border-green-500 text-white' 
+                : 'border-gray-300 hover:border-green-500'
+            }`}
+          >
+            {event.completed && <span className="text-xs">✓</span>}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Componente de tarjeta de recordatorio detallada
+const ReminderCard = ({ reminder, onToggle, detailed = false }) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return `Vencido hace ${Math.abs(diffDays)} días`;
+    if (diffDays === 0) return 'Hoy';
+    if (diffDays === 1) return 'Mañana';
+    return `En ${diffDays} días`;
+  };
+
+  const isOverdue = !reminder.completed && new Date(reminder.date) < new Date();
+
+  return (
+    <div className={`rounded-xl p-4 border transition-all duration-200 ${
+      isOverdue 
+        ? 'border-red-200 bg-red-50' 
+        : reminder.completed
+          ? 'border-green-200 bg-green-50'
+          : 'border-gray-200 bg-white'
+    }`}>
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <h4 className="font-semibold text-gray-800 text-sm mb-1">{reminder.title}</h4>
+          
+          <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
+            <span>{formatDate(reminder.date)}</span>
+            <span>•</span>
+            <span>{new Date(reminder.date).toLocaleDateString('es-CO')}</span>
+          </div>
+
+          {detailed && reminder.description && (
+            <p className="text-xs text-gray-600 mb-2">{reminder.description}</p>
+          )}
+
+          <div className="flex items-center gap-2">
+            <span className={`text-xs px-2 py-1 rounded-full ${
+              reminder.priority === 'high' 
+                ? 'bg-red-100 text-red-700'
+                : reminder.priority === 'medium'
+                  ? 'bg-orange-100 text-orange-700'
+                  : 'bg-gray-100 text-gray-700'
+            }`}>
+              {reminder.priority} prioridad
+            </span>
+
+            <span className={`text-xs px-2 py-1 rounded-full ${
+              reminder.type === 'vaccine' 
+                ? 'bg-green-100 text-green-700'
+                : reminder.type === 'checkup'
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'bg-gray-100 text-gray-700'
+            }`}>
+              {reminder.type}
+            </span>
+
+            {isOverdue && (
+              <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">
+                Vencido
+              </span>
+            )}
+
+            {reminder.completed && (
+              <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
+                Completado
+              </span>
+            )}
+          </div>
+        </div>
+
+        <button
+          onClick={() => onToggle(reminder._id)}
+          className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all duration-200 ml-3 ${
+            reminder.completed 
+              ? 'bg-green-500 border-green-500 text-white' 
+              : 'border-gray-300 hover:border-green-500'
+          }`}
+        >
+          {reminder.completed && <span className="text-xs">✓</span>}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Componente de tarjeta de estadística
+const StatCard = ({ icon, value, label, color }) => {
+  const colors = {
+    blue: 'from-blue-500 to-blue-600',
+    green: 'from-green-500 to-green-600',
+    orange: 'from-orange-500 to-orange-600',
+    red: 'from-red-500 to-red-600'
+  };
+
+  return (
+    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${colors[color]} flex items-center justify-center`}>
+          <span className="text-white text-sm">{icon}</span>
+        </div>
+        <div>
+          <div className="text-xl font-bold text-gray-800">{value}</div>
+          <div className="text-xs text-gray-500">{label}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Componente para mostrar próximos eventos (LEGACY - mantener por compatibilidad)
 const UpcomingEvents = ({ events, onRefresh }) => {
   if (events.length === 0) {
     return (

@@ -8,6 +8,7 @@ import { useFetchUserProfile } from "../../Hooks/useFetchUserProfile/useFetchUse
 import { ProfileSection } from "../../Components/ProfileSection/ProfileSection";
 import { PetsSection } from "../../Components/PetsSection/PetsSection";
 import { HealthDashboard } from "../../Components/HealthDashboard/HealthDashboard";
+import { CalendarWidget } from "../../Components/CalendarWidget";
 import { FooterNav } from "../../Components/FooterNav/FooterNav";
 import petImage from '../../assets/images/petImage.png'
 import iconoHomeUno from '../../assets/images/iconoHomeUno.png'
@@ -85,6 +86,9 @@ export const Home = () => {
 
         {/* Pets Section */}
         <PetsSection petList={petList} navigate={navigate}/>
+
+        {/* Calendar Widget - Prominente */}
+        <CalendarWidget />
 
         {/* Health Dashboard Section */}
         <HealthDashboard petList={petList} navigate={navigate}/>
