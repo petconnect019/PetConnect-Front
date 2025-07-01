@@ -4,7 +4,7 @@ import { IoArrowBack, IoEllipsisVertical, IoSearch, IoClose, IoWifiOffOutline, I
 
 // Contexto y componentes
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
-import { useChat } from '../../Contexts/ChatContext/ChatContextV2';
+import { useChat } from '../../Contexts/ChatContext/ChatContextV2Simple';
 import { ConversationList } from '../../Components/ChatComponents/ConversationList';
 import { MessageList } from '../../Components/ChatComponents/MessageList';
 import { MessageInput } from '../../Components/ChatComponents/MessageInput';
@@ -128,21 +128,20 @@ export const Chat = () => {
 
   // Manejar envío de mensaje
   const handleSendMessage = async (content, options = {}) => {
-    console.log('🚀 [Chat.jsx] handleSendMessage llamado:', { 
-      content, 
-      activeChat: activeChat?._id,
-      hasFunction: typeof sendMessage === 'function'
-    });
-    
     if (!activeChat) {
       console.warn('❌ No hay chat activo');
       return;
     }
     
     try {
-      console.log('📤 Enviando mensaje...');
-      await sendMessage(activeChat._id, content, options);
-      console.log('✅ Mensaje enviado exitosamente');
+      // Agregar información del usuario actual
+      const messageOptions = {
+        ...options,
+        currentUserId: user?.id || user?._id,
+        currentUserName: user?.name || 'Tú'
+      };
+      
+      await sendMessage(activeChat._id, content, messageOptions);
     } catch (error) {
       console.error('❌ Error al enviar mensaje:', error);
     }

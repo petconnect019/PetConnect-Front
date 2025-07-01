@@ -1,5 +1,5 @@
 import React from 'react';
-import { useChat } from '../../Contexts/ChatContext/ChatContextV2';
+import { useChat } from '../../Contexts/ChatContext/ChatContextV2Simple';
 
 const ChatDebugger = () => {
   const chatContext = useChat();
