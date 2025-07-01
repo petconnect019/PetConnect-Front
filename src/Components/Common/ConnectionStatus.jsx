@@ -1,43 +1,173 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { IoWifi, IoWifiOutline, IoCloudOffline, IoSync } from 'react-icons/io5';
+import { FiTool } from 'react-icons/fi';
+import { ConnectionDiagnostic } from './ConnectionDiagnostic';
 
-const ConnectionStatus = ({ connectionState }) => {
-  const getStatusDetails = () => {
-    switch (connectionState) {
-      case 'connected':
-        return {
-          text: 'Conectado',
-          color: 'bg-green-500',
-          title: 'Conexión con el chat establecida.',
-        };
-      case 'connecting':
-        return {
-          text: 'Conectando...',
-          color: 'bg-yellow-500 animate-pulse',
-          title: 'Intentando conectar con el servidor de chat...',
-        };
-      case 'disconnected':
-        return {
-          text: 'Sin conexión',
-          color: 'bg-red-500',
-          title: 'No hay conexión con el servidor de chat.',
-        };
-      default:
-        return {
-          text: 'Desconocido',
-          color: 'bg-gray-400',
-          title: 'Estado de la conexión desconocido.',
-        };
+const ConnectionStatus = ({ 
+  connected = false, 
+  reconnecting = false,
+  error = null,
+  showLabel = false,
+  compact = false,
+  onRetry = null 
+}) => {
+  const [showStatus, setShowStatus] = useState(false);
+  const [lastConnectionTime, setLastConnectionTime] = useState(null);
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
+
+  // Mostrar estado solo cuando hay cambios importantes
+  useEffect(() => {
+    if (!connected || reconnecting || error) {
+      setShowStatus(true);
+    } else {
+      setLastConnectionTime(new Date());
+      // Ocultar después de unos segundos si está conectado
+      const timer = setTimeout(() => {
+        setShowStatus(false);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
+  }, [connected, reconnecting, error]);
+
+  // Determinar el estado actual
+  const getStatus = () => {
+    if (reconnecting) {
+      return {
+        type: 'reconnecting',
+        icon: IoSync,
+        color: 'text-yellow-500',
+        bgColor: 'bg-yellow-50',
+        borderColor: 'border-yellow-200',
+        label: 'Reconectando...',
+        animate: true,
+        showIndicator: true
+      };
+    }
+    
+    if (error) {
+      return {
+        type: 'error',
+        icon: IoCloudOffline,
+        color: 'text-red-500',
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-200',
+        label: error || 'Error de conexión',
+        animate: false,
+        showIndicator: true
+      };
+    }
+    
+    if (!connected) {
+      return {
+        type: 'disconnected',
+        icon: IoWifiOutline,
+        color: 'text-gray-500',
+        bgColor: 'bg-gray-50',
+        borderColor: 'border-gray-200',
+        label: 'Sin conexión',
+        animate: false,
+        showIndicator: true
+      };
+    }
+    
+    return {
+      type: 'connected',
+      icon: IoWifi,
+      color: 'text-green-500',
+      bgColor: 'bg-green-50',
+      borderColor: 'border-green-200',
+      label: 'Conectado',
+      animate: false,
+      showIndicator: connected
+    };
   };
 
-  const { text, color, title } = getStatusDetails();
+  const status = getStatus();
+
+  // Versión compacta - solo el indicador
+  if (compact) {
+    return (
+      <div className="flex items-center">
+        <div 
+          className={`w-2 h-2 rounded-full ${
+            connected ? 'bg-green-500' : 'bg-red-500'
+          } ${status.animate ? 'animate-pulse' : ''}`}
+          title={status.label}
+        />
+      </div>
+    );
+  }
+
+  // No mostrar si está conectado y no se fuerza mostrar
+  if (!showStatus && connected && !showLabel) {
+    return null;
+  }
+
+  const StatusIcon = status.icon;
 
   return (
-    <div className="flex items-center space-x-2" title={title}>
-      <div className={`w-2.5 h-2.5 rounded-full ${color}`}></div>
-      <span className="text-xs text-gray-600">{text}</span>
+    <div className={`
+      flex items-center space-x-2 px-3 py-2 rounded-lg border transition-all duration-300
+      ${status.bgColor} ${status.borderColor}
+      ${showStatus ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}
+    `}>
+      {/* Icono de estado */}
+      <div className="flex-shrink-0">
+        <StatusIcon 
+          className={`w-4 h-4 ${status.color} ${
+            status.animate ? 'animate-spin' : ''
+          }`} 
+        />
+      </div>
+
+      {/* Etiqueta de estado */}
+      {(showLabel || status.showIndicator) && (
+        <span className={`text-xs font-medium ${status.color}`}>
+          {status.label}
+        </span>
+      )}
+
+      {/* Botones de acción */}
+      {(status.type === 'error' || status.type === 'disconnected') && (
+        <div className="flex space-x-1">
+          {onRetry && (
+            <button
+              onClick={onRetry}
+              className={`
+                text-xs px-2 py-1 rounded hover:bg-opacity-20 transition-colors
+                ${status.color} hover:bg-current
+              `}
+              title="Reintentar conexión"
+            >
+              Reintentar
+            </button>
+          )}
+          <button
+            onClick={() => setShowDiagnostic(true)}
+            className="text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors flex items-center"
+            title="Ver diagnóstico de conexión"
+          >
+            <FiTool className="w-3 h-3 mr-1" />
+            Diagnóstico
+          </button>
+        </div>
+      )}
+
+      {/* Información adicional */}
+      {lastConnectionTime && connected && showLabel && (
+        <span className="text-xs text-gray-400">
+          {lastConnectionTime.toLocaleTimeString()}
+        </span>
+      )}
+      
+      {/* Modal de diagnóstico */}
+      <ConnectionDiagnostic 
+        show={showDiagnostic} 
+        onClose={() => setShowDiagnostic(false)} 
+      />
     </div>
   );
 };
 
-export default ConnectionStatus; 
+export default ConnectionStatus;
+export { ConnectionStatus }; 
