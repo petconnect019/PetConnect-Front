@@ -223,7 +223,6 @@ export const HealthDashboard = ({ petList, navigate }) => {
             <span className="text-xl">📄</span>
             <span className="font-semibold">Subir Documento</span>
           </div>
-          <p className="text-xs opacity-90">Agrega vacunas, exámenes y más</p>
         </button>
 
         <button
@@ -234,7 +233,6 @@ export const HealthDashboard = ({ petList, navigate }) => {
             <span className="text-xl">📅</span>
             <span className="font-semibold">Ver Calendario</span>
           </div>
-          <p className="text-xs opacity-90">Programa citas y eventos</p>
         </button>
       </div>
 
