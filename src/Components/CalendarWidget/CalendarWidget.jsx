@@ -9,6 +9,13 @@ export const CalendarWidget = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [nextEvent, setNextEvent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    date: '',
+    time: '',
+    notes: ''
+  });
 
   useEffect(() => {
     checkConnectionAndLoadEvents();
@@ -21,7 +28,6 @@ export const CalendarWidget = () => {
       
       if (connected) {
         const events = await GoogleCalendarAPI.getEvents();
-        // Encontrar el próximo evento
         const now = new Date();
         const upcoming = events
           .filter(event => new Date(event.start.dateTime || event.start.date) > now)
@@ -54,6 +60,51 @@ export const CalendarWidget = () => {
     }
   };
 
+  const handleCreateEvent = () => {
+    if (!isConnected) {
+      navigate('/health-management');
+      return;
+    }
+    setShowCreateForm(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const dateTime = new Date(`${formData.date}T${formData.time}`);
+      const endDateTime = new Date(dateTime.getTime() + 60 * 60 * 1000); // 1 hora después
+
+      const event = {
+        summary: `🐾 ${formData.title}`,
+        description: formData.notes,
+        start: {
+          dateTime: dateTime.toISOString(),
+          timeZone: 'America/Bogota'
+        },
+        end: {
+          dateTime: endDateTime.toISOString(),
+          timeZone: 'America/Bogota'
+        },
+        reminders: {
+          useDefault: false,
+          overrides: [
+            { method: 'popup', minutes: 60 }, // 1 hora antes
+            { method: 'popup', minutes: 15 } // 15 minutos antes
+          ]
+        }
+      };
+
+      await GoogleCalendarAPI.createEvent(event);
+      await checkConnectionAndLoadEvents();
+      setShowCreateForm(false);
+      setFormData({ title: '', date: '', time: '', notes: '' });
+    } catch (error) {
+      console.error('Error creating event:', error);
+      alert('Error al crear el evento. Por favor, intenta de nuevo.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 animate-pulse">
@@ -62,9 +113,77 @@ export const CalendarWidget = () => {
     );
   }
 
-  const handleCreateEvent = () => {
-    navigate('/health-management');
-  };
+  if (showCreateForm) {
+    return (
+      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-medium text-gray-800">Agendar Cita</h3>
+          <button
+            onClick={() => setShowCreateForm(false)}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div>
+            <input
+              type="text"
+              placeholder="Título de la cita"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand"
+              required
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="date"
+              value={formData.date}
+              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand"
+              required
+            />
+            <input
+              type="time"
+              value={formData.time}
+              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand"
+              required
+            />
+          </div>
+
+          <div>
+            <textarea
+              placeholder="Notas (opcional)"
+              value={formData.notes}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand resize-none"
+              rows="2"
+            />
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setShowCreateForm(false)}
+              className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors duration-150"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-3 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-sm font-medium transition-colors duration-150"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
@@ -87,7 +206,7 @@ export const CalendarWidget = () => {
         <div className="flex items-center justify-between py-2">
           <span className="text-sm text-gray-500">Sin conexión a Calendar</span>
           <button
-            onClick={handleCreateEvent}
+            onClick={() => navigate('/health-management')}
             className="text-brand hover:text-brand-dark text-sm font-medium transition-colors duration-150"
           >
             Conectar →
@@ -112,7 +231,7 @@ export const CalendarWidget = () => {
             onClick={handleCreateEvent}
             className="text-brand hover:text-brand-dark text-sm font-medium transition-colors duration-150"
           >
-            Programar →
+            Agendar →
           </button>
         </div>
       )}
