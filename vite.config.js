@@ -31,12 +31,22 @@ export default defineConfig(({ command, mode }) => {
       react(),
       tailwindcss(),
       VitePWA({
-        registerType: 'autoUpdate',
+        // El usuario decide cuándo actualizar la app; se mostrará un banner opcional.
+        registerType: 'prompt',
+        includeAssets: [
+          // Archivos que se copiarán sin procesar a la carpeta de salida
+          'favicon.svg',
+          'robots.txt',
+          'offline.html',
+          'src/assets/images/LogoPetConnect.png'
+        ],
         devOptions: {
           enabled: isDevelopment,
         },
         workbox: {
-          globPatterns: ['*/.{js,css,html,png,svg,ico,woff2}'],
+          // Precargar todos los recursos generados y estáticos
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
+          navigateFallback: '/offline.html',
           runtimeCaching: [
             {
               urlPattern: ({ request }) => request.destination === 'document',
@@ -55,7 +65,6 @@ export default defineConfig(({ command, mode }) => {
               handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'assets-cache',
-                
                 expiration: {
                   maxEntries: 50,
                   maxAgeSeconds: 7 * 24 * 60 * 60,
@@ -86,13 +95,13 @@ export default defineConfig(({ command, mode }) => {
           scope: '/',
           icons: [
             {
-              src: '/icon-192x192.png',
+              src: 'src/assets/images/LogoPetConnect.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any maskable'
             },
             {
-              src: '/icon-512x512.png',
+              src: 'src/assets/images/LogoPetConnect.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'
