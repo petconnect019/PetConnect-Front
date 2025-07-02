@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Intro from '../../assets/images/PhoneImg.png'
 import { useEffect, useState } from 'react';
-
-
+import { isTokenExpired } from '../../Utils/Helpers/IsTokenExpired/IsTokenExpired';
 
 export const Introduction1 = () => {
     const navigate = useNavigate();
@@ -11,6 +10,13 @@ export const Introduction1 = () => {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
+        // Verificar si existe un token y redirigir si es válido
+        const token = localStorage.getItem('token');
+        if (token && !isTokenExpired(token)) {
+            navigate('/home');
+            return;
+        }
+
         const updateEllipseSize = () => {
             const width = window.innerWidth;
             setIsLargeScreen(width >= 1280);
