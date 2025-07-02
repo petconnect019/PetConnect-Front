@@ -16,7 +16,6 @@ const SettingsMenu = ({ isOpen, onClose, onMarkAllRead, onToggleSort, onToggleNo
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      // Prevenir scroll del body cuando el menú está abierto
       document.body.style.overflow = 'hidden';
     }
 
@@ -30,13 +29,17 @@ const SettingsMenu = ({ isOpen, onClose, onMarkAllRead, onToggleSort, onToggleNo
 
   return (
     <>
-      {/* Overlay semi-transparente */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity" />
+      {/* Overlay con blur */}
+      <div className="fixed inset-0 backdrop-blur-sm bg-black/30 z-40 transition-all duration-300" />
       
       {/* Menú de configuración */}
       <div 
         ref={menuRef}
-        className="absolute right-0 mt-2 w-72 sm:w-80 rounded-xl shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-50 transform transition-all duration-200 ease-out"
+        className="fixed top-16 right-4 w-72 sm:w-80 rounded-xl shadow-xl bg-white/95 backdrop-blur-sm ring-1 ring-black/5 z-50 transform transition-all duration-300 ease-out"
+        style={{
+          maxHeight: 'calc(100vh - 5rem)',
+          overflowY: 'auto'
+        }}
       >
         <div className="py-2 px-1" role="menu" aria-orientation="vertical">
           <div className="px-3 py-2 border-b border-gray-100">
@@ -48,7 +51,7 @@ const SettingsMenu = ({ isOpen, onClose, onMarkAllRead, onToggleSort, onToggleNo
               onMarkAllRead();
               onClose();
             }}
-            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors duration-200"
+            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50/80 flex items-center gap-3 transition-colors duration-200"
           >
             <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
               <IoCheckmarkOutline className="text-xl text-blue-500" />
@@ -61,7 +64,7 @@ const SettingsMenu = ({ isOpen, onClose, onMarkAllRead, onToggleSort, onToggleNo
               onToggleSort();
               onClose();
             }}
-            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors duration-200"
+            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50/80 flex items-center gap-3 transition-colors duration-200"
           >
             <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center">
               <IoTimeOutline className="text-xl text-purple-500" />
@@ -74,7 +77,7 @@ const SettingsMenu = ({ isOpen, onClose, onMarkAllRead, onToggleSort, onToggleNo
               onToggleNotifications();
               onClose();
             }}
-            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors duration-200"
+            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50/80 flex items-center gap-3 transition-colors duration-200"
           >
             <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center">
               <IoNotificationsOffOutline className="text-xl text-red-500" />
