@@ -144,7 +144,7 @@ export const MyPets = () => {
                         {/* Add Pet Button */}
                         <div className="flex justify-center">
                             <button
-                                onClick={() => navigate('/new-pet1')}
+                                onClick={() => navigate('/new_pet_1')}
                                 className="inline-flex items-center px-6 py-3 bg-[#EC9216] text-white rounded-lg font-medium hover:bg-[#d4820f] transition-colors duration-200"
                             >
                                 <MdAdd className="w-5 h-5 mr-2" />
@@ -164,7 +164,7 @@ export const MyPets = () => {
                             Agrega tu primera mascota para comenzar
                         </p>
                         <button
-                            onClick={() => navigate('/new-pet1')}
+                            onClick={() => navigate('/new_pet_1')}
                             className="inline-flex items-center px-6 py-3 bg-[#EC9216] text-white rounded-lg font-medium hover:bg-[#d4820f] transition-colors duration-200"
                         >
                             <MdAdd className="w-5 h-5 mr-2" />
