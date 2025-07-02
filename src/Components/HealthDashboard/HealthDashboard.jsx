@@ -89,11 +89,11 @@ export const HealthDashboard = ({ petList, navigate }) => {
   }
 
   return (
-    <section className="relative bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-6 mx-4 mb-6 shadow-lg border border-indigo-100/50">
+    <section className="relative bg-white rounded-2xl p-2 mx-4 mb-6 shadow-sm border border-gray-100">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-indigo-300 to-purple-300 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 bg-sky-400/90 rounded-xl flex items-center justify-center shadow-sm">
             <FaPaw className="text-white text-2xl" />
           </div>
           <div>
@@ -105,7 +105,7 @@ export const HealthDashboard = ({ petList, navigate }) => {
         </div>
         <button
           onClick={() => navigate('/health-management')}
-          className="bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 hover:brightness-110 text-white py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          className="bg-sky-500 hover:bg-sky-600 text-white py-2 px-4 rounded-xl text-sm font-medium transition-all duration-150 flex items-center justify-center gap-2 shadow-sm"
         >
           Ver detalles
         </button>
@@ -121,8 +121,8 @@ export const HealthDashboard = ({ petList, navigate }) => {
                 onClick={() => setSelectedPet(pet)}
                 className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
                   selectedPet?._id === pet._id
-                    ? 'bg-gradient-to-r from-indigo-300 to-purple-300 text-white shadow-md'
-                    : 'bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 border border-white/50'
+                    ? 'bg-sky-500 text-white shadow-sm'
+                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                 }`}
               >
                 <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
@@ -138,19 +138,19 @@ export const HealthDashboard = ({ petList, navigate }) => {
       {/* Health Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Próxima Vacuna */}
-        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
+        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-300 to-purple-300 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-400/90 rounded-lg flex items-center justify-center">
               <FaSyringe className="text-white text-sm" />
             </div>
-            <span className="text-xs font-medium text-indigo-500">Próxima Vacuna</span>
+            <span className="text-xs font-medium text-sky-600">Próxima Vacuna</span>
           </div>
           {healthData.nextVaccine ? (
             <div>
               <p className="text-sm font-semibold text-gray-800 mb-1">
                 {healthData.nextVaccine.title}
               </p>
-              <p className="text-xs text-indigo-500">
+              <p className="text-xs text-sky-600">
                 {getDaysUntil(healthData.nextVaccine.nextDue) > 0 
                   ? `En ${getDaysUntil(healthData.nextVaccine.nextDue)} días`
                   : 'Vencida'
@@ -163,51 +163,51 @@ export const HealthDashboard = ({ petList, navigate }) => {
         </div>
 
         {/* Recordatorios Pendientes */}
-        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
+        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-300 to-purple-300 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-400/90 rounded-lg flex items-center justify-center">
               <FaClock className="text-white text-sm" />
             </div>
-            <span className="text-xs font-medium text-indigo-500">Recordatorios</span>
+            <span className="text-xs font-medium text-sky-600">Recordatorios</span>
           </div>
           <div>
             <p className="text-lg font-bold text-gray-800">
               {healthData.pendingReminders}
             </p>
-            <p className="text-xs text-indigo-500">Pendientes</p>
+            <p className="text-xs text-sky-600">Pendientes</p>
           </div>
         </div>
 
         {/* Documentos */}
-        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
+        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-300 to-purple-300 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-400/90 rounded-lg flex items-center justify-center">
               <FaFileMedicalAlt className="text-white text-sm" />
             </div>
-            <span className="text-xs font-medium text-indigo-500">Documentos</span>
+            <span className="text-xs font-medium text-sky-600">Documentos</span>
           </div>
           <div>
             <p className="text-lg font-bold text-gray-800">
               {healthData.totalDocuments}
             </p>
-            <p className="text-xs text-indigo-500">Archivados</p>
+            <p className="text-xs text-sky-600">Archivados</p>
           </div>
         </div>
 
         {/* Último Chequeo */}
-        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
+        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-300 to-purple-300 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-400/90 rounded-lg flex items-center justify-center">
               <FaStethoscope className="text-white text-sm" />
             </div>
-            <span className="text-xs font-medium text-indigo-500">Último Chequeo</span>
+            <span className="text-xs font-medium text-sky-600">Último Chequeo</span>
           </div>
           {healthData.lastCheckup ? (
             <div>
               <p className="text-sm font-semibold text-gray-800 mb-1">
                 {formatDate(healthData.lastCheckup.date)}
               </p>
-              <p className="text-xs text-indigo-500">
+              <p className="text-xs text-sky-600">
                 {healthData.lastCheckup.veterinary || 'Sin especificar'}
               </p>
             </div>
@@ -221,7 +221,7 @@ export const HealthDashboard = ({ petList, navigate }) => {
       <div className="mt-4">
         <button
           onClick={() => navigate('/health-management?tab=documents')}
-          className="w-full bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 hover:brightness-110 text-white rounded-xl p-4 transition-colors duration-150"
+          className="w-full bg-sky-500 hover:bg-sky-600 text-white rounded-xl p-4 transition-colors duration-150"
         >
           <div className="flex items-center justify-center gap-2">
             <FaCloudUploadAlt className="text-xl" />
@@ -232,21 +232,21 @@ export const HealthDashboard = ({ petList, navigate }) => {
 
       {/* Urgent Alerts */}
       {(healthData.nextVaccine && getDaysUntil(healthData.nextVaccine.nextDue) <= 7) && (
-        <div className="mt-4 bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-200 rounded-xl p-4">
+        <div className="mt-4 bg-rose-50 border border-rose-200 rounded-xl p-4">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-pink-200 rounded-lg flex items-center justify-center flex-shrink-0">
-              <FaExclamationTriangle className="text-pink-600 text-sm" />
+            <div className="w-8 h-8 bg-rose-200 rounded-lg flex items-center justify-center flex-shrink-0">
+              <FaExclamationTriangle className="text-rose-600 text-sm" />
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-pink-600 mb-1">
+              <h4 className="font-semibold text-rose-600 mb-1">
                 ¡Vacuna próxima a vencer!
               </h4>
-              <p className="text-sm text-pink-600 mb-2">
+              <p className="text-sm text-rose-600 mb-2">
                 {healthData.nextVaccine.title} vence el {formatDate(healthData.nextVaccine.nextDue)}
               </p>
               <button
                 onClick={() => navigate('/health-management?tab=vaccines')}
-                className="text-xs bg-pink-100 hover:bg-pink-200 text-pink-600 px-3 py-1 rounded-lg transition-colors duration-200"
+                className="text-xs bg-rose-100 hover:bg-rose-200 text-rose-600 px-3 py-1 rounded-lg transition-colors duration-200"
               >
                 Ver vacunas
               </button>
