@@ -1,6 +1,6 @@
 import React, {  useEffect, useState } from 'react'
 import Logo from '../../assets/images/PetConnect Logo.png'
-import { Player } from 'lottie-react'
+import Lottie from 'lottie-react'
 import RunningDog from '../../assets/images/Perrito3.json'
 import { useNavigate } from 'react-router-dom'
 
@@ -23,10 +23,9 @@ export const SplashScreen = () => {
             <img src={Logo} alt="Logo" className='w-32 sm:w-40 sm:h-40 mb-2' />
             <h1 className='text-2xl sm:text-xl font-bold text-center'>PetConnect</h1>
         </div>
-        <Player
-          autoplay
+        <Lottie
+          animationData={RunningDog}
           loop
-          src={RunningDog}
           className='w-40 h-40 sm:w-38 sm:h-38 mt-[2rem]'
         />
     </div>
