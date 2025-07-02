@@ -19,7 +19,7 @@ export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
   const documentTypes = [
     { id: 'medical', label: 'Examen Médico', icon: '📋', color: 'blue' },
     { id: 'vaccine', label: 'Vacuna', icon: '💉', color: 'green' },
-    { id: 'certificate', label: 'Certificado', icon: '🏆', color: 'yellow' },
+    { id: 'passport', label: 'Pasaporte', icon: '🛂', color: 'yellow' },
     { id: 'prescription', label: 'Receta', icon: '💊', color: 'purple' },
     { id: 'lab', label: 'Laboratorio', icon: '🧪', color: 'pink' },
     { id: 'surgery', label: 'Cirugía', icon: '🏥', color: 'red' }

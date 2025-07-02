@@ -19,7 +19,7 @@ export const VaccineTimeline = ({ documents, selectedPet }) => {
     switch (type) {
       case 'vaccine': return '💉';
       case 'medical': return '🩺';
-      case 'certificate': return '🏆';
+      case 'passport': return '🛂';
       case 'prescription': return '💊';
       case 'lab': return '🧪';
       case 'surgery': return '🏥';
@@ -31,7 +31,7 @@ export const VaccineTimeline = ({ documents, selectedPet }) => {
     switch (type) {
       case 'vaccine': return 'bg-green-100 text-green-700 border-green-200';
       case 'medical': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'certificate': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      case 'passport': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
       case 'prescription': return 'bg-purple-100 text-purple-700 border-purple-200';
       case 'lab': return 'bg-pink-100 text-pink-700 border-pink-200';
       case 'surgery': return 'bg-red-100 text-red-700 border-red-200';

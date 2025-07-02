@@ -21,6 +21,7 @@ export const DocumentCard = ({ document: doc, onView, onDelete }) => {
       case 'medical': return '📋';
       case 'certificate': return '🏆';
       case 'prescription': return '💊';
+      case 'passport': return '🛂';
       default: return '📄';
     }
   };
@@ -31,6 +32,7 @@ export const DocumentCard = ({ document: doc, onView, onDelete }) => {
       case 'medical': return 'from-blue-50 to-cyan-50 border-blue-100';
       case 'certificate': return 'from-yellow-50 to-amber-50 border-yellow-100';
       case 'prescription': return 'from-purple-50 to-violet-50 border-purple-100';
+      case 'passport': return 'from-yellow-50 to-amber-50 border-yellow-100';
       default: return 'from-gray-50 to-slate-50 border-gray-100';
     }
   };
