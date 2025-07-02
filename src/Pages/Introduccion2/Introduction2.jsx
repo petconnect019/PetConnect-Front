@@ -25,35 +25,35 @@ export const Introduction2 = () => {
             <div className={`bg-white w-full max-w-7xl lg:rounded-3xl lg:shadow-2xl lg:border lg:border-gray-200 overflow-hidden transition-all duration-500 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                 
                 {/* Mobile and Tablet Design */}
-                <div className="lg:hidden relative min-h-screen flex flex-col">
-                    {/* Orange curved section with image */}
-                    <div className="relative flex-1 min-h-[60vh]">
-                        <div 
-                            className="absolute inset-0 bg-gradient-to-br from-orange-400 to-orange-500"
-                            style={{
-                                clipPath: 'ellipse(100% 70% at 50% 0%)'
-                            }}
+                <div className="lg:hidden relative h-screen flex flex-col">
+                    {/* Orange curved section - BACKGROUND */}
+                    <div 
+                        className="absolute top-0 left-0 right-0 bg-gradient-to-br from-orange-400 to-orange-500 h-[65vh]"
+                        style={{
+                            clipPath: 'ellipse(100% 100% at 50% 0%)'
+                        }}
+                    />
+                    
+                    {/* Image container - INSIDE the ellipse */}
+                    <div className="relative z-10 flex items-center justify-center h-[65vh] pt-16">
+                        <img 
+                            src={Intro} 
+                            alt="Introducción" 
+                            className={`w-full max-w-xs sm:max-w-sm object-contain transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
                         />
-                        <div className="relative z-10 flex items-center justify-center h-full pt-20 pb-10">
-                            <img 
-                                src={Intro} 
-                                alt="Introducción" 
-                                className={`w-full max-w-xs sm:max-w-sm object-contain transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
-                            />
-                        </div>
                     </div>
 
-                    {/* Content section */}
-                    <div className={`flex-1 flex flex-col justify-center px-6 py-8 min-h-[40vh] transition-all duration-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-                        <div className="text-center space-y-6">
+                    {/* Content section - OUTSIDE the ellipse */}
+                    <div className={`relative z-20 flex-1 flex flex-col justify-center px-6 py-4 transition-all duration-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                        <div className="text-center space-y-4">
                             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 leading-tight">
                                 Gestiona la información sobre tu mascota
                             </h2>
-                            <p className="text-gray-600 text-base sm:text-lg leading-relaxed px-4">
+                            <p className="text-gray-600 text-base sm:text-lg leading-relaxed px-2">
                                 Administra el perfil de tu mascota y mantén su información siempre disponible.
                             </p>
                             
-                            <div className='flex flex-col gap-4 pt-4'>
+                            <div className='flex flex-col gap-4 pt-6'>
                                 <button 
                                     onClick={handleContinue}
                                     className="w-full max-w-sm mx-auto bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-full text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
@@ -69,18 +69,19 @@ export const Introduction2 = () => {
                 <div className="hidden lg:flex min-h-[600px] xl:min-h-[700px]">
                     {/* Left side - Image with curved background */}
                     <div className={`w-1/2 relative overflow-hidden transition-all duration-700 transform ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}>
-                        <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-orange-500" />
+                        {/* Background ellipse */}
                         <div 
                             className="absolute inset-0 bg-gradient-to-br from-orange-400 to-orange-500"
                             style={{
-                                clipPath: 'ellipse(150% 100% at 0% 50%)'
+                                clipPath: 'ellipse(130% 100% at 0% 50%)'
                             }}
                         />
-                        <div className="relative z-10 flex items-center justify-center h-full p-12">
+                        {/* Image inside the ellipse area */}
+                        <div className="relative z-10 flex items-center justify-center h-full">
                             <img 
                                 src={Intro} 
                                 alt="Introducción" 
-                                className={`w-full max-w-md xl:max-w-lg object-contain transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                                className={`w-full max-w-sm xl:max-w-md object-contain transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
                             />
                         </div>
                     </div>
