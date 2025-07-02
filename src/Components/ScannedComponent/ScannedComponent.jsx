@@ -1,10 +1,8 @@
 import React from 'react';
-import { FiMapPin, FiCalendar, FiClock, FiMap, FiUser } from 'react-icons/fi';
-import { MdPets } from 'react-icons/md';
+import { FiMapPin, FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 import PropTypes from 'prop-types';
 import './ScannedComponent.css';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 
 export const ScannedComponent = ({ scanData }) => {
@@ -16,7 +14,6 @@ export const ScannedComponent = ({ scanData }) => {
   const { fecha, hora, location, scannedBy } = scanData;
   const hasLocation = location && location.latitude && location.longitude;
   const hasUser = scannedBy && scannedBy._id;
-  const position = [location.latitude, location.longitude];
   
   // Function to format address
   const formatAddress = () => {
@@ -34,6 +31,14 @@ export const ScannedComponent = ({ scanData }) => {
   const handleViewUserProfile = () => {
     if (hasUser) {
       navigate(`/user-profile/${scannedBy._id}`);
+    }
+  };
+
+  // Function to open Google Maps with the scanned location
+  const handleOpenMaps = () => {
+    if (hasLocation) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${location.latitude},${location.longitude}`;
+      window.open(url, '_blank');
     }
   };
 
@@ -62,9 +67,17 @@ export const ScannedComponent = ({ scanData }) => {
         
         <div className="flex items-start col-span-2">
           <FiMapPin className="text-orange-500 mr-2 mt-1 flex-shrink-0" />
-          <div>
+          <div className="flex-1">
             <p className="text-xs sm:text-sm text-gray-500">Ubicación</p>
             <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700">{formatAddress()}</p>
+            {hasLocation && (
+              <button
+                onClick={handleOpenMaps}
+                className="mt-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 py-1 px-2 rounded transition-colors"
+              >
+                Ver en Google Maps
+              </button>
+            )}
           </div>
         </div>
         
