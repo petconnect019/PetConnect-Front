@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import Intro from '../../assets/images/Group.svg'
+import Intro from '../../assets/images/Group.png'
 import { useEffect, useState } from 'react';
 
 export const Introduction2 = () => {
