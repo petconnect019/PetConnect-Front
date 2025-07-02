@@ -88,11 +88,11 @@ export const HealthDashboard = ({ petList, navigate }) => {
   }
 
   return (
-    <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 mx-4 mb-6 shadow-lg border border-blue-100/50">
+    <section className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-2xl p-6 mx-4 mb-6 shadow-lg border border-orange-100/50">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#EC9216] to-amber-500 rounded-xl flex items-center justify-center shadow-lg">
             <span className="text-white text-xl">🏥</span>
           </div>
           <div>
@@ -104,7 +104,7 @@ export const HealthDashboard = ({ petList, navigate }) => {
         </div>
         <button
           onClick={() => navigate('/health-management')}
-          className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          className="bg-gradient-to-r from-[#EC9216] to-amber-500 hover:from-[#d48314] hover:to-amber-600 text-white py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
         >
           Ver detalles
         </button>
@@ -120,7 +120,7 @@ export const HealthDashboard = ({ petList, navigate }) => {
                 onClick={() => setSelectedPet(pet)}
                 className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
                   selectedPet?._id === pet._id
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md'
+                    ? 'bg-gradient-to-r from-[#EC9216] to-amber-500 text-white shadow-md'
                     : 'bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 border border-white/50'
                 }`}
               >
@@ -139,17 +139,17 @@ export const HealthDashboard = ({ petList, navigate }) => {
         {/* Próxima Vacuna */}
         <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#EC9216] to-amber-500 rounded-lg flex items-center justify-center">
               <span className="text-white text-sm">💉</span>
             </div>
-            <span className="text-xs font-medium text-green-700">Próxima Vacuna</span>
+            <span className="text-xs font-medium text-[#EC9216]">Próxima Vacuna</span>
           </div>
           {healthData.nextVaccine ? (
             <div>
               <p className="text-sm font-semibold text-gray-800 mb-1">
                 {healthData.nextVaccine.title}
               </p>
-              <p className="text-xs text-green-600">
+              <p className="text-xs text-[#EC9216]">
                 {getDaysUntil(healthData.nextVaccine.nextDue) > 0 
                   ? `En ${getDaysUntil(healthData.nextVaccine.nextDue)} días`
                   : 'Vencida'
@@ -164,49 +164,49 @@ export const HealthDashboard = ({ petList, navigate }) => {
         {/* Recordatorios Pendientes */}
         <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-amber-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#EC9216] to-amber-500 rounded-lg flex items-center justify-center">
               <span className="text-white text-sm">⏰</span>
             </div>
-            <span className="text-xs font-medium text-orange-700">Recordatorios</span>
+            <span className="text-xs font-medium text-[#EC9216]">Recordatorios</span>
           </div>
           <div>
             <p className="text-lg font-bold text-gray-800">
               {healthData.pendingReminders}
             </p>
-            <p className="text-xs text-orange-600">Pendientes</p>
+            <p className="text-xs text-[#EC9216]">Pendientes</p>
           </div>
         </div>
 
         {/* Documentos */}
         <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#EC9216] to-amber-500 rounded-lg flex items-center justify-center">
               <span className="text-white text-sm">📋</span>
             </div>
-            <span className="text-xs font-medium text-blue-700">Documentos</span>
+            <span className="text-xs font-medium text-[#EC9216]">Documentos</span>
           </div>
           <div>
             <p className="text-lg font-bold text-gray-800">
               {healthData.totalDocuments}
             </p>
-            <p className="text-xs text-blue-600">Archivados</p>
+            <p className="text-xs text-[#EC9216]">Archivados</p>
           </div>
         </div>
 
         {/* Último Chequeo */}
         <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-violet-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#EC9216] to-amber-500 rounded-lg flex items-center justify-center">
               <span className="text-white text-sm">🩺</span>
             </div>
-            <span className="text-xs font-medium text-purple-700">Último Chequeo</span>
+            <span className="text-xs font-medium text-[#EC9216]">Último Chequeo</span>
           </div>
           {healthData.lastCheckup ? (
             <div>
               <p className="text-sm font-semibold text-gray-800 mb-1">
                 {formatDate(healthData.lastCheckup.date)}
               </p>
-              <p className="text-xs text-purple-600">
+              <p className="text-xs text-[#EC9216]">
                 {healthData.lastCheckup.veterinary || 'Sin especificar'}
               </p>
             </div>
@@ -217,47 +217,37 @@ export const HealthDashboard = ({ petList, navigate }) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="mt-4">
         <button
           onClick={() => navigate('/health-management?tab=documents')}
-          className="bg-brand hover:bg-orange-600 text-white rounded-xl p-4 transition-colors duration-150"
+          className="w-full bg-brand hover:bg-[#d48314] text-white rounded-xl p-4 transition-colors duration-150"
         >
-          <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="flex items-center justify-center gap-2">
             <span className="text-xl">📄</span>
             <span className="font-semibold">Subir Documento</span>
-          </div>
-        </button>
-
-        <button
-          onClick={() => navigate('/health-management?tab=calendar')}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl p-4 transition-colors duration-150"
-        >
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="text-xl">📅</span>
-            <span className="font-semibold">Ver Calendario</span>
           </div>
         </button>
       </div>
 
       {/* Urgent Alerts */}
       {(healthData.nextVaccine && getDaysUntil(healthData.nextVaccine.nextDue) <= 7) && (
-        <div className="mt-4 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl p-4">
+        <div className="mt-4 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-xl p-4">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-sm">🚨</span>
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-red-800 mb-1">
+              <h4 className="font-semibold text-[#EC9216] mb-1">
                 ¡Vacuna próxima a vencer!
               </h4>
-              <p className="text-sm text-red-600 mb-2">
+              <p className="text-sm text-[#EC9216] mb-2">
                 {healthData.nextVaccine.title} vence el {formatDate(healthData.nextVaccine.nextDue)}
               </p>
               <button
-                onClick={() => navigate('/health-management?tab=calendar')}
-                className="text-xs bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg transition-colors duration-200"
+                onClick={() => navigate('/health-management?tab=vaccines')}
+                className="text-xs bg-orange-100 hover:bg-orange-200 text-[#EC9216] px-3 py-1 rounded-lg transition-colors duration-200"
               >
-                Programar cita
+                Ver vacunas
               </button>
             </div>
           </div>
