@@ -1,7 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IoChevronForward, IoCheckmarkCircleOutline, IoLockClosedOutline, IoStarOutline, IoAlertCircleOutline, IoCloudDownloadOutline, IoSettingsOutline, IoTrashOutline } from 'react-icons/io5';
+import { IoChevronForward, IoCheckmarkCircleOutline, IoLockClosedOutline, IoStarOutline, IoAlertCircleOutline, IoCloudDownloadOutline, IoSettingsOutline, IoTrashOutline, IoCheckmarkOutline, IoTimeOutline, IoNotificationsOffOutline } from 'react-icons/io5';
 import { useNotifications } from '../../Contexts/NotificationContext/NotificationContext';
+import FooterNav from '../../Components/FooterNav/FooterNav';
+
+const SettingsMenu = ({ isOpen, onClose, onMarkAllRead, onToggleSort, onToggleNotifications, sortOrder, notificationsEnabled }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+      <div className="py-1" role="menu" aria-orientation="vertical">
+        <button
+          onClick={() => {
+            onMarkAllRead();
+            onClose();
+          }}
+          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+        >
+          <IoCheckmarkOutline className="text-lg" />
+          Marcar todas como leídas
+        </button>
+        <button
+          onClick={() => {
+            onToggleSort();
+            onClose();
+          }}
+          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+        >
+          <IoTimeOutline className="text-lg" />
+          Ordenar por {sortOrder === 'asc' ? 'más antiguas' : 'más recientes'}
+        </button>
+        <button
+          onClick={() => {
+            onToggleNotifications();
+            onClose();
+          }}
+          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+        >
+          <IoNotificationsOffOutline className="text-lg" />
+          {notificationsEnabled ? 'Desactivar notificaciones' : 'Activar notificaciones'}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const NotificationItem = ({ notification, onDelete }) => {
   const { markAsRead } = useNotifications();
@@ -83,6 +125,9 @@ export const Notifications = () => {
     yesterday: [],
     older: []
   });
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState('desc'); // 'desc' for newest first, 'asc' for oldest first
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
   useEffect(() => {
     fetchNotifications();
@@ -93,7 +138,14 @@ export const Notifications = () => {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 
-    const grouped = notifications.reduce((acc, notification) => {
+    let sortedNotifications = [...notifications];
+    if (sortOrder === 'asc') {
+      sortedNotifications.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else {
+      sortedNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
+    const grouped = sortedNotifications.reduce((acc, notification) => {
       const notifDate = new Date(notification.createdAt);
       const notifDay = new Date(notifDate.getFullYear(), notifDate.getMonth(), notifDate.getDate());
 
@@ -108,7 +160,7 @@ export const Notifications = () => {
     }, { today: [], yesterday: [], older: [] });
 
     setGroupedNotifications(grouped);
-  }, [notifications]);
+  }, [notifications, sortOrder]);
 
   const handleDelete = async (notificationId) => {
     await deleteNotification(notificationId);
@@ -116,11 +168,21 @@ export const Notifications = () => {
 
   const handleMarkAllAsRead = async () => {
     await markAllAsRead();
+    fetchNotifications(); // Refetch to update the UI
+  };
+
+  const handleToggleSort = () => {
+    setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
+  };
+
+  const handleToggleNotifications = () => {
+    setNotificationsEnabled(prev => !prev);
+    // Aquí se podría implementar la lógica para guardar la preferencia en el backend
   };
 
   if (loading) {
     return (
-      <div className="font-sans bg-gray-100 min-h-screen p-5 box-border">
+      <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="space-y-3">
@@ -135,31 +197,45 @@ export const Notifications = () => {
             ))}
           </div>
         </div>
+        <FooterNav />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="font-sans bg-gray-100 min-h-screen p-5 box-border">
+      <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20">
         <div className="text-center text-red-500">
           <p>Error al cargar las notificaciones. Por favor, intente de nuevo.</p>
         </div>
+        <FooterNav />
       </div>
     );
   }
 
   return (
-    <div className="font-sans bg-gray-100 min-h-screen p-5 box-border">
+    <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20">
       {/* Header */}
-      <div className="flex justify-between items-center mb-5 pb-2.5">
+      <div className="flex justify-between items-center mb-5 pb-2.5 relative">
         <button onClick={() => navigate(-1)}>
           <IoChevronForward className="text-2xl text-gray-700 transform rotate-180" />
         </button>
         <h1 className="text-2xl font-bold text-gray-800 m-0">Notificaciones</h1>
-        <button onClick={handleMarkAllAsRead}>
+        <button 
+          onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+          className="relative"
+        >
           <IoSettingsOutline className="text-2xl text-gray-700" />
         </button>
+        <SettingsMenu
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          onMarkAllRead={handleMarkAllAsRead}
+          onToggleSort={handleToggleSort}
+          onToggleNotifications={handleToggleNotifications}
+          sortOrder={sortOrder}
+          notificationsEnabled={notificationsEnabled}
+        />
       </div>
 
       {/* Notifications sections */}
@@ -209,6 +285,7 @@ export const Notifications = () => {
           )}
         </>
       )}
+      <FooterNav />
     </div>
   );
 };
