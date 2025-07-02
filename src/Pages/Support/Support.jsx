@@ -9,7 +9,16 @@ import emailjs from '@emailjs/browser';
 import { ImSpinner2 } from "react-icons/im";
 
 // Inicializar EmailJS
-emailjs.init("tu_public_key"); // Reemplaza con tu Public Key
+emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+
+// Log para verificar las variables de entorno (solo en desarrollo)
+if (import.meta.env.DEV) {
+  console.log('EmailJS Config:', {
+    publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+    serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+    templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+  });
+}
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -107,8 +116,8 @@ export const Support = () => {
       };
 
       const result = await emailjs.send(
-        'service_tu_service_id', // Reemplaza con tu Service ID
-        'template_tu_template_id', // Reemplaza con tu Template ID
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         templateParams
       );
 
