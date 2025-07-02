@@ -42,16 +42,16 @@ export const Introduction1 = () => {
                 {/* Mobile and Tablet Design */}
                 <div className="lg:hidden relative h-screen flex flex-col">
                     {/* Orange top section */}
-                    <div className="h-[60vh] bg-gradient-to-br from-orange-400 to-orange-500 flex items-end justify-center relative pb-4">
+                    <div className="h-[92vh] bg-gradient-to-br from-orange-400 to-orange-500 flex items-end justify-center relative">
                         <img 
                             src={Intro} 
                             alt="Introducción" 
-                            className={`w-full max-w-[280px] sm:max-w-sm object-contain transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                            className={`w-full max-w-[240px] sm:max-w-sm object-contain mb-6 transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
                         />
                     </div>
 
                     {/* White content card, overlapping orange section */}
-                    <div className={`-mt-10 flex-1 bg-white rounded-t-3xl shadow-md px-6 pt-8 pb-6 transition-all duration-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'}`}>
+                    <div className={`-mt-52 flex-1 bg-white rounded-t-[35px] shadow-md px-6 pt-8 pb-6 transition-all duration-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'}`}>
                         <div className="text-center space-y-4">
                             <h2 className="text-2xl font-bold text-gray-800 leading-tight">
                                 Más que una app, un puente hacia el hogar
