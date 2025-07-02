@@ -31,7 +31,7 @@ export const Introduction2 = () => {
                         <img 
                             src={Intro} 
                             alt="Introducción" 
-                            className={`w-full max-w-[240px] sm:max-w-sm object-contain mb-6 transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                            className={`w-full max-w-[312px] sm:max-w-md object-contain mb-6 transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
                         />
                     </div>
 
