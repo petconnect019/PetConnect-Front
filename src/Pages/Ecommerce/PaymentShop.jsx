@@ -268,7 +268,7 @@ export const PaymentShop = () => {
                 test: true
             });
             
-            const amount = savedQuantity * 15000;
+            const amount = savedQuantity * 29900;
             console.log('Monto calculado:', amount);
             
             // Abrir el checkout con interfaz mejorada

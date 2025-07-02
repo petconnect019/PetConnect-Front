@@ -78,10 +78,28 @@ export const Ecommerce = () => {
                     </div>
 
                     {/* Main Content */}
-                    <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
+                    <div className="max-w-3xl mx-auto">
+                        {/* Product Title and Badges */}
+                        <div className="text-center mb-8">
+                            <div className="flex justify-center flex-wrap gap-2 mb-3">
+                                <span className="px-2 py-1 bg-brand/10 text-brand rounded-full text-xs font-medium">
+                                    Nuevo
+                                </span>
+                                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                                    En Stock
+                                </span>
+                            </div>
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+                                Etiqueta QR Premium PetConnect
+                            </h1>
+                            <p className="text-base text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                                Sistema de identificación inteligente que mantiene a tu mascota segura las 24 horas. Diseño elegante y resistente al agua.
+                            </p>
+                        </div>
+
                         {/* Product Image Carousel */}
-                        <div className="relative order-2 md:order-1">
-                            <div className="bg-gray-50 rounded-2xl p-4 sm:p-6">
+                        <div className="relative mb-8">
+                            <div className="bg-gray-50 rounded-2xl p-4 sm:p-6 max-w-lg mx-auto">
                                 <div className="relative aspect-square">
                                     {images.map((img, index) => (
                                         <img
@@ -126,44 +144,27 @@ export const Ecommerce = () => {
                         </div>
 
                         {/* Product Info */}
-                        <div className="space-y-6 order-1 md:order-2">
-                            <div>
-                                <div className="flex flex-wrap items-center gap-2 mb-3">
-                                    <span className="px-2 py-1 bg-brand/10 text-brand rounded-full text-xs font-medium">
-                                        Nuevo
-                                    </span>
-                                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                                        En Stock
-                                    </span>
-                                </div>
-                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                                    Etiqueta QR Premium PetConnect
-                                </h1>
-                                <p className="text-base text-gray-600 leading-relaxed">
-                                    Sistema de identificación inteligente que mantiene a tu mascota segura las 24 horas. Diseño elegante y resistente al agua.
-                                </p>
-                            </div>
-
+                        <div className="space-y-6">
                             <div className="space-y-3">
-                                <div className="flex items-baseline gap-3">
-                                    <span className="text-2xl sm:text-3xl font-bold text-gray-900">$15.000</span>
-                                    <span className="text-base text-gray-500 line-through">$28.000</span>
-                                    <span className="text-sm text-green-600 font-medium">Ahorras $13.000</span>
+                                <div className="flex items-baseline justify-center gap-3">
+                                    <span className="text-2xl sm:text-3xl font-bold text-gray-900">$29.900</span>
+                                    <span className="text-base text-gray-500 line-through">$38.000</span>
+                                    <span className="text-sm text-green-600 font-medium">Ahorras $8.100</span>
                                 </div>
-                                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
                                     <FaCreditCard className="w-4 h-4 text-brand" />
                                     <span>Pago seguro por ePayco</span>
                                 </div>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-gray-500 text-center">
                                     Incluye envío express y activación inmediata
                                 </p>
                             </div>
 
                             {/* Benefits */}
-                            <div className="space-y-3">
+                            <div className="grid sm:grid-cols-3 gap-4 bg-gray-50 rounded-xl p-4">
                                 {benefits.map((benefit, index) => (
                                     <div key={index} className="flex items-center space-x-3">
-                                        <div className="flex-shrink-0 bg-brand/5 p-2 rounded-full">
+                                        <div className="flex-shrink-0 bg-white p-2 rounded-full">
                                             {benefit.icon}
                                         </div>
                                         <div>
@@ -181,10 +182,6 @@ export const Ecommerce = () => {
                                     text="Comprar Ahora" 
                                     className="w-full py-3 text-base font-medium rounded-xl"
                                 />
-                                <button className="w-full bg-brand/5 hover:bg-brand/10 transition-colors text-brand py-3 rounded-xl text-sm font-medium flex items-center justify-center space-x-2">
-                                    <img className="w-4 h-4" src={CrownImg} alt="Crown" />
-                                    <span>Incluye bono de regalo especial</span>
-                                </button>
                             </div>
 
                             {/* Trust Elements */}
