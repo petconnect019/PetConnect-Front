@@ -234,7 +234,7 @@ export const Notifications = () => {
 
   if (loading) {
     return (
-      <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20">
+      <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20 overflow-x-hidden">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="space-y-3">
@@ -249,24 +249,24 @@ export const Notifications = () => {
             ))}
           </div>
         </div>
-        <FooterNav />
+        <FooterNav navigate={navigate} />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20">
+      <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20 overflow-x-hidden">
         <div className="text-center text-red-500">
           <p>Error al cargar las notificaciones. Por favor, intente de nuevo.</p>
         </div>
-        <FooterNav />
+        <FooterNav navigate={navigate} />
       </div>
     );
   }
 
   return (
-    <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20">
+    <div className="font-sans bg-gray-100 min-h-screen p-5 box-border pb-20 overflow-x-hidden">
       {/* Header */}
       <div className="flex justify-between items-center mb-5 pb-2.5 relative">
         <button onClick={() => navigate(-1)}>
