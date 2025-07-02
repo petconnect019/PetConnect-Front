@@ -7,9 +7,8 @@ export const CalendarWidget = () => {
   const navigate = useNavigate();
   const { petList } = usePet();
   const [isConnected, setIsConnected] = useState(false);
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [nextEvent, setNextEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkConnectionAndLoadEvents();
@@ -22,8 +21,6 @@ export const CalendarWidget = () => {
       
       if (connected) {
         const events = await GoogleCalendarAPI.getEvents();
-        setUpcomingEvents(events);
-        
         // Encontrar el próximo evento
         const now = new Date();
         const upcoming = events
@@ -46,173 +43,77 @@ export const CalendarWidget = () => {
     tomorrow.setDate(tomorrow.getDate() + 1);
     
     if (date.toDateString() === today.toDateString()) {
-      return `Hoy ${date.toLocaleTimeString('es-CO', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-      })}`;
+      return 'Hoy';
     } else if (date.toDateString() === tomorrow.toDateString()) {
-      return `Mañana ${date.toLocaleTimeString('es-CO', { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-      })}`;
+      return 'Mañana';
     } else {
       return date.toLocaleDateString('es-CO', { 
         day: 'numeric',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
+        month: 'short'
       });
     }
   };
 
-  const getDaysUntilEvent = (dateString) => {
-    const eventDate = new Date(dateString);
-    const today = new Date();
-    const diffTime = eventDate - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-6 my-4 animate-pulse">
-        <div className="h-20 bg-white/50 rounded-xl"></div>
+      <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 animate-pulse">
+        <div className="h-16 bg-gray-100 rounded-lg"></div>
       </div>
     );
   }
 
+  const handleCreateEvent = () => {
+    navigate('/health-management');
+  };
+
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 mx-0 mb-6 shadow-lg border border-blue-100/50">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-            <span className="text-white text-xl">📅</span>
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-gray-800">Calendario Veterinario</h3>
-            <p className="text-sm text-gray-600">
-              {isConnected ? 'Sincronizado con Google Calendar' : 'No conectado'}
-            </p>
-          </div>
+    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">📅</span>
+          <h3 className="text-sm font-medium text-gray-800">Próxima Cita</h3>
         </div>
         
-        {/* Connection Status */}
-        <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'} animate-pulse`}></div>
+        <button
+          onClick={handleCreateEvent}
+          className="bg-brand hover:bg-brand-dark text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-150 flex items-center gap-1"
+        >
+          <span className="text-xs">➕</span>
+          Agendar
+        </button>
       </div>
 
       {!isConnected ? (
-        /* Not Connected State */
-        <div className="text-center py-8">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-            <span className="text-white text-2xl">🔗</span>
-          </div>
-          <h4 className="font-semibold text-gray-800 mb-2">Conecta tu calendario</h4>
-          <p className="text-sm text-gray-600 mb-4">
-            Sincroniza las citas de tus mascotas con Google Calendar
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => navigate('/health-management?tab=calendar')}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-xl text-sm font-medium transition-colors duration-150"
-            >
-              Conectar
-            </button>
-            <button
-              onClick={() => navigate('/health-management?tab=calendar')}
-              className="flex-1 bg-white/60 backdrop-blur-sm text-gray-700 py-2 px-4 rounded-xl text-sm font-medium border border-white/50 hover:bg-white/80 transition-colors duration-150"
-            >
-              Ver más
-            </button>
-          </div>
-        </div>
-      ) : nextEvent ? (
-        /* Has Upcoming Events */
-        <div>
-          {/* Next Event Card */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/50">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-sm">🩺</span>
-              </div>
-              <div className="flex-1">
-                <h4 className="font-semibold text-gray-800 mb-1">{nextEvent.summary}</h4>
-                <p className="text-sm text-gray-600 mb-2">
-                  {formatDate(nextEvent.start.dateTime || nextEvent.start.date)}
-                </p>
-                
-                {/* Days Until Event */}
-                {(() => {
-                  const days = getDaysUntilEvent(nextEvent.start.dateTime || nextEvent.start.date);
-                  if (days === 0) {
-                    return (
-                      <div className="inline-flex items-center gap-1 bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">
-                        <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                        ¡Hoy!
-                      </div>
-                    );
-                  } else if (days === 1) {
-                    return (
-                      <div className="inline-flex items-center gap-1 bg-orange-100 text-orange-700 px-2 py-1 rounded-full text-xs font-medium">
-                        <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
-                        Mañana
-                      </div>
-                    );
-                  } else if (days <= 7) {
-                    return (
-                      <div className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                        En {days} días
-                      </div>
-                    );
-                  }
-                  return null;
-                })()}
-              </div>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-white/50">
-              <div className="text-2xl font-bold text-blue-600">{upcomingEvents.length}</div>
-              <div className="text-sm text-gray-600">Citas programadas</div>
-            </div>
-            <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 text-center border border-white/50">
-              <div className="text-2xl font-bold text-green-600">{petList.length}</div>
-              <div className="text-sm text-gray-600">Mascotas registradas</div>
-            </div>
-          </div>
-
-          {/* Action Button */}
+        <div className="flex items-center justify-between py-2">
+          <span className="text-sm text-gray-500">Sin conexión a Calendar</span>
           <button
-            onClick={() => navigate('/health-management?tab=calendar')}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 px-6 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            onClick={handleCreateEvent}
+            className="text-brand hover:text-brand-dark text-sm font-medium transition-colors duration-150"
           >
-            <span className="text-lg">📋</span>
-            <span>Agendar Nueva Cita</span>
+            Conectar →
           </button>
         </div>
-      ) : (
-        /* No Upcoming Events */
-        <div className="text-center py-6">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
-            <span className="text-2xl">📅</span>
+      ) : nextEvent ? (
+        <div className="flex items-center gap-3 py-1">
+          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span className="text-sm">🩺</span>
           </div>
-          <h4 className="font-semibold text-gray-800 mb-2">No hay citas programadas</h4>
-          <p className="text-sm text-gray-600 mb-4">
-            Programa la próxima cita veterinaria para {petList.length > 0 ? 'tus mascotas' : 'tu mascota'}
-          </p>
-                      <button
-              onClick={() => navigate('/health-management?tab=calendar')}
-              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-xl text-sm font-medium transition-colors duration-150 flex items-center gap-2 mx-auto"
-            >
-              <span>➕</span>
-              Programar Cita
-            </button>
+          <div className="flex-1 min-w-0">
+            <h4 className="font-medium text-gray-800 text-sm truncate">{nextEvent.summary}</h4>
+            <p className="text-xs text-gray-500">
+              {formatDate(nextEvent.start.dateTime || nextEvent.start.date)}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between py-2">
+          <span className="text-sm text-gray-500">Sin citas programadas</span>
+          <button
+            onClick={handleCreateEvent}
+            className="text-brand hover:text-brand-dark text-sm font-medium transition-colors duration-150"
+          >
+            Programar →
+          </button>
         </div>
       )}
     </div>
