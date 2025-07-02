@@ -86,7 +86,18 @@ export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
         id: response.document._id // Para compatibilidad con el frontend
       };
 
-      onUpload(newDocument);
+      if (onUpload) {
+        await onUpload(newDocument);
+      }
+
+      // Cerrar modal y resetear campos
+      setTitle('');
+      setDate('');
+      setNextDue('');
+      setVeterinary('');
+      setNotes('');
+      setFile(null);
+      onClose();
     } catch (error) {
       console.error('Error al subir documento:', error);
       alert('Error al subir el documento. Por favor, intenta de nuevo.');

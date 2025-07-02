@@ -142,7 +142,7 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
         <UploadModal
           isOpen={showUploadModal}
           onClose={() => setShowUploadModal(false)}
-          onUploadComplete={loadDocuments}
+          onUpload={loadDocuments}
           selectedPet={selectedPet}
         />
       )}
