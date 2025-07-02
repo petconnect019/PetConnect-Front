@@ -44,7 +44,15 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
   }, [selectedPet]);
 
   const handleViewDocument = (doc) => {
-    if (doc.fileUrl) {
+    if (!doc.fileUrl) return;
+
+    const isPdf = doc.mimeType === 'application/pdf' || doc.fileUrl.toLowerCase().endsWith('.pdf');
+
+    if (isPdf) {
+      // Usar Google Docs viewer como fallback para evitar "Failed to load PDF" en navegadores
+      const viewerUrl = `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(doc.fileUrl)}`;
+      window.open(viewerUrl, '_blank');
+    } else {
       window.open(doc.fileUrl, '_blank');
     }
   };
