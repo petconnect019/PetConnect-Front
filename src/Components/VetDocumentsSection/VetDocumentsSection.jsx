@@ -3,6 +3,7 @@ import { DocumentCard } from './DocumentCard';
 import { UploadModal } from './UploadModal';
 import { VaccineTimeline } from './VaccineTimeline';
 import { useVetDocuments } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
+import { deleteVetDocument } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
 
 export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents' }) => {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -41,6 +42,23 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
   useEffect(() => {
     loadDocuments();
   }, [selectedPet]);
+
+  const handleViewDocument = (doc) => {
+    if (doc.fileUrl) {
+      window.open(doc.fileUrl, '_blank');
+    }
+  };
+
+  const handleDeleteDocument = async (doc) => {
+    if (!window.confirm('¿Seguro que deseas eliminar este documento?')) return;
+
+    try {
+      await deleteVetDocument(doc._id);
+      await loadDocuments();
+    } catch (err) {
+      alert('No se pudo eliminar el documento');
+    }
+  };
 
   if (!petList || petList.length === 0) {
     return <EmptyPetsState navigate={navigate} />;
@@ -116,6 +134,8 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
               <DocumentCard 
                 key={doc._id} 
                 document={doc}
+                onView={handleViewDocument}
+                onDelete={handleDeleteDocument}
               />
             ))}
             {filteredDocuments.length === 0 && (

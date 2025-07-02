@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-export const DocumentCard = ({ document }) => {
+export const DocumentCard = ({ document: doc, onView, onDelete }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Cerrar menú al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const getDocumentIcon = (type) => {
     switch (type) {
       case 'vaccine': return '💉';
@@ -46,37 +60,37 @@ export const DocumentCard = ({ document }) => {
   };
 
   return (
-    <div className={`bg-gradient-to-r ${getDocumentColor(document.type)} border rounded-xl p-4 hover:bg-opacity-90 transition-colors duration-150 cursor-pointer group`}>
+    <div className={`bg-gradient-to-r ${getDocumentColor(doc.type)} border rounded-xl p-4 hover:bg-opacity-90 transition-colors duration-150 cursor-pointer group`}>
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3 flex-1">
           {/* Icon */}
           <div className="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center transition-colors duration-150">
-            <span className="text-lg">{getDocumentIcon(document.type)}</span>
+            <span className="text-lg">{getDocumentIcon(doc.type)}</span>
           </div>
           
           {/* Content */}
           <div className="flex-1 min-w-0">
             <h4 className="font-semibold text-gray-800 text-sm mb-1 truncate">
-              {document.title}
+              {doc.title}
             </h4>
             
             <div className="space-y-1">
               <p className="text-xs text-gray-600 flex items-center gap-1">
                 <span>📅</span>
-                {formatDate(document.date)}
+                {formatDate(doc.date)}
               </p>
               
-              {document.veterinary && (
+              {doc.veterinary && (
                 <p className="text-xs text-gray-500 flex items-center gap-1">
                   <span>👨‍⚕️</span>
-                  {document.veterinary}
+                  {doc.veterinary}
                 </p>
               )}
               
-              {document.nextDue && (
+              {doc.nextDue && (
                 <p className="text-xs text-orange-600 font-medium flex items-center gap-1">
                   <span>⏰</span>
-                  Próximo: {formatDate(document.nextDue)}
+                  Próximo: {formatDate(doc.nextDue)}
                 </p>
               )}
             </div>
@@ -85,11 +99,11 @@ export const DocumentCard = ({ document }) => {
         
         {/* Status and Actions */}
         <div className="flex flex-col items-end gap-2">
-          {getStatusBadge(document.status)}
+          {getStatusBadge(doc.status)}
           
           <div className="flex gap-1">
-            {document.fileUrl ? (
-              <button className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-colors duration-150">
+            {doc.fileUrl ? (
+              <button onClick={() => onView && onView(doc)} className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-colors duration-150">
                 <span className="text-sm">👁️</span>
               </button>
             ) : (
@@ -98,20 +112,35 @@ export const DocumentCard = ({ document }) => {
               </button>
             )}
             
-            <button className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-colors duration-150">
-              <span className="text-sm">⋯</span>
-            </button>
+            <div className="relative" ref={menuRef}>
+              <button onClick={() => setMenuOpen(!menuOpen)} className="w-8 h-8 bg-white/60 hover:bg-white rounded-lg flex items-center justify-center transition-colors duration-150">
+                <span className="text-sm">⋯</span>
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onDelete && onDelete(doc);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 text-red-600"
+                  >
+                    🗑️ Eliminar
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
       
       {/* Progress bar for vaccines */}
-      {document.type === 'vaccine' && document.nextDue && (
+      {doc.type === 'vaccine' && doc.nextDue && (
         <div className="mt-3 pt-3 border-t border-white/30">
           <div className="flex justify-between items-center mb-1">
             <span className="text-xs text-gray-600">Vigencia</span>
             <span className="text-xs text-gray-600">
-              {Math.ceil((new Date(document.nextDue) - new Date()) / (1000 * 60 * 60 * 24))} días
+              {Math.ceil((new Date(doc.nextDue) - new Date()) / (1000 * 60 * 60 * 24))} días
             </span>
           </div>
           <div className="w-full bg-white/40 rounded-full h-1">
@@ -119,7 +148,7 @@ export const DocumentCard = ({ document }) => {
               className="bg-gradient-to-r from-green-400 to-green-500 h-1 rounded-full transition-all duration-500"
               style={{ 
                 width: `${Math.max(10, Math.min(100, 
-                  (1 - (new Date(document.nextDue) - new Date()) / (365 * 24 * 60 * 60 * 1000)) * 100
+                  (1 - (new Date(doc.nextDue) - new Date()) / (365 * 24 * 60 * 60 * 1000)) * 100
                 ))}%` 
               }}
             ></div>
