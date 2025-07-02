@@ -42,11 +42,11 @@ export const Introduction1 = () => {
                 {/* Mobile and Tablet Design */}
                 <div className="lg:hidden relative h-screen flex flex-col">
                     {/* Orange top section */}
-                    <div className="h-[55vh] bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center relative">
+                    <div className="h-[55vh] bg-gradient-to-br from-orange-400 to-orange-500 flex items-end justify-center relative pt-20 pb-8">
                         <img 
                             src={Intro} 
                             alt="Introducción" 
-                            className={`w-full max-w-xs sm:max-w-sm object-contain mt-12 transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                            className={`w-full max-w-xs sm:max-w-sm object-contain transition-all duration-700 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
                         />
                     </div>
 
