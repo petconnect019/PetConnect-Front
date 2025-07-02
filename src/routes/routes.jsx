@@ -147,7 +147,7 @@ export const routes = createBrowserRouter([
   },
   {
     path: '/ecommerce',
-    element: <ProtectRoute><Ecommerce /></ProtectRoute>,
+    element: <Ecommerce />,
   },
   {
     path: '/check-protection',

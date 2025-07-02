@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavButton } from '../../Components/NavButton/NavButton';
-import { ButtonPrimary } from '../../Components/Buttons/ButtonPrimary';
+import { useAuth } from '../../Contexts/AuthContext/AuthContext';
 import ImageQR from '../../assets/images/Tag1.jpg';
 import ImageQR2 from '../../assets/images/Tag2.jpg';
-import CrownImg from '../../assets/images/Crown.png';
 import { FaShieldAlt, FaCheckCircle, FaTruck, FaChevronLeft, FaChevronRight, FaStar, FaHeadset, FaCreditCard, FaTimes } from 'react-icons/fa';
 
 export const Ecommerce = () => {
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
     const [currentImage, setCurrentImage] = useState(0);
     const [showPopup, setShowPopup] = useState(false);
     const images = [ImageQR, ImageQR2];
@@ -177,11 +177,19 @@ export const Ecommerce = () => {
 
                             {/* Call to Action */}
                             <div className="space-y-3 pt-4">
-                                <ButtonPrimary 
-                                    path="/payment/shop" 
-                                    text="Comprar Ahora" 
-                                    className="w-full py-3 text-base font-medium rounded-xl"
-                                />
+                                <button
+                                    onClick={() => {
+                                        if (!isAuthenticated) {
+                                            localStorage.setItem('redirectAfterLogin', '/payment/shop');
+                                            navigate('/login');
+                                        } else {
+                                            navigate('/payment/shop');
+                                        }
+                                    }}
+                                    className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 rounded-xl text-base font-medium hover:opacity-90 transition-all"
+                                >
+                                    Comprar Ahora
+                                </button>
                             </div>
 
                             {/* Trust Elements */}
