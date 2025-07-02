@@ -38,8 +38,10 @@ class GoogleCalendarService {
 
   storeAuth(token) {
     try {
+      // Si se pasa un token de respuesta, pero preferimos guardar el token interno de gapi si existe
+      const tokenToStore = this.gapi?.client?.getToken() || token;
       // Guardar token y tiempo de expiración (1 hora desde ahora)
-      localStorage.setItem('gapi_token', JSON.stringify(token));
+      localStorage.setItem('gapi_token', JSON.stringify(tokenToStore));
       localStorage.setItem('gapi_token_expiry', new Date().getTime() + 3600000);
       this.isAuthenticated = true;
     } catch (error) {
@@ -81,6 +83,22 @@ class GoogleCalendarService {
               apiKey: apiKey,
               discoveryDocs: [DISCOVERY_DOC],
             });
+
+            // Restaurar token si existe en storage y no ha expirado
+            const storedToken = localStorage.getItem('gapi_token');
+            const tokenExpiry = localStorage.getItem('gapi_token_expiry');
+            if (storedToken && tokenExpiry && new Date().getTime() < parseInt(tokenExpiry)) {
+              try {
+                const parsedToken = JSON.parse(storedToken);
+                this.gapi.client.setToken(parsedToken);
+                this.isAuthenticated = true;
+                console.log('Token restaurado desde almacenamiento local');
+              } catch (err) {
+                console.error('Error parsing stored token:', err);
+                this.clearStoredAuth();
+              }
+            }
+
             resolve();
           } catch (error) {
             reject(error);
