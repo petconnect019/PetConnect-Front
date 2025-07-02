@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { VetDocumentsSection } from '../../Components/VetDocumentsSection';
 import { CalendarIntegration } from '../../Components/CalendarIntegration/CalendarIntegration';
 import { usePet } from '../../Contexts/PetContext/PetContext';
+import { useHasPetsUser } from '../../Contexts/HasPetsUser/HasPetsUser';
+import { useFetchPets } from '../../Hooks/useFetchPets/useFetchPets';
 
 export const HealthManagement = () => {
   const navigate = useNavigate();
@@ -10,6 +12,10 @@ export const HealthManagement = () => {
   const initialTab = searchParams.get('tab') || 'documents';
   const [activeTab, setActiveTab] = useState(initialTab);
   const { petList } = usePet();
+  const { hasPetsUser } = useHasPetsUser();
+
+  // Obtener mascotas si no están en contexto (persistencia tras reload)
+  useFetchPets(hasPetsUser);
 
   // Actualizar URL cuando cambie la pestaña
   useEffect(() => {
