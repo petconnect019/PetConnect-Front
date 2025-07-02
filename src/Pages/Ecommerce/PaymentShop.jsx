@@ -349,13 +349,13 @@ export const PaymentShop = () => {
     }, []);
 
     return (
-        <div className='w-auto flex flex-col items-center justify-center'>
-            <div className='w-screen bg-white p-4 sm:p-6 md:p-8'>
+        <div className="min-h-screen bg-gray-50 flex items-start justify-center py-10">
+            <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-6 sm:p-8">
                 <NavButton onClick={() => navigate('/Ecommerce')} />
                 <div className="text-left space-y-4">
                     <div className="bg-white p-4">
                         <div className="border-b border-gray-200 pb-4 mb-4">
-                            <h2 className='text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-5xl 3xl:text-5xl 4xl:text-5xl font-bold text-gray-800'>QR personalizado para tu mascota</h2>
+                            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">QR personalizado para tu mascota</h2>
                         </div>
                         <div className="space-y-4">
                             <ul className="list-none pl-0 space-y-3">
