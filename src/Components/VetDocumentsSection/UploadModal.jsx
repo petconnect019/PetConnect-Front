@@ -11,7 +11,10 @@ export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
   const [file, setFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [fileError, setFileError] = useState('');
   const fileInputRef = useRef(null);
+
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
   const documentTypes = [
     { id: 'medical', label: 'Examen Médico', icon: '📋', color: 'blue' },
@@ -36,15 +39,27 @@ export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
+    setFileError('');
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
+      const droppedFile = e.dataTransfer.files[0];
+      if (droppedFile.size > MAX_FILE_SIZE) {
+        setFileError('El archivo supera el límite de 10 MB. Selecciona uno más ligero.');
+        return;
+      }
+      setFile(droppedFile);
     }
   };
 
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      setFileError('');
+      const selectedFile = e.target.files[0];
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        setFileError('El archivo supera el límite de 10 MB. Selecciona uno más ligero.');
+        return;
+      }
+      setFile(selectedFile);
     }
   };
 
@@ -247,6 +262,9 @@ export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
                   </p>
                 </div>
               )}
+              {fileError && (
+                <p className="text-xs text-red-500 mt-2">{fileError}</p>
+              )}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -283,7 +301,7 @@ export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
             </button>
             <button
               type="submit"
-              disabled={!title || !date || isUploading}
+              disabled={!title || !date || isUploading || fileError}
               className="flex-1 px-4 py-3 bg-brand text-white rounded-xl hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
             >
               {isUploading ? (
