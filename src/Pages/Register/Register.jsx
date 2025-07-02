@@ -159,7 +159,7 @@ export const Register = () => {
           >
             <div className="sm:p-4 md:p-6 lg:p-8 2xl:p-2 xl:p-2 w-auto">
                 <div className="mb-6 pl-2">
-                  <NavButton onClick={() => navigate(-1)} />
+                  <NavButton onClick={() => navigate("/welcome")} />
                 </div>
                 <header className="mb-4 2xl:mb-2 sm:mb-6 text-left ml-2 xl:mb-2">
                   <h2
