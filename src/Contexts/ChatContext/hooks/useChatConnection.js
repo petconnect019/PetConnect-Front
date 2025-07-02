@@ -31,7 +31,7 @@ export const useChatConnection = (isAuthenticated, user) => {
     }
 
     try {
-      const token = sessionStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         throw new Error('Token de acceso no encontrado');
       }

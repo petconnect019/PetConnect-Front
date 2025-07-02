@@ -67,7 +67,7 @@ export const useFetchUserProfile = () => {
     window.dispatchEvent(event);
   };
 
-  // Función para guardar datos en localStorage y sessionStorage
+  // Función para guardar datos en localStorage y localStorage
   const saveUserData = (userData) => {
     try {
       const normalizedData = normalizeUserData(userData);
@@ -83,7 +83,7 @@ export const useFetchUserProfile = () => {
       
       // Guardar en ambos almacenamientos
       localStorage.setItem("userData", JSON.stringify(normalizedData));
-      sessionStorage.setItem("userData", JSON.stringify(normalizedData));
+      localStorage.setItem("userData", JSON.stringify(normalizedData));
       
       // Notificar que los datos han cambiado
       notifyUserDataChange();
@@ -100,16 +100,16 @@ export const useFetchUserProfile = () => {
   // Función para obtener datos del almacenamiento
   const getStoredUserData = () => {
     try {
-      // Primero intentamos obtener de sessionStorage
-      let storedData = sessionStorage.getItem("userData");
+      // Primero intentamos obtener de localStorage
+      let storedData = localStorage.getItem("userData");
       
-      // Si no hay datos en sessionStorage, intentamos con localStorage
+      // Si no hay datos en localStorage, intentamos con localStorage
       if (!storedData) {
         storedData = localStorage.getItem("userData");
         
-        // Si encontramos datos en localStorage, los restauramos en sessionStorage
+        // Si encontramos datos en localStorage, los restauramos en localStorage
         if (storedData) {
-          sessionStorage.setItem("userData", storedData);
+          localStorage.setItem("userData", storedData);
         }
       }
       
@@ -208,7 +208,7 @@ export const useFetchUserProfile = () => {
       }
 
       // Si no hay datos almacenados o es una actualización forzada, hacemos la llamada a la API
-      let token = sessionStorage.getItem("accessToken");
+      let token = localStorage.getItem("accessToken");
       
       if (!token) {
         throw new Error("No hay token de acceso disponible");
@@ -217,7 +217,7 @@ export const useFetchUserProfile = () => {
       if (isTokenExpired(token)) {
         try {
           await FetchRefreshToken();
-          token = sessionStorage.getItem("accessToken");
+          token = localStorage.getItem("accessToken");
         } catch (refreshError) {
           throw new Error("Error de autenticación");
         }

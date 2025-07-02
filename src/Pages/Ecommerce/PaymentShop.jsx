@@ -38,7 +38,7 @@ export const PaymentShop = () => {
     // Cargar datos del usuario existente
     useEffect(() => {
         const loadUserData = () => {
-            const userData = sessionStorage.getItem('userData');
+            const userData = localStorage.getItem('userData');
             if (userData) {
                 try {
                     const parsedUserData = JSON.parse(userData);
@@ -85,7 +85,7 @@ export const PaymentShop = () => {
 
     useEffect(() => {
         const checkSession = async () => {
-            const token = sessionStorage.getItem('accessToken');
+            const token = localStorage.getItem('accessToken');
             if (!token || await isTokenExpired(token)) {
                 try {
                     const newToken = await FetchRefreshToken();
@@ -164,7 +164,7 @@ export const PaymentShop = () => {
         setError(null);
 
         try {
-            const token = sessionStorage.getItem('accessToken');
+            const token = localStorage.getItem('accessToken');
             if (!token || await isTokenExpired(token)) {
                 throw new Error('Sesión expirada');
             }
@@ -201,9 +201,9 @@ export const PaymentShop = () => {
             
             if (data.success) {
                 setOrderCreated(true);
-                sessionStorage.setItem('currentOrderId', data.order._id);
-                // Guardar la cantidad en sessionStorage
-                sessionStorage.setItem('orderQuantity', quantity.toString());
+                localStorage.setItem('currentOrderId', data.order._id);
+                // Guardar la cantidad en localStorage
+                localStorage.setItem('orderQuantity', quantity.toString());
             } else {
                 throw new Error(data.message || 'Error al crear la orden');
             }
@@ -237,18 +237,18 @@ export const PaymentShop = () => {
 
     const handlePayWithEpayco = useCallback(async () => {
         try {
-            const orderId = sessionStorage.getItem('currentOrderId');
+            const orderId = localStorage.getItem('currentOrderId');
             if (!orderId) {
                 throw new Error('No se encontró la orden');
             }
 
-            const token = sessionStorage.getItem('accessToken');
+            const token = localStorage.getItem('accessToken');
             if (!token || await isTokenExpired(token)) {
                 throw new Error('Sesión expirada');
             }
 
-            // Obtener la cantidad guardada en sessionStorage
-            const savedQuantity = parseInt(sessionStorage.getItem('orderQuantity'));
+            // Obtener la cantidad guardada en localStorage
+            const savedQuantity = parseInt(localStorage.getItem('orderQuantity'));
             if (isNaN(savedQuantity) || savedQuantity < 1) {
                 throw new Error('Cantidad inválida');
             }

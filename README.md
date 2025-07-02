@@ -115,7 +115,7 @@ Los hooks personalizados encapsulan la lógica de negocio y las operaciones con 
 
 1. El usuario puede registrarse a través de `Register.jsx` o iniciar sesión desde `Login.jsx`
 2. Se admite inicio de sesión tradicional con correo/contraseña o a través de Google
-3. Tras la autenticación exitosa, se almacena el token en `sessionStorage`
+3. Tras la autenticación exitosa, se almacena el token en `localStorage`
 4. El hook `isTokenExpired` verifica la validez del token y `FetchRefreshToken` lo actualiza cuando es necesario
 
 ### Gestión de Mascotas
@@ -201,7 +201,7 @@ yarn preview
 
 ## Consideraciones para el Mantenimiento
 
-- Los tokens de autenticación se gestionan en el sessionStorage
+- Los tokens de autenticación se gestionan en el localStorage
 - La renovación de tokens se maneja automáticamente con `FetchRefreshToken`
 - Todas las peticiones a la API están centralizadas en los archivos de la carpeta Utils/Fetch
 - Los estilos se gestionan principalmente con Tailwind CSS y algunos componentes tienen CSS propio

@@ -3,7 +3,7 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 // Obtener todas las conversaciones del usuario
 export const fetchGetConversations = async () => {
   try {
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     if (!token) {
       throw new Error('No hay token disponible');
     }
@@ -32,7 +32,7 @@ export const fetchGetConversations = async () => {
 // Obtener los mensajes de una conversación
 export const fetchGetMessages = async (chatId) => {
   try {
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     if (!token) {
       throw new Error('No hay token disponible');
     }
@@ -61,7 +61,7 @@ export const fetchGetMessages = async (chatId) => {
 // Enviar un mensaje
 export const fetchSendMessage = async (chatId, content) => {
   try {
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     if (!token) {
       throw new Error('No hay token disponible');
     }
@@ -91,7 +91,7 @@ export const fetchSendMessage = async (chatId, content) => {
 // Crear una nueva conversación
 export const fetchCreateConversation = async (recipientId) => {
   try {
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     if (!token) {
       throw new Error('No hay token disponible');
     }

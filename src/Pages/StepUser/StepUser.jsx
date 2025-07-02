@@ -28,7 +28,7 @@ export const StepUser = () => {
     // Obtener datos iniciales del usuario
     useEffect(() => {
         const loadUserData = () => {
-            const storedUserData = sessionStorage.getItem("userData");
+            const storedUserData = localStorage.getItem("userData");
             if (storedUserData) {
                 try {
                     const userData = JSON.parse(storedUserData);
@@ -63,7 +63,7 @@ export const StepUser = () => {
         // Cargar datos al montar el componente
         loadUserData();
 
-        // Agregar listener para cambios en sessionStorage
+        // Agregar listener para cambios en localStorage
         const handleStorageChange = (e) => {
             if (e.key === "userData") {
                 loadUserData();

@@ -117,11 +117,11 @@ export const Login = () => {
         changeHasPetsUser(true);
       }
       
-      // Check if there's a redirect URL saved in sessionStorage
-      const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+      // Check if there's a redirect URL saved in localStorage
+      const redirectUrl = localStorage.getItem('redirectAfterLogin');
       if (redirectUrl) {
-        // Clear the redirect URL from sessionStorage
-        sessionStorage.removeItem('redirectAfterLogin');
+        // Clear the redirect URL from localStorage
+        localStorage.removeItem('redirectAfterLogin');
         // Navigate to the saved URL
         navigate(redirectUrl);
       } else {

@@ -141,7 +141,7 @@ export const PublicUserProfile = () => {
   const handleContactUser = () => {
     if (!isAuthenticated) {
       // Redirect to login if not authenticated
-      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+      localStorage.setItem('redirectAfterLogin', window.location.pathname);
       navigate('/login');
       return;
     }
@@ -160,7 +160,7 @@ export const PublicUserProfile = () => {
   const handleSendMessage = async () => {
     if (!isAuthenticated) {
       setShowMessageModal(false);
-      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+      localStorage.setItem('redirectAfterLogin', window.location.pathname);
       navigate('/login');
       return;
     }
@@ -177,7 +177,7 @@ export const PublicUserProfile = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         },
         body: JSON.stringify({ initialMessage: messageToSend })
       });

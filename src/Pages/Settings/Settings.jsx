@@ -20,7 +20,7 @@ export const Settings = () => {
   };
   
   const handleProfile = () => {
-    const storedUserData = JSON.parse(sessionStorage.getItem("userData"));
+    const storedUserData = JSON.parse(localStorage.getItem("userData"));
     if (storedUserData) {
       const userId = storedUserData._id || (storedUserData._doc && storedUserData._doc._id);
       if (userId) {

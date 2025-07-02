@@ -105,11 +105,11 @@ export const Register = () => {
       
       // Usar fetchUserProfile para normalizar los datos del usuario de Google
       fetchUserProfile().then(() => {
-        // Check for redirect URL in sessionStorage
-        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+        // Check for redirect URL in localStorage
+        const redirectUrl = localStorage.getItem('redirectAfterLogin');
         if (redirectUrl) {
           // Clear the redirect URL
-          sessionStorage.removeItem('redirectAfterLogin');
+          localStorage.removeItem('redirectAfterLogin');
           // Navigate to the saved URL
           navigate(redirectUrl);
         } else {

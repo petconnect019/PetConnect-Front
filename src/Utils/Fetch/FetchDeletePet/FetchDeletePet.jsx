@@ -5,7 +5,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const fetchDeletePet = async (petId) => {
     try {
-        let token = sessionStorage.getItem('accessToken');
+        let token = localStorage.getItem('accessToken');
         
         if (!token) {
             throw new Error('No se encontró el token de autenticación');
@@ -15,7 +15,7 @@ export const fetchDeletePet = async (petId) => {
         if (isTokenExpired(token)) {
             try {
                 await FetchRefreshToken();
-                token = sessionStorage.getItem('accessToken');
+                token = localStorage.getItem('accessToken');
             } catch (refreshError) {
                 throw new Error('Error de autenticación: ' + refreshError.message);
             }

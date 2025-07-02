@@ -14,7 +14,7 @@ export const useFetchPetPhotos = () => {
     setPhotosState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${petId}/photos`, {
         method: 'GET',
@@ -119,7 +119,7 @@ export const useFetchPetPhotos = () => {
     }));
 
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       const formData = new FormData();
       
       // Agregar cada archivo al FormData
@@ -184,7 +184,7 @@ export const useFetchPetPhotos = () => {
     setPhotosState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${petId}/photos/${photoId}`, {
         method: 'DELETE',

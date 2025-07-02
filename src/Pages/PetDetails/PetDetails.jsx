@@ -42,8 +42,8 @@ export const PetDetails = () => {
   }
 
   useEffect(() => {
-    // Obtener datos del usuario del sessionStorage
-    const storedUserData = sessionStorage.getItem("userData");
+    // Obtener datos del usuario del localStorage
+    const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
       try {
         const parsedData = JSON.parse(storedUserData);
@@ -137,7 +137,7 @@ export const PetDetails = () => {
 
   const handleReportLost = async () => {
     try {
-      let token = sessionStorage.getItem("accessToken");
+      let token = localStorage.getItem("accessToken");
       
       const formData = new FormData();
       formData.append('name', pet.name);
@@ -176,7 +176,7 @@ export const PetDetails = () => {
 
   const handleMarkAsFound = async () => {
     try {
-      let token = sessionStorage.getItem("accessToken");
+      let token = localStorage.getItem("accessToken");
       
       const formData = new FormData();
       formData.append('name', pet.name);

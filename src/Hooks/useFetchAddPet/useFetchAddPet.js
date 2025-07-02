@@ -20,13 +20,13 @@ export const useFetchAddPet = () => {
 
     try {
       // Get the token from session storage
-      let token = sessionStorage.getItem("accessToken");
+      let token = localStorage.getItem("accessToken");
 
       // Check if token is expired and refresh if needed
       if (isTokenExpired(token)) {
         try {
           await FetchRefreshToken();
-          token = sessionStorage.getItem("accessToken");
+          token = localStorage.getItem("accessToken");
         } catch (refreshError) {
           console.log(refreshError);
           setAddPetState((prev)=> ({...prev, error: refreshError, isLoading: false }))

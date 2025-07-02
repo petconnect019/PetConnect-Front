@@ -125,7 +125,7 @@ export const ChatProvider = ({ children }) => {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ initialMessage })

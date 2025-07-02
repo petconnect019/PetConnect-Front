@@ -18,7 +18,7 @@ export const ProfileSection = ({ navigate }) => {
             setIsLoading(true);
             
             // Obtenemos el token de acceso
-            const token = sessionStorage.getItem("accessToken");
+            const token = localStorage.getItem("accessToken");
             if (!token) {
                 throw new Error("No hay token de acceso disponible");
             }
@@ -47,8 +47,8 @@ export const ProfileSection = ({ navigate }) => {
             if (profileData) {
                 setUserData(profileData);
                 
-                // También guardamos en sessionStorage para mantener consistencia
-                sessionStorage.setItem("userData", JSON.stringify(profileData));
+                // También guardamos en localStorage para mantener consistencia
+                localStorage.setItem("userData", JSON.stringify(profileData));
                 
                 setIsLoading(false);
             } else {

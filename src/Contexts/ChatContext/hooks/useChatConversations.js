@@ -40,7 +40,7 @@ export const useChatConversations = () => {
 
       const response = await fetch(`${config.api}/api/chat?${queryParams}`, {
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
         }
       });

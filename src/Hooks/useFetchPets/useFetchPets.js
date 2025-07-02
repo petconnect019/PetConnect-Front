@@ -15,11 +15,11 @@ export const useFetchPets = (hasPetsUser) => {
         console.log("entra");
         
         const fetchData = async () => {
-            let token = sessionStorage.getItem('accessToken');
+            let token = localStorage.getItem('accessToken');
             if (isTokenExpired(token)) {
                 try {
                     await FetchRefreshToken();
-                    token = sessionStorage.getItem('accessToken');
+                    token = localStorage.getItem('accessToken');
                 } catch (error) {
                     console.error("Error al refrescar el token:", error);
                     return;

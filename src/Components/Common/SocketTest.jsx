@@ -10,10 +10,10 @@ const SocketTest = () => {
     setTestResult('🔄 Iniciando test de conexión socket...\n');
     
     const serverUrl = 'https://petconnect-backend-production.up.railway.app';
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     
     if (!token) {
-      setTestResult(prev => prev + '❌ No se encontró token en sessionStorage\n');
+      setTestResult(prev => prev + '❌ No se encontró token en localStorage\n');
       setIsTesting(false);
       return;
     }

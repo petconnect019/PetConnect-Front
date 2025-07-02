@@ -14,7 +14,7 @@ export const useFetchScans = (pet_id) => {
             setError(null);
             
             try {
-                const token = sessionStorage.getItem('accessToken');
+                const token = localStorage.getItem('accessToken');
                 if (!token) {
                     throw new Error('No hay token de acceso');
                 }

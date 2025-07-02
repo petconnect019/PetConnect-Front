@@ -69,7 +69,7 @@ export const CheckProtection = () => {
     
     setIsLoadingScans(true);
     try {
-      const token = sessionStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         console.error('No hay token de acceso');
         return;

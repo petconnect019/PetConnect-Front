@@ -6,7 +6,7 @@ export const HasPetsUserProvider = ({ children }) => {
     const [hasPetsUser, setHasPetsUser] = useState(false);
 
     useEffect(() => {
-        const hasPets = sessionStorage.getItem("hasPets");
+        const hasPets = localStorage.getItem("hasPets");
         if (hasPets) {
             setHasPetsUser(true);
         }
@@ -14,7 +14,7 @@ export const HasPetsUserProvider = ({ children }) => {
 
     const changeHasPetsUser = (bool) => {
         setHasPetsUser(bool);
-        sessionStorage.setItem("hasPets", bool);
+        localStorage.setItem("hasPets", bool);
     };
 
     return (

@@ -17,12 +17,12 @@ export const useFetchUpdateUser = () => {
         setIsSuccess(false);
 
         try {
-            let token = sessionStorage.getItem('accessToken');
+            let token = localStorage.getItem('accessToken');
 
             if (!token || isTokenExpired(token)) {
                 try {
                     await FetchRefreshToken();
-                    token = sessionStorage.getItem('accessToken');
+                    token = localStorage.getItem('accessToken');
                 } catch (error) {
                     console.log("Error al refrescar el token:", error);
                     setError("Error al refrescar el token");

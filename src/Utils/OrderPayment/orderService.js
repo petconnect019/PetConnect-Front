@@ -9,7 +9,7 @@ class OrderService {
             console.log('URL de la API:', `${API_URL}/api/orders`);
             console.log('Datos de la orden:', orderData);
             
-            const token = sessionStorage.getItem('accessToken');
+            const token = localStorage.getItem('accessToken');
             if (!token) {
                 throw new Error('No hay token de autenticación');
             }
@@ -37,7 +37,7 @@ class OrderService {
 
     static async confirmOrder(orderId, paymentData) {
         try {
-            const token = sessionStorage.getItem('accessToken');
+            const token = localStorage.getItem('accessToken');
             if (!token) {
                 throw new Error('No hay token de autenticación');
             }
@@ -80,7 +80,7 @@ class OrderService {
 
     static async updatePaymentStatus(orderId, status) {
         try {
-            const token = sessionStorage.getItem('accessToken');
+            const token = localStorage.getItem('accessToken');
             if (!token) {
                 throw new Error('No hay token de autenticación');
             }
@@ -108,7 +108,7 @@ class OrderService {
 
     static async getOrderById(orderId) {
         try {
-            const token = sessionStorage.getItem('accessToken');
+            const token = localStorage.getItem('accessToken');
             if (!token) {
                 throw new Error('No hay token de autenticación');
             }
@@ -133,7 +133,7 @@ class OrderService {
 
     static async getUserOrders() {
         try {
-            const token = sessionStorage.getItem('accessToken');
+            const token = localStorage.getItem('accessToken');
             if (!token) {
                 throw new Error('No hay token de autenticación');
             }

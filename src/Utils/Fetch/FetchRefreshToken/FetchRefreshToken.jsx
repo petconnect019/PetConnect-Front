@@ -14,12 +14,12 @@ export const FetchRefreshToken = async ()=> {
         }
 
         const data = await response.json();
-        sessionStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('accessToken', data.accessToken);
         return data.accessToken;
 
     } catch (error) {
         console.error('Error en refreshToken:', error);
-        sessionStorage.removeItem('accessToken');
+        localStorage.removeItem('accessToken');
         throw error;
     }
 }

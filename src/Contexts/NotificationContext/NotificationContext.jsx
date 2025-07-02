@@ -42,7 +42,7 @@ export const NotificationProvider = ({ children }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications?${queryParams}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
         }
       });
@@ -97,7 +97,7 @@ export const NotificationProvider = ({ children }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/unread-count`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
         }
       });
@@ -123,7 +123,7 @@ export const NotificationProvider = ({ children }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/stats`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
         }
       });
@@ -147,7 +147,7 @@ export const NotificationProvider = ({ children }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/${notificationId}/read`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
         }
       });
@@ -178,7 +178,7 @@ export const NotificationProvider = ({ children }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/read-all`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
         }
       });
@@ -209,7 +209,7 @@ export const NotificationProvider = ({ children }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/${notificationId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
         }
       });
@@ -244,7 +244,7 @@ export const NotificationProvider = ({ children }) => {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({

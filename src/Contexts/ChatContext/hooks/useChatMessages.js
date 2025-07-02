@@ -68,7 +68,7 @@ export const useChatMessages = () => {
         `${config.api}/api/chat/${chatId}/messages?${queryParams}`,
         {
           headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'Content-Type': 'application/json'
           }
         }
@@ -129,7 +129,7 @@ export const useChatMessages = () => {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(messageData)
@@ -193,7 +193,7 @@ export const useChatMessages = () => {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ messageIds })

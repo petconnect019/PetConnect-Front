@@ -121,7 +121,7 @@ export const UserProfileConfig = () => {
     console.log("Respuesta del backend:", response);
 
     if (response.success) {
-      // Actualizamos los datos en sessionStorage
+      // Actualizamos los datos en localStorage
       const updatedUserData = {
         ...userData,
         name: dataForm.name,
@@ -134,7 +134,7 @@ export const UserProfileConfig = () => {
         address: address,
         profile_picture: response.data?.profile_picture || userData.profile_picture
       };
-      sessionStorage.setItem("userData", JSON.stringify(updatedUserData));
+      localStorage.setItem("userData", JSON.stringify(updatedUserData));
       setModalOpen(true);
     } else {
       console.error("Error en la actualización:", response.error);

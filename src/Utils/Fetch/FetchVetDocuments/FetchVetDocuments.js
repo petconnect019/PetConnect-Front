@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 // Función base para hacer peticiones con manejo de errores
 const fetchWithAuth = async (url, options = {}) => {
     try {
-        let token = sessionStorage.getItem('accessToken');
+        let token = localStorage.getItem('accessToken');
         
         if (!token) {
             throw new Error('Token no proporcionado');
@@ -16,7 +16,7 @@ const fetchWithAuth = async (url, options = {}) => {
         if (isTokenExpired(token)) {
             try {
                 await FetchRefreshToken();
-                token = sessionStorage.getItem('accessToken');
+                token = localStorage.getItem('accessToken');
             } catch (error) {
                 throw new Error('Error al refrescar el token');
             }
