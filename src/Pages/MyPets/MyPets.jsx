@@ -12,8 +12,7 @@ import { BiHeart } from "react-icons/bi";
 
 export const MyPets = () => {
     const navigate = useNavigate();
-    const pets = usePet();
-    const { petList, removePet } = pets ?? {};
+    const { petList = [], removePet } = usePet() ?? { petList: [], removePet: () => {} };
     
     const [deleteModal, setDeleteModal] = useState({
         isOpen: false,
@@ -26,7 +25,7 @@ export const MyPets = () => {
         e.stopPropagation();
         setDeleteModal({
             isOpen: true,
-            petId: pet.id,
+            petId: pet._id,
             petName: pet.name,
             isLoading: false
         });
@@ -93,14 +92,14 @@ export const MyPets = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                             {petList.map((pet, index) => (
                                 <div
-                                    key={index + pet.id}
-                                    onClick={() => navigate(`/pet-details/${pet.id}`)}
+                                    key={pet._id || index}
+                                    onClick={() => navigate(`/pet-profile/${pet._id}`)}
                                     className="group relative bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-100 overflow-hidden"
                                 >
                                     {/* Action Buttons */}
                                     <div className="absolute top-3 right-3 z-10 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                         <button
-                                            onClick={(e) => handleEditClick(e, pet.id)}
+                                            onClick={(e) => handleEditClick(e, pet._id)}
                                             className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
                                         >
                                             <AiOutlineEdit className="w-4 h-4 text-gray-600" />
