@@ -313,7 +313,12 @@ export const Register = () => {
                     "
                       >
                         Aceptar{" "}
-                        <Link to="/terms-and-conditions" className="text-brand hover:underline">
+                        <Link 
+                          to="/terms-and-conditions" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-brand hover:underline"
+                        >
                           Términos & Condiciones
                         </Link>{" "}
                         de PetConnect.
