@@ -243,12 +243,12 @@ export const CalendarIntegration = () => {
 
   if (showCreateForm) {
     return (
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-800">Nueva Cita Veterinaria</h3>
+      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800">Nueva Cita Veterinaria</h3>
           <button
             onClick={() => setShowCreateForm(false)}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-gray-400 hover:text-gray-600 p-1"
           >
             ✕
           </button>
@@ -288,7 +288,7 @@ export const CalendarIntegration = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Fecha
@@ -341,18 +341,18 @@ export const CalendarIntegration = () => {
             />
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
             <button
               type="button"
               onClick={() => setShowCreateForm(false)}
-              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors duration-150"
+              className="order-2 sm:order-1 sm:flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors duration-150"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-sm font-medium transition-colors duration-150 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="order-1 sm:order-2 sm:flex-1 px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-sm font-medium transition-colors duration-150 disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -373,29 +373,29 @@ export const CalendarIntegration = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Connection Status & Create Button */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-            <span className="text-gray-700">
+      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+            <span className="text-sm sm:text-base text-gray-700">
               {isConnected ? 'Conectado a Google Calendar' : 'No conectado'}
             </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {isConnected && (
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 flex items-center gap-2"
+                className="flex-1 sm:flex-none bg-brand hover:bg-brand-dark text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 flex items-center justify-center gap-2"
               >
                 <span>➕</span>
-                Nueva Cita
+                <span className="sm:inline">Nueva Cita</span>
               </button>
             )}
             <button
               onClick={isConnected ? disconnectFromGoogleCalendar : connectToGoogleCalendar}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+              className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
                 isConnected
                   ? 'bg-red-50 text-red-600 hover:bg-red-100'
                   : 'bg-brand text-white hover:bg-brand-dark'
@@ -411,12 +411,12 @@ export const CalendarIntegration = () => {
       {isConnected && (
         <>
           {/* Events List */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-gray-800">Próximos Eventos</h3>
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800">Próximos Eventos</h3>
               <button
                 onClick={loadCalendarEvents}
-                className="text-sm text-brand hover:text-brand-dark transition-colors duration-150"
+                className="text-xs sm:text-sm text-brand hover:text-brand-dark transition-colors duration-150"
                 disabled={loading}
               >
                 Actualizar
@@ -424,28 +424,28 @@ export const CalendarIntegration = () => {
             </div>
 
             {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+              <div className="flex items-center justify-center py-8 sm:py-12">
+                <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-brand"></div>
               </div>
             ) : getCombinedEvents().length === 0 ? (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">📅</span>
+              <div className="text-center py-8 sm:py-12">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <span className="text-xl sm:text-2xl">📅</span>
                 </div>
                 <h4 className="text-gray-800 font-medium mb-2">No hay eventos programados</h4>
-                <p className="text-gray-500 text-sm mb-4">
+                <p className="text-xs sm:text-sm text-gray-500 mb-4">
                   Programa tu primera cita veterinaria
                 </p>
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 inline-flex items-center gap-2"
+                  className="bg-brand hover:bg-brand-dark text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 inline-flex items-center gap-2"
                 >
                   <span>➕</span>
                   Nueva Cita
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {getCombinedEvents().map((event) => (
                   <EventCard
                     key={event.id || event._id}
@@ -477,35 +477,35 @@ const EventCard = ({ event, onReminderToggle }) => {
   const isOverdue = event.type === 'reminder' && !event.completed && new Date(event.date) < new Date();
 
   return (
-    <div className={`rounded-xl p-4 border ${
+    <div className={`rounded-xl p-3 sm:p-4 border ${
       isOverdue 
         ? 'border-red-200 bg-red-50' 
         : event.type === 'calendar' 
           ? 'border-blue-200 bg-blue-50'
           : 'border-orange-200 bg-orange-50'
     }`}>
-      <div className="flex items-start gap-4">
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
           event.type === 'calendar' 
             ? 'bg-blue-500' 
             : isOverdue
               ? 'bg-red-500'
               : 'bg-orange-500'
         }`}>
-          <span className="text-white text-lg">
+          <span className="text-white text-base sm:text-lg">
             {event.type === 'calendar' ? '📅' : '⏰'}
           </span>
         </div>
         
         <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-gray-800 mb-1">{event.title}</h4>
-          <p className="text-sm text-gray-600">
+          <h4 className="text-sm sm:text-base font-medium text-gray-800 mb-0.5 sm:mb-1 line-clamp-2">{event.title}</h4>
+          <p className="text-xs sm:text-sm text-gray-600 line-clamp-1">
             {formatDate(event.date)}
           </p>
           
           {event.type === 'reminder' && (
-            <div className="flex items-center gap-2 mt-2">
-              <span className={`text-xs px-2 py-1 rounded-full ${
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2">
+              <span className={`text-xs px-2 py-0.5 sm:py-1 rounded-full ${
                 event.priority === 'high' 
                   ? 'bg-red-100 text-red-700'
                   : event.priority === 'medium'
@@ -516,7 +516,7 @@ const EventCard = ({ event, onReminderToggle }) => {
               </span>
               
               {isOverdue && (
-                <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">
+                <span className="text-xs px-2 py-0.5 sm:py-1 rounded-full bg-red-100 text-red-700">
                   Vencido
                 </span>
               )}
@@ -527,7 +527,7 @@ const EventCard = ({ event, onReminderToggle }) => {
         {event.type === 'reminder' && (
           <button
             onClick={() => onReminderToggle(event._id)}
-            className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors duration-150 ${
+            className={`w-5 h-5 sm:w-6 sm:h-6 rounded border-2 flex items-center justify-center transition-colors duration-150 ${
               event.completed 
                 ? 'bg-green-500 border-green-500 text-white' 
                 : 'border-gray-300 hover:border-green-500'
