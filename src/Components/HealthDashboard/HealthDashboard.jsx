@@ -140,17 +140,17 @@ export const HealthDashboard = ({ petList, navigate }) => {
         {/* Próxima Vacuna */}
         <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-sky-400/90 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-amber-400/90 rounded-lg flex items-center justify-center">
               <FaSyringe className="text-white text-sm" />
             </div>
-            <span className="text-xs font-medium text-sky-600">Próxima Vacuna</span>
+            <span className="text-xs font-medium text-amber-600">Próxima Vacuna</span>
           </div>
           {healthData.nextVaccine ? (
             <div>
               <p className="text-sm font-semibold text-gray-800 mb-1">
                 {healthData.nextVaccine.title}
               </p>
-              <p className="text-xs text-sky-600">
+              <p className="text-xs text-amber-600">
                 {getDaysUntil(healthData.nextVaccine.nextDue) > 0 
                   ? `En ${getDaysUntil(healthData.nextVaccine.nextDue)} días`
                   : 'Vencida'
@@ -165,49 +165,49 @@ export const HealthDashboard = ({ petList, navigate }) => {
         {/* Recordatorios Pendientes */}
         <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-sky-400/90 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-violet-400/90 rounded-lg flex items-center justify-center">
               <FaClock className="text-white text-sm" />
             </div>
-            <span className="text-xs font-medium text-sky-600">Recordatorios</span>
+            <span className="text-xs font-medium text-violet-600">Recordatorios</span>
           </div>
           <div>
             <p className="text-lg font-bold text-gray-800">
               {healthData.pendingReminders}
             </p>
-            <p className="text-xs text-sky-600">Pendientes</p>
+            <p className="text-xs text-violet-600">Pendientes</p>
           </div>
         </div>
 
         {/* Documentos */}
         <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-sky-400/90 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-teal-400/90 rounded-lg flex items-center justify-center">
               <FaFileMedicalAlt className="text-white text-sm" />
             </div>
-            <span className="text-xs font-medium text-sky-600">Documentos</span>
+            <span className="text-xs font-medium text-teal-600">Documentos</span>
           </div>
           <div>
             <p className="text-lg font-bold text-gray-800">
               {healthData.totalDocuments}
             </p>
-            <p className="text-xs text-sky-600">Archivados</p>
+            <p className="text-xs text-teal-600">Archivados</p>
           </div>
         </div>
 
         {/* Último Chequeo */}
         <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-sky-400/90 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-emerald-400/90 rounded-lg flex items-center justify-center">
               <FaStethoscope className="text-white text-sm" />
             </div>
-            <span className="text-xs font-medium text-sky-600">Último Chequeo</span>
+            <span className="text-xs font-medium text-emerald-600">Último Chequeo</span>
           </div>
           {healthData.lastCheckup ? (
             <div>
               <p className="text-sm font-semibold text-gray-800 mb-1">
                 {formatDate(healthData.lastCheckup.date)}
               </p>
-              <p className="text-xs text-sky-600">
+              <p className="text-xs text-emerald-600">
                 {healthData.lastCheckup.veterinary || 'Sin especificar'}
               </p>
             </div>
