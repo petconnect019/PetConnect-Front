@@ -1,47 +1,96 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoChevronForward, IoCheckmarkCircleOutline, IoLockClosedOutline, IoStarOutline, IoAlertCircleOutline, IoCloudDownloadOutline, IoSettingsOutline, IoTrashOutline, IoCheckmarkOutline, IoTimeOutline, IoNotificationsOffOutline } from 'react-icons/io5';
 import { useNotifications } from '../../Contexts/NotificationContext/NotificationContext';
 import { FooterNav } from '../../Components/FooterNav/FooterNav';
 
 const SettingsMenu = ({ isOpen, onClose, onMarkAllRead, onToggleSort, onToggleNotifications, sortOrder, notificationsEnabled }) => {
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Prevenir scroll del body cuando el menú está abierto
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-      <div className="py-1" role="menu" aria-orientation="vertical">
-        <button
-          onClick={() => {
-            onMarkAllRead();
-            onClose();
-          }}
-          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-        >
-          <IoCheckmarkOutline className="text-lg" />
-          Marcar todas como leídas
-        </button>
-        <button
-          onClick={() => {
-            onToggleSort();
-            onClose();
-          }}
-          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-        >
-          <IoTimeOutline className="text-lg" />
-          Ordenar por {sortOrder === 'asc' ? 'más antiguas' : 'más recientes'}
-        </button>
-        <button
-          onClick={() => {
-            onToggleNotifications();
-            onClose();
-          }}
-          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-        >
-          <IoNotificationsOffOutline className="text-lg" />
-          {notificationsEnabled ? 'Desactivar notificaciones' : 'Activar notificaciones'}
-        </button>
+    <>
+      {/* Overlay semi-transparente */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity" />
+      
+      {/* Menú de configuración */}
+      <div 
+        ref={menuRef}
+        className="absolute right-0 mt-2 w-72 sm:w-80 rounded-xl shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-50 transform transition-all duration-200 ease-out"
+      >
+        <div className="py-2 px-1" role="menu" aria-orientation="vertical">
+          <div className="px-3 py-2 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-800">Configuración</h3>
+          </div>
+          
+          <button
+            onClick={() => {
+              onMarkAllRead();
+              onClose();
+            }}
+            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors duration-200"
+          >
+            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+              <IoCheckmarkOutline className="text-xl text-blue-500" />
+            </div>
+            <span>Marcar todas como leídas</span>
+          </button>
+
+          <button
+            onClick={() => {
+              onToggleSort();
+              onClose();
+            }}
+            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors duration-200"
+          >
+            <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center">
+              <IoTimeOutline className="text-xl text-purple-500" />
+            </div>
+            <span>Ordenar por {sortOrder === 'asc' ? 'más antiguas' : 'más recientes'}</span>
+          </button>
+
+          <button
+            onClick={() => {
+              onToggleNotifications();
+              onClose();
+            }}
+            className="w-full text-left px-4 py-3 text-base text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors duration-200"
+          >
+            <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center">
+              <IoNotificationsOffOutline className="text-xl text-red-500" />
+            </div>
+            <div className="flex flex-col">
+              <span>{notificationsEnabled ? 'Desactivar notificaciones' : 'Activar notificaciones'}</span>
+              <span className="text-xs text-gray-500">
+                {notificationsEnabled 
+                  ? 'No recibirás nuevas notificaciones' 
+                  : 'Recibirás todas las notificaciones'}
+              </span>
+            </div>
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
