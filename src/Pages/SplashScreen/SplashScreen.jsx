@@ -12,7 +12,7 @@ export const SplashScreen = () => {
     const timer = setTimeout(() => {
       setLoading(false);
       navigate('/introduction1'); 
-    }, 800);
+    }, 1500);
     
     return () => clearTimeout(timer);
   }, [navigate]);
