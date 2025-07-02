@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoChevronForward, IoCheckmarkCircleOutline, IoLockClosedOutline, IoStarOutline, IoAlertCircleOutline, IoCloudDownloadOutline, IoSettingsOutline, IoTrashOutline, IoCheckmarkOutline, IoTimeOutline, IoNotificationsOffOutline } from 'react-icons/io5';
 import { useNotifications } from '../../Contexts/NotificationContext/NotificationContext';
-import FooterNav from '../../Components/FooterNav/FooterNav';
+import { FooterNav } from '../../Components/FooterNav/FooterNav';
 
 const SettingsMenu = ({ isOpen, onClose, onMarkAllRead, onToggleSort, onToggleNotifications, sortOrder, notificationsEnabled }) => {
   if (!isOpen) return null;
@@ -285,7 +285,7 @@ export const Notifications = () => {
           )}
         </>
       )}
-      <FooterNav />
+      <FooterNav navigate={navigate} />
     </div>
   );
 };
