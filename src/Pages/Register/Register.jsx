@@ -320,10 +320,11 @@ export const Register = () => {
                       leading-tight
                     "
                       >
-                        Aceptar Términos{" "}
-                        <span className="text-brand">
-                          & Condiciones de PetConnect.
-                        </span>
+                        Aceptar{" "}
+                        <Link to="/terms-and-conditions" className="text-brand hover:underline">
+                          Términos & Condiciones
+                        </Link>{" "}
+                        de PetConnect.
                       </label>
                     </div>
                     {errors.terms && (

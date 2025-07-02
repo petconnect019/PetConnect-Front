@@ -36,6 +36,7 @@ import { ChangePassword } from "../Pages/ChangePassword/ChangePassword";
 import {ScanQR} from '../Pages/ScanQR/ScanQR'
 import { PublicUserProfile } from "../Pages/PublicUserProfile/PublicUserProfile";
 import { HealthManagement } from '../Pages/HealthManagement/HealthManagement';
+import { TermsAndConditions } from "../Pages/TermsAndConditions/TermsAndConditions";
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -184,5 +185,9 @@ export const routes = createBrowserRouter([
         <HealthManagement />
       </ProtectRoute>
     )
-  }
+  },
+  {
+    path: "/terms-and-conditions",
+    element: <TermsAndConditions />,
+  },
 ]);
