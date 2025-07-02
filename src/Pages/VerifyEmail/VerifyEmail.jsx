@@ -25,11 +25,16 @@ export const VerifyEmail = () => {
                 if (response.ok) {
                     setVerificationStatus('success');
                     toast.success('¡Correo electrónico verificado exitosamente!');
+                    // Redirigir automáticamente después de 2 segundos
+                    setTimeout(() => {
+                        navigate('/login');
+                    }, 2000);
                 } else {
                     setVerificationStatus('error');
                     toast.error(data.message || 'Error al verificar el correo electrónico');
                 }
             } catch (error) {
+                console.error('Error durante la verificación:', error);
                 setVerificationStatus('error');
                 toast.error('Error al conectar con el servidor');
             } finally {
@@ -43,7 +48,7 @@ export const VerifyEmail = () => {
             setVerificationStatus('error');
             setIsVerifying(false);
         }
-    }, [token]);
+    }, [token, navigate]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -62,8 +67,11 @@ export const VerifyEmail = () => {
                                 <p className="text-green-600 mb-4">
                                     ¡Tu correo electrónico ha sido verificado exitosamente!
                                 </p>
+                                <p className="text-gray-600 mb-4">
+                                    Serás redirigido a la página de inicio de sesión en unos segundos...
+                                </p>
                                 <ButtonPrimary
-                                    text="Iniciar sesión"
+                                    text="Iniciar sesión ahora"
                                     onClick={() => navigate('/login')}
                                     className="w-full"
                                 />

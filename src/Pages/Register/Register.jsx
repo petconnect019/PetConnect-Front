@@ -63,18 +63,28 @@ export const Register = () => {
 
   // Form submission for regular email/password registration
   const onSubmit = async (formData) => {
-    // Crear un nuevo objeto sin el campo confirmPassword
-    const { confirmPassword, ...registerData } = formData;
-    
-    // Verificar que las contraseñas coincidan antes de registrar
-    if (formData.password === formData.confirmPassword) {
-      const result = await handleRegister(registerData);
-      if (result?.success) {
-        // Redirigir a la página de verificación pendiente solo para registro normal
-        navigate('/pending-verification', { 
-          state: { email: formData.email }
-        });
+    try {
+      // Crear un nuevo objeto sin el campo confirmPassword
+      const { confirmPassword, ...registerData } = formData;
+      
+      // Verificar que las contraseñas coincidan antes de registrar
+      if (formData.password === formData.confirmPassword) {
+        const result = await handleRegister(registerData);
+        if (result?.success) {
+          // Mostrar mensaje de éxito
+          toast.success('Registro exitoso. Por favor verifica tu correo electrónico.');
+          // Redirigir a la página de verificación pendiente solo para registro normal
+          navigate('/pending-verification', { 
+            state: { email: formData.email }
+          });
+        } else {
+          // Mostrar mensaje de error específico si existe
+          toast.error(result?.message || 'Error en el registro. Por favor intenta nuevamente.');
+        }
       }
+    } catch (error) {
+      console.error('Error durante el registro:', error);
+      toast.error('Error en el registro. Por favor intenta nuevamente.');
     }
   };
 
