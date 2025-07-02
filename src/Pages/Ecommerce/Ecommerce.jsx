@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavButton } from '../../Components/NavButton/NavButton';
-import ImageQR from '../../assets/images/medalla.png';
 import { ButtonPrimary } from '../../Components/Buttons/ButtonPrimary';
+import ImageQR from '../../assets/images/medalla.png';
 import CrownImg from '../../assets/images/Crown.png';
+import { FaShieldAlt, FaCheckCircle, FaTruck } from 'react-icons/fa';
 
 export const Ecommerce = () => {
     const navigate = useNavigate();
@@ -12,30 +13,113 @@ export const Ecommerce = () => {
         navigate('/home');
     }
 
+    const benefits = [
+        {
+            icon: <FaShieldAlt className="w-8 h-8 text-brand" />,
+            title: "Protección Garantizada",
+            description: "Sistema de seguridad avanzado para tu mascota"
+        },
+        {
+            icon: <FaCheckCircle className="w-8 h-8 text-brand" />,
+            title: "Calidad Premium",
+            description: "Materiales duraderos y resistentes al agua"
+        },
+        {
+            icon: <FaTruck className="w-8 h-8 text-brand" />,
+            title: "Envío Rápido",
+            description: "Entrega segura en todo el país"
+        }
+    ];
+
     return (
-        <div className="flex items-center justify-center h-auto">
-            <div className="flex flex-col p-4 xs:p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 2xl:p-14 3xl:p-16 4xl:p-18 w-screen items-center h-screen justify-between">
-                <div className="bg-white w-full mx-auto p-4 xs:p-5 sm:p-6 md:p-8 lg:p-10 xl:p-12 2xl:p-14 3xl:p-16 4xl:p-18 flex flex-col justify-between h-full items-center">
-                    <div className="flex flex-col items-center">
-                        <NavButton onClick={onClick} />
-                        <h1 className="mt-10 text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl 4xl:text-9xl font-bold text-center text-gray-800">
-                            Etiqueta de codigo QR para tu que tu mascota tenga una mayor proteccion
-                        </h1>
-                        
-                        <div className="flex justify-center mt-4 xs:mt-6 sm:mt-8 md:mt-10 lg:mt-12 xl:mt-14 2xl:mt-16 3xl:mt-18 4xl:mt-20">
-                            <img src={ImageQR} alt="QR PetConnect" className="w-40 xs:w-44 sm:w-48 md:w-52 lg:w-56 xl:w-60 2xl:w-64 3xl:w-68 4xl:w-72" />
+        <div className="min-h-screen bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {/* Header */}
+                <div className="flex justify-between items-center mb-8">
+                    <NavButton onClick={onClick} />
+                    <div className="flex items-center space-x-4">
+                        <span className="text-sm text-gray-600">¿Necesitas ayuda?</span>
+                        <button className="text-brand font-medium">Contactar soporte</button>
+                    </div>
+                </div>
+
+                {/* Main Content */}
+                <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
+                    {/* Product Image */}
+                    <div className="relative">
+                        <div className="bg-white rounded-2xl shadow-lg p-8 flex items-center justify-center">
+                            <img 
+                                src={ImageQR} 
+                                alt="QR PetConnect" 
+                                className="w-64 h-64 object-contain"
+                            />
+                        </div>
+                        <div className="absolute -top-4 -right-4 bg-brand text-white px-4 py-2 rounded-full text-sm font-medium">
+                            Producto destacado
                         </div>
                     </div>
-                    <div className='flex flex-col items-center gap-4 xs:gap-5 sm:gap-6 md:gap-7 lg:gap-8 xl:gap-9 2xl:gap-10 3xl:gap-11 4xl:gap-12 p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 3xl:p-9 4xl:p-10 mt-auto w-full mb-10'>
+
+                    {/* Product Info */}
+                    <div className="space-y-6">
+                        <h1 className="text-4xl font-bold text-gray-900">
+                            Etiqueta QR Premium PetConnect
+                        </h1>
+                        <p className="text-lg text-gray-600">
+                            Brinda la máxima protección a tu mascota con nuestra etiqueta QR de alta calidad. Diseñada para durar y mantener a tu compañero seguro.
+                        </p>
+                        <div className="flex items-center space-x-4">
+                            <span className="text-3xl font-bold text-gray-900">$299.00</span>
+                            <span className="text-lg text-gray-500 line-through">$399.00</span>
+                            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                25% OFF
+                            </span>
+                        </div>
+
+                        {/* Benefits */}
+                        <div className="grid grid-cols-1 gap-4 mt-8">
+                            {benefits.map((benefit, index) => (
+                                <div key={index} className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-sm">
+                                    {benefit.icon}
+                                    <div>
+                                        <h3 className="font-medium text-gray-900">{benefit.title}</h3>
+                                        <p className="text-sm text-gray-500">{benefit.description}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Call to Action */}
+                <div className="bg-white rounded-2xl shadow-lg p-8 max-w-3xl mx-auto">
+                    <div className="space-y-6">
                         <ButtonPrimary 
                             path="/payment/shop" 
-                            text="Comprar" 
-                            className="w-full max-w-md mx-auto"
+                            text="Comprar Ahora" 
+                            className="w-full py-4 text-lg font-medium"
                         />
-                        <button className='block mx-auto w-full max-w-md bg-orange-50 text-brand py-3 xs:py-3.5 sm:py-4 md:py-4.5 lg:py-5 xl:py-5 2xl:py-5.5 3xl:py-6 4xl:py-6 rounded-full text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-3xl 3xl:text-3xl 4xl:text-4xl font-medium shadow-md flex items-center justify-center gap-2'>
-                            <img className='w-5 h-5 xs:w-6 xs:h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10 3xl:w-10 3xl:h-10 4xl:w-12 4xl:h-12' src={CrownImg} alt="Crown" />
-                            Obtén bono de regalo
+                        <button className="w-full bg-orange-50 hover:bg-orange-100 transition-colors text-brand py-4 rounded-full text-lg font-medium shadow-sm flex items-center justify-center space-x-3">
+                            <img className="w-6 h-6" src={CrownImg} alt="Crown" />
+                            <span>Obtén bono de regalo especial</span>
                         </button>
+                    </div>
+
+                    {/* Trust Badges */}
+                    <div className="mt-8 pt-6 border-t border-gray-200">
+                        <div className="flex justify-center items-center space-x-8">
+                            <div className="text-center">
+                                <span className="block text-sm font-medium text-gray-900">Pago Seguro</span>
+                                <span className="text-xs text-gray-500">SSL Encryption</span>
+                            </div>
+                            <div className="text-center">
+                                <span className="block text-sm font-medium text-gray-900">Garantía</span>
+                                <span className="text-xs text-gray-500">30 días</span>
+                            </div>
+                            <div className="text-center">
+                                <span className="block text-sm font-medium text-gray-900">Soporte 24/7</span>
+                                <span className="text-xs text-gray-500">Siempre contigo</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
