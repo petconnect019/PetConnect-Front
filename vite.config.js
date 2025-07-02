@@ -46,13 +46,13 @@ export default defineConfig(({ command, mode }) => {
         workbox: {
           // Precargar todos los recursos generados y estáticos
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
-          navigateFallback: '/offline.html',
           runtimeCaching: [
             {
               urlPattern: ({ request }) => request.destination === 'document',
               handler: 'NetworkFirst',
               options: {
                 cacheName: 'html-cache',
+                networkTimeoutSeconds: 6,
                 expiration: {
                   maxEntries: 10,
                   maxAgeSeconds: 24 * 60 * 60,
