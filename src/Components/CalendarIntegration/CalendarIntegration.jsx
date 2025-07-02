@@ -6,27 +6,38 @@ import { useFetchPets } from '../../Hooks/useFetchPets/useFetchPets';
 import { useVetDocuments } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
 
 export const CalendarIntegration = () => {
-  // Obtener mascotas del context
   const { petList } = usePet();
   const { hasPetsUser } = useHasPetsUser();
   
-  // Cargar mascotas si es necesario
   useFetchPets(hasPetsUser);
   
-  // Estados principales
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
   const [reminders, setReminders] = useState([]);
   const [selectedPet, setSelectedPet] = useState(null);
   const [configError, setConfigError] = useState(null);
-  const [activeView, setActiveView] = useState('overview'); // overview, create
+  const [activeView, setActiveView] = useState('overview');
   const [error, setError] = useState(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    date: '',
+    time: '',
+    notes: '',
+    petId: '',
+    veterinary: ''
+  });
   
-  // Hook para gestionar recordatorios del backend
-  const { getReminders, toggleReminder, loading: remindersLoading } = useVetDocuments();
+  const { getReminders, toggleReminder } = useVetDocuments();
 
-  // Memoizar la función de verificación de conexión
+  useEffect(() => {
+    if (petList?.length > 0 && !selectedPet) {
+      setSelectedPet(petList[0]);
+      setFormData(prev => ({ ...prev, petId: petList[0]._id }));
+    }
+  }, [petList, selectedPet]);
+
   const checkGoogleCalendarConnection = useCallback(async () => {
     try {
       setLoading(true);
@@ -48,50 +59,15 @@ export const CalendarIntegration = () => {
     }
   }, []);
 
-  // Efecto para verificar la conexión al montar y cuando cambie petList
   useEffect(() => {
     checkGoogleCalendarConnection();
   }, [checkGoogleCalendarConnection]);
-
-  // Efecto para manejar la selección automática de mascota
-  useEffect(() => {
-    if (petList && petList.length > 0 && !selectedPet) {
-      setSelectedPet(petList[0]);
-    } else if (!petList || petList.length === 0) {
-      setSelectedPet(null);
-    }
-  }, [petList, selectedPet]);
-
-  // Cargar recordatorios cuando cambie la mascota seleccionada
-  useEffect(() => {
-    const loadReminders = async () => {
-      if (selectedPet) {
-        try {
-          const remindersData = await getReminders(selectedPet._id);
-          setReminders(remindersData || []);
-        } catch (error) {
-          console.error('Error al cargar recordatorios:', error);
-          setReminders([]);
-        }
-      }
-    };
-
-    loadReminders();
-  }, [selectedPet]);
-
-  // Log para debugging
-  useEffect(() => {
-    console.log('CalendarIntegration montado - hasPetsUser:', hasPetsUser);
-    console.log('CalendarIntegration montado - petList:', petList);
-  }, []);
 
   const loadCalendarEvents = async () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('Cargando eventos del calendario...');
       const calendarEvents = await GoogleCalendarAPI.getEvents();
-      console.log('Eventos cargados:', calendarEvents);
       setEvents(calendarEvents || []);
       
       if (selectedPet) {
@@ -110,28 +86,18 @@ export const CalendarIntegration = () => {
   const connectToGoogleCalendar = async () => {
     setLoading(true);
     try {
-      console.log('Iniciando proceso de autenticación...');
       await GoogleCalendarAPI.authenticate();
-      
-      // Verificar que realmente estamos conectados
       const connected = await GoogleCalendarAPI.isConnected();
       setIsConnected(connected);
       setConfigError(null);
       
       if (connected) {
-        console.log('Conectado exitosamente, cargando eventos...');
         await loadCalendarEvents();
         alert('¡Conectado exitosamente a Google Calendar!');
-      } else {
-        throw new Error('Falló la verificación de conexión después de autenticar');
       }
     } catch (error) {
       console.error('Error connecting to Google Calendar:', error);
-      if (error.message.includes('VITE_GOOGLE')) {
-        setConfigError(error.message);
-      } else {
-        alert(`Error al conectar con Google Calendar: ${error.message}`);
-      }
+      alert(`Error al conectar con Google Calendar: ${error.message}`);
       setIsConnected(false);
     } finally {
       setLoading(false);
@@ -149,39 +115,23 @@ export const CalendarIntegration = () => {
     }
   };
 
-  const createVetAppointment = async (appointmentData) => {
+  const handleCreateEvent = async (e) => {
+    e.preventDefault();
     setLoading(true);
+    
     try {
-      console.log('Creando cita veterinaria...', appointmentData);
-      console.log('Mascota seleccionada:', selectedPet);
-      
-      // Verificar que estamos autenticados
-      if (!isConnected) {
-        throw new Error('No estás conectado a Google Calendar. Por favor conecta primero.');
-      }
+      const dateTime = new Date(`${formData.date}T${formData.time}`);
+      const endDateTime = new Date(dateTime.getTime() + 60 * 60 * 1000); // 1 hora después
 
-      // Verificar que hay una mascota seleccionada
-      if (!selectedPet || !selectedPet.name) {
-        throw new Error('Por favor selecciona una mascota antes de crear la cita.');
-      }
-
-      const petName = selectedPet.name;
-      const petIcon = selectedPet.species === 'dog' ? '🐕' : '🐱';
-
-      // Asegurar formato correcto de fecha/hora
-      const startDateTime = new Date(appointmentData.datetime);
-      const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000); // +1 hora
-
-      // Verificar que las fechas son válidas
-      if (isNaN(startDateTime.getTime()) || isNaN(endDateTime.getTime())) {
-        throw new Error('Fecha/hora inválida. Por favor verifica la fecha seleccionada.');
-      }
+      const selectedPetData = petList.find(pet => pet._id === formData.petId);
+      const petIcon = selectedPetData?.species === 'dog' ? '🐕' : '🐱';
+      const petName = selectedPetData?.name || 'Mascota';
 
       const event = {
-        summary: `${petIcon} ${appointmentData.title} - ${petName}`,
-        description: `Cita veterinaria para ${petName}\n\nTipo: ${appointmentData.title}\nNotas: ${appointmentData.notes || 'Sin notas adicionales'}\n\nCreado desde Pet Connect`,
+        summary: `${petIcon} ${formData.title} - ${petName}`,
+        description: `Cita veterinaria para ${petName}\n\nTipo: ${formData.title}\nNotas: ${formData.notes || 'Sin notas adicionales'}\n\nCreado desde Pet Connect`,
         start: {
-          dateTime: startDateTime.toISOString(),
+          dateTime: dateTime.toISOString(),
           timeZone: 'America/Bogota'
         },
         end: {
@@ -196,174 +146,39 @@ export const CalendarIntegration = () => {
             { method: 'popup', minutes: 15 } // 15 minutos antes
           ]
         },
-        location: appointmentData.location || '',
         colorId: '3' // Color verde para eventos de mascotas
       };
 
-      // Agregar veterinario si se proporcionó
-      if (appointmentData.veterinary && appointmentData.veterinary.trim()) {
+      if (formData.veterinary?.trim()) {
         event.attendees = [{ 
-          email: appointmentData.veterinary.trim(),
+          email: formData.veterinary.trim(),
           responseStatus: 'needsAction'
         }];
       }
 
-      console.log('Evento a crear:', JSON.stringify(event, null, 2));
-
-      const createdEvent = await GoogleCalendarAPI.createEvent(event);
-      console.log('Evento creado exitosamente:', createdEvent);
-      
-      // Recargar eventos y recordatorios
+      await GoogleCalendarAPI.createEvent(event);
       await loadCalendarEvents();
-      setActiveView('overview');
-      alert('¡Cita creada exitosamente en Google Calendar!');
+      setShowCreateForm(false);
+      setFormData({
+        title: '',
+        date: '',
+        time: '',
+        notes: '',
+        petId: selectedPet?._id || '',
+        veterinary: ''
+      });
+      alert('¡Cita creada exitosamente!');
     } catch (error) {
-      console.error('Error creating calendar event:', error);
-      let errorMessage = 'Error desconocido al crear la cita.';
-      
-      if (error.message) {
-        errorMessage = error.message;
-      } else if (error.result?.error?.message) {
-        errorMessage = error.result.error.message;
-      } else if (error.body) {
-        try {
-          const errorBody = JSON.parse(error.body);
-          errorMessage = errorBody.error?.message || errorMessage;
-        } catch (e) {
-          // Si no se puede parsear el error, usar el mensaje por defecto
-        }
-      }
-      
-      alert(`Error al crear la cita: ${errorMessage}`);
+      console.error('Error creating event:', error);
+      alert('Error al crear el evento. Por favor, intenta de nuevo.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Mostrar error de configuración si las credenciales no están configuradas
-  if (configError) {
-    return (
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="text-center py-8">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center">
-            <span className="text-3xl">⚙️</span>
-          </div>
-          
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
-            Configuración de Google Calendar Requerida
-          </h2>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Para usar la integración con Google Calendar, necesitas configurar las credenciales de API.
-          </p>
-
-          <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-4 mb-6 max-w-md mx-auto text-left">
-            <h3 className="font-semibold text-orange-800 mb-2">⚠️ Error de configuración:</h3>
-            <p className="text-sm text-orange-700 mb-3">{configError}</p>
-            
-            <div className="text-sm text-orange-700 space-y-2">
-              <p className="font-medium">Pasos para solucionarlo:</p>
-              <ol className="list-decimal list-inside space-y-1 text-xs">
-                <li>Ve a <a href="https://console.cloud.google.com/" target="_blank" className="underline">Google Cloud Console</a></li>
-                <li>Habilita la Google Calendar API</li>
-                <li>Crea credenciales OAuth 2.0 y API Key</li>
-                <li>Configura las variables en el archivo .env</li>
-                <li>Reinicia el servidor de desarrollo</li>
-              </ol>
-            </div>
-          </div>
-
-          <div className="bg-gray-100 rounded-xl p-4 mb-6 max-w-md mx-auto">
-            <h4 className="font-semibold text-gray-800 mb-2">Agrega a tu archivo .env:</h4>
-            <div className="text-left text-xs font-mono bg-white p-3 rounded border">
-              <div className="text-green-600"># Google Calendar Integration</div>
-              <div>VITE_GOOGLE_CLIENT_ID=tu_client_id_aqui</div>
-              <div>VITE_GOOGLE_API_KEY=tu_api_key_aqui</div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => window.open('https://console.cloud.google.com/', '_blank')}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-150 flex items-center gap-2 mx-auto"
-          >
-            <span>🔗</span>
-            Abrir Google Cloud Console
-          </button>
-
-          <p className="text-xs text-gray-500 mt-4">
-            Consulta la documentación en GOOGLE_CALENDAR_SETUP.md para instrucciones detalladas
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isConnected) {
-    return (
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="text-center py-8">
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center">
-            <span className="text-3xl">📅</span>
-          </div>
-          
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
-            Conecta con Google Calendar
-          </h2>
-          <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            Sincroniza los recordatorios veterinarios de {selectedPet?.name || 'tus mascotas'} con tu calendario personal y recibe notificaciones automáticas.
-          </p>
-
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 mb-6 max-w-md mx-auto">
-            <h3 className="font-semibold text-green-800 mb-2">¿Qué puedes hacer?</h3>
-            <ul className="text-sm text-green-700 text-left space-y-1">
-              <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                Programar citas veterinarias
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                Recordatorios de vacunas automáticos
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                Notificaciones por email y móvil
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-green-500">✓</span>
-                Compartir con familiares
-              </li>
-            </ul>
-          </div>
-
-          <button
-            onClick={connectToGoogleCalendar}
-            disabled={loading}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
-          >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Conectando...
-              </>
-            ) : (
-              <>
-                <span>🔗</span>
-                Conectar con Google Calendar
-              </>
-            )}
-          </button>
-
-          <p className="text-xs text-gray-500 mt-4">
-            Utilizamos una conexión segura. Tus datos están protegidos.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const handleReminderToggle = async (reminderId) => {
     try {
       await toggleReminder(reminderId);
-      // Recargar recordatorios
       if (selectedPet) {
         const remindersData = await getReminders(selectedPet._id);
         setReminders(remindersData || []);
@@ -373,7 +188,6 @@ export const CalendarIntegration = () => {
     }
   };
 
-  // Combinar y ordenar eventos y recordatorios
   const getCombinedEvents = () => {
     const calendarEvents = events.map(event => ({
       ...event,
@@ -392,266 +206,175 @@ export const CalendarIntegration = () => {
       }));
 
     return [...calendarEvents, ...reminderEvents]
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .slice(0, 5); // Mostrar solo los próximos 5
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
   };
 
-  const getStats = () => {
-    const now = new Date();
-    const upcomingEvents = events.filter(event => 
-      new Date(event.start?.dateTime || event.start?.date) > now
-    ).length;
+  if (configError) {
+    return (
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="text-center py-8">
+          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center">
+            <span className="text-3xl">⚙️</span>
+          </div>
+          
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
+            Configuración de Google Calendar Requerida
+          </h2>
+          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            Para usar la integración con Google Calendar, necesitas configurar las credenciales de API.
+          </p>
 
-    const pendingReminders = reminders.filter(reminder => 
-      !reminder.completed && new Date(reminder.date) > now
-    ).length;
-
-    const overdueReminders = reminders.filter(reminder => 
-      !reminder.completed && new Date(reminder.date) < now
-    ).length;
-
-    return [
-      {
-        icon: "📅",
-        value: upcomingEvents + pendingReminders,
-        label: "Total Eventos",
-        color: "blue"
-      },
-      {
-        icon: "🗓️",
-        value: upcomingEvents,
-        label: "Citas Calendar",
-        color: "green"
-      },
-      {
-        icon: "⏰",
-        value: pendingReminders,
-        label: "Recordatorios",
-        color: "orange"
-      },
-      {
-        icon: "🚨",
-        value: overdueReminders,
-        label: "Vencidos",
-        color: "red"
-      }
-    ];
-  };
-
-  const stats = getStats();
-
-  return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-4">
-          <p className="font-medium">Error</p>
-          <p className="text-sm">{error}</p>
-        </div>
-      )}
-
-      {loading ? (
-        <div className="flex items-center justify-center min-h-[200px]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
-        </div>
-      ) : (
-        <>
-          {activeView === 'overview' ? (
-            <CalendarOverview
-              stats={stats}
-              combinedEvents={getCombinedEvents()}
-              onRefresh={loadCalendarEvents}
-              onReminderToggle={handleReminderToggle}
-              loading={loading}
-              isConnected={isConnected}
-              onConnect={connectToGoogleCalendar}
-              onDisconnect={disconnectFromGoogleCalendar}
-              error={error}
-            />
-          ) : (
-            <CreateAppointmentForm
-              selectedPet={selectedPet}
-              onCreateAppointment={createVetAppointment}
-              loading={loading}
-              onCancel={() => setActiveView('overview')}
-            />
-          )}
-        </>
-      )}
-    </div>
-  );
-};
-
-// Componente para crear citas rápidas
-const CreateAppointmentForm = ({ selectedPet, onCreateAppointment, loading, onCancel }) => {
-  console.log('CreateAppointmentForm - selectedPet:', selectedPet);
-  const [formData, setFormData] = useState({
-    title: '',
-    datetime: '',
-    veterinary: '',
-    notes: ''
-  });
-
-  const appointmentTypes = [
-    { id: 'checkup', label: 'Chequeo General', icon: '🩺' },
-    { id: 'vaccine', label: 'Vacunación', icon: '💉' },
-    { id: 'surgery', label: 'Cirugía', icon: '⚕️' },
-    { id: 'dental', label: 'Limpieza Dental', icon: '🦷' },
-    { id: 'emergency', label: 'Emergencia', icon: '🚨' },
-    { id: 'grooming', label: 'Estética', icon: '✂️' }
-  ];
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Validaciones mejoradas
-    if (!selectedPet || !selectedPet.name) {
-      alert('Error: No hay mascota seleccionada. Por favor selecciona una mascota.');
-      return;
-    }
-    
-    if (!formData.title || !formData.datetime) {
-      alert('Por favor completa los campos requeridos (tipo de cita y fecha/hora)');
-      return;
-    }
-    
-    console.log('Enviando cita:', { formData, selectedPet });
-    onCreateAppointment(formData);
-    setFormData({ title: '', datetime: '', veterinary: '', notes: '' });
-  };
-
-  return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-      <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
-        <span>📅</span>
-        Programar Cita para {selectedPet?.name || 'mascota'}
-      </h3>
-      
-      {/* Debug info - remover en producción */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
-          Debug: selectedPet = {selectedPet ? `${selectedPet.name} (${selectedPet.species})` : 'null/undefined'}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Tipo de cita */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tipo de cita
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            {appointmentTypes.map((type) => (
-              <button
-                key={type.id}
-                type="button"
-                onClick={() => setFormData({ ...formData, title: type.label })}
-                className={`p-3 rounded-xl border-2 transition-all duration-200 text-left ${
-                  formData.title === type.label
-                    ? 'border-brand bg-orange-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span>{type.icon}</span>
-                  <span className="text-sm font-medium">{type.label}</span>
-                </div>
-              </button>
-            ))}
+          <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-xl p-4 mb-6 max-w-md mx-auto text-left">
+            <h3 className="font-semibold text-orange-800 mb-2">⚠️ Error de configuración:</h3>
+            <p className="text-sm text-orange-700">{configError}</p>
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Fecha y hora */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Fecha y hora *
-          </label>
-          <input
-            type="datetime-local"
-            value={formData.datetime}
-            onChange={(e) => setFormData({ ...formData, datetime: e.target.value })}
-            min={new Date().toISOString().slice(0, 16)}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-all duration-200"
-            required
-          />
+  if (loading && !events.length) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
+      </div>
+    );
+  }
+
+  if (showCreateForm) {
+    return (
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-800">Nueva Cita Veterinaria</h3>
+          <button
+            onClick={() => setShowCreateForm(false)}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
         </div>
 
-        {/* Veterinario */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email del veterinario (opcional)
-          </label>
-          <input
-            type="email"
-            value={formData.veterinary}
-            onChange={(e) => setFormData({ ...formData, veterinary: e.target.value })}
-            placeholder="doctor@clinica.com"
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-all duration-200"
-          />
-        </div>
+        <form onSubmit={handleCreateEvent} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Mascota
+            </label>
+            <select
+              value={formData.petId}
+              onChange={(e) => setFormData({ ...formData, petId: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand"
+              required
+            >
+              <option value="">Selecciona una mascota</option>
+              {petList.map(pet => (
+                <option key={pet._id} value={pet._id}>
+                  {pet.species === 'dog' ? '🐕' : '🐱'} {pet.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {/* Notas */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Notas adicionales
-          </label>
-          <textarea
-            value={formData.notes}
-            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-            placeholder="Información adicional sobre la cita..."
-            rows={3}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand focus:border-brand transition-colors duration-150 resize-none"
-          />
-        </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Título de la cita
+            </label>
+            <input
+              type="text"
+              placeholder="Ej: Control rutinario"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand"
+              required
+            />
+          </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          {onCancel && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fecha
+              </label>
+              <input
+                type="date"
+                value={formData.date}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Hora
+              </label>
+              <input
+                type="time"
+                value={formData.time}
+                onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Veterinario (Email - Opcional)
+            </label>
+            <input
+              type="email"
+              placeholder="correo@ejemplo.com"
+              value={formData.veterinary}
+              onChange={(e) => setFormData({ ...formData, veterinary: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Notas adicionales
+            </label>
+            <textarea
+              placeholder="Agrega notas importantes sobre la cita"
+              value={formData.notes}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-brand resize-none"
+              rows="3"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-2">
             <button
               type="button"
-              onClick={onCancel}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-medium transition-colors duration-150"
+              onClick={() => setShowCreateForm(false)}
+              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors duration-150"
             >
               Cancelar
             </button>
-          )}
-          <button
-            type="submit"
-            disabled={loading || !formData.title || !formData.datetime}
-            className="flex-1 bg-brand hover:bg-orange-600 text-white py-3 rounded-xl font-medium transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Creando cita...
-              </>
-            ) : (
-              <>
-                <span>📅</span>
-                Crear Cita en Calendar
-              </>
-            )}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-brand hover:bg-brand-dark text-white rounded-lg text-sm font-medium transition-colors duration-150 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Creando...
+                </>
+              ) : (
+                <>
+                  <span>📅</span>
+                  Crear Cita
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
 
-// Componente de resumen del calendario
-const CalendarOverview = ({
-  stats,
-  combinedEvents,
-  onRefresh,
-  onReminderToggle,
-  loading,
-  isConnected,
-  onConnect,
-  onDisconnect,
-  error
-}) => {
   return (
     <div className="space-y-6">
-      {/* Connection Status */}
+      {/* Connection Status & Create Button */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -660,103 +383,124 @@ const CalendarOverview = ({
               {isConnected ? 'Conectado a Google Calendar' : 'No conectado'}
             </span>
           </div>
-          <button
-            onClick={isConnected ? onDisconnect : onConnect}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-150 ${
-              isConnected
-                ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                : 'bg-brand text-white hover:bg-brand-dark'
-            }`}
-            disabled={loading}
-          >
-            {isConnected ? 'Desconectar' : 'Conectar'}
-          </button>
+          <div className="flex items-center gap-3">
+            {isConnected && (
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 flex items-center gap-2"
+              >
+                <span>➕</span>
+                Nueva Cita
+              </button>
+            )}
+            <button
+              onClick={isConnected ? disconnectFromGoogleCalendar : connectToGoogleCalendar}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                isConnected
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                  : 'bg-brand text-white hover:bg-brand-dark'
+              }`}
+              disabled={loading}
+            >
+              {isConnected ? 'Desconectar' : 'Conectar Calendar'}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <StatCard key={index} {...stat} />
-        ))}
-      </div>
+      {isConnected && (
+        <>
+          {/* Events List */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Próximos Eventos</h3>
+              <button
+                onClick={loadCalendarEvents}
+                className="text-sm text-brand hover:text-brand-dark transition-colors duration-150"
+                disabled={loading}
+              >
+                Actualizar
+              </button>
+            </div>
 
-      {/* Events List */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-800">Próximos Eventos</h3>
-          <button
-            onClick={onRefresh}
-            className="text-sm text-brand hover:text-brand-dark transition-colors duration-150"
-            disabled={loading}
-          >
-            Actualizar
-          </button>
-        </div>
-
-        {combinedEvents.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            No hay eventos programados
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
+              </div>
+            ) : getCombinedEvents().length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">📅</span>
+                </div>
+                <h4 className="text-gray-800 font-medium mb-2">No hay eventos programados</h4>
+                <p className="text-gray-500 text-sm mb-4">
+                  Programa tu primera cita veterinaria
+                </p>
+                <button
+                  onClick={() => setShowCreateForm(true)}
+                  className="bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 inline-flex items-center gap-2"
+                >
+                  <span>➕</span>
+                  Nueva Cita
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {getCombinedEvents().map((event) => (
+                  <EventCard
+                    key={event.id || event._id}
+                    event={event}
+                    onReminderToggle={handleReminderToggle}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="space-y-4">
-            {combinedEvents.map((event) => (
-              <CombinedEventCard
-                key={event.id || event._id}
-                event={event}
-                onReminderToggle={onReminderToggle}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };
 
-// Componente de tarjeta de evento combinado
-const CombinedEventCard = ({ event, onReminderToggle }) => {
+const EventCard = ({ event, onReminderToggle }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const today = new Date();
-    const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) return 'Hoy';
-    if (diffDays === 1) return 'Mañana';
-    if (diffDays < 0) return `Hace ${Math.abs(diffDays)} días`;
-    return `En ${diffDays} días`;
+    return date.toLocaleDateString('es-CO', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   const isOverdue = event.type === 'reminder' && !event.completed && new Date(event.date) < new Date();
 
   return (
-    <div className={`rounded-xl p-4 border transition-colors duration-150 ${
+    <div className={`rounded-xl p-4 border ${
       isOverdue 
         ? 'border-red-200 bg-red-50' 
         : event.type === 'calendar' 
           ? 'border-blue-200 bg-blue-50'
           : 'border-orange-200 bg-orange-50'
     }`}>
-      <div className="flex items-start gap-3">
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+      <div className="flex items-start gap-4">
+        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
           event.type === 'calendar' 
-            ? 'bg-blue-500 text-white' 
+            ? 'bg-blue-500' 
             : isOverdue
-              ? 'bg-red-500 text-white'
-              : 'bg-orange-500 text-white'
+              ? 'bg-red-500'
+              : 'bg-orange-500'
         }`}>
-          <span className="text-sm">
+          <span className="text-white text-lg">
             {event.type === 'calendar' ? '📅' : '⏰'}
           </span>
         </div>
         
-        <div className="flex-1">
-          <h4 className="font-semibold text-gray-800 text-sm">{event.title}</h4>
-          <p className="text-xs text-gray-600 mb-1">
-            {formatDate(event.date)} • {new Date(event.date).toLocaleTimeString('es-CO', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            })}
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-gray-800 mb-1">{event.title}</h4>
+          <p className="text-sm text-gray-600">
+            {formatDate(event.date)}
           </p>
           
           {event.type === 'reminder' && (
@@ -793,45 +537,6 @@ const CombinedEventCard = ({ event, onReminderToggle }) => {
           </button>
         )}
       </div>
-    </div>
-  );
-};
-
-// Componente de tarjeta de estadística
-const StatCard = ({ icon, value, label, color }) => {
-  const colors = {
-    blue: 'bg-blue-500',
-    green: 'bg-green-500',
-    orange: 'bg-orange-500',
-    red: 'bg-red-500'
-  };
-
-  return (
-    <div className="bg-white rounded-xl p-4 border border-gray-100">
-      <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-lg ${colors[color]} flex items-center justify-center`}>
-          <span className="text-white text-sm">{icon}</span>
-        </div>
-        <div>
-          <div className="text-xl font-bold text-gray-800">{value}</div>
-          <div className="text-xs text-gray-500">{label}</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Componente para mostrar próximos eventos (LEGACY - mantener por compatibilidad)
-const UpcomingEvents = ({ events, onRefresh }) => {
-  return (
-    <div className="space-y-4">
-      {events.map((event) => (
-        <CombinedEventCard
-          key={event.id}
-          event={event}
-          onReminderToggle={() => {}}
-        />
-      ))}
     </div>
   );
 }; 
