@@ -174,6 +174,45 @@ export const PetDetails = () => {
     }
   };
 
+  const handleMarkAsFound = async () => {
+    try {
+      let token = sessionStorage.getItem("accessToken");
+      
+      const formData = new FormData();
+      formData.append('name', pet.name);
+      formData.append('birthDate', pet.birthDate);
+      formData.append('breed', pet.breed);
+      formData.append('gender', pet.gender);
+      formData.append('species', pet.species);
+      formData.append('color', pet.color);
+      formData.append('_id', pet._id);
+      formData.append('status', 'Activo');
+      
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${pet._id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        credentials: 'include',
+        body: formData
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        setPet(prevPet => ({
+          ...prevPet,
+          status: 'Activo'
+        }));
+        setIsModalOpen(false);
+      } else {
+        console.error('Error al actualizar el estado:', result.message);
+      }
+    } catch (error) {
+      console.error('Error al marcar mascota como encontrada:', error);
+    }
+  };
+
   return (
     <>
       {pet ? (
@@ -249,11 +288,17 @@ export const PetDetails = () => {
               />
 
               <div
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => pet.status === 'Perdido' ? setIsModalOpen(true) : setIsModalOpen(true)}
                 className="flex flex-col items-center cursor-pointer"
               >
-                <img className="w-8 h-8 sm:w-10 sm:h-10 xs:w-8 xs:h-8 md:w-9 md:h-9 3xl:w-11 3xl:h-11 4xl:w-12 4xl:h-12" src={enableLost} alt="Pet is Lost" />
-                <p className="text-xs sm:text-base xs:text-base 3xl:text-lg 4xl:text-xl text-center mt-1">Reportar como Perdida</p>
+                <img 
+                  className="w-8 h-8 sm:w-10 sm:h-10 xs:w-8 xs:h-8 md:w-9 md:h-9 3xl:w-11 3xl:h-11 4xl:w-12 4xl:h-12" 
+                  src={enableLost} 
+                  alt={pet.status === 'Perdido' ? "Marcar como encontrada" : "Reportar como perdida"} 
+                />
+                <p className="text-xs sm:text-base xs:text-base 3xl:text-lg 4xl:text-xl text-center mt-1">
+                  {pet.status === 'Perdido' ? "Marcar como encontrada" : "Reportar como perdida"}
+                </p>
               </div>
             </div>
             
@@ -298,18 +343,19 @@ export const PetDetails = () => {
           {isModalOpen && (
             <div className="fixed inset-0 bg-gray-200/30 backdrop-blur-md flex items-center justify-center z-50 px-4">
               <div className="bg-white p-6 xs:p-5 sm:p-5 md:p-6 3xl:p-8 4xl:p-10 rounded-lg shadow-lg max-w-xs sm:max-w-sm xs:max-w-sm md:max-w-md 3xl:max-w-lg 4xl:max-w-xl w-full text-center">
-                <AiOutlineExclamationCircle className="text-red-500 text-3xl sm:text-4xl xs:text-4xl md:text-4xl 3xl:text-5xl 4xl:text-6xl mx-auto mb-2" />
+                <AiOutlineExclamationCircle className={`text-3xl sm:text-4xl xs:text-4xl md:text-4xl 3xl:text-5xl 4xl:text-6xl mx-auto mb-2 ${pet.status === 'Perdido' ? 'text-green-500' : 'text-red-500'}`} />
                 <h2 className="text-base sm:text-lg xs:text-lg md:text-xl 3xl:text-2xl 4xl:text-3xl font-semibold">
-                  Reportar mascota perdida
+                  {pet.status === 'Perdido' ? 'Marcar mascota como encontrada' : 'Reportar mascota perdida'}
                 </h2>
                 <p className="text-xs sm:text-sm xs:text-base md:text-base 3xl:text-lg 4xl:text-xl text-gray-600 mt-2">
-                  Si reportas a tu mascota como perdida, cualquier persona que
-                  escanee el QR podrá verlo.
+                  {pet.status === 'Perdido' 
+                    ? '¿Has encontrado a tu mascota? ¡Qué alegría! Al marcarla como encontrada, se actualizará su estado.'
+                    : 'Si reportas a tu mascota como perdida, cualquier persona que escanee el QR podrá verlo.'}
                 </p>
                 <div className="mt-4 flex justify-center gap-3 sm:gap-4 xs:gap-4 3xl:gap-6 4xl:gap-8">
                   <button
-                    className="bg-red-500 text-white text-sm sm:text-base xs:text-base 3xl:text-lg 4xl:text-xl px-3 sm:px-4 xs:px-5 3xl:px-6 4xl:px-8 py-2 rounded-lg hover:bg-red-600 transition-colors"
-                    onClick={handleReportLost}
+                    className={`text-white text-sm sm:text-base xs:text-base 3xl:text-lg 4xl:text-xl px-3 sm:px-4 xs:px-5 3xl:px-6 4xl:px-8 py-2 rounded-lg transition-colors ${pet.status === 'Perdido' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`}
+                    onClick={pet.status === 'Perdido' ? handleMarkAsFound : handleReportLost}
                   >
                     Aceptar
                   </button>
