@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaSyringe, FaFileMedicalAlt, FaPassport, FaPrescriptionBottleAlt, FaFlask, FaHospitalAlt, FaFileAlt } from 'react-icons/fa';
 
 export const VaccineTimeline = ({ documents, selectedPet }) => {
   const sortedDocuments = documents.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -17,13 +18,13 @@ export const VaccineTimeline = ({ documents, selectedPet }) => {
 
   const getIconByType = (type) => {
     switch (type) {
-      case 'vaccine': return '💉';
-      case 'medical': return '🩺';
-      case 'passport': return '🛂';
-      case 'prescription': return '💊';
-      case 'lab': return '🧪';
-      case 'surgery': return '🏥';
-      default: return '📄';
+      case 'vaccine': return FaSyringe;
+      case 'medical': return FaFileMedicalAlt;
+      case 'passport': return FaPassport;
+      case 'prescription': return FaPrescriptionBottleAlt;
+      case 'lab': return FaFlask;
+      case 'surgery': return FaHospitalAlt;
+      default: return FaFileAlt;
     }
   };
 
@@ -84,7 +85,7 @@ export const VaccineTimeline = ({ documents, selectedPet }) => {
                 <div key={doc.id} className="relative flex gap-4">
                   {/* Timeline dot */}
                   <div className={`w-12 h-12 rounded-full border-4 border-white ${getColorByType(doc.type)} flex items-center justify-center z-10 shadow-sm`}>
-                    <span className="text-lg">{getIconByType(doc.type)}</span>
+                    {React.createElement(getIconByType(doc.type), { className: 'text-lg' })}
                   </div>
                   
                   {/* Content card */}

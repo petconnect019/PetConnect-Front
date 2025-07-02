@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { FaSyringe, FaFileMedicalAlt, FaPassport, FaPrescriptionBottleAlt, FaFlask, FaHospitalAlt, FaFileAlt } from 'react-icons/fa';
 
 export const DocumentCard = ({ document: doc, onView, onDelete }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,12 +18,14 @@ export const DocumentCard = ({ document: doc, onView, onDelete }) => {
 
   const getDocumentIcon = (type) => {
     switch (type) {
-      case 'vaccine': return '💉';
-      case 'medical': return '📋';
+      case 'vaccine': return FaSyringe;
+      case 'medical': return FaFileMedicalAlt;
       case 'certificate': return '🏆';
-      case 'prescription': return '💊';
-      case 'passport': return '🛂';
-      default: return '📄';
+      case 'prescription': return FaPrescriptionBottleAlt;
+      case 'passport': return FaPassport;
+      case 'lab': return FaFlask;
+      case 'surgery': return FaHospitalAlt;
+      default: return FaFileAlt;
     }
   };
 
@@ -67,7 +70,7 @@ export const DocumentCard = ({ document: doc, onView, onDelete }) => {
         <div className="flex items-start gap-3 flex-1">
           {/* Icon */}
           <div className="w-10 h-10 bg-white/60 rounded-full flex items-center justify-center transition-colors duration-150">
-            <span className="text-lg">{getDocumentIcon(doc.type)}</span>
+            {React.createElement(getDocumentIcon(doc.type), { className: 'text-lg' })}
           </div>
           
           {/* Content */}

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { createVetDocument } from '../../Utils/Fetch/FetchVetDocuments/FetchVetDocuments';
+import { FaFileMedicalAlt, FaSyringe, FaPassport, FaPrescriptionBottleAlt, FaFlask, FaHospitalAlt } from 'react-icons/fa';
 
 export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
   const [documentType, setDocumentType] = useState('medical');
@@ -17,12 +18,12 @@ export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
   const documentTypes = [
-    { id: 'medical', label: 'Examen Médico', icon: '📋', color: 'blue' },
-    { id: 'vaccine', label: 'Vacuna', icon: '💉', color: 'green' },
-    { id: 'passport', label: 'Pasaporte', icon: '🛂', color: 'yellow' },
-    { id: 'prescription', label: 'Receta', icon: '💊', color: 'purple' },
-    { id: 'lab', label: 'Laboratorio', icon: '🧪', color: 'pink' },
-    { id: 'surgery', label: 'Cirugía', icon: '🏥', color: 'red' }
+    { id: 'medical', label: 'Examen Médico', icon: FaFileMedicalAlt, color: 'blue' },
+    { id: 'vaccine', label: 'Vacuna', icon: FaSyringe, color: 'green' },
+    { id: 'passport', label: 'Pasaporte', icon: FaPassport, color: 'yellow' },
+    { id: 'prescription', label: 'Receta', icon: FaPrescriptionBottleAlt, color: 'purple' },
+    { id: 'lab', label: 'Laboratorio', icon: FaFlask, color: 'pink' },
+    { id: 'surgery', label: 'Cirugía', icon: FaHospitalAlt, color: 'red' }
   ];
 
   const handleDrag = (e) => {
@@ -148,7 +149,7 @@ export const UploadModal = ({ selectedPet, onClose, onUpload }) => {
                   }`}
                 >
                   <div className="text-center">
-                    <span className="text-lg block mb-1">{type.icon}</span>
+                    <type.icon className="text-lg block mb-1" />
                     <span className="text-xs font-medium text-gray-700">
                       {type.label}
                     </span>
