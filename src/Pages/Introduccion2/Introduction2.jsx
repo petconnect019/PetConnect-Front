@@ -26,16 +26,8 @@ export const Introduction2 = () => {
                 
                 {/* Mobile and Tablet Design */}
                 <div className="lg:hidden relative h-screen flex flex-col">
-                    {/* Orange curved section - BACKGROUND */}
-                    <div 
-                        className="absolute top-0 left-0 right-0 bg-gradient-to-br from-orange-400 to-orange-500 h-[65vh]"
-                        style={{
-                            clipPath: 'ellipse(100% 100% at 50% 0%)'
-                        }}
-                    />
-                    
-                    {/* Image container - INSIDE the ellipse */}
-                    <div className="relative z-10 flex items-center justify-center h-[65vh] pt-16">
+                    {/* Orange top section */}
+                    <div className="h-[55vh] bg-gradient-to-br from-orange-400 to-orange-500 flex items-center justify-center relative">
                         <img 
                             src={Intro} 
                             alt="Introducción" 
@@ -43,20 +35,28 @@ export const Introduction2 = () => {
                         />
                     </div>
 
-                    {/* Content section - OUTSIDE the ellipse */}
-                    <div className={`relative z-20 flex-1 flex flex-col justify-center px-6 py-4 transition-all duration-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                    {/* White content card */}
+                    <div className={`-mt-6 flex-1 bg-white rounded-t-3xl shadow-md px-6 pt-8 pb-6 transition-all duration-700 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'}`}>
                         <div className="text-center space-y-4">
-                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 leading-tight">
+                            <h2 className="text-2xl font-bold text-gray-800 leading-tight">
                                 Gestiona la información sobre tu mascota
                             </h2>
-                            <p className="text-gray-600 text-base sm:text-lg leading-relaxed px-2">
+                            <p className="text-gray-600 text-base leading-relaxed px-1">
                                 Administra el perfil de tu mascota y mantén su información siempre disponible.
                             </p>
-                            
-                            <div className='flex flex-col gap-4 pt-6'>
+
+                            {/* Paginator */}
+                            <div className="flex justify-center gap-1 pt-2">
+                                <span className="w-1.5 h-1 bg-gray-300 rounded-full" />
+                                <span className="w-10 h-1 bg-orange-500 rounded-full" />
+                                <span className="w-1.5 h-1 bg-gray-300 rounded-full" />
+                            </div>
+
+                            {/* Button */}
+                            <div className='flex justify-center pt-6'>
                                 <button 
                                     onClick={handleContinue}
-                                    className="w-full max-w-sm mx-auto bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-full text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                                    className="flex-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 rounded-full text-base font-medium shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
                                 >
                                     Continuar
                                 </button>
