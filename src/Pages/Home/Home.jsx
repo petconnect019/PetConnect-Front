@@ -87,12 +87,6 @@ export const Home = () => {
         {/* Pets Section */}
         <PetsSection petList={petList} navigate={navigate}/>
 
-        {/* Calendar Widget - Prominente */}
-        <CalendarWidget />
-
-        {/* Health Dashboard Section */}
-        <HealthDashboard petList={petList} navigate={navigate}/>
-
         {/* Buttons Section */}
         <section className="grid grid-cols-2 gap-3 sm:gap-4 mt-12 sm:mt-14 md:mt-16 mb-16 sm:mb-20 md:mb-24">
           <button 
@@ -119,6 +113,13 @@ export const Home = () => {
             <span className="font-medium text-gray-700">Tienda</span>
           </button>
         </section>
+
+        {/* Health Dashboard Section */}
+        <HealthDashboard petList={petList} navigate={navigate}/>
+
+        {/* Calendar Widget - Prominente */}
+        <CalendarWidget />
+
       </div>
       
       <FooterNav navigate={navigate} />

@@ -106,12 +106,6 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
              'Historial médico'}
           </p>
         </div>
-        <button 
-          onClick={() => setShowUploadModal(true)}
-          className="bg-brand text-white p-2 rounded-xl hover:bg-orange-600 transition-colors duration-150"
-        >
-          <span className="text-lg">📁</span>
-        </button>
       </div>
 
       {/* Pet Selector (solo si hay más de una mascota) */}
@@ -121,10 +115,10 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
             <button
               key={pet._id}
               onClick={() => setSelectedPet(pet)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-colors duration-150 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                 selectedPet?._id === pet._id
-                  ? 'bg-brand text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md'
+                  : 'bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 border border-white/50'
               }`}
             >
               <span>{pet.species === 'dog' ? '🐕' : '🐱'}</span>
@@ -164,6 +158,18 @@ export const VetDocumentsSection = ({ petList, navigate, initialTab = 'documents
           />
         )}
       </div>
+
+      {/* Floating Action Button */}
+      <button
+        onClick={() => setShowUploadModal(true)}
+        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-blue-500 to-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center transform transition-all duration-200 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-95 group"
+        aria-label={`Agregar ${initialTab === 'vaccines' ? 'vacuna' : 'documento'}`}
+      >
+        <span className="text-2xl">+</span>
+        <div className="absolute -top-10 right-0 bg-gray-800 text-white text-sm py-1 px-3 rounded-lg opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100 whitespace-nowrap">
+          Agregar {initialTab === 'vaccines' ? 'vacuna' : 'documento'}
+        </div>
+      </button>
 
       {/* Upload Modal */}
       {showUploadModal && (

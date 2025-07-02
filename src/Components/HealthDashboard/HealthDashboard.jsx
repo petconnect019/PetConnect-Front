@@ -88,37 +88,40 @@ export const HealthDashboard = ({ petList, navigate }) => {
   }
 
   return (
-    <section className="bg-white rounded-2xl p-6 mx-4 mb-6 shadow-sm border border-gray-100">
+    <section className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 mx-4 mb-6 shadow-lg border border-blue-100/50">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-            🏥 <span>Panel de Salud</span>
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            Mantén al día la salud de {selectedPet?.name}
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+            <span className="text-white text-xl">🏥</span>
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">Panel de Salud</h2>
+            <p className="text-sm text-gray-600">
+              {selectedPet ? `Mantén al día la salud de ${selectedPet.name}` : 'Resumen de salud'}
+            </p>
+          </div>
         </div>
         <button
           onClick={() => navigate('/health-management')}
-                        className="px-4 py-2 bg-brand hover:bg-orange-600 text-white rounded-xl text-sm font-medium transition-colors duration-150"
+          className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-2 px-4 rounded-xl text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
         >
-          Ver todo
+          Ver detalles
         </button>
       </div>
 
       {/* Pet Selector */}
       {petList.length > 1 && (
         <div className="mb-6">
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
             {petList.map((pet) => (
               <button
                 key={pet._id}
                 onClick={() => setSelectedPet(pet)}
-                className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl transition-colors duration-150 ${
+                className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
                   selectedPet?._id === pet._id
-                    ? 'bg-brand text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md'
+                    : 'bg-white/60 backdrop-blur-sm text-gray-700 hover:bg-white/80 border border-white/50'
                 }`}
               >
                 <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
@@ -132,12 +135,12 @@ export const HealthDashboard = ({ petList, navigate }) => {
       )}
 
       {/* Health Cards Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Próxima Vacuna */}
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4">
+        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-              <span className="text-sm">💉</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg flex items-center justify-center">
+              <span className="text-white text-sm">💉</span>
             </div>
             <span className="text-xs font-medium text-green-700">Próxima Vacuna</span>
           </div>
@@ -159,10 +162,10 @@ export const HealthDashboard = ({ petList, navigate }) => {
         </div>
 
         {/* Recordatorios Pendientes */}
-        <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
+        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-              <span className="text-sm">⏰</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-amber-500 rounded-lg flex items-center justify-center">
+              <span className="text-white text-sm">⏰</span>
             </div>
             <span className="text-xs font-medium text-orange-700">Recordatorios</span>
           </div>
@@ -175,10 +178,10 @@ export const HealthDashboard = ({ petList, navigate }) => {
         </div>
 
         {/* Documentos */}
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
+        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-              <span className="text-sm">📋</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg flex items-center justify-center">
+              <span className="text-white text-sm">📋</span>
             </div>
             <span className="text-xs font-medium text-blue-700">Documentos</span>
           </div>
@@ -191,10 +194,10 @@ export const HealthDashboard = ({ petList, navigate }) => {
         </div>
 
         {/* Último Chequeo */}
-        <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 rounded-xl p-4">
+        <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-              <span className="text-sm">🩺</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-violet-500 rounded-lg flex items-center justify-center">
+              <span className="text-white text-sm">🩺</span>
             </div>
             <span className="text-xs font-medium text-purple-700">Último Chequeo</span>
           </div>
