@@ -1,30 +1,23 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ButtonPrimary } from '../../Components/Buttons/ButtonPrimary';
 import { ImSpinner2 } from 'react-icons/im';
 import { toast } from 'react-toastify';
 
 export const VerifyEmail = () => {
-    const [searchParams] = useSearchParams();
+    const { token } = useParams();
     const navigate = useNavigate();
     const [isVerifying, setIsVerifying] = useState(true);
     const [verificationStatus, setVerificationStatus] = useState('verifying');
 
     useEffect(() => {
         const verifyEmail = async () => {
-            const token = searchParams.get('token');
-            if (!token) {
-                setVerificationStatus('error');
-                return;
-            }
-
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify-email`, {
-                    method: 'POST',
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify-email/${token}`, {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ token }),
+                    }
                 });
 
                 const data = await response.json();
@@ -44,12 +37,13 @@ export const VerifyEmail = () => {
             }
         };
 
-        verifyEmail();
-    }, [searchParams]);
-
-    const handleContinue = () => {
-        navigate('/login');
-    };
+        if (token) {
+            verifyEmail();
+        } else {
+            setVerificationStatus('error');
+            setIsVerifying(false);
+        }
+    }, [token]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -69,8 +63,8 @@ export const VerifyEmail = () => {
                                     ¡Tu correo electrónico ha sido verificado exitosamente!
                                 </p>
                                 <ButtonPrimary
-                                    text="Continuar al inicio de sesión"
-                                    onClick={handleContinue}
+                                    text="Iniciar sesión"
+                                    onClick={() => navigate('/login')}
                                     className="w-full"
                                 />
                             </>

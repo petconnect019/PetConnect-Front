@@ -57,9 +57,43 @@ export const Login = () => {
   const [hasPetsState, setHasPetsState] = useState(false);
   const [isNewUserState, setIsNewUserState] = useState(false);
   const [errorState, setErrorState] = useState(null);
+  const [showResendButton, setShowResendButton] = useState(false);
+  const [lastEmail, setLastEmail] = useState('');
+
+  const handleResendVerification = async () => {
+    if (!lastEmail) return;
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/resend-verification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: lastEmail }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success('Correo de verificación reenviado exitosamente');
+        setShowResendButton(false);
+      } else {
+        toast.error(data.message || 'Error al reenviar el correo de verificación');
+      }
+    } catch (error) {
+      toast.error('Error al conectar con el servidor');
+    }
+  };
 
   const onSubmit = async (formData) => {
-    handleLogin(formData);
+    setLastEmail(formData.email);
+    const result = await handleLogin(formData);
+    
+    if (result?.error?.includes('verifica tu correo electrónico')) {
+      setShowResendButton(true);
+    } else {
+      setShowResendButton(false);
+    }
   };
 
   // Efecto para actualizar estados cuando el customHook cambie
@@ -291,6 +325,18 @@ export const Login = () => {
                     Regístrate aquí
                   </Link>
                 </p>
+
+                {showResendButton && (
+                  <div className="mt-4 text-center">
+                    <p className="text-sm text-gray-600 mb-2">¿No recibiste el correo de verificación?</p>
+                    <button
+                      onClick={handleResendVerification}
+                      className="text-brand hover:underline text-sm font-semibold"
+                    >
+                      Reenviar correo de verificación
+                    </button>
+                  </div>
+                )}
               </form>
             </div>
           </div>

@@ -38,6 +38,8 @@ import { PublicUserProfile } from "../Pages/PublicUserProfile/PublicUserProfile"
 import { HealthManagement } from '../Pages/HealthManagement/HealthManagement';
 import { TermsAndConditions } from "../Pages/TermsAndConditions/TermsAndConditions";
 import { Support } from "../Pages/Support/Support";
+import { VerifyEmail } from '../Pages/VerifyEmail/VerifyEmail';
+import { PendingVerification } from '../Pages/PendingVerification/PendingVerification';
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -194,5 +196,13 @@ export const routes = createBrowserRouter([
   {
     path: "/support",
     element: <Support />,
+  },
+  {
+    path: "/verify-email/:token",
+    element: <VerifyEmail />,
+  },
+  {
+    path: "/pending-verification",
+    element: <PendingVerification />,
   },
 ]);

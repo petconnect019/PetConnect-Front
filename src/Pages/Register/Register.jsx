@@ -61,53 +61,35 @@ export const Register = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [errorState, setErrorState] = useState(null);
 
-  // Form submission
+  // Form submission for regular email/password registration
   const onSubmit = async (formData) => {
     // Crear un nuevo objeto sin el campo confirmPassword
     const { confirmPassword, ...registerData } = formData;
     
     // Verificar que las contraseñas coincidan antes de registrar
     if (formData.password === formData.confirmPassword) {
-      handleRegister(registerData);
+      const result = await handleRegister(registerData);
+      if (result?.success) {
+        // Redirigir a la página de verificación pendiente solo para registro normal
+        navigate('/pending-verification', { 
+          state: { email: formData.email }
+        });
+      }
     }
   };
 
   // Efecto para actualizar estados cuando el customHook cambie
   useEffect(() => {
-    if (isSuccess) {
-      setAccessToken(accessTokenResult);
-    }
     if (error) {
       setErrorState(error);
+      toast.error(error);
     }
-  }, [isSuccess, error]);
+  }, [error]);
 
-  // Efectos para las acciones de los estados
-  useEffect(() => {
-    if (accessToken && userResult) {
-      login(accessToken, userResult);
-      changeHasPetsUser(false);
-      
-      // Usar fetchUserProfile para normalizar y guardar correctamente los datos del usuario
-      fetchUserProfile().then(() => {
-        // Check for redirect URL in sessionStorage
-        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
-        if (redirectUrl) {
-          // Clear the redirect URL
-          sessionStorage.removeItem('redirectAfterLogin');
-          // Navigate to the saved URL
-          navigate(redirectUrl);
-        } else {
-          // Default flow
-          navigate("/step-user");
-        }
-      });
-    }
-  }, [accessToken, userResult]);
-
-  // Efecto para manejar los estados de Google
+  // Efectos para las acciones de los estados de Google
   useEffect(() => {
     if (user && accessToken) {
+      // Los usuarios de Google no necesitan verificación de correo
       login(accessToken, user);
       changeHasPetsUser(hasPetsState);
       
