@@ -89,7 +89,7 @@ export const HealthDashboard = ({ petList, navigate }) => {
   }
 
   return (
-    <section className="relative bg-white rounded-2xl p-2 mx-4 mb-6 shadow-sm border border-gray-100">
+    <section className="relative bg-white rounded-2xl p-2 mx-0 mb-6 shadow-sm border border-gray-100">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
