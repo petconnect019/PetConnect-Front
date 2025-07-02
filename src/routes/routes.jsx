@@ -195,4 +195,4 @@ export const routes = createBrowserRouter([
     path: "/support",
     element: <Support />,
   },
-  ]);
+]);

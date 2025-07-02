@@ -8,6 +8,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import emailjs from '@emailjs/browser';
 import { ImSpinner2 } from "react-icons/im";
 
+// Logs inmediatos para debug
+console.log('Variables de entorno disponibles:', {
+  PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+  SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+  TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+});
+
 // Inicializar EmailJS
 emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
 
@@ -74,6 +81,16 @@ export const Support = () => {
     message: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  // Usar useEffect para verificar las variables al montar el componente
+  useEffect(() => {
+    console.log('Componente Support montado');
+    console.log('Verificando configuración de EmailJS:', {
+      publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+    });
+  }, []);
 
   const faqData = [
     {

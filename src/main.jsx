@@ -9,6 +9,13 @@ import { PetProvider } from './Contexts/PetContext/PetContext.jsx'
 import { FetchedPetsProvider } from './Contexts/IsFetchedPets/IsFetchedPets.jsx'
 import { PrimeReactProvider } from 'primereact/api';
 
+// Log de verificación de variables de entorno
+console.log('Verificando variables de entorno en main.jsx:', {
+  EMAILJS_PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+  EMAILJS_SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+  EMAILJS_TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+});
+
 const updateSW = registerSW({
   onNeedRefresh: function() {
     if (confirm('Hay una nueva versión disponible. ¿Deseas actualizar?')) {
