@@ -6,8 +6,26 @@ export const PetProvider = ({ children }) => {
     const [petList, setPetList] = useState([]);
 
     const addPet = (newPet) => {
-        if (!findPet(newPet._id)) {
-            setPetList((prevPets)=> [...prevPets, newPet]);
+        if (!newPet) return;
+
+        try {
+            // Obtener el usuario logueado desde localStorage (estructura guardada por AuthContext)
+            const storedUser = JSON.parse(localStorage.getItem("userData") || "null");
+            const loggedUserId = storedUser?._id;
+
+            // Verificar que la mascota pertenece al usuario autenticado
+            const ownerId = typeof newPet.owner === "string" ? newPet.owner : newPet.owner?._id;
+
+            if (loggedUserId && ownerId && ownerId !== loggedUserId) {
+                // No es nuestra mascota → no la añadimos
+                return;
+            }
+
+            if (!findPet(newPet._id)) {
+                setPetList((prevPets) => [...prevPets, newPet]);
+            }
+        } catch (error) {
+            console.error("Error al validar propietario de la mascota:", error);
         }
     };
 
