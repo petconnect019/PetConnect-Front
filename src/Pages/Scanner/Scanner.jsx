@@ -14,252 +14,240 @@ import { NavButton } from '../../Components/NavButton/NavButton';
 
 export const Scanner = () => {
   const navigate = useNavigate();
+  const { pet_id } = useParams();
+  
+  // Estados del scanner
   const [hasPermission, setHasPermission] = useState(null);
-  const [scannedResult, setScannedResult] = useState(null);
   const [scanning, setScanning] = useState(false);
+  const [scannedResult, setScannedResult] = useState(null);
+  const [qrId, setQrId] = useState(null);
+  
+  // Referencias
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const scanningRef = useRef(false);
+  const animationRef = useRef(null);
 
-  const [renderCheckVideoFrame, setRenderCheckVideoFrame] = useState(false);
-  const {pet_id} = useParams();
-  
-  console.log('=== DEBUG SCANNER ===');
-  console.log('Pet ID desde URL:', pet_id);
-  console.log('Scanned Result:', scannedResult);
-  console.log('QR ID extraído:', scannedResult ? getQrId(scannedResult) : 'NO ESCANEADO');
-  
-  const {linkPet, data, pet, hasPet, isLoading, error} = useFetchLinkPet(scannedResult ? getQrId(scannedResult) : null, pet_id);
+  // Hook para vincular mascota
+  const { linkPet, data, pet, hasPet, isLoading, error } = useFetchLinkPet(qrId, pet_id);
 
-  // Process QR code function defined early with useCallback
+  // Debug logs (solo para errores críticos)
+  if (error) {
+    console.error('Error en Scanner:', error);
+  }
+
+  // Función para procesar el QR
   const processQRCode = useCallback((canvas, ctx) => {
-    return new Promise((resolve, reject) => {
-      try {
-        //obtenemos los datos de la imagen de canvas
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-        //intentamos detectar un codigo qr
-        const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
-
-        //si hay un codigo qr, devolverl el contenido
-        if (qrCode) {
-          resolve(qrCode.data);
-        } else {
-          resolve(null);
-        }
-        
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }, []);
-
-  // Stop scanning defined early with useCallback
-  const stopScanning = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
+    try {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const qrCode = jsQR(imageData.data, canvas.width, canvas.height);
+      return qrCode ? qrCode.data : null;
+    } catch (error) {
+      console.error('Error procesando QR:', error);
+      return null;
     }
-    setScanning(false);
-    setRenderCheckVideoFrame(false);
   }, []);
 
-  // Request camera permission and set up video stream
-  const startScanning = useCallback(async () => {
-    // Ensure previous stream is fully stopped
+  // Función para detener el escaneo
+  const stopScanning = useCallback(() => {
+    scanningRef.current = false;
+    setScanning(false);
+    
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+    
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
     
-    // Reset video element
-    if (videoRef.current && videoRef.current.srcObject) {
+    if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+  }, []);
+
+  // Función para verificar frames del video
+  const checkVideoFrame = useCallback(() => {
+    if (!scanningRef.current || !videoRef.current || !canvasRef.current) {
+      return;
+    }
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      const result = processQRCode(canvas, ctx);
+      
+      if (result) {
+        setScannedResult(result);
+        const extractedQrId = getQrId(result);
+        setQrId(extractedQrId);
+        stopScanning();
+        return;
+      }
+    }
+
+    // Continuar escaneando si no se encontró QR
+    if (scanningRef.current) {
+      animationRef.current = requestAnimationFrame(checkVideoFrame);
+    }
+  }, [processQRCode, stopScanning]);
+
+  // Función para iniciar el escaneo
+  const startScanning = useCallback(async () => {
+    // Limpiar estado anterior
+    setScannedResult(null);
+    setQrId(null);
+    setHasPermission(null);
     
-    setScanning(true);
-    
+    // Detener stream anterior si existe
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: 'environment' } 
       });
       
       streamRef.current = stream;
+      scanningRef.current = true;
+      setScanning(true);
+      setHasPermission(true);
       
       if (videoRef.current) {
-        
         videoRef.current.srcObject = stream;
         videoRef.current.onloadedmetadata = () => {
-          console.log("Video metadata loaded, attempting to play");
           videoRef.current.play()
             .then(() => {
-              console.log("Video playback started successfully");
-              setHasPermission(true);
-              setScanning(true);
-              
-              // Clear any previous results when starting a new scan
-              setScannedResult(null);
-              
-              // Start looking for QR codes
-              setRenderCheckVideoFrame(true);
+              checkVideoFrame();
             })
             .catch(error => {
-              console.error("Error playing video:", error);
+              console.error('Error reproduciendo video:', error);
               setHasPermission(false);
             });
         };
       }
     } catch (error) {
-      console.error("Error accessing camera:", error);
+      console.error('Error accediendo a cámara:', error);
       setHasPermission(false);
+      scanningRef.current = false;
+      setScanning(false);
     }
-  }, []);
+  }, [checkVideoFrame]);
 
-  // Check video frames for QR codes - defined with useCallback before any useEffect that references it
-  const checkVideoFrame = useCallback(async () => {
-    if (!scanning || !videoRef.current || !canvasRef.current) {
-      console.log("Skipping frame check - conditions not met", { scanning });
-      return;
-    }
-    
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-
-    // Make sure video is ready
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      // Set canvas dimensions to match video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      // Draw current video frame to canvas
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      try {
-        // Process the canvas data to find QR codes
-        const result = await processQRCode(canvas, ctx);
-        
-        if (result) {
-          // QR code found
-          setScannedResult(result);
-          stopScanning();
-          return;
-        }
-      } catch (error) {
-        console.error("QR processing error:", error);
-      }
-    }
-    
-    // If still scanning, continue checking frames with a delay
-    if (scanning) {
-      setTimeout(() => {
-        requestAnimationFrame(checkVideoFrame);
-      }, 500);
-    } else {
-      console.log("Scanning stopped, not scheduling next frame");
-    }
-  }, [scanning, processQRCode, stopScanning]);
-
-  // For the Scan Again button
+  // Función para escanear otra vez
   const handleScanAgain = useCallback(() => {
-    console.log("Scan again requested");
     setScannedResult(null);
+    setQrId(null);
     stopScanning();
-    console.log("Scanning stopped, scheduling restart");
     setTimeout(() => {
-      console.log("Starting scan again");
       startScanning();
     }, 100);
   }, [stopScanning, startScanning]);
 
-  // useEffect to check video frames when renderCheckVideoFrame state changes
+  // Effect para vincular mascota cuando se detecta QR
   useEffect(() => {
-    if (renderCheckVideoFrame && scanning) {
-      console.log("Starting to check video frames");
-      checkVideoFrame();
-    }
-  }, [renderCheckVideoFrame, scanning, checkVideoFrame]);
-
-  // Cleanup on component unmount
-  useEffect(() => {
-    return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, []);
-
-  //access to the scanned result
-  useEffect(()=> {
-    console.log('=== DEBUG useEffect scannedResult ===');
-    console.log('scannedResult cambió:', scannedResult);
-    console.log('pet_id disponible:', pet_id);
-    
-    if (scannedResult) {
-      console.log('Llamando linkPet()...');
+    if (qrId && pet_id && !isLoading && !data && !error) {
       linkPet();
     }
+  }, [qrId, pet_id, linkPet, isLoading, data, error]);
+
+  // Cleanup al desmontar
+  useEffect(() => {
+    return () => {
+      stopScanning();
+    };
+  }, [stopScanning]);
+
+  // Determinar qué pantalla mostrar
+  const renderScreen = () => {
+    // Pantalla de bienvenida
+    if (!scanning && !scannedResult && !data && !error) {
+      return <WelcomeScreen startScanning={startScanning} />;
+    }
     
-  }, [scannedResult, linkPet])
-  
+    // Pantalla de permisos denegados
+    if (hasPermission === false) {
+      return <PermisionsDeniedScreens startScanning={startScanning} />;
+    }
+    
+    // Pantalla de escaneo
+    if (scanning) {
+      return <ScanningScreen stopScanning={stopScanning} />;
+    }
+    
+    // Pantalla de éxito (mascota vinculada por primera vez)
+    if (hasPet === 'first') {
+      return <SuccessScreen handleScanAgain={handleScanAgain} />;
+    }
+    
+    // Pantalla de mascota ya vinculada
+    if (hasPet === 'linked' && pet) {
+      return <LinkedPetScreen handleScanAgain={handleScanAgain} petId={pet._id} />;
+    }
+    
+    // Pantalla de error
+    if (error) {
+      return <ErrorLinkScreen error={error} handleScanAgain={handleScanAgain} />;
+    }
+    
+    // Pantalla de carga
+    if (isLoading) {
+      return (
+        <div className="absolute inset-0 flex items-center justify-center bg-white">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#EC9126] mx-auto mb-4"></div>
+            <p className="text-gray-600">Procesando...</p>
+          </div>
+        </div>
+      );
+    }
+    
+    // Default
+    return <WelcomeScreen startScanning={startScanning} />;
+  };
 
   return (
     <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 relative">
       {/* Header */}
       <div className="w-full mb-6 text-center">
-        <NavButton onClick={() => navigate(-1)}  />
+        <NavButton onClick={() => navigate(-1)} />
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 p-4">
           <span className="text-[#EC9126]">Escaner</span> medalla QR
         </h2>
       </div>
       
-      {/* Scanner Container with responsive aspect ratio */}
-      <div className="relative w-full bg-white rounded-2xl overflow-hidden shadow-xl mb-6 scanner-video-container" style={{aspectRatio: "1/1"}}>
-        {/* Always render the video element, but hide it when not scanning */}
+      {/* Scanner Container */}
+      <div className="relative w-full bg-white rounded-2xl overflow-hidden shadow-xl mb-6" style={{aspectRatio: "1/1"}}>
+        {/* Video siempre presente pero oculto cuando no escanea */}
         <video
           ref={videoRef}
-          className={` absolute inset-0 w-screen h-screen object-cover ${scanning ? 'block' : 'hidden'}`}
+          className={`absolute inset-0 w-full h-full object-cover ${scanning ? 'block' : 'hidden'}`}
           autoPlay
           playsInline
           muted
         />
         
-        {/* Welcome Screen */}
-        {!scanning && !scannedResult && !data && !hasPet && (
-          <WelcomeScreen startScanning={startScanning}/>
-        )}
-        
-        {/* Permission Denied Screen */}
-        {hasPermission === false && (
-          <PermisionsDeniedScreens startScanning={startScanning} />
-        )}
-        
-        {/* Scanning Screen */}
-        {scanning && (
-          <ScanningScreen stopScanning={stopScanning}/>
-        )}
-        
-        {/* Successfully pet created screen */}
-        {hasPet === 'first' && !scanning &&  (
-          <SuccessScreen handleScanAgain={handleScanAgain} />
-        )}
-
-        {/* Pet already linked Screen */}
-        {hasPet === 'linked' && !scanning && (
-          <LinkedPetScreen handleScanAgain={handleScanAgain} petId={pet?._id} />
-        )}
-
-        {/* Error scanning qr*/}
-        {error && !scanning && (
-          <ErrorLinkScreen error={error} handleScanAgain={handleScanAgain} />
-        )}
-        
+        {/* Canvas oculto para procesamiento */}
         <canvas ref={canvasRef} className="hidden" />
+        
+        {/* Pantallas del scanner */}
+        {renderScreen()}
       </div>
       
-      {/* Instructions or tip */}
+      {/* Instrucciones */}
       {!scanning && !scannedResult && (
-        <div className="text-center text-[0.65rem] xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-base 2xl:text-lg 3xl:text-base 4xl:text-base text-gray-500 scanner-instructions">
+        <div className="text-center text-sm text-gray-500">
           <p>Asegúrate de que el código QR esté bien iluminado y encuadrado para mejores resultados.</p>
         </div>
       )}
