@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import ServiceCard from '../../Components/ServiceCard/ServiceCard';
 import { VITE_API_URL } from '../../Utils/config';
 import './NearbyServices.css'; // Crearemos este archivo para los estilos
@@ -22,11 +21,20 @@ const NearbyServices = () => {
 
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${VITE_API_URL}/places/nearby`, {
-          params: { latitude, longitude },
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await fetch(`${VITE_API_URL}/api/places/nearby?latitude=${latitude}&longitude=${longitude}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
         });
-        setServices(response.data.places || []);
+
+        if (!response.ok) {
+          throw new Error('La respuesta del servidor no fue exitosa.');
+        }
+
+        const data = await response.json();
+        setServices(data.places || []);
         setStatus('success');
       } catch (err) {
         setStatus('error');
