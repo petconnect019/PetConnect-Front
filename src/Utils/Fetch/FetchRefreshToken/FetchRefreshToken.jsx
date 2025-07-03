@@ -1,3 +1,5 @@
+import { updateAuthToken } from '../../socket';
+
 export const FetchRefreshToken = async ()=> {
     try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/refresh-token`, {
@@ -14,12 +16,15 @@ export const FetchRefreshToken = async ()=> {
         }
 
         const data = await response.json();
-        sessionStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('accessToken', data.accessToken);
+
+        // Actualizar token en socket (si aplica)
+        updateAuthToken(data.accessToken);
         return data.accessToken;
 
     } catch (error) {
         console.error('Error en refreshToken:', error);
-        sessionStorage.removeItem('accessToken');
+        localStorage.removeItem('accessToken');
         throw error;
     }
 }

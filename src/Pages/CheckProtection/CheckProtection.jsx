@@ -69,7 +69,7 @@ export const CheckProtection = () => {
     
     setIsLoadingScans(true);
     try {
-      const token = sessionStorage.getItem('accessToken');
+      const token = localStorage.getItem('accessToken');
       if (!token) {
         console.error('No hay token de acceso');
         return;
@@ -92,17 +92,17 @@ export const CheckProtection = () => {
           const data = await response.json();
           console.log('Datos recibidos del backend:', data);
           if (data.success && data.history) {
-            // Transformar los datos para asegurar la estructura correcta
+            // Renombrar `ubicacion` a `location` para consistencia en el frontend
             const transformedHistory = data.history.map(scan => ({
               ...scan,
-              location: {
-                latitude: scan.ubicacion?.latitude,
-                longitude: scan.ubicacion?.longitude,
-                address: scan.ubicacion?.address
-              }
+              location: scan.ubicacion,
+              // Eliminar la propiedad original para evitar confusiones
+              // delete scan.ubicacion; // Esto no es posible porque scan es un objeto inmutable aquí
             }));
-            console.log('Datos transformados:', transformedHistory);
-            allScanHistory.push(...transformedHistory);
+             allScanHistory.push(...transformedHistory.map(s => {
+                const { ubicacion, ...rest } = s;
+                return rest;
+            }));
           }
         }
       }

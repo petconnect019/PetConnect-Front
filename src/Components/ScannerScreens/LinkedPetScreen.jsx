@@ -1,38 +1,56 @@
-import { InfoIcon } from "lucide-react";
+import { AlertCircle, Eye, QrCode } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const LinkedPetScreen = ({petId, handleScanAgain}) => {
     const navigate = useNavigate();
 
     return (
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 xs:p-5 sm:p-6 text-center bg-gradient-to-b from-amber-50 to-white">
-          <div className="w-20 h-20 xs:w-24 xs:h-24 rounded-full bg-amber-100 flex items-center justify-center mb-4 xs:mb-5 sm:mb-6">
-            <InfoIcon className="w-10 h-10 xs:w-12 xs:h-12 text-amber-500" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-amber-50 via-white to-amber-50/30">
+          {/* Info Icon */}
+          <div className="relative mb-8">
+            <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-amber-200 rounded-3xl flex items-center justify-center shadow-lg shadow-amber-100/50">
+              <AlertCircle className="w-12 h-12 text-amber-600" strokeWidth={1.5} />
+            </div>
+            {/* Subtle glow effect */}
+            <div className="absolute inset-0 w-24 h-24 bg-gradient-to-br from-amber-400/20 to-amber-600/20 rounded-3xl blur-xl -z-10"></div>
           </div>
-          <h3 className="text-lg xs:text-xl sm:text-2xl font-bold text-amber-800 mb-2">
+          
+          {/* Title */}
+          <h3 className="text-2xl font-bold text-amber-800 mb-3 tracking-tight">
             Mascota ya vinculada
           </h3>
-          <div className="bg-white rounded-xl p-3 xs:p-4 shadow-md w-full max-w-[16rem] xs:max-w-[18rem] sm:max-w-xs mb-4 xs:mb-5 sm:mb-6 border border-amber-200">
-            <p className="text-sm xs:text-base sm:text-lg text-gray-700 mb-2">
-              Esta mascota ya está vinculada a una cuenta. Puedes visitar su perfil público o escanear otro código.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full max-w-[16rem] xs:max-w-[18rem] sm:max-w-xs">
+          
+          {/* Description */}
+          <p className="text-amber-700/80 mb-8 max-w-sm leading-relaxed">
+            Esta mascota ya pertenece a otro usuario. Puedes ver su perfil público o escanear otra medalla.
+          </p>
+          
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
             <button
               onClick={() => {
                 navigate(`/public-pet-profile/${petId}`);
               }}
-              className="px-4 py-2 xs:py-2.5 sm:py-3 bg-[#EC9126] text-white font-semibold rounded-full hover:bg-[#d98421] focus:outline-none focus:ring-2 focus:ring-[#EC9126] focus:ring-offset-2 shadow-lg sm:flex-1 text-sm xs:text-base sm:text-lg"
+              className="group relative flex-1 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/30 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-105 active:scale-95"
             >
-              Ver Perfil
+              <div className="flex items-center justify-center space-x-2">
+                <Eye className="w-4 h-4" />
+                <span>Ver perfil</span>
+              </div>
+              {/* Button glow effect */}
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 opacity-0 group-hover:opacity-20 transition-opacity duration-200"></div>
             </button>
+            
             <button
               onClick={handleScanAgain}
-              className="px-4 py-2 xs:py-2.5 sm:py-3 bg-gray-200 text-gray-800 font-semibold rounded-full hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 shadow sm:flex-1 text-sm xs:text-base sm:text-lg"
+              className="group relative flex-1 px-6 py-3 bg-white border-2 border-amber-200 text-amber-700 font-semibold rounded-xl shadow-sm hover:shadow-md hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-105 active:scale-95"
             >
-              Escanear Otro
+              <div className="flex items-center justify-center space-x-2">
+                <QrCode className="w-4 h-4" />
+                <span>Escanear otro</span>
+              </div>
             </button>
           </div>
         </div>
-      );
+    );
 };

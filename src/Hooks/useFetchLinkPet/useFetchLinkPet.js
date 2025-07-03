@@ -18,12 +18,12 @@ export const useFetchLinkPet = (_id, petId) => {
     setLinkState(prev => ({ ...prev, isLoading: true, error: null }));
     
     try {
-      let token = sessionStorage.getItem('accessToken');
+      let token = localStorage.getItem('accessToken');
       
       if (isTokenExpired(token)) {
         try {
           await FetchRefreshToken();
-          token = sessionStorage.getItem('accessToken');
+          token = localStorage.getItem('accessToken');
         } catch (refreshError) {
           throw new Error("Error al refrescar el token: " + refreshError.message);
         }

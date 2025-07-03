@@ -1,5 +1,5 @@
-import { createBrowserRouter } from "react-router-dom";
 import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
+import { MainLayout } from "../Components/MainLayout/MainLayout";
 
 import { Introduction1 } from "../Pages/Introduccion1/Introduction1";
 import { Introduction2 } from "../Pages/Introduccion2/Introduction2";
@@ -24,7 +24,7 @@ import { PublicPetProfile } from "../Pages/PublicPetProfile/PublicPetProfile";
 import { QRScanLanding } from "../Pages/QRScanLanding/QRScanLanding";
 import { Ecommerce } from "../Pages/Ecommerce/Ecommerce";
 import { Messages } from "../Pages/Messages/Messages";
-import { Chat } from "../Pages/Chat/Chat";
+import { ChatV2 as Chat } from "../Pages/Chat/ChatV2";
 import { Settings } from "../Pages/Settings/Settings";
 import { UserProfileConfig } from "../Pages/UserProfileConfig/UserProfileConfig";
 import { MyPets } from "../Pages/MyPets/MyPets";
@@ -35,8 +35,14 @@ import { PaymentShop } from "../Pages/Ecommerce/PaymentShop";
 import { ChangePassword } from "../Pages/ChangePassword/ChangePassword";
 import {ScanQR} from '../Pages/ScanQR/ScanQR'
 import { PublicUserProfile } from "../Pages/PublicUserProfile/PublicUserProfile";
+import { HealthManagement } from '../Pages/HealthManagement/HealthManagement';
+import { TermsAndConditions } from "../Pages/TermsAndConditions/TermsAndConditions";
+import { Support } from "../Pages/Support/Support";
+import { VerifyEmail } from '../Pages/VerifyEmail/VerifyEmail';
+import { PendingVerification } from '../Pages/PendingVerification/PendingVerification';
+import NearbyServices from '../Pages/NearbyServices/NearbyServices';
 
-export const routes = createBrowserRouter([
+export const routesConfig = [
   // 🔓 Rutas públicas (No requieren autenticación)
   {
     path: '/',
@@ -91,89 +97,122 @@ export const routes = createBrowserRouter([
     element: <PublicUserProfile />,
   },
 
-  // 🔒 Rutas protegidas (Requieren autenticación)
+  // --- Rutas Protegidas que SÍ usan el MainLayout ---
   {
-    path: '/home',
-    element: <ProtectRoute><Home /></ProtectRoute>,
-  },
-  {
-    path: '/step-pet',
-    element: <ProtectRoute><StepPet /></ProtectRoute>,
-  },
-  {
-    path: '/step-user',
-    element: <ProtectRoute><StepUser /></ProtectRoute>,
-  },
-  {
-    path: '/step-tag/:pet_id',
-    element: <ProtectRoute><StepTag /></ProtectRoute>,
-  },
-  {
-    path: '/scanner/:pet_id',
-    element: <ProtectRoute><Scanner /></ProtectRoute>,
-  },
-  {
-    path: '/notifications',
-    element: <ProtectRoute><Notifications /></ProtectRoute>,
-  },
-  {
-    path: '/map-view',
-    element: <ProtectRoute><MapView /></ProtectRoute>,
-  },
-  {
-    path: '/pet-details/:pet_id',
-    element: <ProtectRoute><PetDetails /></ProtectRoute>,
-  },
-  {
-    path: '/pet-profile/:pet_id',
-    element: <ProtectRoute><PetProfile /></ProtectRoute>,
-  },
-  {
-    path: '/my-pets',
-    element: <ProtectRoute><MyPets /></ProtectRoute>,
-  },
-  {
-    path: '/new_pet_1',
-    element: <ProtectRoute><NewPet1 /></ProtectRoute>,
-  },
-  {
-    path: '/user-profile-config/:user_id',
-    element: <ProtectRoute><UserProfileConfig /></ProtectRoute>,
-  },
-  {
-    path: '/ecommerce',
-    element: <ProtectRoute><Ecommerce /></ProtectRoute>,
-  },
-  {
-    path: '/check-protection',
-    element: <ProtectRoute><CheckProtection /></ProtectRoute>,
-  },
-  {
-    path: '/messages',
-    element: <ProtectRoute><Messages /></ProtectRoute>,
-  },
-  {
-    path: '/chat',
-    element: <ProtectRoute><Chat /></ProtectRoute>,
-  },
-  {
-    path: '/chat/:chat_id',
-    element: <ProtectRoute><Chat /></ProtectRoute>,
-  },
-  {
-    path: '/settings',
-    element: <ProtectRoute><Settings /></ProtectRoute>,
-  },
-  {
-    path: "/payment/shop",
-    element: <ProtectRoute><PaymentShop /></ProtectRoute>
-  },
-  {
-    path: '/change-password',
-    element: <ProtectRoute><ChangePassword /></ProtectRoute>,
-  },
-  {
-    path: '/scan-qr',
-    element: <ProtectRoute><ScanQR /> </ProtectRoute>
+    element: (
+      <ProtectRoute>
+        <MainLayout />
+      </ProtectRoute>
+    ),
+    children: [
+      {
+        path: '/home',
+        element: <Home />,
+      },
+      {
+        path: '/step-pet',
+        element: <StepPet />,
+      },
+      {
+        path: '/step-user',
+        element: <StepUser />,
+      },
+      {
+        path: '/step-tag/:pet_id',
+        element: <StepTag />,
+      },
+      {
+        path: '/scanner/:pet_id',
+        element: <Scanner />,
+      },
+      {
+        path: '/notifications',
+        element: <Notifications />,
+      },
+      {
+        path: '/map-view',
+        element: <MapView />,
+      },
+      {
+        path: '/pet-details/:pet_id',
+        element: <PetDetails />,
+      },
+      {
+        path: '/pet-profile/:pet_id',
+        element: <PetProfile />,
+      },
+      {
+        path: '/my-pets',
+        element: <MyPets />,
+      },
+      {
+        path: '/new_pet_1',
+        element: <NewPet1 />,
+      },
+      {
+        path: '/user-profile-config/:user_id',
+        element: <UserProfileConfig />,
+      },
+      {
+        path: '/ecommerce',
+        element: <Ecommerce />,
+      },
+      {
+        path: '/check-protection',
+        element: <CheckProtection />,
+      },
+      {
+        path: '/messages',
+        element: <Messages />,
+      },
+      {
+        path: '/chat',
+        element: <Chat />,
+      },
+      {
+        path: '/chat/:chat_id',
+        element: <Chat />,
+      },
+      {
+        path: '/settings',
+        element: <Settings />,
+      },
+      {
+        path: "/payment/shop",
+        element: <PaymentShop />,
+      },
+      {
+        path: '/change-password',
+        element: <ChangePassword />,
+      },
+      {
+        path: '/scan-qr',
+        element: <ScanQR />,
+      },
+      {
+        path: "/health-management",
+        element: <HealthManagement />,
+      },
+      {
+        path: "/terms-and-conditions",
+        element: <TermsAndConditions />,
+      },
+      {
+        path: "/support",
+        element: <Support />,
+      },
+      {
+        path: "/verify-email/:token",
+        element: <VerifyEmail />,
+      },
+      {
+        path: "/pending-verification",
+        element: <PendingVerification />,
+      },
+      {
+        path: '/nearby-services',
+        element: <NearbyServices />,
+      },
+    ]
   }
-]);
+];

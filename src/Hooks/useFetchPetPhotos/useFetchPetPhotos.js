@@ -14,7 +14,7 @@ export const useFetchPetPhotos = () => {
     setPhotosState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${petId}/photos`, {
         method: 'GET',
@@ -25,18 +25,55 @@ export const useFetchPetPhotos = () => {
         credentials: 'include'
       });
 
+      // Verificar si la respuesta es JSON antes de parsear
+      const contentType = response.headers.get('content-type');
+      
+      if (!contentType || !contentType.includes('application/json')) {
+        // Si no es JSON, probablemente es HTML de error
+        console.error('Respuesta no es JSON:', response.status, response.statusText);
+        
+        // Tratar como sin fotos si es un error relacionado con fotos faltantes
+        if (response.status === 404) {
+          setPhotosState((prev) => ({
+            ...prev,
+            isSuccess: true,
+            isLoading: false,
+            photos: [],
+            error: null
+          }));
+          return { success: true, photos: [] };
+        }
+        
+        throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+      }
+
       const data = await response.json();
 
       if (response.ok) {
+        // Asegurar que photos sea siempre un array
+        const photos = Array.isArray(data.photos) ? data.photos : [];
+        
         setPhotosState((prev) => ({
           ...prev,
           isSuccess: true,
           isLoading: false,
-          photos: data.photos || [],
+          photos: photos,
           error: null
         }));
-        return { success: true, photos: data.photos };
+        return { success: true, photos: photos };
       } else {
+        // Si es un error 404, tratarlo como sin fotos
+        if (response.status === 404) {
+          setPhotosState((prev) => ({
+            ...prev,
+            isSuccess: true,
+            isLoading: false,
+            photos: [],
+            error: null
+          }));
+          return { success: true, photos: [] };
+        }
+        
         setPhotosState((prev) => ({
           ...prev,
           error: data.message || "Error al obtener las fotos",
@@ -47,6 +84,21 @@ export const useFetchPetPhotos = () => {
       }
     } catch (error) {
       console.error("Error fetching pet photos:", error);
+      
+      // Si el error contiene referencias a JSON o 404, tratar como sin fotos
+      if (error.message.includes('JSON') || 
+          error.message.includes('404') || 
+          error.message.includes('no tiene fotos')) {
+        setPhotosState((prev) => ({
+          ...prev,
+          isSuccess: true,
+          isLoading: false,
+          photos: [],
+          error: null
+        }));
+        return { success: true, photos: [] };
+      }
+      
       setPhotosState((prev) => ({
         ...prev,
         error: error.message || "Error al obtener las fotos",
@@ -67,7 +119,7 @@ export const useFetchPetPhotos = () => {
     }));
 
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       const formData = new FormData();
       
       // Agregar cada archivo al FormData
@@ -84,11 +136,17 @@ export const useFetchPetPhotos = () => {
         body: formData
       });
 
+      // Verificar si la respuesta es JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+      }
+
       const data = await response.json();
 
       if (response.ok) {
         // Recargar todas las fotos después de subir exitosamente
-        const photosResponse = await getPetPhotos(petId);
+        await getPetPhotos(petId);
         
         setPhotosState((prev) => ({
           ...prev,
@@ -126,7 +184,7 @@ export const useFetchPetPhotos = () => {
     setPhotosState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = localStorage.getItem("accessToken");
       
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pets/${petId}/photos/${photoId}`, {
         method: 'DELETE',
@@ -136,6 +194,12 @@ export const useFetchPetPhotos = () => {
         },
         credentials: 'include'
       });
+
+      // Verificar si la respuesta es JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+      }
 
       const data = await response.json();
 

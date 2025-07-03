@@ -25,12 +25,12 @@ export const useFetchUpdatePet = () => {
     setUpdatePetState((prev) => ({ ...prev, isLoading: true }));
 
     try {
-      let token = sessionStorage.getItem("accessToken");
+      let token = localStorage.getItem("accessToken");
 
       if (isTokenExpired(token)) {
         try {
           await FetchRefreshToken();
-          token = sessionStorage.getItem("accessToken");
+          token = localStorage.getItem("accessToken");
         } catch (refreshError) {
           console.log(refreshError);
           setUpdatePetState((prev) => ({ ...prev, error: refreshError, isLoading: false }));

@@ -8,11 +8,14 @@ import DefaultProfile from '../../assets/images/DefaultProfile.png';
 import defaultDog from '../../assets/images/DogProfilePfp.png';
 import defaultCat from '../../assets/images/CatProfilePfp.png';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
+import { useChat } from '../../Contexts/ChatContext/ChatContextV2';
+import config from '../../Utils/config';
 
 export const PublicUserProfile = () => {
   const { user_id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
+  const { loadConversations, sendMessage: sendChatMessage } = useChat();
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,6 +26,7 @@ export const PublicUserProfile = () => {
   const [customMessage, setCustomMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
+  const [chatCreatedSuccessfully, setChatCreatedSuccessfully] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const modalRef = useRef(null);
@@ -40,7 +44,7 @@ export const PublicUserProfile = () => {
       try {
         setLoading(true);
         
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/public/${user_id}`);
+        const response = await fetch(`${config.api}/api/users/public/${user_id}`);
         console.log('Response status:', response.status);
         
         // Si la respuesta no es ok, intentamos leer el texto del error
@@ -86,9 +90,9 @@ export const PublicUserProfile = () => {
       
       try {
         setLoadingPets(true);
-        console.log('Fetching pets from:', `${import.meta.env.VITE_API_URL}/api/users/public/${user_id}/pets`);
+        console.log('Fetching pets from:', `${config.api}/api/users/public/${user_id}/pets`);
         
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/public/${user_id}/pets`);
+        const response = await fetch(`${config.api}/api/users/public/${user_id}/pets`);
         console.log('Pets response status:', response.status);
 
         if (!response.ok) {
@@ -137,7 +141,7 @@ export const PublicUserProfile = () => {
   const handleContactUser = () => {
     if (!isAuthenticated) {
       // Redirect to login if not authenticated
-      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+      localStorage.setItem('redirectAfterLogin', window.location.pathname);
       navigate('/login');
       return;
     }
@@ -156,7 +160,7 @@ export const PublicUserProfile = () => {
   const handleSendMessage = async () => {
     if (!isAuthenticated) {
       setShowMessageModal(false);
-      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+      localStorage.setItem('redirectAfterLogin', window.location.pathname);
       navigate('/login');
       return;
     }
@@ -165,7 +169,7 @@ export const PublicUserProfile = () => {
     if (!messageToSend.trim()) return;
 
     setIsSending(true);
-    const url = `${import.meta.env.VITE_API_URL}/api/chat/user/${user_id}/start`;
+    const url = `${config.api}/api/chat/user/${user_id}/start`;
     console.log('Intentando enviar mensaje a:', url);
 
     try {
@@ -173,7 +177,7 @@ export const PublicUserProfile = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
         },
         body: JSON.stringify({ initialMessage: messageToSend })
       });
@@ -188,18 +192,56 @@ export const PublicUserProfile = () => {
       
       const data = await response.json();
 
-      if (data && data.chat) {
+      if (data && data.success && data.chat && data.chat._id) {
+        console.log('✅ Chat creado exitosamente:', data.chat);
+        
+        // Mostrar mensaje de éxito
         setMessageSent(true);
+        setChatCreatedSuccessfully(true);
+        
+        // Actualizar las conversaciones en el ChatContext (NO BLOQUEAR POR ERRORES)
+        loadConversations().catch(loadError => {
+          console.warn('⚠️ Error al actualizar conversaciones (no crítico):', loadError);
+          // Fallback: intentar agregar conversación manualmente al contexto si existe el método
+          try {
+            if (typeof sendChatMessage === 'function') {
+              console.log('🔄 Intentando fallback para agregar conversación');
+            }
+          } catch (fallbackError) {
+            console.warn('⚠️ Fallback también falló:', fallbackError);
+          }
+        });
+        
+        // Redirigir al chat después de un breve delay
         setTimeout(() => {
           setShowMessageModal(false);
           setMessageSent(false);
-          navigate(`/chat/${data.chat._id}`);
+          setChatCreatedSuccessfully(false);
+          
+          // Navegar con validación
+          const chatId = data.chat._id;
+          if (chatId) {
+            console.log('🚀 Navegando al chat:', chatId);
+            navigate(`/chat/${chatId}`);
+          } else {
+            console.error('❌ ID de chat no válido:', data.chat);
+            navigate('/messages'); // Fallback a lista de mensajes
+          }
         }, 1500);
       } else {
-        throw new Error('La respuesta del servidor no fue la esperada');
+        console.error('❌ Respuesta inválida del servidor:', data);
+        throw new Error(`Respuesta del servidor inválida: ${JSON.stringify(data)}`);
       }
     } catch (err) {
       console.error('Error al enviar mensaje:', err);
+      
+      // Si el error incluye información de respuesta del servidor, parsearla
+      let serverMessage = '';
+      if (err.message.includes('500') && err.message.includes('permisos')) {
+        serverMessage = 'Problema de permisos en el servidor.';
+      } else if (err.message.includes('Respuesta del servidor inválida')) {
+        serverMessage = 'El mensaje se envió pero hubo un problema con la respuesta.';
+      }
       
       let errorMessage;
       if (err.message.includes('404')) {
@@ -208,8 +250,8 @@ export const PublicUserProfile = () => {
         errorMessage = 'No puedes enviarte mensajes a ti mismo.';
       } else if (err.message.includes('vacío')) {
         errorMessage = 'El mensaje no puede estar vacío.';
-      } else if (err.message.includes('no esperada')) {
-        errorMessage = 'Hubo un problema al procesar la respuesta del servidor.';
+      } else if (serverMessage) {
+        errorMessage = serverMessage + ' El mensaje podría haberse enviado, verifica tus conversaciones.';
       } else {
         errorMessage = 'No se pudo enviar el mensaje, por favor intente nuevamente.';
       }
@@ -217,6 +259,11 @@ export const PublicUserProfile = () => {
       alert(errorMessage);
     } finally {
       setIsSending(false);
+      // Limpiar estados en caso de error
+      if (!chatCreatedSuccessfully) {
+        setMessageSent(false);
+        setChatCreatedSuccessfully(false);
+      }
     }
   };
 
@@ -522,8 +569,12 @@ export const PublicUserProfile = () => {
                   <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
                     <FiCheck className="text-green-500 w-8 h-8" />
                   </div>
-                  <p className="text-gray-800 font-medium mb-2">¡Mensaje enviado con éxito!</p>
-                  <p className="text-gray-600 text-sm">Redirigiendo al chat...</p>
+                  <p className="text-gray-800 font-medium mb-2">
+                    {chatCreatedSuccessfully ? '¡Chat creado y mensaje enviado!' : '¡Mensaje enviado con éxito!'}
+                  </p>
+                  <p className="text-gray-600 text-sm">
+                    {chatCreatedSuccessfully ? 'Redirigiendo al chat...' : 'Procesando...'}
+                  </p>
                 </div>
               ) : (
                 <>

@@ -17,6 +17,7 @@ export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scannedResult, setScannedResult] = useState(null);
   const [scanning, setScanning] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -56,6 +57,7 @@ export const Scanner = () => {
     }
     setScanning(false);
     setRenderCheckVideoFrame(false);
+    setCameraReady(false);
   }, []);
 
   // Request camera permission and set up video stream
@@ -72,6 +74,7 @@ export const Scanner = () => {
     }
     
     setScanning(true);
+    setCameraReady(false);
     
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -85,11 +88,12 @@ export const Scanner = () => {
         videoRef.current.srcObject = stream;
         videoRef.current.onloadedmetadata = () => {
           console.log("Video metadata loaded, attempting to play");
+          videoRef.current.setAttribute('playsinline', '');
           videoRef.current.play()
             .then(() => {
               console.log("Video playback started successfully");
               setHasPermission(true);
-              setScanning(true);
+              setCameraReady(true);
               
               // Clear any previous results when starting a new scan
               setScannedResult(null);
@@ -193,63 +197,70 @@ export const Scanner = () => {
   
 
   return (
-    <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-orange-50/20 flex flex-col">
       {/* Header */}
-      <div className="w-full mb-6 text-center">
-        <NavButton onClick={() => navigate(-1)}  />
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 p-4">
-          <span className="text-[#EC9126]">Escaner</span> medalla QR
-        </h2>
+      <div className="relative px-6 py-8 text-center">
+        <NavButton onClick={() => navigate(-1)} />
+        <div className="mt-4">
+          <h1 className="text-3xl font-bold text-slate-800 tracking-tight">
+            Escáner <span className="text-orange-600">QR</span>
+          </h1>
+          <p className="text-slate-600 mt-2">Vincula mascotas escaneando su medalla</p>
+        </div>
       </div>
       
-      {/* Scanner Container with responsive aspect ratio */}
-      <div className="relative w-full bg-white rounded-2xl overflow-hidden shadow-xl mb-6 scanner-video-container" style={{aspectRatio: "1/1"}}>
-        {/* Always render the video element, but hide it when not scanning */}
-        <video
-          ref={videoRef}
-          className={` absolute inset-0 w-screen h-screen object-cover ${scanning ? 'block' : 'hidden'}`}
-          autoPlay
-          playsInline
-          muted
-        />
-        
-        {/* Welcome Screen */}
-        {!scanning && !scannedResult && !data && !hasPet && (
-          <WelcomeScreen startScanning={startScanning}/>
-        )}
-        
-        {/* Permission Denied Screen */}
-        {hasPermission === false && (
-          <PermisionsDeniedScreens startScanning={startScanning} />
-        )}
-        
-        {/* Scanning Screen */}
-        {scanning && (
-          <ScanningScreen stopScanning={stopScanning}/>
-        )}
-        
-        {/* Successfully pet created screen */}
-        {hasPet === 'first' && !scanning &&  (
-          <SuccessScreen handleScanAgain={handleScanAgain} />
-        )}
+      {/* Scanner Container */}
+      <div className="flex-1 flex items-center justify-center px-6 pb-8">
+        {scanning ? (
+          <div className="relative w-full max-w-md aspect-square bg-white rounded-3xl shadow-2xl shadow-slate-200/50 overflow-hidden border border-white/20">
+            {/* Video Element */}
+            <video
+              ref={videoRef}
+              className={`absolute inset-0 w-full h-full object-cover ${cameraReady ? 'block' : 'hidden'}`}
+              autoPlay
+              playsInline
+              muted
+            />
+            {/* Scanning Screen */}
+            <ScanningScreen stopScanning={stopScanning} />
+            <canvas ref={canvasRef} className="hidden" />
+          </div>
+        ) : (
+          <div className="relative w-full max-w-md">
+            {/* Welcome Screen */}
+            {!scannedResult && !data && !hasPet && (
+              <WelcomeScreen startScanning={startScanning} />
+            )}
 
-        {/* Pet already linked Screen */}
-        {hasPet === 'linked' && !scanning && (
-          <LinkedPetScreen handleScanAgain={handleScanAgain} petId={pet?._id} />
-        )}
+            {/* Permission Denied Screen */}
+            {hasPermission === false && (
+              <PermisionsDeniedScreens startScanning={startScanning} />
+            )}
 
-        {/* Error scanning qr*/}
-        {error && !scanning && (
-          <ErrorLinkScreen error={error} handleScanAgain={handleScanAgain} />
+            {/* Successfully pet created screen */}
+            {hasPet === 'first' && !scanning && (
+              <SuccessScreen handleScanAgain={handleScanAgain} />
+            )}
+
+            {/* Pet already linked Screen */}
+            {hasPet === 'linked' && !scanning && (
+              <LinkedPetScreen handleScanAgain={handleScanAgain} petId={pet?._id} />
+            )}
+
+            {/* Error scanning qr*/}
+            {error && !scanning && (
+              <ErrorLinkScreen error={error} handleScanAgain={handleScanAgain} />
+            )}
+          </div>
         )}
-        
-        <canvas ref={canvasRef} className="hidden" />
       </div>
       
-      {/* Instructions or tip */}
+      {/* Bottom hint */}
       {!scanning && !scannedResult && (
-        <div className="text-center text-[0.65rem] xs:text-xs sm:text-sm md:text-sm lg:text-base xl:text-base 2xl:text-lg 3xl:text-base 4xl:text-base text-gray-500 scanner-instructions">
-          <p>Asegúrate de que el código QR esté bien iluminado y encuadrado para mejores resultados.</p>
+        <div className="px-6 pb-6 text-center">
+          <p className="text-slate-500 text-sm leading-relaxed max-w-md mx-auto">
+            Asegúrate de que el código QR esté bien iluminado y centrado para obtener mejores resultados
+          </p>
         </div>
       )}
     </div>

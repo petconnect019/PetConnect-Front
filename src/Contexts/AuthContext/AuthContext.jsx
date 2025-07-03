@@ -10,20 +10,20 @@ const AuthContext = createContext({
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    const token = sessionStorage.getItem("accessToken");
-    const userData = sessionStorage.getItem("userData");
+    const token = localStorage.getItem("accessToken");
+    const userData = localStorage.getItem("userData");
     return !!(token && userData);
   });
 
   const [user, setUser] = useState(() => {
-    const userData = sessionStorage.getItem("userData");
+    const userData = localStorage.getItem("userData");
     return userData ? JSON.parse(userData) : null;
   });
 
   useEffect(() => {
-    // Verificar token y datos de usuario en sessionStorage al iniciar
-    const token = sessionStorage.getItem("accessToken");
-    const userData = sessionStorage.getItem("userData");
+    // Verificar token y datos de usuario en localStorage al iniciar
+    const token = localStorage.getItem("accessToken");
+    const userData = localStorage.getItem("userData");
     setIsAuthenticated(!!(token && userData));
     if (userData) {
       setUser(JSON.parse(userData));
@@ -37,8 +37,8 @@ export const AuthProvider = ({ children }) => {
     }
     
     try {
-      sessionStorage.setItem("accessToken", token);
-      sessionStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("accessToken", token);
+      localStorage.setItem("userData", JSON.stringify(userData));
       setIsAuthenticated(true);
       setUser(userData);
     } catch (error) {
@@ -51,9 +51,9 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     try {
       FetchLogout();
-      sessionStorage.removeItem("accessToken");
-      sessionStorage.removeItem("userData");
-      sessionStorage.removeItem("hasPets");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("userData");
+      localStorage.removeItem("hasPets");
       setIsAuthenticated(false);
       setUser(null);
     } catch (error) {

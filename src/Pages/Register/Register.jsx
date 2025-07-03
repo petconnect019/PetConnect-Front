@@ -61,63 +61,55 @@ export const Register = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [errorState, setErrorState] = useState(null);
 
-  // Form submission
+  // Form submission for regular email/password registration
   const onSubmit = async (formData) => {
-    // Crear un nuevo objeto sin el campo confirmPassword
-    const { confirmPassword, ...registerData } = formData;
-    
-    // Verificar que las contraseñas coincidan antes de registrar
-    if (formData.password === formData.confirmPassword) {
-      handleRegister(registerData);
+    try {
+      // Crear un nuevo objeto sin el campo confirmPassword
+      const { confirmPassword, ...registerData } = formData;
+      
+      // Verificar que las contraseñas coincidan antes de registrar
+      if (formData.password === formData.confirmPassword) {
+        const result = await handleRegister(registerData);
+        if (result?.success) {
+          // Mostrar mensaje de éxito
+          toast.success('Registro exitoso. Por favor verifica tu correo electrónico.');
+          // Redirigir a la página de verificación pendiente solo para registro normal
+          navigate('/pending-verification', { 
+            state: { email: formData.email }
+          });
+        } else {
+          // Mostrar mensaje de error específico si existe
+          toast.error(result?.message || 'Error en el registro. Por favor intenta nuevamente.');
+        }
+      }
+    } catch (error) {
+      console.error('Error durante el registro:', error);
+      toast.error('Error en el registro. Por favor intenta nuevamente.');
     }
   };
 
   // Efecto para actualizar estados cuando el customHook cambie
   useEffect(() => {
-    if (isSuccess) {
-      setAccessToken(accessTokenResult);
-    }
     if (error) {
       setErrorState(error);
+      toast.error(error);
     }
-  }, [isSuccess, error]);
+  }, [error]);
 
-  // Efectos para las acciones de los estados
-  useEffect(() => {
-    if (accessToken && userResult) {
-      login(accessToken, userResult);
-      changeHasPetsUser(false);
-      
-      // Usar fetchUserProfile para normalizar y guardar correctamente los datos del usuario
-      fetchUserProfile().then(() => {
-        // Check for redirect URL in sessionStorage
-        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
-        if (redirectUrl) {
-          // Clear the redirect URL
-          sessionStorage.removeItem('redirectAfterLogin');
-          // Navigate to the saved URL
-          navigate(redirectUrl);
-        } else {
-          // Default flow
-          navigate("/step-user");
-        }
-      });
-    }
-  }, [accessToken, userResult]);
-
-  // Efecto para manejar los estados de Google
+  // Efectos para las acciones de los estados de Google
   useEffect(() => {
     if (user && accessToken) {
+      // Los usuarios de Google no necesitan verificación de correo
       login(accessToken, user);
       changeHasPetsUser(hasPetsState);
       
       // Usar fetchUserProfile para normalizar los datos del usuario de Google
       fetchUserProfile().then(() => {
-        // Check for redirect URL in sessionStorage
-        const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+        // Check for redirect URL in localStorage
+        const redirectUrl = localStorage.getItem('redirectAfterLogin');
         if (redirectUrl) {
           // Clear the redirect URL
-          sessionStorage.removeItem('redirectAfterLogin');
+          localStorage.removeItem('redirectAfterLogin');
           // Navigate to the saved URL
           navigate(redirectUrl);
         } else {
@@ -167,7 +159,7 @@ export const Register = () => {
           >
             <div className="sm:p-4 md:p-6 lg:p-8 2xl:p-2 xl:p-2 w-auto">
                 <div className="mb-6 pl-2">
-                  <NavButton onClick={() => navigate(-1)} />
+                  <NavButton onClick={() => navigate("/welcome")} />
                 </div>
                 <header className="mb-4 2xl:mb-2 sm:mb-6 text-left ml-2 xl:mb-2">
                   <h2
@@ -320,10 +312,16 @@ export const Register = () => {
                       leading-tight
                     "
                       >
-                        Aceptar Términos{" "}
-                        <span className="text-brand">
-                          & Condiciones de PetConnect.
-                        </span>
+                        Aceptar{" "}
+                        <Link 
+                          to="/terms-and-conditions" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-brand hover:underline"
+                        >
+                          Términos & Condiciones
+                        </Link>{" "}
+                        de PetConnect.
                       </label>
                     </div>
                     {errors.terms && (

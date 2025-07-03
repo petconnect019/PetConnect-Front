@@ -8,7 +8,7 @@ export const FetchScans = async (pet_id) => {
         throw new Error('Se requiere el ID de la mascota');
     }
     
-    const token = sessionStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken');
     if (!token) {
         throw new Error('No hay token de acceso');
     }

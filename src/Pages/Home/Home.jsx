@@ -4,32 +4,35 @@ import { usePet } from "../../Contexts/PetContext/PetContext";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useFetchPets } from "../../Hooks/useFetchPets/useFetchPets";
-import { useFetchUserProfile } from "../../Hooks/useFetchUserProfile/useFetchUserProfile"; // Añadir esta importación
+import { useFetchUserProfile } from "../../Hooks/useFetchUserProfile/useFetchUserProfile";
 import { ProfileSection } from "../../Components/ProfileSection/ProfileSection";
 import { PetsSection } from "../../Components/PetsSection/PetsSection";
+import { HealthDashboard } from "../../Components/HealthDashboard/HealthDashboard";
+import { CalendarWidget } from "../../Components/CalendarWidget";
 import { FooterNav } from "../../Components/FooterNav/FooterNav";
 import petImage from '../../assets/images/petImage.png'
 import iconoHomeUno from '../../assets/images/iconoHomeUno.png'
 import iconoHomeDos from '../../assets/images/iconoHomeDos.png'
 import logo from '../../assets/images/LogoPetConnect.png'
-import notification from '../../assets/images/Notifications.png'
-import { useEffect } from "react"; // Añadir esta importación
+import { IoNotifications, IoNotificationsOutline } from "react-icons/io5";
+import { useNotifications } from "../../Contexts/NotificationContext/NotificationContext";
+import { useEffect } from "react";
 
 export const Home = () => {
   const auth = useAuth();
   const petsValidation = useHasPetsUser();
   const petsUser = usePet();
   const navigate = useNavigate();
-  const { fetchUserProfile } = useFetchUserProfile(); // Usar el hook para cargar los datos del usuario
+  const { fetchUserProfile } = useFetchUserProfile();
+  const { unreadCount } = useNotifications();
 
   if (!auth)
     return <div className="text-center text-gray-600">Cargando...</div>;
 
-  const { isAuthenticated } = auth; // Añadir esta línea
+  const { isAuthenticated } = auth;
   const { hasPetsUser } = petsValidation;
   const { petList } = petsUser;
 
-  // Asegurarnos de cargar los datos del usuario cuando el componente se monta
   useEffect(() => {
     if (isAuthenticated) {
       fetchUserProfile();
@@ -48,14 +51,19 @@ export const Home = () => {
             Pet Connect
           </Link>
           <button 
-            className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 3xl:w-13 3xl:h-13 4xl:w-14 4xl:h-14 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200" 
             onClick={() => navigate('/notifications')}
+            className="relative flex items-center justify-center w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 3xl:w-13 3xl:h-13 4xl:w-14 4xl:h-14 rounded-full hover:bg-gray-100 transition-colors duration-200"
           >
-            <img 
-              className='w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 3xl:w-13 3xl:h-13 4xl:w-14 4xl:h-14' 
-              src={notification} 
-              alt="Notification"
-            />
+            {unreadCount > 0 ? (
+              <IoNotifications className="text-xl sm:text-2xl" />
+            ) : (
+              <IoNotificationsOutline className="text-xl sm:text-2xl" />
+            )}
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] leading-none rounded-full w-4 h-4 flex items-center justify-center">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
           </button>
         </header>
 
@@ -111,6 +119,13 @@ export const Home = () => {
             <span className="font-medium text-gray-700">Tienda</span>
           </button>
         </section>
+
+        {/* Health Dashboard Section */}
+        <HealthDashboard petList={petList} navigate={navigate}/>
+
+        {/* Calendar Widget - Prominente */}
+        <CalendarWidget />
+
       </div>
       
       <FooterNav navigate={navigate} />

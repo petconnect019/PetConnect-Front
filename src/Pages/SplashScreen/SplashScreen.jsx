@@ -1,6 +1,7 @@
 import React, {  useEffect, useState } from 'react'
 import Logo from '../../assets/images/PetConnect Logo.png'
-import DogGift from '../../assets/images/DogSpinner.gif'
+import Lottie from 'lottie-react'
+import RunningDog from '../../assets/images/Perrito3.json'
 import { useNavigate } from 'react-router-dom'
 
 export const SplashScreen = () => {
@@ -11,7 +12,7 @@ export const SplashScreen = () => {
     const timer = setTimeout(() => {
       setLoading(false);
       navigate('/introduction1'); 
-    }, 800);
+    }, 2000);
     
     return () => clearTimeout(timer);
   }, [navigate]);
@@ -22,7 +23,11 @@ export const SplashScreen = () => {
             <img src={Logo} alt="Logo" className='w-32 sm:w-40 sm:h-40 mb-2' />
             <h1 className='text-2xl sm:text-xl font-bold text-center'>PetConnect</h1>
         </div>
-        <img src={DogGift} alt="Cargando..." className='w-50 h-50 sm:w-38 sm:h-38 mt-[2rem]' />
+        <Lottie
+          animationData={RunningDog}
+          loop
+          className='w-40 h-40 sm:w-38 sm:h-38 mt-[2rem]'
+        />
     </div>
   )
 }

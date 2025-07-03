@@ -121,7 +121,7 @@ export const UserProfileConfig = () => {
     console.log("Respuesta del backend:", response);
 
     if (response.success) {
-      // Actualizamos los datos en sessionStorage
+      // Actualizamos los datos en localStorage
       const updatedUserData = {
         ...userData,
         name: dataForm.name,
@@ -134,7 +134,7 @@ export const UserProfileConfig = () => {
         address: address,
         profile_picture: response.data?.profile_picture || userData.profile_picture
       };
-      sessionStorage.setItem("userData", JSON.stringify(updatedUserData));
+      localStorage.setItem("userData", JSON.stringify(updatedUserData));
       setModalOpen(true);
     } else {
       console.error("Error en la actualización:", response.error);
@@ -180,8 +180,8 @@ export const UserProfileConfig = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full">
-      <div className="w-screen space-y-2 xs:space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7 2xl:space-y-8">
+    <div className="flex flex-col items-center justify-center w-full min-h-screen">
+      <div className="w-full space-y-2 xs:space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7 2xl:space-y-8">
         <div className="flex items-center mt-2 mb-2 xs:mb-3 sm:mb-4 md:mb-5 lg:mb-6 xl:mb-7 2xl:mb-8 w-full relative">
           <div className="absolute left-0 pl-2">
             <NavButton onClick={() => navigate(-1)} />

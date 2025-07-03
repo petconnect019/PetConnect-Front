@@ -38,8 +38,8 @@ export const PublicPetProfile = () => {
   const carouselRef = useRef(null);
 
   useEffect(() => {
-    // Obtener datos del usuario del sessionStorage
-    const storedUserData = sessionStorage.getItem("userData");
+    // Obtener datos del usuario del localStorage
+    const storedUserData = localStorage.getItem("userData");
     if (storedUserData) {
       try {
         const parsedData = JSON.parse(storedUserData);
@@ -173,7 +173,7 @@ export const PublicPetProfile = () => {
     if (!isAuthenticated) {
       setRedirected(true);
       // Save current path to redirect back after authentication
-      sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
+      localStorage.setItem('redirectAfterLogin', window.location.pathname);
       // Give option to login or register
       navigate('/login');
       return;

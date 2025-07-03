@@ -48,8 +48,11 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
   const handleFileSelect = (event) => {
     const files = Array.from(event.target.files);
     
+    // Asegurar que photos sea un array
+    const photosArray = Array.isArray(photos) ? photos : [];
+    
     // Validar que no se exceda el límite de 5 fotos
-    if (photos.length + files.length > 5) {
+    if (photosArray.length + files.length > 5) {
       alert("No puedes subir más de 5 fotos en total");
       return;
     }
@@ -110,11 +113,14 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
     const photoSlots = [];
     const maxPhotos = 5;
 
+    // Asegurar que photos sea un array
+    const photosArray = Array.isArray(photos) ? photos : [];
+
     // Agregar fotos existentes
-    photos.forEach((photo, index) => {
+    photosArray.forEach((photo, index) => {
       photoSlots.push(
         <div 
-          key={photo._id || index} 
+          key={photo._id || `photo_${index}`} 
           className="relative flex items-center justify-center bg-[#F8FAFC] rounded-lg aspect-square overflow-hidden group"
         >
           <img 
@@ -140,7 +146,7 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
     });
 
     // Agregar botón de subir si hay espacio y es el propietario
-    if (photos.length < maxPhotos && isOwner) {
+    if (photosArray.length < maxPhotos && isOwner) {
       photoSlots.push(
         <div 
           key="upload-button"
@@ -155,7 +161,7 @@ export const PetPhotoGallery = ({ petId, isOwner = false }) => {
       );
     }
 
-    // Agregar slots vacíos para mantener la cuadrícula
+    // Agregar slots vacíos para mantener la cuadrícula solo si hay menos de 4 elementos
     while (photoSlots.length < 4) {
       photoSlots.push(
         <div 

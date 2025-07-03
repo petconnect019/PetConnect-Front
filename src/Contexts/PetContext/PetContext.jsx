@@ -12,7 +12,7 @@ export const PetProvider = ({ children }) => {
     };
 
     const removePet = (petId) => {
-        setPetList(petList.filter((pet) => pet._id !== petId));
+        setPetList((prevPets) => prevPets.filter((pet) => pet._id !== petId && pet.id !== petId));
     };
     const updatePet = (updatedPet) => {
         setPetList((prevPets) =>
@@ -26,7 +26,7 @@ export const PetProvider = ({ children }) => {
     }
 
     return (
-        <PetContext.Provider value={{ petList, addPet, removePet, findPet, updatePet }}>
+        <PetContext.Provider value={{ petList, setPetList, addPet, removePet, findPet, updatePet }}>
             {children}
         </PetContext.Provider>
     );
