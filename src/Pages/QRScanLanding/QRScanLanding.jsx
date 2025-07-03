@@ -5,6 +5,7 @@ import { FiMapPin, FiCheck, FiHeart, FiAlertCircle } from 'react-icons/fi';
 import { ImSpinner2 } from 'react-icons/im';
 import petLogo from '../../assets/images/PetConnect Logo.png'; // Usar el logo existente
 import config from '../../Utils/config';
+import { sendScanNotificationEmail } from '../../Services/emailService';
 
 export const QRScanLanding = () => {
   const { qrId } = useParams();
@@ -15,6 +16,7 @@ export const QRScanLanding = () => {
   const [locationStatus, setLocationStatus] = useState('idle');
   const [scanSuccess, setScanSuccess] = useState(false);
   const [errorType, setErrorType] = useState(null);
+  const [manualAddress, setManualAddress] = useState('');
 
   useEffect(() => {
     // Simular progreso automático para la animación de entrada
@@ -23,6 +25,60 @@ export const QRScanLanding = () => {
       return () => clearTimeout(timer);
     }
   }, [step]);
+
+  const handleManualScan = async () => {
+    if (!manualAddress.trim()) {
+      setError('Por favor, ingresa una dirección o punto de referencia.');
+      setErrorType('manual_input');
+      return;
+    }
+
+    setError(null);
+    setErrorType(null);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${config.api}/api/qr/manual-scan/${qrId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          address: manualAddress,
+          scanType: 'qr_scan_manual'
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al registrar la dirección.');
+      }
+
+      // Enviar correo con EmailJS
+      if (data.owner && data.pet) {
+        sendScanNotificationEmail({
+          owner_name: data.owner.name,
+          to_email: data.owner.email,
+          pet_name: data.pet.name,
+          location_data: manualAddress
+        });
+      }
+
+      setScanSuccess(true);
+      setLocationStatus('obtained'); // Reutilizamos este estado para mostrar éxito
+
+      setTimeout(() => {
+        navigate(`/public-pet-profile/${qrId}`);
+      }, 2000);
+    } catch (err) {
+      console.error('Error al enviar la dirección:', err);
+      setError(err.message || 'Error al registrar la dirección. Intenta nuevamente.');
+      setErrorType('backend');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleGetLocation = () => {
     setLocationStatus('requesting');
@@ -66,6 +122,17 @@ export const QRScanLanding = () => {
           
           if (!response.ok) {
             throw new Error(data.message || 'Error al registrar el escaneo');
+          }
+
+          // Enviar correo con EmailJS
+          if (data.owner && data.pet) {
+            const locationString = `Latitud: ${position.coords.latitude}, Longitud: ${position.coords.longitude}`;
+            sendScanNotificationEmail({
+              owner_name: data.owner.name,
+              to_email: data.owner.email,
+              pet_name: data.pet.name,
+              location_data: locationString
+            });
           }
 
           // Mostrar mensaje de éxito
@@ -263,6 +330,30 @@ export const QRScanLanding = () => {
                     : 'No pudimos obtener tu ubicación'}
                 </p>
                 <p className="text-gray-600 mb-4 text-sm">{error}</p>
+
+                {errorType !== 'invalid_qr' && (
+                  <div className="mt-6">
+                    <p className="text-gray-500 text-sm mb-2">Como alternativa, puedes ingresar la dirección manualmente:</p>
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="text"
+                        value={manualAddress}
+                        onChange={(e) => setManualAddress(e.target.value)}
+                        placeholder="Ej: Calle Principal 123, Cerca del parque"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+                        disabled={isLoading}
+                      />
+                    </div>
+                     <button
+                        onClick={handleManualScan}
+                        disabled={isLoading || !manualAddress.trim()}
+                        className="w-full mt-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white py-2 px-4 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                      >
+                        {isLoading ? <ImSpinner2 className="animate-spin" /> : 'Enviar dirección'}
+                      </button>
+                  </div>
+                )}
+
                 <div className="space-y-3 mt-4">
                   <button 
                     onClick={handleTryAgain}
