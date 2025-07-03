@@ -81,6 +81,7 @@ const NearbyServices = () => {
   // Función que se llama al pulsar el botón en iOS Safari
   const requestLocation = () => {
     setRequiresInteraction(false); // Ocultar el botón tras la interacción
+    setShowOptions(false);
 
     if (!navigator.geolocation) {
       setStatus('denied');
@@ -102,6 +103,8 @@ const NearbyServices = () => {
     if (!manualCity) return;
     const selected = cities.find(c => c.name === manualCity);
     if (!selected) return;
+    setShowOptions(false);
+    setStatus('fetching');
     successCallback({ coords: { latitude: selected.latitude, longitude: selected.longitude } });
   };
 
