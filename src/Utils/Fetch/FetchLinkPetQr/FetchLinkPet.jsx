@@ -10,9 +10,7 @@ export const FetchLinkPetQr = async (objectQrPet, token) => {
     }
 
     try {
-        const url = `${import.meta.env.VITE_API_URL}/api/qr/link?_id=${objectQrPet._id}`;
-        
-        const response = await fetch(url, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/qr/link?_id=${objectQrPet._id}`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,

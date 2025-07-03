@@ -13,9 +13,7 @@ export const useFetchLinkPet = (_id, petId) => {
   });
 
   const linkPet = async () => {
-    if (!_id || !petId) {
-      return;
-    }
+    if (!_id || !petId) return;
     
     setLinkState(prev => ({ ...prev, isLoading: true, error: null }));
     
