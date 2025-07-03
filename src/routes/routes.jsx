@@ -40,6 +40,7 @@ import { TermsAndConditions } from "../Pages/TermsAndConditions/TermsAndConditio
 import { Support } from "../Pages/Support/Support";
 import { VerifyEmail } from '../Pages/VerifyEmail/VerifyEmail';
 import { PendingVerification } from '../Pages/PendingVerification/PendingVerification';
+import { NearbyServices } from '../Pages/NearbyServices/NearbyServices';
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
@@ -189,7 +190,7 @@ export const routes = createBrowserRouter([
       </ProtectRoute>
     )
   },
-    {
+  {
     path: "/terms-and-conditions",
     element: <TermsAndConditions />,
   },
@@ -204,5 +205,9 @@ export const routes = createBrowserRouter([
   {
     path: "/pending-verification",
     element: <PendingVerification />,
+  },
+  {
+    path: '/nearby-services',
+    element: <ProtectRoute><NearbyServices /></ProtectRoute>,
   },
 ]);
