@@ -4,15 +4,15 @@ import { FetchRefreshToken } from "../../Utils/Fetch/FetchRefreshToken/FetchRefr
 import { isTokenExpired } from "../../Utils/Helpers/IsTokenExpired/IsTokenExpired";
 import { usePet } from "../../Contexts/PetContext/PetContext";
 import { useIsFetchedPets } from "../../Contexts/IsFetchedPets/IsFetchedPets";
+import { useHasPetsUser } from "../../Contexts/HasPetsUser/HasPetsUser";
 
 export const useFetchPets = (hasPetsUser) => {
     const { addPet, findPet, updatePet } = usePet();
     const { isFetchedPets, changeIsFetched } = useIsFetchedPets();
+    const { changeHasPetsUser } = useHasPetsUser();
+
     useEffect(() => {
-        console.log(isFetchedPets);
-        
-        if (!hasPetsUser || isFetchedPets) return;
-        console.log("entra");
+        if (isFetchedPets) return;
         
         const fetchData = async () => {
             let token = sessionStorage.getItem('accessToken');
@@ -28,13 +28,16 @@ export const useFetchPets = (hasPetsUser) => {
 
             try {
                 const data = await FetchPets(token);
-                data.pets.forEach(pet => {
-                    if (!findPet(pet._id)) {
-                        addPet(pet);
-                    } else {
-                        updatePet(pet)
-                    }
-                });
+                if (data.pets && data.pets.length > 0) {
+                    changeHasPetsUser(true);
+                    data.pets.forEach(pet => {
+                        if (!findPet(pet._id)) {
+                            addPet(pet);
+                        } else {
+                            updatePet(pet)
+                        }
+                    });
+                }
                 changeIsFetched(true);
 
             } catch (error) {
