@@ -19,6 +19,7 @@ class GoogleCalendarService {
       
       // Verificar si el token ha expirado
       if (new Date().getTime() > parseInt(tokenExpiry)) {
+        this.clearStoredAuth();
         return false;
       }
       
@@ -41,8 +42,7 @@ class GoogleCalendarService {
       const tokenToStore = this.gapi?.client?.getToken() || token;
       // Guardar token y tiempo de expiración (1 hora desde ahora)
       localStorage.setItem('gapi_token', JSON.stringify(tokenToStore));
-      const expiresInMs = (tokenToStore?.expires_in ? tokenToStore.expires_in * 1000 : 3600000);
-      localStorage.setItem('gapi_token_expiry', new Date().getTime() + expiresInMs);
+      localStorage.setItem('gapi_token_expiry', new Date().getTime() + 3600000);
       this.isAuthenticated = true;
     } catch (error) {
       console.error('Error storing auth:', error);
@@ -203,15 +203,18 @@ class GoogleCalendarService {
         await this.initialize();
       }
       
-      // Asegurarnos de que el token sea válido (o intentar refrescarlo en silencio)
-      const hasValidToken = await this.ensureValidToken();
-      if (!hasValidToken) {
+      // Primero verificar el almacenamiento local
+      if (!this.checkStoredAuth()) {
         return false;
       }
 
-      // Verificar el token actual de gapi
+      // Luego verificar el token actual de gapi
       const token = this.gapi?.client?.getToken();
       const connected = token !== null;
+      
+      if (!connected) {
+        this.clearStoredAuth();
+      }
       
       console.log('Connection status:', { token: !!token, isAuthenticated: this.isAuthenticated, connected });
       return connected;
@@ -294,42 +297,6 @@ class GoogleCalendarService {
       console.error('Error during disconnect:', error);
       this.clearStoredAuth();
     }
-  }
-
-  // Intenta refrescar el token en silencio si está expirado
-  async ensureValidToken() {
-    // Si el almacenamiento indica que el token aún es válido, no hacemos nada
-    if (this.checkStoredAuth()) {
-      return true;
-    }
-
-    // Si no hay tokenClient, no podemos refrescar
-    if (!this.tokenClient) {
-      return false;
-    }
-
-    // Intento de refresh silencioso
-    return await new Promise((resolve) => {
-      try {
-        this.tokenClient.callback = (resp) => {
-          if (resp?.error !== undefined) {
-            console.error('Silent token refresh failed:', resp);
-            this.clearStoredAuth();
-            resolve(false);
-            return;
-          }
-          console.log('Silent token refresh success');
-          this.storeAuth(resp);
-          resolve(true);
-        };
-
-        // prompt vacío para evitar pop-ups si es posible
-        this.tokenClient.requestAccessToken({ prompt: '' });
-      } catch (error) {
-        console.error('Error in ensureValidToken:', error);
-        resolve(false);
-      }
-    });
   }
 }
 
