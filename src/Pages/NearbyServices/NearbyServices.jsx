@@ -2,10 +2,87 @@ import React, { useState, useEffect } from 'react';
 import ServiceCard from '../../Components/ServiceCard/ServiceCard';
 import './NearbyServices.css'; // Crearemos este archivo para los estilos
 
+// Utilidad para detectar iOS
+const isIOS = () => {
+  return /iP(hone|od|ad)/.test(navigator.platform) || (navigator.userAgent.includes('Mac') && 'ontouchend' in document);
+};
+
+// Utilidad para detectar Safari (excluyendo Chrome en iOS)
+const isSafari = () => {
+  const ua = navigator.userAgent;
+  return ua.includes('Safari') && !ua.includes('Chrome');
+};
+
 const NearbyServices = () => {
   const [services, setServices] = useState([]);
   const [status, setStatus] = useState('locating'); // 'locating', 'fetching', 'success', 'denied', 'error'
   const [error, setError] = useState('');
+  const [requiresInteraction, setRequiresInteraction] = useState(false);
+
+  const requestLocation = () => {
+    if (!navigator.geolocation) {
+      setStatus('denied');
+      setError('La geolocalización no es compatible con tu navegador.');
+      return;
+    }
+
+    setStatus('locating');
+
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+    });
+  };
+
+  const successCallback = async (position) => {
+    setStatus('fetching');
+    const { latitude, longitude } = position.coords;
+
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        setStatus('denied');
+        setError('Debes iniciar sesión para acceder a esta función.');
+        return;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/places/nearby?latitude=${latitude}&longitude=${longitude}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.status === 401) {
+        setStatus('denied');
+        setError('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error('La respuesta del servidor no fue exitosa.');
+      }
+
+      const data = await response.json();
+      setServices(data.places || []);
+      setStatus('success');
+    } catch (err) {
+      setStatus('error');
+      setError('No se pudieron cargar los servicios cercanos. Inténtalo de nuevo más tarde.');
+      console.error(err);
+    }
+  };
+
+  const errorCallback = (error) => {
+    setStatus('denied');
+    if (error.code === error.PERMISSION_DENIED) {
+      setError('Permiso de ubicación denegado. Activa la ubicación en tu navegador para encontrar servicios cercanos.');
+    } else {
+      setError('No se pudo obtener tu ubicación.');
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -15,58 +92,25 @@ const NearbyServices = () => {
       return;
     }
 
-    if (!navigator.geolocation) {
-      setStatus('denied');
-      setError('La geolocalización no es compatible con tu navegador.');
+    // Si es iOS Safari, esperar interacción del usuario
+    if (isIOS() && isSafari()) {
+      setRequiresInteraction(true);
       return;
     }
 
-    const successCallback = async (position) => {
-      setStatus('fetching');
-      const { latitude, longitude } = position.coords;
-
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/places/nearby?latitude=${latitude}&longitude=${longitude}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.status === 401) {
-          setStatus('denied');
-          setError('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error('La respuesta del servidor no fue exitosa.');
-        }
-
-        const data = await response.json();
-        setServices(data.places || []);
-        setStatus('success');
-      } catch (err) {
-        setStatus('error');
-        setError('No se pudieron cargar los servicios cercanos. Inténtalo de nuevo más tarde.');
-        console.error(err);
-      }
-    };
-
-    const errorCallback = (error) => {
-      setStatus('denied');
-      if (error.code === error.PERMISSION_DENIED) {
-        setError('Permiso de ubicación denegado. Activa la ubicación en tu navegador para encontrar servicios cercanos.');
-      } else {
-        setError('No se pudo obtener tu ubicación.');
-      }
-    };
-
-    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+    // Para otros navegadores, pedir ubicación inmediatamente
+    requestLocation();
   }, []);
 
   const renderContent = () => {
+    if (requiresInteraction) {
+      return (
+        <div className="status-message">
+          <p>Para mostrar servicios cercanos necesitamos tu ubicación.</p>
+          <button className="action-button map-button" onClick={requestLocation}>Permitir ubicación</button>
+        </div>
+      );
+    }
     switch (status) {
       case 'locating':
         return <div className="status-message">🌍 Obteniendo tu ubicación...</div>;
