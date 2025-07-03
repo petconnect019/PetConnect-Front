@@ -40,7 +40,7 @@ import { TermsAndConditions } from "../Pages/TermsAndConditions/TermsAndConditio
 import { Support } from "../Pages/Support/Support";
 import { VerifyEmail } from '../Pages/VerifyEmail/VerifyEmail';
 import { PendingVerification } from '../Pages/PendingVerification/PendingVerification';
-import { NearbyServices } from '../Pages/NearbyServices/NearbyServices';
+import NearbyServices from '../Pages/NearbyServices/NearbyServices';
 
 export const routes = createBrowserRouter([
   // 🔓 Rutas públicas (No requieren autenticación)
