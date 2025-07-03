@@ -8,7 +8,7 @@ export const PetsSection = ({ petList, navigate }) => {
                 <h2 className="text-lg font-semibold">Mis Mascotas</h2>
                 <Link to={'/my-pets'} className="text-brand font-medium hover:underline">Ver todas</Link>
             </div>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 overflow-x-auto flex-nowrap">
                 {petList.length > 0 ? (
                     petList.map((pet, index) => (
                         <ProfilePetSection key={index + pet._id} pet={pet} navigate={navigate}/>
