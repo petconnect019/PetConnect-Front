@@ -19,25 +19,10 @@ const NearbyServices = () => {
   const [error, setError] = useState('');
   const [requiresInteraction, setRequiresInteraction] = useState(false);
 
-  const requestLocation = () => {
-    if (!navigator.geolocation) {
-      setStatus('denied');
-      setError('La geolocalización no es compatible con tu navegador.');
-      return;
-    }
-
-    setStatus('locating');
-
-    navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0,
-    });
-  };
-
+  // Primero declaramos los callbacks para que estén disponibles antes de usarlos
   const successCallback = async (position) => {
-    setStatus('fetching');
     const { latitude, longitude } = position.coords;
+    setStatus('fetching');
 
     try {
       const token = localStorage.getItem('accessToken');
@@ -79,9 +64,30 @@ const NearbyServices = () => {
     setStatus('denied');
     if (error.code === error.PERMISSION_DENIED) {
       setError('Permiso de ubicación denegado. Activa la ubicación en tu navegador para encontrar servicios cercanos.');
+    } else if (error.code === error.TIMEOUT) {
+      setError('La solicitud de ubicación excedió el tiempo límite.');
     } else {
       setError('No se pudo obtener tu ubicación.');
     }
+  };
+
+  // Función que se llama al pulsar el botón en iOS Safari
+  const requestLocation = () => {
+    setRequiresInteraction(false); // Ocultar el botón tras la interacción
+
+    if (!navigator.geolocation) {
+      setStatus('denied');
+      setError('La geolocalización no es compatible con tu navegador.');
+      return;
+    }
+
+    setStatus('locating');
+
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+    });
   };
 
   useEffect(() => {
