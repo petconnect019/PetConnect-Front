@@ -28,9 +28,9 @@ export const FooterNav = ({ navigate }) => {
             >
                 <div className="w-6 h-6 flex items-center justify-center">
                   <img 
-                    src={isActive("/nearby-services") ? Location : LocationGray}
+                    src={Location}
                     alt='Servicios Cercanos' 
-                    className='max-w-full max-h-full' 
+                    className={`max-w-full max-h-full transition-all duration-300 ${!isActive("/nearby-services") ? "grayscale" : ""}`}
                   />
                 </div>
                 <span className="text-xs">Servicios</span>
