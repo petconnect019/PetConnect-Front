@@ -17,6 +17,7 @@ export const Scanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scannedResult, setScannedResult] = useState(null);
   const [scanning, setScanning] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -56,6 +57,7 @@ export const Scanner = () => {
     }
     setScanning(false);
     setRenderCheckVideoFrame(false);
+    setCameraReady(false);
   }, []);
 
   // Request camera permission and set up video stream
@@ -72,6 +74,7 @@ export const Scanner = () => {
     }
     
     setScanning(true);
+    setCameraReady(false);
     
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -85,11 +88,12 @@ export const Scanner = () => {
         videoRef.current.srcObject = stream;
         videoRef.current.onloadedmetadata = () => {
           console.log("Video metadata loaded, attempting to play");
+          videoRef.current.setAttribute('playsinline', '');
           videoRef.current.play()
             .then(() => {
               console.log("Video playback started successfully");
               setHasPermission(true);
-              setScanning(true);
+              setCameraReady(true);
               
               // Clear any previous results when starting a new scan
               setScannedResult(null);
@@ -207,7 +211,7 @@ export const Scanner = () => {
         {/* Always render the video element, but hide it when not scanning */}
         <video
           ref={videoRef}
-          className={` absolute inset-0 w-screen h-screen object-cover ${scanning ? 'block' : 'hidden'}`}
+          className={`absolute inset-0 w-full h-full object-cover ${cameraReady ? 'block' : 'hidden'}`}
           autoPlay
           playsInline
           muted
