@@ -1,6 +1,8 @@
 import { Frown } from "lucide-react";
 
 export const ErrorLinkScreen = ({error, handleScanAgain}) => {
+  console.log("ErrorLinkScreen rendered with error:", error);
+  
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center p-4 xs:p-5 sm:p-6 text-center bg-blue-50">
       <div className="w-20 h-20 xs:w-24 xs:h-24 rounded-full bg-blue-100 flex items-center justify-center mb-4 xs:mb-5 sm:mb-6">
