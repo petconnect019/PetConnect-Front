@@ -23,6 +23,12 @@ export const Scanner = () => {
 
   const [renderCheckVideoFrame, setRenderCheckVideoFrame] = useState(false);
   const {pet_id} = useParams();
+  
+  console.log('=== DEBUG SCANNER ===');
+  console.log('Pet ID desde URL:', pet_id);
+  console.log('Scanned Result:', scannedResult);
+  console.log('QR ID extraído:', scannedResult ? getQrId(scannedResult) : 'NO ESCANEADO');
+  
   const {linkPet, data, pet, hasPet, isLoading, error} = useFetchLinkPet(scannedResult ? getQrId(scannedResult) : null, pet_id);
 
   // Process QR code function defined early with useCallback
@@ -185,11 +191,16 @@ export const Scanner = () => {
 
   //access to the scanned result
   useEffect(()=> {
+    console.log('=== DEBUG useEffect scannedResult ===');
+    console.log('scannedResult cambió:', scannedResult);
+    console.log('pet_id disponible:', pet_id);
+    
     if (scannedResult) {
+      console.log('Llamando linkPet()...');
       linkPet();
     }
     
-  }, [scannedResult])
+  }, [scannedResult, linkPet])
   
 
   return (

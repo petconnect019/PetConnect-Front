@@ -13,29 +13,47 @@ export const useFetchLinkPet = (_id, petId) => {
   });
 
   const linkPet = async () => {
-    if (!_id || !petId) return;
+    if (!_id || !petId) {
+      console.log('=== linkPet NO EJECUTADO ===');
+      console.log('_id:', _id);
+      console.log('petId:', petId);
+      return;
+    }
+    
+    console.log('=== DEBUG FRONTEND linkPet ===');
+    console.log('QR ID (_id):', _id);
+    console.log('Pet ID (petId):', petId);
+    console.log('Iniciando vinculación...');
     
     setLinkState(prev => ({ ...prev, isLoading: true, error: null }));
     
     try {
       let token = localStorage.getItem('accessToken');
+      console.log('Token obtenido:', token ? 'SÍ' : 'NO');
       
       if (isTokenExpired(token)) {
+        console.log('Token expirado, refrescando...');
         try {
           await FetchRefreshToken();
           token = localStorage.getItem('accessToken');
+          console.log('Token refrescado:', token ? 'SÍ' : 'NO');
         } catch (refreshError) {
           throw new Error("Error al refrescar el token: " + refreshError.message);
         }
       }
 
       const objectQrPet = { _id, petId };
+      console.log('Objeto a enviar:', objectQrPet);
       const result = await FetchLinkPetQr(objectQrPet, token);
       
+      console.log('Resultado de FetchLinkPetQr:', result);
+      
       if (!result.ok) {
+        console.log('Error en la respuesta:', result.message);
         throw new Error(result.message || "Error en la respuesta del servidor");
       }
       
+      console.log('Vinculación exitosa, actualizando estado...');
       setLinkState({
         isLoading: false,
         error: null,
@@ -46,6 +64,7 @@ export const useFetchLinkPet = (_id, petId) => {
       
       return result.data;
     } catch (error) {
+      console.log('Error capturado en linkPet:', error.message);
       setLinkState(prev => ({ 
         ...prev, 
         isLoading: false, 
