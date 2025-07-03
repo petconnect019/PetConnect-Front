@@ -60,10 +60,6 @@ export const PendingVerification = () => {
         }
     };
 
-    const handleCheckEmail = () => {
-        // Abrir el cliente de correo predeterminado
-        window.open(`mailto:${email}`);
-    };
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -104,11 +100,6 @@ export const PendingVerification = () => {
 
                     {/* Botones de acción */}
                     <div className="space-y-4">
-                        <ButtonPrimary
-                            text="Abrir mi correo"
-                            onClick={handleCheckEmail}
-                            className="w-full"
-                        />
                         <ButtonSecondary
                             text={
                                 isResending
@@ -121,6 +112,12 @@ export const PendingVerification = () => {
                             disabled={isResending || countdown > 0}
                             className="w-full"
                         />
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="text-brand hover:text-brand-dark font-medium w-full text-center"
+                        >
+                            Volver al inicio de sesión
+                        </button>
                     </div>
 
                     {/* Nota de ayuda */}
@@ -128,16 +125,6 @@ export const PendingVerification = () => {
                         ¿No recibiste el correo? Revisa tu carpeta de spam o solicita un nuevo correo de verificación.
                     </p>
                 </div>
-            </div>
-
-            {/* Footer */}
-            <div className="p-4 text-center">
-                <button
-                    onClick={() => navigate('/login')}
-                    className="text-brand hover:text-brand-dark font-medium"
-                >
-                    Volver al inicio de sesión
-                </button>
             </div>
         </div>
     );
