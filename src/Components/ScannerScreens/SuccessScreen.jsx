@@ -1,34 +1,52 @@
-import { PartyPopper } from "lucide-react";
+import { CheckCircle, QrCode, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const SuccessScreen = ({ handleScanAgain }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 xs:p-5 sm:p-6 text-center bg-gradient-to-b from-green-50 to-white">
-      <div className="w-20 h-20 xs:w-24 xs:h-24 rounded-full bg-green-100 flex items-center justify-center mb-4 xs:mb-5 sm:mb-6 animate-bounce-slow">
-        <PartyPopper className="w-10 h-10 xs:w-12 xs:h-12 text-green-500" />
+    <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-emerald-50 via-white to-emerald-50/30">
+      {/* Success Icon */}
+      <div className="relative mb-8">
+        <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-3xl flex items-center justify-center shadow-lg shadow-emerald-100/50">
+          <CheckCircle className="w-12 h-12 text-emerald-600" strokeWidth={1.5} />
+        </div>
+        {/* Subtle glow effect */}
+        <div className="absolute inset-0 w-24 h-24 bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 rounded-3xl blur-xl -z-10"></div>
       </div>
-      <h3 className="text-lg xs:text-xl sm:text-2xl font-bold text-green-800 mb-2">
-        ¡Mascota vinculada con éxito!
+      
+      {/* Title */}
+      <h3 className="text-2xl font-bold text-emerald-800 mb-3 tracking-tight">
+        ¡Mascota vinculada!
       </h3>
-      <div className="bg-white rounded-xl p-3 xs:p-4 shadow-md w-full max-w-[16rem] xs:max-w-[18rem] sm:max-w-xs mb-4 xs:mb-5 sm:mb-6 border border-green-200">
-        <p className="text-sm xs:text-base sm:text-lg text-gray-700 mb-2">
-          Tu mascota ha sido vinculada correctamente a tu cuenta.
-        </p>
-      </div>
-      <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full max-w-[16rem] xs:max-w-[18rem] sm:max-w-xs">
+      
+      {/* Description */}
+      <p className="text-emerald-700/80 mb-8 max-w-sm leading-relaxed">
+        La mascota ha sido vinculada exitosamente a tu cuenta. Ya puedes gestionar su información.
+      </p>
+      
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
         <button
           onClick={handleScanAgain}
-          className="px-4 py-2 xs:py-2.5 sm:py-3 bg-gray-200 text-gray-800 font-semibold rounded-full hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 shadow sm:flex-1 text-sm xs:text-base sm:text-lg"
+          className="group relative flex-1 px-6 py-3 bg-white border-2 border-emerald-200 text-emerald-700 font-semibold rounded-xl shadow-sm hover:shadow-md hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-105 active:scale-95"
         >
-          Vincular Otra
+          <div className="flex items-center justify-center space-x-2">
+            <QrCode className="w-4 h-4" />
+            <span>Vincular otra</span>
+          </div>
         </button>
+        
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 xs:py-2.5 sm:py-3 bg-red-400 text-white font-semibold rounded-full hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-redbg-red-400 focus:ring-offset-2 shadow sm:flex-1 text-sm xs:text-base sm:text-lg"
+          className="group relative flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-105 active:scale-95"
         >
-          Volver
+          <div className="flex items-center justify-center space-x-2">
+            <ArrowLeft className="w-4 h-4" />
+            <span>Volver</span>
+          </div>
+          {/* Button glow effect */}
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-400 to-emerald-500 opacity-0 group-hover:opacity-20 transition-opacity duration-200"></div>
         </button>
       </div>
     </div>
