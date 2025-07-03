@@ -1,4 +1,3 @@
-import { createBrowserRouter } from "react-router-dom";
 import { ProtectRoute } from "../Components/ProtectRoute/ProtectRoute";
 import { MainLayout } from "../Components/MainLayout/MainLayout";
 
@@ -43,7 +42,7 @@ import { VerifyEmail } from '../Pages/VerifyEmail/VerifyEmail';
 import { PendingVerification } from '../Pages/PendingVerification/PendingVerification';
 import NearbyServices from '../Pages/NearbyServices/NearbyServices';
 
-export const routes = createBrowserRouter([
+export const routesConfig = [
   // 🔓 Rutas públicas (No requieren autenticación)
   {
     path: '/',
@@ -216,4 +215,4 @@ export const routes = createBrowserRouter([
       },
     ]
   }
-]);
+];
