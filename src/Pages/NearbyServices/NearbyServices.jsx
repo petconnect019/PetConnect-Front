@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ServiceCard from '../../Components/ServiceCard/ServiceCard';
 import './NearbyServices.css'; // Crearemos este archivo para los estilos
 import { cities } from '../../data/cities.js';
-import { IoArrowBack } from "react-icons/io5"; // Importar icono de flecha
+import { IoArrowBack, IoWarningOutline } from "react-icons/io5"; // Importar icono de flecha y de advertencia
 
 // Utilidad para detectar iOS
 const isIOS = () => {
@@ -129,9 +129,15 @@ const NearbyServices = () => {
       
       case 'awaiting_user_choice':
         return (
-          <div className="status-message">
-            <p>Para encontrar servicios cercanos, permite tu ubicación o selecciona una ciudad.</p>
-            {error && <p className="text-sm error-message mt-2">{error}</p>}
+          <div className="choice-container">
+            <h1 className="page-title">Servicios Cercanos</h1>
+            <p className="page-subtitle">Para encontrar ayuda para tu mascota, permite tu ubicación o selecciona una ciudad.</p>
+            {error && (
+              <div className="error-message">
+                <IoWarningOutline className="icon" />
+                <span>{error}</span>
+              </div>
+            )}
             
             <div className="location-options">
               <button onClick={requestLocation} className="action-button">Permitir ubicación</button>
@@ -154,37 +160,36 @@ const NearbyServices = () => {
         return <div className="status-message">🔍 Buscando servicios para tu mascota...</div>;
         
       case 'denied':
-        // Este caso puede mostrar un mensaje más específico o redirigir
         return (
           <div className="status-message">
-            <p className="error-message">⚠️ {error}</p>
-            <div className="location-options mt-4">
+             <div className="error-message mb-4">
+                <IoWarningOutline className="icon" />
+                <span>{error}</span>
+              </div>
+            <div className="location-options">
                <button onClick={handleReturnToChoice} className="action-button">Volver a intentar</button>
             </div>
           </div>
         );
 
       case 'error':
-        return <div className="status-message error-message">😢 {error}</div>;
+        return (
+          <div className="status-message">
+            <div className="error-message">
+              <IoWarningOutline className="icon" />
+              <span>{error}</span>
+            </div>
+          </div>
+        );
         
       case 'success':
-        return (
-          <>
-            <div className="flex items-center mb-4">
-              <button onClick={handleReturnToChoice} className="p-2 mr-2 text-2xl text-gray-600 hover:text-gray-900">
-                <IoArrowBack />
-              </button>
-              <h2 className="text-xl font-bold text-gray-800">Resultados</h2>
-            </div>
-            {services.length > 0 ? (
-              <div className="services-list">{services.map(service => <ServiceCard key={service.id} service={service} />)}</div>
-            ) : (
-              <div className="status-message">
-                <p>🤷‍♀️ No se encontraron servicios cercanos.</p>
-                <button onClick={handleReturnToChoice} className="action-button mt-4">Buscar de nuevo</button>
-              </div>
-            )}
-          </>
+        return services.length > 0 ? (
+          <div className="services-list">{services.map(service => <ServiceCard key={service.id} service={service} />)}</div>
+        ) : (
+          <div className="status-message">
+            <p>🤷‍♀️ No se encontraron servicios cercanos.</p>
+            <button onClick={handleReturnToChoice} className="action-button mt-4">Buscar de nuevo</button>
+          </div>
         );
         
       default:
@@ -193,9 +198,20 @@ const NearbyServices = () => {
   };
 
   return (
-    <div className="nearby-services-container">
-      {status !== 'success' && <h1 className="page-title">Servicios Cercanos</h1>}
-      {renderContent()}
+    <div className="nearby-services-page">
+      <div className="page-header">
+        {status === 'success' && (
+          <div className="results-header">
+            <button onClick={handleReturnToChoice} className="back-button">
+              <IoArrowBack />
+            </button>
+            <h2 className="results-title">Resultados</h2>
+          </div>
+        )}
+      </div>
+      <div className="page-content">
+        {renderContent()}
+      </div>
     </div>
   );
 };

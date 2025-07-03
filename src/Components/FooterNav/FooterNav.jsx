@@ -18,18 +18,7 @@ export const FooterNav = ({ navigate }) => {
 
     return (
         <footer className="bg-white flex justify-around fixed bottom-0 left-0 right-0 py-3 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30">
-            {/* Botón de Inicio */}
-            <button 
-                onClick={() => navigate("/home")}
-                className={`flex flex-col items-center gap-1 transition-all duration-300 ${
-                    isActive("/home") ? "text-brand" : "text-gray-400 hover:text-brand"
-                }`}
-            >
-                {isActive("/home") ? <AiFillHome className="text-2xl" /> : <AiOutlineHome className="text-2xl" />}
-                <span className="text-xs">Inicio</span>
-            </button>
-            
-            {/* Botón de Servicios (Nuevo orden) */}
+            {/* Botón de Servicios */}
             <button
                 onClick={() => navigate("/nearby-services")}
                 className={`flex flex-col items-center justify-center gap-1 transition-all duration-300 ${
@@ -51,6 +40,17 @@ export const FooterNav = ({ navigate }) => {
             >
                 {isMessagesActive ? <AiFillMessage className="text-2xl" /> : <AiOutlineMessage className="text-2xl" />}
                 <span className="text-xs">Mensajes</span>
+            </button>
+            
+            {/* Botón de Inicio (Posición Central) */}
+            <button 
+                onClick={() => navigate("/home")}
+                className={`flex flex-col items-center gap-1 transition-all duration-300 ${
+                    isActive("/home") ? "text-brand" : "text-gray-400 hover:text-brand"
+                }`}
+            >
+                {isActive("/home") ? <AiFillHome className="text-2xl" /> : <AiOutlineHome className="text-2xl" />}
+                <span className="text-xs">Inicio</span>
             </button>
 
             {/* Botón de Alertas */}
