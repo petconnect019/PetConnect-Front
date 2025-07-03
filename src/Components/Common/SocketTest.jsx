@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 const SocketTest = () => {
   const [testResult, setTestResult] = useState('');
   const [isTesting, setIsTesting] = useState(false);
-
+//o
   const runSocketTest = () => {
     setIsTesting(true);
     setTestResult('🔄 Iniciando test de conexión socket...\n');
