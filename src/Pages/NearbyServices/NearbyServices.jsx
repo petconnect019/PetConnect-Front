@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import ServiceCard from '../../Components/ServiceCard/ServiceCard';
-import { VITE_API_URL } from '../../Utils/config';
 import './NearbyServices.css'; // Crearemos este archivo para los estilos
 
 const NearbyServices = () => {
@@ -21,7 +20,7 @@ const NearbyServices = () => {
 
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`${VITE_API_URL}/api/places/nearby?latitude=${latitude}&longitude=${longitude}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/places/nearby?latitude=${latitude}&longitude=${longitude}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
