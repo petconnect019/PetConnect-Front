@@ -211,11 +211,11 @@ export const Scanner = () => {
       
       {/* Scanner Container */}
       <div className="flex-1 flex items-center justify-center px-6 pb-8">
-        <div className="relative w-full max-w-md aspect-square bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl shadow-slate-200/50 overflow-hidden border border-white/50">
+        <div className="relative w-full max-w-md aspect-square bg-white rounded-3xl shadow-2xl shadow-slate-200/50 overflow-hidden border border-white/20">
           {/* Video Element */}
           <video
             ref={videoRef}
-            className={`absolute inset-0 w-full h-full object-cover rounded-3xl ${cameraReady ? 'block' : 'hidden'}`}
+            className={`absolute inset-0 w-full h-full object-cover ${cameraReady ? 'block' : 'hidden'}`}
             autoPlay
             playsInline
             muted
