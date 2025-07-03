@@ -21,3 +21,4 @@ export const PetsSection = ({ petList, navigate }) => {
         </section>
     );
 };
+//r

@@ -2,7 +2,7 @@ import { X, Scan } from "lucide-react";
 
 export const ScanningScreen = ({stopScanning}) => {
   return (
-    <div className="absolute inset-0 bg-black/10 backdrop-blur-sm">
+    <div className="absolute inset-0 bg-black/10">
       {/* Scanner Frame */}
       <div className="absolute inset-0 flex items-center justify-center p-8">
         <div className="relative w-64 h-64 max-w-[80vw] max-h-[80vw]">
