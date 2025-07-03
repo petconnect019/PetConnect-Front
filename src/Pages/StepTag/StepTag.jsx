@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { ButtonPrimary } from "../../Components/Buttons/ButtonPrimary"
-import AddTag from '../../assets/images/AddTag.png'
+import AddTag from '../../assets/images/addTag.png'
 import { NavButtonStep } from "../../Components/NavButtonStep/NavButtonStep"
 
 export const StepTag = () => {
