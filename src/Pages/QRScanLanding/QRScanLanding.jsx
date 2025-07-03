@@ -55,8 +55,8 @@ export const QRScanLanding = () => {
         throw new Error(data.message || 'Error al registrar la dirección.');
       }
 
-      // Enviar correo con EmailJS
-      if (data.owner && data.pet) {
+      // Enviar correo con EmailJS SOLO si existe un email válido del dueño
+      if (data.owner && data.pet && data.owner.email) {
         sendScanNotificationEmail({
           owner_name: data.owner.name,
           to_email: data.owner.email,
@@ -124,8 +124,8 @@ export const QRScanLanding = () => {
             throw new Error(data.message || 'Error al registrar el escaneo');
           }
 
-          // Enviar correo con EmailJS
-          if (data.owner && data.pet) {
+          // Enviar correo con EmailJS SOLO si existe un email válido del dueño
+          if (data.owner && data.pet && data.owner.email) {
             const locationString = `Latitud: ${position.coords.latitude}, Longitud: ${position.coords.longitude}`;
             sendScanNotificationEmail({
               owner_name: data.owner.name,
