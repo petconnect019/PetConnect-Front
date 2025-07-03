@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ServiceCard from '../../Components/ServiceCard/ServiceCard';
 import './NearbyServices.css'; // Crearemos este archivo para los estilos
 import { cities } from '../../data/cities.js';
+import { IoArrowBack } from "react-icons/io5"; // Importar icono de flecha
 
 // Utilidad para detectar iOS
 const isIOS = () => {
@@ -92,6 +93,12 @@ const NearbyServices = () => {
     successCallback({ coords: { latitude: selected.latitude, longitude: selected.longitude } });
   };
 
+  const handleReturnToChoice = () => {
+    setStatus('awaiting_user_choice');
+    setError(''); // Limpiar errores previos
+    setServices([]); // Limpiar resultados
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -119,45 +126,75 @@ const NearbyServices = () => {
     switch (status) {
       case 'initializing':
         return <div className="status-message">Inicializando...</div>;
+      
       case 'awaiting_user_choice':
         return (
           <div className="status-message">
-            {error && <p className="error-message mb-4">{error}</p>}
             <p>Para encontrar servicios cercanos, permite tu ubicación o selecciona una ciudad.</p>
-            <div className="flex flex-col gap-4 w-full mt-4">
-              <button onClick={requestLocation} className="action-button map-button">Permitir ubicación</button>
-              <div>
-                <select className="mt-2 p-2 border rounded w-full" value={manualCity} onChange={(e) => setManualCity(e.target.value)}>
-                  <option value="" disabled>O selecciona tu ciudad</option>
+            {error && <p className="text-sm error-message mt-2">{error}</p>}
+            
+            <div className="location-options">
+              <button onClick={requestLocation} className="action-button">Permitir ubicación</button>
+              <div className="or-divider">o</div>
+              <div className="city-selector-container">
+                <select className="city-selector" value={manualCity} onChange={(e) => setManualCity(e.target.value)}>
+                  <option value="" disabled>Selecciona tu ciudad</option>
                   {cities.map(city => (<option key={city.name} value={city.name}>{city.name}</option>))}
                 </select>
-                <button disabled={!manualCity} onClick={handleManualSearch} className="action-button map-button w-full mt-2 disabled:opacity-50">Buscar por ciudad</button>
+                <button disabled={!manualCity} onClick={handleManualSearch} className="action-button">Buscar</button>
               </div>
             </div>
           </div>
         );
+      
       case 'locating':
         return <div className="status-message">🌍 Obteniendo tu ubicación...</div>;
+        
       case 'fetching':
         return <div className="status-message">🔍 Buscando servicios para tu mascota...</div>;
+        
       case 'denied':
-        return <div className="status-message error-message">⚠️ {error}</div>;
+        // Este caso puede mostrar un mensaje más específico o redirigir
+        return (
+          <div className="status-message">
+            <p className="error-message">⚠️ {error}</p>
+            <div className="location-options mt-4">
+               <button onClick={handleReturnToChoice} className="action-button">Volver a intentar</button>
+            </div>
+          </div>
+        );
+
       case 'error':
         return <div className="status-message error-message">😢 {error}</div>;
+        
       case 'success':
-        return services.length > 0 ? (
-          <div className="services-list">{services.map(service => <ServiceCard key={service.id} service={service} />)}</div>
-        ) : (
-          <div className="status-message">🤷‍♀️ No se encontraron servicios cercanos.</div>
+        return (
+          <>
+            <div className="flex items-center mb-4">
+              <button onClick={handleReturnToChoice} className="p-2 mr-2 text-2xl text-gray-600 hover:text-gray-900">
+                <IoArrowBack />
+              </button>
+              <h2 className="text-xl font-bold text-gray-800">Resultados</h2>
+            </div>
+            {services.length > 0 ? (
+              <div className="services-list">{services.map(service => <ServiceCard key={service.id} service={service} />)}</div>
+            ) : (
+              <div className="status-message">
+                <p>🤷‍♀️ No se encontraron servicios cercanos.</p>
+                <button onClick={handleReturnToChoice} className="action-button mt-4">Buscar de nuevo</button>
+              </div>
+            )}
+          </>
         );
+        
       default:
         return <div className="status-message">Cargando...</div>;
     }
   };
-  
+
   return (
     <div className="nearby-services-container">
-      <h1 className="page-title">Servicios Cercanos</h1>
+      {status !== 'success' && <h1 className="page-title">Servicios Cercanos</h1>}
       {renderContent()}
     </div>
   );

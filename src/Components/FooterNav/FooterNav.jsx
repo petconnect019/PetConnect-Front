@@ -8,38 +8,17 @@ import Location from '../../assets/images/Location.png'
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
 
 export const FooterNav = ({ navigate }) => {
-    const location = useLocation();
-    const currentPath = location.pathname;
+    const { pathname } = useLocation();
     const { unreadCount } = useNotifications();
     const { user } = useAuth();
 
-    console.log("FooterNav - currentPath:", currentPath);
-
-    const isActive = (path) => {
-        let result = false;
-        if (path === "/home") {
-            result = currentPath === "/home";
-        } else if (path === "/messages") {
-            // Activar para /messages y /chat (con o sin parámetros)
-            result = currentPath === "/messages" || currentPath.startsWith("/chat");
-        } else if (path === "/notifications") {
-            result = currentPath === "/notifications";
-        } else if (path === "/settings") {
-            result = currentPath === "/settings";
-        } else if (path === "/qrs") {
-            result = currentPath === "/qrs";
-        } else if (path === "/nearby-services") {
-            result = currentPath === "/nearby-services";
-        } else if (path === `/profile/${user.id}`) {
-            result = currentPath === `/profile/${user.id}`;
-        }
-        
-        console.log(`FooterNav - isActive("${path}"):`, result);
-        return result;
-    };
+    // Lógica de estado activo simplificada
+    const isActive = (path) => pathname === path;
+    const isMessagesActive = pathname === '/messages' || pathname.startsWith('/chat');
 
     return (
         <footer className="bg-white flex justify-around fixed bottom-0 left-0 right-0 py-3 px-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30">
+            {/* Botón de Inicio */}
             <button 
                 onClick={() => navigate("/home")}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 ${
@@ -50,16 +29,31 @@ export const FooterNav = ({ navigate }) => {
                 <span className="text-xs">Inicio</span>
             </button>
             
+            {/* Botón de Servicios (Nuevo orden) */}
+            <button
+                onClick={() => navigate("/nearby-services")}
+                className={`flex flex-col items-center justify-center gap-1 transition-all duration-300 ${
+                    isActive("/nearby-services") ? "text-brand" : "text-gray-400 hover:text-brand"
+                }`}
+            >
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <img src={Location} alt='Servicios Cercanos' className='max-w-full max-h-full' />
+                </div>
+                <span className="text-xs">Servicios</span>
+            </button>
+            
+            {/* Botón de Mensajes */}
             <button 
                 onClick={() => navigate("/messages")}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 ${
-                    isActive("/messages") ? "text-brand" : "text-gray-400 hover:text-brand"
+                    isMessagesActive ? "text-brand" : "text-gray-400 hover:text-brand"
                 }`}
             >
-                {isActive("/messages") ? <AiFillMessage className="text-2xl" /> : <AiOutlineMessage className="text-2xl" />}
+                {isMessagesActive ? <AiFillMessage className="text-2xl" /> : <AiOutlineMessage className="text-2xl" />}
                 <span className="text-xs">Mensajes</span>
             </button>
 
+            {/* Botón de Alertas */}
             <button 
                 onClick={() => navigate("/notifications")}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 relative ${
@@ -74,19 +68,8 @@ export const FooterNav = ({ navigate }) => {
                 )}
                 <span className="text-xs">Alertas</span>
             </button>
-
-            <button
-                onClick={() => navigate("/nearby-services")}
-                className={`flex flex-col items-center justify-center gap-1 transition-all duration-300 ${
-                    isActive("/nearby-services") ? "text-brand" : "text-gray-400 hover:text-brand"
-                }`}
-            >
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <img src={Location} alt='Servicios Cercanos' className='max-w-full max-h-full' />
-                </div>
-                <span className="text-xs">Servicios</span>
-            </button>
             
+            {/* Botón de Ajustes */}
             <button 
                 onClick={() => navigate("/settings")}
                 className={`flex flex-col items-center gap-1 transition-all duration-300 ${

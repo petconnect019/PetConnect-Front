@@ -1,5 +1,6 @@
 import React from 'react';
 import './ServiceCard.css';
+import { FiMapPin, FiPhone, FiGlobe, FiStar, FiClock } from 'react-icons/fi';
 
 const ServiceCard = ({ service }) => {
   const {
@@ -23,33 +24,41 @@ const ServiceCard = ({ service }) => {
         <span className={`place-type ${placeType.replace(/\s+/g, '-').toLowerCase()}`}>{placeType}</span>
       </div>
       
-      {rating && (
-        <div className="place-rating">
-          <span className="rating-score">{rating} ★</span>
-          <span className="rating-count">({userRatingCount} opiniones)</span>
+      <div className="place-details">
+        <div className="detail-item">
+          <FiMapPin className="icon" />
+          <span>{formattedAddress}</span>
         </div>
-      )}
 
-      <p className="place-address">{formattedAddress}</p>
-      
-      {isOpen !== null && (
-        <div className={`place-status ${isOpen ? 'open' : 'closed'}`}>
-          {isOpen ? 'Abierto ahora' : 'Cerrado ahora'}
-        </div>
-      )}
+        {rating && (
+          <div className="detail-item">
+            <FiStar className="icon" style={{ color: '#ffcc00' }} />
+            <span>{rating} de 5 estrellas</span>
+          </div>
+        )}
+        
+        {isOpen !== null && (
+          <div className="detail-item">
+            <FiClock className="icon" />
+            <span className={`place-status ${isOpen ? 'open' : 'closed'}`}>
+              {isOpen ? 'Abierto ahora' : 'Cerrado ahora'}
+            </span>
+          </div>
+        )}
+      </div>
 
       <div className="card-actions">
         {internationalPhoneNumber && (
           <a href={`tel:${internationalPhoneNumber}`} className="action-button call-button">
-            Llamar
+            <FiPhone /> Llamar
           </a>
         )}
         <a href={googleMapsUri} target="_blank" rel="noopener noreferrer" className="action-button map-button">
-          Ver en Mapa
+          <FiMapPin /> Mapa
         </a>
         {websiteUri && (
           <a href={websiteUri} target="_blank" rel="noopener noreferrer" className="action-button web-button">
-            Sitio Web
+            <FiGlobe /> Web
           </a>
         )}
       </div>
