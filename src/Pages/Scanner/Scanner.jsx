@@ -211,48 +211,48 @@ export const Scanner = () => {
       
       {/* Scanner Container */}
       <div className="flex-1 flex items-center justify-center px-6 pb-8">
-        <div className="relative w-full max-w-md aspect-square bg-white rounded-3xl shadow-2xl shadow-slate-200/50 overflow-hidden border border-white/20">
-          {/* Video Element */}
-          <video
-            ref={videoRef}
-            className={`absolute inset-0 w-full h-full object-cover ${cameraReady ? 'block' : 'hidden'}`}
-            autoPlay
-            playsInline
-            muted
-          />
-          
-          {/* Welcome Screen */}
-          {!scanning && !scannedResult && !data && !hasPet && (
-            <WelcomeScreen startScanning={startScanning}/>
-          )}
-          
-          {/* Permission Denied Screen */}
-          {hasPermission === false && (
-            <PermisionsDeniedScreens startScanning={startScanning} />
-          )}
-          
-          {/* Scanning Screen */}
-          {scanning && (
-            <ScanningScreen stopScanning={stopScanning}/>
-          )}
-          
-          {/* Successfully pet created screen */}
-          {hasPet === 'first' && !scanning &&  (
-            <SuccessScreen handleScanAgain={handleScanAgain} />
-          )}
+        {scanning ? (
+          <div className="relative w-full max-w-md aspect-square bg-white rounded-3xl shadow-2xl shadow-slate-200/50 overflow-hidden border border-white/20">
+            {/* Video Element */}
+            <video
+              ref={videoRef}
+              className={`absolute inset-0 w-full h-full object-cover ${cameraReady ? 'block' : 'hidden'}`}
+              autoPlay
+              playsInline
+              muted
+            />
+            {/* Scanning Screen */}
+            <ScanningScreen stopScanning={stopScanning} />
+            <canvas ref={canvasRef} className="hidden" />
+          </div>
+        ) : (
+          <div className="relative w-full max-w-md">
+            {/* Welcome Screen */}
+            {!scannedResult && !data && !hasPet && (
+              <WelcomeScreen startScanning={startScanning} />
+            )}
 
-          {/* Pet already linked Screen */}
-          {hasPet === 'linked' && !scanning && (
-            <LinkedPetScreen handleScanAgain={handleScanAgain} petId={pet?._id} />
-          )}
+            {/* Permission Denied Screen */}
+            {hasPermission === false && (
+              <PermisionsDeniedScreens startScanning={startScanning} />
+            )}
 
-          {/* Error scanning qr*/}
-          {error && !scanning && (
-            <ErrorLinkScreen error={error} handleScanAgain={handleScanAgain} />
-          )}
-          
-          <canvas ref={canvasRef} className="hidden" />
-        </div>
+            {/* Successfully pet created screen */}
+            {hasPet === 'first' && !scanning && (
+              <SuccessScreen handleScanAgain={handleScanAgain} />
+            )}
+
+            {/* Pet already linked Screen */}
+            {hasPet === 'linked' && !scanning && (
+              <LinkedPetScreen handleScanAgain={handleScanAgain} petId={pet?._id} />
+            )}
+
+            {/* Error scanning qr*/}
+            {error && !scanning && (
+              <ErrorLinkScreen error={error} handleScanAgain={handleScanAgain} />
+            )}
+          </div>
+        )}
       </div>
       
       {/* Bottom hint */}
