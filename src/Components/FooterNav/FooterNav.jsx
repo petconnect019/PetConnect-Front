@@ -5,6 +5,7 @@ import { useNotifications } from "../../Contexts/NotificationContext/Notificatio
 import User from '../../assets/images/DefaultProfile.png'
 import QR from '../../assets/images/QR.png'
 import Location from '../../assets/images/Location.png'
+import LocationGray from '../../assets/images/Location-Gray.png'
 import { useAuth } from "../../Contexts/AuthContext/AuthContext";
 
 export const FooterNav = ({ navigate }) => {
@@ -26,7 +27,11 @@ export const FooterNav = ({ navigate }) => {
                 }`}
             >
                 <div className="w-6 h-6 flex items-center justify-center">
-                  <img src={Location} alt='Servicios Cercanos' className='max-w-full max-h-full' />
+                  <img 
+                    src={isActive("/nearby-services") ? Location : LocationGray}
+                    alt='Servicios Cercanos' 
+                    className='max-w-full max-h-full' 
+                  />
                 </div>
                 <span className="text-xs">Servicios</span>
             </button>
