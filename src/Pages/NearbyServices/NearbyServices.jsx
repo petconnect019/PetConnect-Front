@@ -8,6 +8,13 @@ const NearbyServices = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      setStatus('denied');
+      setError('Debes iniciar sesión para acceder a esta función.');
+      return;
+    }
+
     if (!navigator.geolocation) {
       setStatus('denied');
       setError('La geolocalización no es compatible con tu navegador.');
@@ -19,7 +26,6 @@ const NearbyServices = () => {
       const { latitude, longitude } = position.coords;
 
       try {
-        const token = localStorage.getItem('token');
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/places/nearby?latitude=${latitude}&longitude=${longitude}`, {
           method: 'GET',
           headers: {
@@ -27,6 +33,12 @@ const NearbyServices = () => {
             'Authorization': `Bearer ${token}`
           }
         });
+
+        if (response.status === 401) {
+          setStatus('denied');
+          setError('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+          return;
+        }
 
         if (!response.ok) {
           throw new Error('La respuesta del servidor no fue exitosa.');
