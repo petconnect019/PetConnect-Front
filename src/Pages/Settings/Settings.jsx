@@ -2,15 +2,21 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { FooterNav } from '../../Components/FooterNav/FooterNav';
 import { useAuth } from '../../Contexts/AuthContext/AuthContext';
+import { usePet } from '../../Contexts/PetContext/PetContext';
+import { useIsFetchedPets } from '../../Contexts/IsFetchedPets/IsFetchedPets';
 import { ModalLogout } from '../../Components/ModalBasic/ModalLogout';
 
 export const Settings = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { setPetList } = usePet();
+  const { changeIsFetched } = useIsFetchedPets();
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = async () => {
     try {
+      setPetList([]);
+      changeIsFetched(false);
       await logout();
       console.log('Cerrando sesión...');
       navigate('/login');
