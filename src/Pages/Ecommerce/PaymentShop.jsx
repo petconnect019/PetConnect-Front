@@ -349,7 +349,7 @@ export const PaymentShop = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-start justify-center py-10">
+        <div className="min-h-screen bg-gray-50 flex items-start justify-center">
             <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg p-6 sm:p-8">
                 <NavButton onClick={() => navigate('/Ecommerce')} />
                 <div className="text-left space-y-4">
