@@ -9,19 +9,24 @@ export const PetProvider = ({ children }) => {
         if (!newPet) return;
 
         try {
-            // Obtener el usuario logueado desde localStorage (estructura guardada por AuthContext)
             const storedUser = JSON.parse(localStorage.getItem("userData") || "null");
             const loggedUserId = storedUser?._id;
 
-            // Verificar que la mascota pertenece al usuario autenticado
+            // Si no hay usuario autenticado, NO agregamos la mascota
+            if (!loggedUserId) return;
+
+            // Determinar el ownerId, soportando string u objeto
             const ownerId = typeof newPet.owner === "string" ? newPet.owner : newPet.owner?._id;
 
-            if (loggedUserId && ownerId && ownerId !== loggedUserId) {
-                // No es nuestra mascota → no la añadimos
-                return;
-            }
+            // Solo añadir si la mascota realmente pertenece al usuario autenticado
+            if (ownerId !== loggedUserId) return;
 
-            if (!findPet(newPet._id)) {
+            // Evitar duplicados: comparar por _id o id
+            const alreadyExists = petList.some(
+                (p) => p._id === newPet._id || p.id === newPet._id || p._id === newPet.id
+            );
+
+            if (!alreadyExists) {
                 setPetList((prevPets) => [...prevPets, newPet]);
             }
         } catch (error) {
