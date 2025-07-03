@@ -37,7 +37,7 @@ export const Introduction1 = () => {
 
     return (
         <div className='min-h-screen bg-gray-100 flex items-center justify-center p-0 lg:p-4'>
-            <div className={`bg-white w-full max-w-7xl lg:rounded-3xl lg:shadow-2xl lg:border lg:border-gray-200 overflow-hidden transition-all duration-500 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className={`bg-white w-full max-w-7xl lg:rounded-3xl lg:shadow-2xl lg:border lg:border-gray-200 transition-all duration-500 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                 
                 {/* Mobile and Tablet Design */}
                 <div className="lg:hidden relative h-screen flex flex-col">

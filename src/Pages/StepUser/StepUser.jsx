@@ -134,9 +134,9 @@ export const StepUser = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center ">
+        <div className="flex flex-col items-center justify-center min-h-screen">
             {showSpinner && <ModalSpinner />}
-            <div className="w-screen p-2 3xl:p-4 4xl:p-6">
+            <div className="w-full p-2 3xl:p-4 4xl:p-6">
                 <NavButtonStep onClick={()=>navigate('/register')} text={'1/3'} />
                 <div className="mb-4 p-2 text-center">
                     <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl 3xl:text-7xl 4xl:text-8xl font-bold mb-2">¡Creando tu Perfil!</h2>
@@ -183,8 +183,8 @@ export const StepUser = () => {
                             value={phone}
                             onChange={setPhone}
                             onlyCountries={["co"]}
-                            inputClass="w-full !w-[100%] p-2 xs:p-3 sm:p-4 md:p-5 lg:p-6 xl:p-7 2xl:p-8 border-none rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-brand text-sm sm:text-base md:text-lg lg:text-xl xl:text-xl 2xl:text-xl h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22"
-                            containerClass="w-full mb-3 bg-gray-100 h-10 xs:h-12 sm:h-14 md:h-16 lg:h-18 xl:h-20 2xl:h-22"
+                            inputClass="w-full border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-brand"
+                            containerClass="w-full"
                         />
 
                         <label className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl">Género</label>

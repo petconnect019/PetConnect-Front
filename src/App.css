@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 @font-face {
   font-family: 'Urbanist';
   src: url('./assets/fonts/Urbanist.ttf') format('truetype');
