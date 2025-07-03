@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ServiceCard from '../../Components/ServiceCard/ServiceCard';
 import './NearbyServices.css'; // Crearemos este archivo para los estilos
+import { cities } from '../../data/cities.js';
 
 // Utilidad para detectar iOS
 const isIOS = () => {
@@ -15,9 +16,11 @@ const isSafari = () => {
 
 const NearbyServices = () => {
   const [services, setServices] = useState([]);
-  const [status, setStatus] = useState('locating'); // 'locating', 'fetching', 'success', 'denied', 'error'
+  const [status, setStatus] = useState('locating'); // 'locating', 'fetching', 'success', 'denied', 'error', 'manual'
   const [error, setError] = useState('');
   const [requiresInteraction, setRequiresInteraction] = useState(false);
+  const [manualCity, setManualCity] = useState('');
+  const [showOptions, setShowOptions] = useState(false); // muestra UI dual (permitir/seleccionar)
 
   // Primero declaramos los callbacks para que estén disponibles antes de usarlos
   const successCallback = async (position) => {
@@ -61,6 +64,10 @@ const NearbyServices = () => {
   };
 
   const errorCallback = (error) => {
+    if (isIOS() && isSafari()) {
+      setStatus('manual');
+      return;
+    }
     setStatus('denied');
     if (error.code === error.PERMISSION_DENIED) {
       setError('Permiso de ubicación denegado. Activa la ubicación en tu navegador para encontrar servicios cercanos.');
@@ -90,6 +97,14 @@ const NearbyServices = () => {
     });
   };
 
+  // function to handle manual city selection
+  const handleManualSearch = () => {
+    if (!manualCity) return;
+    const selected = cities.find(c => c.name === manualCity);
+    if (!selected) return;
+    successCallback({ coords: { latitude: selected.latitude, longitude: selected.longitude } });
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -98,22 +113,52 @@ const NearbyServices = () => {
       return;
     }
 
-    // Si es iOS Safari, esperar interacción del usuario
-    if (isIOS() && isSafari()) {
-      setRequiresInteraction(true);
-      return;
+    // Comprobamos si ya se concedió permiso anteriormente
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+        if (result.state === 'granted') {
+          requestLocation();
+        } else if (result.state === 'prompt') {
+          // Mostrar opciones al usuario
+          setShowOptions(true);
+          setStatus('idle');
+        } else {
+          // denied
+          setStatus('manual');
+        }
+      }).catch(() => {
+        // Fallback si Permissions API no está disponible
+        if (isIOS() && isSafari()) {
+          setRequiresInteraction(true);
+        } else {
+          setShowOptions(true);
+        }
+      });
+    } else {
+      // Si no hay Permissions API mantenemos la lógica previa
+      if (isIOS() && isSafari()) {
+        setRequiresInteraction(true);
+      } else {
+        setShowOptions(true);
+      }
     }
-
-    // Para otros navegadores, pedir ubicación inmediatamente
-    requestLocation();
   }, []);
 
   const renderContent = () => {
-    if (requiresInteraction) {
+    if (showOptions) {
       return (
         <div className="status-message">
-          <p>Para mostrar servicios cercanos necesitamos tu ubicación.</p>
-          <button className="action-button map-button" onClick={requestLocation}>Permitir ubicación</button>
+          <p>Para encontrar servicios cercanos puedes permitir tu ubicación o seleccionar tu ciudad.</p>
+          <div className="flex flex-col gap-4 w-full mt-2">
+            <button onClick={requestLocation} className="action-button map-button">Permitir ubicación</button>
+            <div>
+              <select className="mt-2 p-2 border rounded w-full" value={manualCity} onChange={(e)=>setManualCity(e.target.value)}>
+                <option value="" disabled>Selecciona ciudad</option>
+                {cities.map(city => (<option key={city.name} value={city.name}>{city.name}</option>))}
+              </select>
+              <button disabled={!manualCity} onClick={handleManualSearch} className="action-button map-button w-full mt-2 disabled:opacity-50">Buscar por ciudad</button>
+            </div>
+          </div>
         </div>
       );
     }
