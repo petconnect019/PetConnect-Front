@@ -7,7 +7,7 @@ export const MainLayout = () => {
 
   return (
     <div className="main-layout">
-      <main className="main-content">
+      <main className="main-content pb-24">
         <Outlet />
       </main>
       <FooterNav navigate={navigate} />
