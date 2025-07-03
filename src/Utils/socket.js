@@ -88,14 +88,14 @@ const connectSocket = (token, options = {}) => {
       }
     });
 
-    socket.on('connect_error', (error) => {
+    socket.on('connect_error', async (error) => {
       console.error('💥 Error de conexión del socket:', error);
-      console.error('🔍 Detalles del error:');
-      console.error(`   Mensaje: ${error.message}`);
-      console.error(`   Tipo: ${error.type || 'unknown'}`);
-      console.error(`   Código: ${error.code || 'unknown'}`);
-      console.error(`   URL intentada: ${serverUrl}`);
-      
+      // Detectar error por token inválido / expirado y reintentar
+      if (error?.message?.toLowerCase().includes('token')) {
+        await refreshTokenAndReconnect();
+        return; // Evitar marcar como error hasta reintentar
+      }
+
       connectionState.isConnected = false;
       connectionState.isConnecting = false;
       connectionState.connectionError = error.message;
@@ -138,6 +138,11 @@ const connectSocket = (token, options = {}) => {
         socket.emit('ping');
       }
     }, 30000); // Cada 30 segundos
+
+    // Responder al ping de servidor personalizado
+    socket.on('ping', () => {
+      socket.emit('pong');
+    });
 
     return socket;
 
@@ -339,6 +344,56 @@ const forceReconnect = () => {
   }
 };
 
+// Nueva función para actualizar el token de autenticación del socket
+const updateAuthToken = (newToken) => {
+  if (!newToken) return;
+  // Actualizar localStorage por consistencia
+  localStorage.setItem('accessToken', newToken);
+
+  if (socket) {
+    // Actualizar el token que se enviará en el próximo handshake
+    socket.auth = socket.auth || {};
+    socket.auth.token = newToken;
+
+    // Si el socket está desconectado, forzar reconexión usando el nuevo token
+    if (!socket.connected && !connectionState.isConnecting) {
+      console.log('🔄 Token actualizado. Reintentando conexión del socket...');
+      try {
+        socket.connect();
+      } catch (err) {
+        console.error('💥 Error al reconectar después de actualizar token:', err);
+      }
+    }
+  }
+};
+
+// Helper interno para refrescar token vía endpoint y reintentar conexión
+const refreshTokenAndReconnect = async () => {
+  try {
+    console.log('🔄 Intentando refrescar token...');
+    const response = await fetch(`${config.api}/api/auth/refresh-token`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('No fue posible refrescar el token');
+    }
+
+    const data = await response.json();
+
+    if (data.accessToken) {
+      updateAuthToken(data.accessToken);
+    }
+  } catch (err) {
+    console.error('💥 Error al refrescar token:', err);
+  }
+};
+
 // Exportar la instancia actual del socket y las funciones
 export {
   socket,
@@ -356,7 +411,8 @@ export {
   off,
   emit,
   getSocket,
-  forceReconnect
+  forceReconnect,
+  updateAuthToken
 };
 
 // Exportar como default para compatibilidad
@@ -376,5 +432,6 @@ export default {
   off,
   emit,
   getSocket,
-  forceReconnect
+  forceReconnect,
+  updateAuthToken
 }; 
