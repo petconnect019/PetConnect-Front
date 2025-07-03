@@ -10,7 +10,7 @@ const ConversationItem = memo(({
 }) => {
   const lastMessageTime = conversation.lastMessage?.timestamp || conversation.updatedAt || conversation.createdAt;
   const otherParticipant = conversation.otherParticipants?.[0];
-  const displayName = conversation.title || otherParticipant?.name || 'Usuario';
+  const displayName = otherParticipant?.name || 'Usuario';
   const displayAvatar = otherParticipant?.profilePicture || defaultProfilePic;
 
   // Formatear tiempo de manera optimizada

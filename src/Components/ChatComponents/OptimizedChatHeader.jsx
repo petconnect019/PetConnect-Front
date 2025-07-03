@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { IoArrowBack, IoEllipsisVertical, IoSearch, IoClose } from 'react-icons/io5';
 import ConnectionStatus from '../Common/ConnectionStatus';
+import defaultProfilePic from '../../assets/images/DefaultProfile.png';
 
 /**
  * Header optimizado del chat con memoización
@@ -25,6 +26,10 @@ const OptimizedChatHeader = memo(({
 }) => {
   
   if (!showSidebar && activeChat) {
+    const otherParticipant = activeChat.otherParticipants?.[0];
+    const displayName = otherParticipant?.name || 'Usuario';
+    const displayAvatar = otherParticipant?.profilePicture || defaultProfilePic;
+
     // Header del chat activo
     return (
       <header className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200 h-16 shrink-0 relative">
@@ -44,23 +49,26 @@ const OptimizedChatHeader = memo(({
             <IoArrowBack className="w-5 h-5 text-gray-600" />
           </button>
           
-          <div className="ml-2 flex-1 min-w-0">
-            <h1 className="text-lg font-semibold text-gray-800 truncate">
-              {activeChat.title || activeChat.otherParticipants?.[0]?.name || 'Chat'}
-            </h1>
-            {activeChat.petName && (
-              <p className="text-sm text-gray-500 truncate">
-                Sobre {activeChat.petName}
-              </p>
-            )}
+          <div className="flex items-center ml-2 flex-1 min-w-0">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 mr-3">
+              <img 
+                src={displayAvatar}
+                alt={displayName}
+                className="w-full h-full object-cover"
+                onError={(e) => e.target.src = defaultProfilePic}
+              />
+            </div>
+            <div>
+              <h1 className="text-lg font-semibold text-gray-800 truncate">
+                {displayName}
+              </h1>
+              {activeChat.petName && (
+                <p className="text-sm text-gray-500 truncate">
+                  Sobre {activeChat.petName}
+                </p>
+              )}
+            </div>
           </div>
-          
-          <button 
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-            aria-label="Opciones del chat"
-          >
-            <IoEllipsisVertical className="w-5 h-5 text-gray-600" />
-          </button>
         </div>
       </header>
     );

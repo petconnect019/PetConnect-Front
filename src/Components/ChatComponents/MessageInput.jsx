@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, memo, useCallback } from 'react';
-import { IoSend, IoAttach, IoImage, IoHappy } from 'react-icons/io5';
+import { IoSend } from 'react-icons/io5';
 import useDebounce from '../../Hooks/useDebounce';
 
 export const MessageInput = memo(({ 
@@ -31,11 +31,8 @@ export const MessageInput = memo(({
     
     try {
       setSending(true);
-      
-      // Limpiar el input inmediatamente para mejor UX
       setMessage('');
       
-      // Llamar función proporcionada por el componente padre
       if (onMessageSent) {
         await onMessageSent(messageContent, {
           type: 'text',
@@ -45,11 +42,9 @@ export const MessageInput = memo(({
       
     } catch (error) {
       console.error('Error al enviar mensaje:', error);
-      // Restaurar mensaje si falla
       setMessage(messageContent);
     } finally {
       setSending(false);
-      // Mantener foco en el input
       if (inputRef.current) {
         inputRef.current.focus();
       }
@@ -62,22 +57,6 @@ export const MessageInput = memo(({
       handleSendMessage(e);
     }
   }, [handleSendMessage]);
-
-  // Manejo de archivos (placeholder para futuras funcionalidades)
-  const handleAttachFile = useCallback(() => {
-    console.log('Funcionalidad de adjuntar archivo próximamente');
-    // TODO: Implementar funcionalidad de archivos
-  }, []);
-
-  const handleAttachImage = useCallback(() => {
-    console.log('Funcionalidad de adjuntar imagen próximamente');
-    // TODO: Implementar funcionalidad de imágenes
-  }, []);
-
-  const handleAddEmoji = useCallback(() => {
-    console.log('Funcionalidad de emojis próximamente');
-    // TODO: Implementar selector de emojis
-  }, []);
 
   // Debounce para validaciones en tiempo real
   const debouncedMessage = useDebounce(message, 300);
@@ -96,30 +75,8 @@ export const MessageInput = memo(({
     <div className="border-t bg-white">
       <form onSubmit={handleSendMessage} className="p-4">
         <div className="flex items-center space-x-2">
-          {/* Botón de archivos */}
-          <button 
-            type="button" 
-            onClick={handleAttachFile}
-            className="p-2 text-gray-500 hover:text-blue-500 hover:bg-blue-50 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            title="Adjuntar archivo"
-            disabled={disabled || sending}
-          >
-            <IoAttach className="text-xl" />
-          </button>
-          
-          {/* Botón de imágenes */}
-          <button 
-            type="button" 
-            onClick={handleAttachImage}
-            className="p-2 text-gray-500 hover:text-blue-500 hover:bg-blue-50 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            title="Adjuntar imagen"
-            disabled={disabled || sending}
-          >
-            <IoImage className="text-xl" />
-          </button>
-          
           {/* Input de mensaje */}
-          <div className="flex-1 relative">
+          <div className="flex-1">
             <input
               ref={inputRef}
               type="text"
@@ -127,7 +84,7 @@ export const MessageInput = memo(({
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               className={`
-                w-full py-3 px-4 pr-12 border rounded-full 
+                w-full py-3 px-4 border rounded-full 
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                 transition-all duration-200
                 ${disabled || sending ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:border-gray-400'}
@@ -136,17 +93,6 @@ export const MessageInput = memo(({
               disabled={disabled || sending}
               maxLength={maxLength}
             />
-            
-            {/* Botón de emojis dentro del input */}
-            <button
-              type="button"
-              onClick={handleAddEmoji}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-yellow-500 transition-colors"
-              title="Agregar emoji"
-              disabled={disabled || sending}
-            >
-              <IoHappy className="text-lg" />
-            </button>
           </div>
           
           {/* Botón de enviar */}
