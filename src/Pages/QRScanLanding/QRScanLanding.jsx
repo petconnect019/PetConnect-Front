@@ -14,6 +14,7 @@ export const QRScanLanding = () => {
   const [error, setError] = useState(null);
   const [locationStatus, setLocationStatus] = useState('idle');
   const [scanSuccess, setScanSuccess] = useState(false);
+  const [errorType, setErrorType] = useState(null);
 
   useEffect(() => {
     // Simular progreso automático para la animación de entrada
@@ -26,9 +27,19 @@ export const QRScanLanding = () => {
   const handleGetLocation = () => {
     setLocationStatus('requesting');
     setError(null);
+    setErrorType(null);
     
     if (!navigator.geolocation) {
       setError('Tu navegador no soporta geolocalización. Por favor, intenta con otro navegador.');
+      setErrorType('geo');
+      setLocationStatus('error');
+      return;
+    }
+
+    // Validar que el qrId esté presente y sea aparentemente válido
+    if (!qrId || qrId === 'undefined') {
+      setError('Este QR es inválido o fue generado con una versión antigua.');
+      setErrorType('invalid_qr');
       setLocationStatus('error');
       return;
     }
@@ -67,6 +78,7 @@ export const QRScanLanding = () => {
         } catch (err) {
           console.error('Error al enviar la ubicación:', err);
           setError(err.message || 'Error al registrar el escaneo. Por favor, intenta nuevamente.');
+          setErrorType('backend');
           setLocationStatus('error');
         } finally {
           setIsLoading(false);
@@ -89,6 +101,7 @@ export const QRScanLanding = () => {
             errorMessage = 'Error al obtener tu ubicación. Por favor, intenta nuevamente.';
         }
         setError(errorMessage);
+        setErrorType('geo');
         setLocationStatus('error');
       },
       { 
@@ -106,6 +119,7 @@ export const QRScanLanding = () => {
 
   const handleTryAgain = () => {
     setError(null);
+    setErrorType(null);
     setLocationStatus('idle');
     setScanSuccess(false);
   };
@@ -241,7 +255,13 @@ export const QRScanLanding = () => {
                 >
                   <FiAlertCircle className="text-3xl text-red-500" />
                 </motion.div>
-                <p className="text-red-600 font-medium mb-2">No pudimos obtener tu ubicación</p>
+                <p className="text-red-600 font-medium mb-2">
+                  {errorType === 'invalid_qr'
+                    ? 'QR inválido'
+                    : errorType === 'backend'
+                    ? 'Error al registrar el escaneo'
+                    : 'No pudimos obtener tu ubicación'}
+                </p>
                 <p className="text-gray-600 mb-4 text-sm">{error}</p>
                 <div className="space-y-3 mt-4">
                   <button 
