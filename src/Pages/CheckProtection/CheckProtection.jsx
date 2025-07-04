@@ -71,66 +71,76 @@ export const CheckProtection = () => {
   // Función para cargar los escaneos
   const fetchScans = async (petId) => {
     if (!petId) return;
-    
+
     setIsLoadingScans(true);
     try {
       const token = localStorage.getItem('accessToken');
-      if (!token) {
-        console.error('No hay token de acceso');
-        return;
+      if (!token) throw new Error('Sin token');
+
+      // Filtrar QRs de la mascota seleccionada
+      const selectedPetQRs = qrsResult?.filter(
+        (qr) => qr.petId && qr.petId._id === petId
+      ) || [];
+
+      if (selectedPetQRs.length === 0) {
+        setScanHistory([]);
+        return; // No hay QRs para esta mascota
       }
-      
-      // Obtener historial de escaneos para todos los QRs de la mascota seleccionada
-      const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === petId) || [];
-      
-      const allScanHistory = [];
-      for (const qr of selectedPetQRs) {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/qr/${qr._id}/history`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+
+      // Traer historial de cada QR en paralelo
+      const histories = await Promise.all(
+        selectedPetQRs.map(async (qr) => {
+          try {
+            const res = await fetch(
+              `${import.meta.env.VITE_API_URL}/api/qr/${qr._id}/history`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (!res.ok) return [];
+
+            const data = await res.json();
+            if (!data.success || !data.history) return [];
+
+            // Normalizar ubicación
+            return data.history.map((scan) => {
+              const { ubicacion, ...rest } = scan;
+              return {
+                ...rest,
+                location: ubicacion,
+              };
+            });
+          } catch (err) {
+            console.error('Error individual al traer history:', err);
+            return [];
           }
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log('Datos recibidos del backend:', data);
-          if (data.success && data.history) {
-            // Renombrar `ubicacion` a `location` para consistencia en el frontend
-            const transformedHistory = data.history.map(scan => ({
-              ...scan,
-              location: scan.ubicacion,
-              // Eliminar la propiedad original para evitar confusiones
-              // delete scan.ubicacion; // Esto no es posible porque scan es un objeto inmutable aquí
-            }));
-             allScanHistory.push(...transformedHistory.map(s => {
-                const { ubicacion, ...rest } = s;
-                return rest;
-            }));
-          }
-        }
-      }
-      
-      // Función auxiliar para obtener timestamp robusto
+        })
+      );
+
+      // Flatten
+      const allScanHistory = histories.flat();
+
+      // Ordenar
       const getTimestamp = (item) => {
         if (item.scanDate) return new Date(item.scanDate).getTime();
         if (item.createdAt) return new Date(item.createdAt).getTime();
-        if (item.fecha && item.hora) {
-          return new Date(`${item.fecha} ${item.hora}`).getTime();
-        }
+        if (item.fecha && item.hora) return new Date(`${item.fecha} ${item.hora}`).getTime();
         return 0;
       };
 
-      const sortedHistory = allScanHistory.sort((a, b) => {
+      allScanHistory.sort((a, b) => {
         const diff = getTimestamp(a) - getTimestamp(b);
         return sortNewest ? -diff : diff;
       });
-      
-      console.log('Historia ordenada final:', sortedHistory);
-      setScanHistory(sortedHistory);
-    } catch (error) {
-      console.error('Error al obtener el historial de escaneos:', error);
+
+      setScanHistory(allScanHistory);
+    } catch (err) {
+      console.error('Error global al traer escaneos:', err);
+      setScanHistory([]);
     } finally {
       setIsLoadingScans(false);
     }
