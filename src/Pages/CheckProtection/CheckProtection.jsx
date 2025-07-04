@@ -43,7 +43,6 @@ export const CheckProtection = () => {
   const [sortNewest, setSortNewest] = useState(true);
   const [mapReady, setMapReady] = useState(false);
 
-
   useEffect(() => {
     // Fix the default icon issue in react-leaflet
     delete L.Icon.Default.prototype._getIconUrl;
@@ -62,6 +61,12 @@ export const CheckProtection = () => {
     setMapReady(true);
   }, []);
 
+  // NUEVO: Traer los QRs cada vez que cambie la mascota seleccionada
+  useEffect(() => {
+    if (selectedPet) {
+      getQrsById();
+    }
+  }, [selectedPet, refreshQRs]);
 
   // Función para cargar los escaneos
   const fetchScans = async (petId) => {
@@ -107,11 +112,19 @@ export const CheckProtection = () => {
         }
       }
       
-      // Ordenar por fecha y hora (más reciente primero por defecto)
+      // Función auxiliar para obtener timestamp robusto
+      const getTimestamp = (item) => {
+        if (item.scanDate) return new Date(item.scanDate).getTime();
+        if (item.createdAt) return new Date(item.createdAt).getTime();
+        if (item.fecha && item.hora) {
+          return new Date(`${item.fecha} ${item.hora}`).getTime();
+        }
+        return 0;
+      };
+
       const sortedHistory = allScanHistory.sort((a, b) => {
-        const dateA = new Date(a.scanDate || a.createdAt);
-        const dateB = new Date(b.scanDate || b.createdAt);
-        return sortNewest ? dateB - dateA : dateA - dateB;
+        const diff = getTimestamp(a) - getTimestamp(b);
+        return sortNewest ? -diff : diff;
       });
       
       console.log('Historia ordenada final:', sortedHistory);
@@ -125,12 +138,10 @@ export const CheckProtection = () => {
 
   //se hace el fetch con los datos de la mascota seleccionada
   useEffect(() => {
-    if (protectionRender === "tag" && selectedPet) {
-      getQrsById();
-    } else if (protectionRender === "scan" && selectedPet && qrsResult?.length > 0) {
+    if (protectionRender === "scan" && selectedPet && qrsResult?.length > 0) {
       fetchScans(selectedPet._id);
     }
-  }, [protectionRender, selectedPet, refreshQRs, qrsResult, sortNewest]);
+  }, [protectionRender, selectedPet, qrsResult, sortNewest]);
 
   //se selecciona la primera mascota al inicializar el componente o cuando se cargan las mascotas
   useEffect(() => {
