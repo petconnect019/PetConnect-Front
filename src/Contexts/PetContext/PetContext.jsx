@@ -21,14 +21,20 @@ export const PetProvider = ({ children }) => {
             // Solo añadir si la mascota realmente pertenece al usuario autenticado
             if (ownerId !== loggedUserId) return;
 
-            // Evitar duplicados: comparar por _id o id
-            const alreadyExists = petList.some(
-                (p) => p._id === newPet._id || p.id === newPet._id || p._id === newPet.id
-            );
+            // Utilizamos el callback de setPetList para asegurarnos de trabajar con la versión
+            // más reciente del estado y evitar duplicados causados por renderizados concurridos.
+            setPetList((prevPets) => {
+                const exists = prevPets.some(
+                    (p) =>
+                        p._id === newPet._id ||
+                        p.id === newPet._id ||
+                        p._id === newPet.id ||
+                        p.id === newPet.id
+                );
 
-            if (!alreadyExists) {
-                setPetList((prevPets) => [...prevPets, newPet]);
-            }
+                // Si ya existe, retornamos el array sin cambios; de lo contrario, añadimos la nueva mascota.
+                return exists ? prevPets : [...prevPets, newPet];
+            });
         } catch (error) {
             console.error("Error al validar propietario de la mascota:", error);
         }
@@ -45,7 +51,7 @@ export const PetProvider = ({ children }) => {
         );
     };
     const findPet = (petId) => {
-        return petList.find((pet) => pet._id === petId);
+        return petList.find((pet) => pet._id === petId || pet.id === petId);
     }
 
     return (
