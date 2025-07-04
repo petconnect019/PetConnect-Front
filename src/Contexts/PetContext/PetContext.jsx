@@ -18,8 +18,8 @@ export const PetProvider = ({ children }) => {
             // Determinar el ownerId, soportando string u objeto
             const ownerId = typeof newPet.owner === "string" ? newPet.owner : newPet.owner?._id;
 
-            // Solo añadir si la mascota realmente pertenece al usuario autenticado
-            if (ownerId !== loggedUserId) return;
+            // Solo impedir el añadido si *existe* ownerId y no coincide con el usuario autenticado
+            if (ownerId && ownerId !== loggedUserId) return;
 
             // Utilizamos el callback de setPetList para asegurarnos de trabajar con la versión
             // más reciente del estado y evitar duplicados causados por renderizados concurridos.
