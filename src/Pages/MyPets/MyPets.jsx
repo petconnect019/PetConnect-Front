@@ -98,7 +98,7 @@ export const MyPets = () => {
                                     className="group relative bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-gray-100 overflow-hidden"
                                 >
                                     {/* Action Buttons */}
-                                    <div className="absolute top-3 right-3 z-10 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                    <div className="absolute top-3 right-3 z-10 flex space-x-2">
                                         <button
                                             onClick={(e) => handleEditClick(e, pet.id)}
                                             className="w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
