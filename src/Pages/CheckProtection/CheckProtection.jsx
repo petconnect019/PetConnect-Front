@@ -80,11 +80,11 @@ export const CheckProtection = () => {
         if (!qr.petId || !selectedPet?._id) return false;
         // Si petId viene como objeto poblado
         if (typeof qr.petId === 'object' && qr.petId._id) {
-          return qr.petId._id === selectedPet._id;
+          return qr.petId._id.toString() === selectedPet._id.toString();
         }
         // Si petId viene como string (ID)
         if (typeof qr.petId === 'string') {
-          return qr.petId === selectedPet._id;
+          return qr.petId === selectedPet._id.toString();
         }
         return false;
       }) || [];
@@ -179,11 +179,11 @@ export const CheckProtection = () => {
     if (!qr.petId || !selectedPet?._id) return false;
     // Si petId viene como objeto poblado
     if (typeof qr.petId === 'object' && qr.petId._id) {
-      return qr.petId._id === selectedPet._id;
+      return qr.petId._id.toString() === selectedPet._id.toString();
     }
     // Si petId viene como string (ID)
     if (typeof qr.petId === 'string') {
-      return qr.petId === selectedPet._id;
+      return qr.petId === selectedPet._id.toString();
     }
     return false;
   }) || [];
