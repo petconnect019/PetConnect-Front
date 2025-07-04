@@ -76,7 +76,18 @@ export const CheckProtection = () => {
       }
       
       // Obtener historial de escaneos para todos los QRs de la mascota seleccionada
-      const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === petId) || [];
+      const selectedPetQRs = qrsResult?.filter(qr => {
+        if (!qr.petId || !selectedPet?._id) return false;
+        // Si petId viene como objeto poblado
+        if (typeof qr.petId === 'object' && qr.petId._id) {
+          return qr.petId._id === selectedPet._id;
+        }
+        // Si petId viene como string (ID)
+        if (typeof qr.petId === 'string') {
+          return qr.petId === selectedPet._id;
+        }
+        return false;
+      }) || [];
       
       const allScanHistory = [];
       for (const qr of selectedPetQRs) {
@@ -164,7 +175,18 @@ export const CheckProtection = () => {
   const isSelectedPet = qrsResult?.[0]?.petId?._id === selectedPet?._id;
 
   // Filtrar QRs para la mascota seleccionada
-  const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === selectedPet?._id) || [];
+  const selectedPetQRs = qrsResult?.filter(qr => {
+    if (!qr.petId || !selectedPet?._id) return false;
+    // Si petId viene como objeto poblado
+    if (typeof qr.petId === 'object' && qr.petId._id) {
+      return qr.petId._id === selectedPet._id;
+    }
+    // Si petId viene como string (ID)
+    if (typeof qr.petId === 'string') {
+      return qr.petId === selectedPet._id;
+    }
+    return false;
+  }) || [];
 
 
   return (
