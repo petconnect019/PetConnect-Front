@@ -78,9 +78,12 @@ export const CheckProtection = () => {
       if (!token) throw new Error('Sin token');
 
       // Filtrar QRs de la mascota seleccionada
-      const selectedPetQRs = qrsResult?.filter(
-        (qr) => qr.petId && qr.petId._id === petId
-      ) || [];
+      const selectedPetQRs = qrsResult?.filter((qr) => {
+        if (!qr.petId) return false;
+        // Puede venir poblado (objeto) o como string
+        if (typeof qr.petId === 'string') return qr.petId === petId;
+        return qr.petId._id === petId;
+      }) || [];
 
       if (selectedPetQRs.length === 0) {
         setScanHistory([]);
@@ -185,7 +188,12 @@ export const CheckProtection = () => {
   const isSelectedPet = qrsResult?.[0]?.petId?._id === selectedPet?._id;
 
   // Filtrar QRs para la mascota seleccionada
-  const selectedPetQRs = qrsResult?.filter(qr => qr.petId && qr.petId._id === selectedPet?._id) || [];
+  const selectedPetQRs = qrsResult?.filter((qr) => {
+    if (!qr.petId) return false;
+    // Puede venir poblado (objeto) o como string
+    if (typeof qr.petId === 'string') return qr.petId === selectedPet?._id;
+    return qr.petId._id === selectedPet?._id;
+  }) || [];
 
 
   return (
