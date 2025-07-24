@@ -10,7 +10,7 @@ export const PetProvider = ({ children }) => {
 
         try {
             const storedUser = JSON.parse(localStorage.getItem("userData") || "null");
-            const loggedUserId = storedUser?._id || storedUser?.id;
+            const loggedUserId = storedUser?._id;
 
             // Si no hay usuario autenticado, NO agregamos la mascota
             if (!loggedUserId) return;
