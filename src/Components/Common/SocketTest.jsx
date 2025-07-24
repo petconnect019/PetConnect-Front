@@ -9,7 +9,7 @@ const SocketTest = () => {
     setIsTesting(true);
     setTestResult('🔄 Iniciando test de conexión socket...\n');
     
-    const serverUrl = 'https://petconnect-backend-production.up.railway.app';
+    const serverUrl = 'https://petconnect-backend-1.onrender.com';
     const token = localStorage.getItem('accessToken');
     
     if (!token) {

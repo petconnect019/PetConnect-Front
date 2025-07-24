@@ -29,7 +29,7 @@ const getBaseUrls = () => {
   const railwayUrl = import.meta.env.VITE_RAILWAY_URL || 
                     import.meta.env.VITE_API_URL ||
                     // URL real de tu Railway (confirmada funcionando):
-                    'https://petconnect-backend-production.up.railway.app';
+                    'https://petconnect-backend-1.onrender.com';
   
   return {
     api: railwayUrl,

@@ -260,7 +260,7 @@ export const PaymentShop = () => {
             const ePayco = await loadEpaycoScript();
             
             // Configurar ePayco
-            const backendUrl = 'https://petconnect-backend-production.up.railway.app';
+            const backendUrl = 'https://petconnect-backend-1.onrender.com';
             const frontendUrl = 'https://pet-connect-front-nu.vercel.app';
 
             const handler = ePayco.checkout.configure({
