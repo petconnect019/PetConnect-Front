@@ -19,7 +19,7 @@ export default defineConfig(({ command, mode }) => {
       },
       proxy: {
         '/api': {
-          target: 'https://petconnect-backend-production.up.railway.app',
+          target: 'https://petconnect-backend-1.onrender.com',
           changeOrigin: true,
           secure: true,
           ws: true,

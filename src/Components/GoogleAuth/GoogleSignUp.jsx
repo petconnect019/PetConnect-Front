@@ -18,7 +18,7 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
 
   // Use useCallback to avoid recreating this function on every render
   const handleGoogleSignUp = useCallback(() => {
-    const popupUrl = 'https://petconnect-backend-production.up.railway.app/api/auth/google';
+    const popupUrl = 'https://petconnect-backend-1.onrender.com/api/auth/google';
     const popupName = 'Google Login';
     const popupFeatures = 'width=500,height=600,left=300,top=200';
     
@@ -32,7 +32,7 @@ export const GoogleSignUp = ({ content, setUser, setAccesToken, setHasPetsState,
       }
       
       const messageListener = async (event) => {
-        if (event.origin !== 'https://petconnect-backend-production.up.railway.app' || !event.data) {
+        if (event.origin !== 'https://petconnect-backend-1.onrender.com' || !event.data) {
           return;
         }
         
